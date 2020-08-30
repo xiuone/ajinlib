@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MultiView">
+        <attr name="aj_left_right" format="dimension"/>
+        <attr name="aj_up_down" format="dimension"/>
+        <attr name="aj_first_select" format="boolean"/>
+
+        <attr name="aj_item_padding_left" format="dimension"/>
+        <attr name="aj_item_padding_right" format="dimension"/>
+        <attr name="aj_item_padding_top" format="dimension"/>
+        <attr name="aj_item_padding_bottom" format="dimension"/>
+
+        <attr name="aj_item_select_textSize" format="dimension"/>
+        <attr name="aj_item_select_not_textSize" format="dimension"/>
+
+        <attr name="aj_item_select_color" format="color"/>
+        <attr name="aj_item_select_not_color" format="color"/>
+        <attr name="aj_item_select_background" format="dimension"/>
+        <attr name="aj_item_select_not_background" format="dimension"/>
+
+        <attr name="aj_item_average_number" format="integer"/>
+        <attr name="aj_item_frame_width" format="dimension"/>
+        <attr name="aj_item_have_frame" format="boolean"/>
+        <attr name="aj_item_have_average" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="MoneyEditView">
+        <attr name="decimal_length" format="integer" />
+    </declare-styleable>
+</resources>
