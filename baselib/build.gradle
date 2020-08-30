@@ -46,7 +46,4 @@ dependencies {
     api 'com.alibaba:fastjson:1.2.72'
     api("com.squareup.okhttp3:okhttp:4.8.0")
 
-
-    api  'com.umeng.umsdk:analytics:8.1.6'
-    api  'com.umeng.umsdk:common:2.2.5'
 }
