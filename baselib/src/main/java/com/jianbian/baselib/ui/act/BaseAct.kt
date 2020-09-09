@@ -6,24 +6,28 @@ import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.FragmentActivity
 import com.gyf.barlibrary.ImmersionBar
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
 import com.jianbian.baselib.utils.ActivityController
+import com.jianbian.baselib.utils.AppUtil
 import com.jianbian.baselib.utils.setOnClick
 import kotlinx.android.synthetic.main.layout_base_view.*
 
 abstract class BaseAct :FragmentActivity(){
     private var loadingDialog: LoadingDialog ?=null
+    protected var defindPage:Int = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityController.instance?.addAct(this)
         setContentView(R.layout.layout_base_view)
         initView()
-        getData()
+        getData(defindPage)
         setStatusBarMode(statusBarView(),statusBarDurk())
     }
 
@@ -86,6 +90,7 @@ abstract class BaseAct :FragmentActivity(){
         navigation_bar_frame_layout.removeAllViews()
         navigation_bar_frame_layout.addView(view)
     }
+
 
     /**
      * 设置预加载
@@ -153,12 +158,12 @@ abstract class BaseAct :FragmentActivity(){
         loadingDialog?.dismiss()
     }
 
-    open fun getData(){}
+    open fun getData(page:Int){}
 
 
     abstract fun initView()
     abstract fun statusBarView():View?
-    abstract fun statusBarDurk():Boolean
+    open fun statusBarDurk():Boolean = false
 
     override fun onDestroy() {
         super.onDestroy()

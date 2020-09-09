@@ -1,4 +1,4 @@
-package com.jianbian.baselib.view
+package com.jianbian.baselib.view.multi
 
 import android.content.Context
 import android.util.AttributeSet
@@ -10,7 +10,6 @@ abstract class MultiSingleTextView<T> : MultiTextView<T> {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, @Nullable attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, @Nullable attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
      override fun actionClicked(view: View, item: T, position: Int) {
          actionClicked(getItemList(),view,item,position)

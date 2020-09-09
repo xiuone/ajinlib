@@ -12,7 +12,7 @@ import com.jianbian.baselib.R
 import kotlinx.android.synthetic.main.layout_base_view.*
 
 abstract class BaseFragment :Fragment() {
-
+    protected var defindPage:Int = 1
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
     }
@@ -119,6 +119,7 @@ abstract class BaseFragment :Fragment() {
         content_frame_layout.visibility = View.VISIBLE
     }
 
+    open fun getData(page:Int){}
 
     abstract fun initView()
 

@@ -1,25 +1,15 @@
-package com.jianbian.baselib.view
+package com.jianbian.baselib.view.multi
 
 import android.content.Context
-import android.os.Handler
-import android.os.Message
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.annotation.Nullable
-import com.github.siyamed.shapeimageview.RoundedImageView
-import com.jianbian.baselib.R
-import com.jianbian.baselib.utils.AppUtil
 
-abstract class MultiImgView<T> :MultiView<T> {
+abstract class MultiImgView<T> : MultiView<T> {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, @Nullable attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, @Nullable attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun actionClicked(view: View, item: T, position: Int) {
         setImageStatus(view,!getViewTag(view))
@@ -29,7 +19,7 @@ abstract class MultiImgView<T> :MultiView<T> {
         actionClicked(view,item,position)
     }
 
-    override fun actionView(item: T, position: Int, selectEd: Boolean): View {
+    override fun actionView(data:MutableList<T>,item: T, position: Int, selectEd: Boolean): View {
         val data = getData()
         val imageView = ImageView(context)
         val surplus = data.size%ajItemAverageNumber
@@ -60,5 +50,9 @@ abstract class MultiImgView<T> :MultiView<T> {
             }
         }
         setTag(view,selectEd)
+    }
+
+    override fun actionEnd() {
+
     }
 }

@@ -1,4 +1,4 @@
-package com.jianbian.baselib.view
+package com.jianbian.baselib.view.multi
 
 import android.content.Context
 import android.util.AttributeSet
@@ -13,7 +13,6 @@ abstract class MultiTextView<T> : MultiView<T> {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, @Nullable attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, @Nullable attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
      override fun actionClicked(view: View, item: T, position: Int) {
          setTextViewStatus(view,item,position,!getViewTag(view))
@@ -23,7 +22,7 @@ abstract class MultiTextView<T> : MultiView<T> {
          actionClicked(view,item,position)
      }
 
-     override fun actionView(item: T, position: Int, selectEd: Boolean): View {
+     override fun actionView(data:MutableList<T>,item: T, position: Int, selectEd: Boolean): View {
          val textView = TextView(context)
          if (ajItemHaveAverage){
              var itemWith = (widthSize - (intervalLeftRight * ajItemAverageNumber - 1)) / ajItemAverageNumber
@@ -32,7 +31,7 @@ abstract class MultiTextView<T> : MultiView<T> {
              textView.layoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
          }
          textView.setPadding(ajItemPaddingLeft,ajItemPaddingTop,ajItemPaddingRight,ajItemPaddingBottom)
-         textView.isSingleLine = true
+         textView.setSingleLine(true)
          textView.gravity = Gravity.CENTER
          setTextViewStatus(textView,item,position,selectEd)
          actionTextView(textView,item,position)
@@ -57,6 +56,10 @@ abstract class MultiTextView<T> : MultiView<T> {
         }
         listener?.onMultiChoseView(view,item,position,selectEd,getViewTag(view) == selectEd)
         setTag(view,selectEd)
+    }
+
+    override fun actionEnd() {
+
     }
 
     abstract fun actionTextView(textView: TextView,item: T,position: Int)

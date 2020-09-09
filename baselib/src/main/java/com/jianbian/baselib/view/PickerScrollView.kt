@@ -27,7 +27,7 @@ abstract class PickerScrollView <T>: View {
     private var mDataList: MutableList<T> = ArrayList<T>()
     private val mMaxTextAlpha = 255f
     private val mMinTextAlpha = 120f
-    private var mMaxTextSize = 20f
+    private var mMaxTextSize = 20F
     private var mMinTextSize = 10f
     private var mViewHeight = 0
     private var mViewWidth = 0
@@ -37,19 +37,20 @@ abstract class PickerScrollView <T>: View {
     private var selectedNotTextColor = 0
     private var loop:Boolean = false//是否循环
     private var speed = 2f
-    val MARGIN_ALPHA = 2.8f
+    private var spacing = 3.8f
 
     /**
      * 滑动的距离
      */
     private var mCurrentSelected = 0
+    private var downSelected = 0
     private var mLastDownY = 0f
     private var mMoveLen = 0f
     private var updateHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             mMoveLen = 0F
-            if (0 <mCurrentSelected &&mCurrentSelected < mDataList.size){
-                listener?.onSelect(mDataList[mCurrentSelected])
+            if (0 <=mCurrentSelected &&mCurrentSelected < mDataList.size && downSelected != mCurrentSelected){
+                listener?.onSelect(this@PickerScrollView,mDataList[mCurrentSelected])
             }
             invalidate()
         }
@@ -71,6 +72,9 @@ abstract class PickerScrollView <T>: View {
         selectedNotTextColor = array.getColor(R.styleable.PickerScrollView_aj_pick_select_not_color,AppUtil.getColor(context,R.color.gray_3333))
         loop = array.getBoolean(R.styleable.PickerScrollView_aj_pick_loop,false)
         speed = array.getFloat(R.styleable.PickerScrollView_aj_pick_speed,2F)
+        spacing = array.getFloat(R.styleable.PickerScrollView_aj_pick_spacing,3.8F)
+        mMaxTextSize = array.getDimensionPixelOffset(R.styleable.PickerScrollView_aj_pick_max_textSize,AppUtil.dp2px(context,20F)).toFloat()
+        mMinTextSize = array.getDimensionPixelOffset(R.styleable.PickerScrollView_aj_pick_min_textSize,AppUtil.dp2px(context,10F)).toFloat()
     }
 
     fun setData(datas: ArrayList<T>) {
@@ -99,7 +103,7 @@ abstract class PickerScrollView <T>: View {
      */
     fun setSelected(mSelectItem: String) {
         for (index in mDataList.indices) {
-            if (drawText(mDataList[index]) == mSelectItem){
+            if (drawText(mDataList[index],false) == mSelectItem){
                 setSelected(index)
                 break
             }
@@ -110,8 +114,6 @@ abstract class PickerScrollView <T>: View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mViewHeight = measuredHeight
         mViewWidth = measuredWidth
-        mMaxTextSize = mViewHeight / 8.0f
-        mMinTextSize = mMaxTextSize / 2f
         isInit = true
         invalidate()
     }
@@ -119,7 +121,7 @@ abstract class PickerScrollView <T>: View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (isInit){
-            if (0 <mCurrentSelected &&mCurrentSelected < mDataList.size){
+            if (0 <=mCurrentSelected &&mCurrentSelected < mDataList.size){
                 drawText(mCurrentSelected,canvas)
             }
             for (index in 1..mCurrentSelected){
@@ -135,8 +137,10 @@ abstract class PickerScrollView <T>: View {
         var mPaint = getPaint(selectedTextColor)
         mPaint.textSize = mMaxTextSize
         mPaint.alpha = mMaxTextAlpha.toInt()
-        val textData: String = drawText(mDataList[index])
-        canvas.drawText(textData, (mViewWidth / 2.0).toFloat(),(mViewHeight / 2.0 + mMoveLen/2.0).toFloat(), mPaint)
+        val textData: String = drawText(mDataList[index],true)
+        val fmi: Paint.FontMetricsInt = mPaint.fontMetricsInt
+        val baseline = ((mViewHeight+mMoveLen - fmi.bottom - fmi.top)/2.0).toFloat()
+        canvas.drawText(textData, (mViewWidth / 2.0).toFloat(),baseline, mPaint)
     }
 
     /**
@@ -146,15 +150,17 @@ abstract class PickerScrollView <T>: View {
      */
     private fun drawOtherText(canvas: Canvas, position: Int, type: Int) {
         var mPaint = getPaint(selectedNotTextColor)
-        val d = (MARGIN_ALPHA * mMinTextSize * position + type * mMoveLen)
+        val d = (spacing * mMinTextSize * position + type * mMoveLen)
         val scale = parabola(mViewHeight / 4.0f, d)
         val size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize
         mPaint.textSize = size
         mPaint.alpha = ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha).toInt()
         val y = (mViewHeight / 2.0 + type * d).toFloat()
         val indexs = mCurrentSelected + type * position
-        val textData: String = drawText(mDataList[indexs])
-        canvas.drawText(textData, (mViewWidth / 2.0).toFloat(),y, mPaint)
+        val textData: String = drawText(mDataList[indexs],false)
+        val fmi: Paint.FontMetricsInt = mPaint.fontMetricsInt
+        val baseline = ((y - (fmi.bottom + fmi.top)/2.0)).toFloat()
+        canvas.drawText(textData, (mViewWidth / 2.0).toFloat(),baseline, mPaint)
     }
 
     private fun getPaint(mColorText: Int):Paint{
@@ -181,6 +187,7 @@ abstract class PickerScrollView <T>: View {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                downSelected = mCurrentSelected
                 updateHandler.removeCallbacksAndMessages(null)
                 mLastDownY = event.y
             }
@@ -199,14 +206,14 @@ abstract class PickerScrollView <T>: View {
     }
 
     private fun actionMove(){
-        if (mMoveLen > MARGIN_ALPHA * mMinTextSize / 2) {
-            mMoveLen -= MARGIN_ALPHA * mMinTextSize
+        if (mMoveLen > spacing * mMinTextSize / 2) {
+            mMoveLen -= spacing * mMinTextSize
             mCurrentSelected--
-        } else if (mMoveLen < -MARGIN_ALPHA * mMinTextSize / 2) {
-            mMoveLen += MARGIN_ALPHA * mMinTextSize
+        } else if (mMoveLen < -spacing * mMinTextSize / 2) {
+            mMoveLen += spacing * mMinTextSize
             mCurrentSelected++
         }
-        if (mCurrentSelected <= 0) {
+        if (mCurrentSelected < 0) {
             mCurrentSelected = 0
             mMoveLen = -mMoveLen
         } else if (mCurrentSelected >= mDataList.size) {
@@ -215,10 +222,14 @@ abstract class PickerScrollView <T>: View {
         }
     }
 
-    abstract fun drawText(data:T) : String
+    abstract fun drawText(data:T,selected: Boolean) : String
+
+    fun getData():MutableList<T>{
+        return mDataList
+    }
 
     fun getSelectItem():T?{
-        if (0 <mCurrentSelected &&mCurrentSelected < mDataList.size){
+        if (0 <=mCurrentSelected &&mCurrentSelected < mDataList.size){
             return mDataList[mCurrentSelected]
         }
         return null

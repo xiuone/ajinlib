@@ -2,27 +2,27 @@
 <resources>
 
     <declare-styleable name="MultiView">
-        <attr name="aj_left_right" format="dimension"/>
-        <attr name="aj_up_down" format="dimension"/>
-        <attr name="aj_first_select" format="boolean"/>
+        <attr name="aj_multi_interval_left_right" format="dimension"/>//item上下距离
+        <attr name="aj_multi_interval_up_down" format="dimension"/>//item左右距离
+        <attr name="aj_multi_first_select" format="boolean"/>//是否选中第一个
 
-        <attr name="aj_item_padding_left" format="dimension"/>
-        <attr name="aj_item_padding_right" format="dimension"/>
-        <attr name="aj_item_padding_top" format="dimension"/>
-        <attr name="aj_item_padding_bottom" format="dimension"/>
+        <attr name="aj_multi_padding_left" format="dimension"/>//item的padding
+        <attr name="aj_multi_padding_right" format="dimension"/>
+        <attr name="aj_multi_padding_top" format="dimension"/>
+        <attr name="aj_multi_padding_bottom" format="dimension"/>
 
-        <attr name="aj_item_select_textSize" format="dimension"/>
-        <attr name="aj_item_select_not_textSize" format="dimension"/>
+        <attr name="aj_multi_select_textSize" format="dimension"/>//选中的文字大小
+        <attr name="aj_multi_select_not_textSize" format="dimension"/>//未选中的文字大小
 
-        <attr name="aj_item_select_color" format="color"/>
-        <attr name="aj_item_select_not_color" format="color"/>
-        <attr name="aj_item_select_background" format="dimension"/>
-        <attr name="aj_item_select_not_background" format="dimension"/>
+        <attr name="aj_multi_select_color" format="color"/>//选中的颜色
+        <attr name="aj_multi_select_not_color" format="color"/>//未选中的颜色
+        <attr name="aj_multi_select_background" format="reference"/>//选中的背景
+        <attr name="aj_multi_select_not_background" format="reference"/>//未选中的背景
 
-        <attr name="aj_item_average_number" format="integer"/>
-        <attr name="aj_item_frame_width" format="dimension"/>
-        <attr name="aj_item_have_frame" format="boolean"/>
-        <attr name="aj_item_have_average" format="boolean"/>
+        <attr name="aj_multi_average_number" format="integer"/>//等分多少分
+        <attr name="aj_multi_have_average" format="boolean"/>//是否等分
+        <attr name="aj_multi_frame_width" format="dimension"/>//边界线宽度
+        <attr name="aj_multi_have_frame" format="boolean"/>//是否有边界先
     </declare-styleable>
 
     <declare-styleable name="MoneyEditView">
@@ -34,5 +34,48 @@
         <attr name="aj_pick_select_color" format="color"/>//选中文字颜色
         <attr name="aj_pick_select_not_color" format="color"/>//未选中文字颜色
         <attr name="aj_pick_speed" format="float"/>//滑动速度
+        <attr name="aj_pick_spacing" format="float"/>//滑动速度
+        <attr name="aj_pick_max_textSize" format="dimension"/>//滑动速度
+        <attr name="aj_pick_min_textSize" format="dimension"/>//滑动速度
+    </declare-styleable>
+
+    <declare-styleable name="NavigationView">
+        <attr name="aj_navigation_can_scroll" format="color"/>
+        <attr name="aj_navigation_select_background" format="reference"/>
+        <attr name="aj_navigation_select_not_background" format="reference"/>
+        <attr name="aj_navigation_speed" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="RoundLayout">
+        <attr name="aj_round_layout_radius" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="RoundImageView">
+        <attr name="aj_round_radius" format="dimension" />
+        <attr name="aj_round_border_color" format="dimension" />
+        <attr name="aj_round_border_width" format="dimension" />
+        <attr name="aj_round_border_show" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="aj_circle_border_width" format="dimension"/>
+        <attr name="aj_circle_border_color" format="color"/>
+        <attr name="aj_circle_border_show" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="LabelView">
+        <attr name="aj_label_text" format="string"/>
+        <attr name="aj_label_textSize" format="dimension"/>
+        <attr name="aj_label_corners" format="dimension"/>
+        <attr name="aj_label_style">
+            <enum name="normal" value="0"/>
+            <enum name="italic" value="1"/>
+            <enum name="bold" value="2"/>
+        </attr>
+        <attr name="aj_label_direction">
+            <enum name="leftTop" value="1"/>
+            <enum name="leftBottom" value="2"/>
+            <enum name="rightTop" value="3"/>
+            <enum name="rightBottom" value="4"/>
+        </attr>
     </declare-styleable>
 </resources>

@@ -42,9 +42,9 @@ object AppUtil {
     /**
      * 将颜色变成bitmap并设置大小
      */
-    fun getBitmapFromColor(context: Context,colorRes: Int,width:Int,height:Int): Bitmap? {
+    fun getBitmapFromColor(context: Context,colorRes: Int,width:Int,height:Int): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        bitmap.eraseColor(ContextCompat.getColor(context, colorRes)) //填充颜色
+        bitmap.eraseColor(colorRes) //填充颜色
         return bitmap
     }
 

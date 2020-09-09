@@ -32,21 +32,25 @@ class ActivityController {
     }
 
     fun closeAllAct() {
-        for (activity in activities) {
-            if (activity != null) {
-                if (!activity.isFinishing)
-                    activity.finish()
-                return
+        closeAct(getActivitys())
+    }
+
+    fun closeAct(data:List<Activity>){
+        for (index in data.indices) {
+            if (!data[index].isFinishing){
+                data[index].finish()
             }
         }
+    }
+
+    fun getActivitys():MutableList<Activity>{
+        return activities
     }
 
 
     companion object {
         private var controller: ActivityController? = null
-        private val activities: MutableList<Activity> =
-            ArrayList()
-
+        private val activities: MutableList<Activity> = ArrayList()
         val instance: ActivityController? get() {
                 if (controller == null) controller = ActivityController()
                 return controller
