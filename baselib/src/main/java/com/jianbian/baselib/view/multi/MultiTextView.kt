@@ -2,6 +2,7 @@ package com.jianbian.baselib.view.multi
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -24,6 +25,7 @@ abstract class MultiTextView<T> : MultiView<T> {
 
      override fun actionView(data:MutableList<T>,item: T, position: Int, selectEd: Boolean): View {
          val textView = TextView(context)
+         actionTextView(textView,item,position)
          if (ajItemHaveAverage){
              var itemWith = (widthSize - (intervalLeftRight * ajItemAverageNumber - 1)) / ajItemAverageNumber
              textView.layoutParams = LayoutParams(itemWith,ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -31,10 +33,12 @@ abstract class MultiTextView<T> : MultiView<T> {
              textView.layoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
          }
          textView.setPadding(ajItemPaddingLeft,ajItemPaddingTop,ajItemPaddingRight,ajItemPaddingBottom)
-         textView.setSingleLine(true)
+         textView.isSingleLine = true
          textView.gravity = Gravity.CENTER
          setTextViewStatus(textView,item,position,selectEd)
-         actionTextView(textView,item,position)
+         if (measureView(textView) < ajItemMinSize && ajItemMinSize >0){
+             textView.minWidth = ajItemMinSize
+         }
          return textView
      }
 
@@ -44,13 +48,13 @@ abstract class MultiTextView<T> : MultiView<T> {
         if (selectEd){
             view.setTextColor(ajItemTextSelectColor)
             if (ajItemSelectBackground != null) {
-                view.setBackgroundDrawable(ajItemSelectBackground!!)
+                view.setBackgroundResource(ajItemSelectBackground)
             }
             view.setTextSize(TypedValue.COMPLEX_UNIT_PX, ajItemTextSelectSize)
         }else{
             view.setTextColor(ajItemTextSelectNotColor)
             if (ajItemSelecNotBackground != null) {
-                view.setBackgroundDrawable(ajItemSelecNotBackground!!)
+                view.setBackgroundResource(ajItemSelecNotBackground)
             }
             view.setTextSize(TypedValue.COMPLEX_UNIT_PX, ajItemTextSelectNotSize)
         }

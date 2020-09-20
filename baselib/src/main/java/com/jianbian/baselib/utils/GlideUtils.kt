@@ -27,6 +27,7 @@ object GlideUtils {
 
     fun getOption(placePic: Int = GlideUtils.placePic, errPic: Int = GlideUtils.errPic): RequestOptions {
         return  RequestOptions()
+            .centerCrop()
             .dontAnimate()
             .format(DecodeFormat.PREFER_RGB_565)
             .diskCacheStrategy(DiskCacheStrategy.ALL)

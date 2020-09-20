@@ -17,11 +17,11 @@ class RadioFragmentController :RadioGroup.OnCheckedChangeListener, ViewPager.OnP
         this.fragments = fragments
         this.group = group
         this.manager = manager
-        val transaction = manager?.beginTransaction()
+        val transaction = manager.beginTransaction()
         for (index in fragments.indices){
-            transaction?.add(fragmentId, fragments[index])
+            transaction.add(fragmentId, fragments[index])
             if (index == 1) {
-                transaction?.show(fragments[index])
+                transaction.show(fragments[index])
             }else{
                 transaction.hide(fragments[index])
             }

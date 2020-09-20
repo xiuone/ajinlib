@@ -9,10 +9,14 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.gyf.barlibrary.ImmersionBar
 import com.jianbian.baselib.R
+import com.jianbian.baselib.ui.dialog.LoadingDialog
 import kotlinx.android.synthetic.main.layout_base_view.*
 
 abstract class BaseFragment :Fragment() {
     protected var defindPage:Int = 1
+    protected var pageSize:Int = 20
+    protected var page = 1
+    private var loadingDialog: LoadingDialog ?=null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
     }
@@ -113,10 +117,21 @@ abstract class BaseFragment :Fragment() {
     /**
      * 加载完成
      */
-    fun loadSuc(){
+    open fun loadSuc(){
         pre_loading_frame_layout.visibility = View.GONE
         err_loading_frame_layout.visibility = View.GONE
         content_frame_layout.visibility = View.VISIBLE
+    }
+
+    fun showLoading(str: String?) {
+        if (loadingDialog == null)
+            loadingDialog= LoadingDialog(context!!)
+        loadingDialog!!.show()
+        loadingDialog?.setText(str)
+    }
+
+    fun disLoading() {
+        loadingDialog?.dismiss()
     }
 
     open fun getData(page:Int){}

@@ -35,7 +35,6 @@ class LabelView(context: Context, attributeSet: AttributeSet?):AppCompatTextView
         canvas?.save()
         if (viewPosition == leftTop){
             val translateWidth = 10F
-            Log.e("==``","$translateWidth")
             canvas?.translate(translateWidth, 0F)
             canvas?.rotate(-45F, 0F, 0F)
         }else if (viewPosition == leftBottom){

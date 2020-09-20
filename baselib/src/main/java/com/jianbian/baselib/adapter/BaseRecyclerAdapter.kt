@@ -8,35 +8,40 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
+import com.jianbian.baselib.R
 import com.jianbian.baselib.mvp.impl.OnChildItemClickListener
 import com.jianbian.baselib.mvp.impl.OnItemClickListener
 import com.jianbian.baselib.utils.setOnClick
-import com.jianbian.baselib.view.LibRecyclerView
-import java.util.*
-import kotlin.collections.ArrayList
 
-abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int): RecyclerView.Adapter<ViewHolder>(){
+abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.dialog_common_load): RecyclerView.Adapter<ViewHolder>(){
     var data: MutableList<T> = ArrayList<T>()
     var onItemClickListener:OnItemClickListener?=null
     private var onChildItemClickListener:OnChildItemClickListener?=null
     private var childs = ArrayList<@IdRes Int>()
-    var recyclerView:LibRecyclerView?=null
 
     open fun addData(item: T?) {
         if (item != null) {
             data.add(item)
             notifyItemInserted(data.size)
         }
-        recyclerView?.resetView(this)
+    }
+
+    open fun addData(position:Int,item: T?) {
+        if (item != null) {
+            if (position < data.size){
+                data.add(position, item)
+                notifyItemInserted(position)
+            }else{
+                addData(item)
+            }
+        }
     }
 
     open fun addData(data: List<T>?) {
         if (data != null) {
             this.data.addAll(data)
             notifyItemRangeInserted(data.size - data.size, data.size)
-            recyclerView?.resetView(this)
         }
-        recyclerView?.resetView(this)
     }
 
     open fun setNewData(data: List<T>?) {
@@ -45,7 +50,6 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int): Recycler
             this.data.addAll(data)
             notifyDataSetChanged()
         }
-        recyclerView?.resetView(this)
     }
 
     fun getItem(position:Int):T?{
@@ -53,6 +57,28 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int): Recycler
             return data[position]
         return null
     }
+
+    open fun remove(position: Int) {
+        if (position>=0 && position < data.size){
+            data.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    /**
+     * 获取View
+     */
+    fun<VI : View> getViewByPostion(recyclerView: RecyclerView?,position: Int,viewId:Int):VI?{
+        if (recyclerView == null)
+            return null
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        if (viewHolder == null || viewHolder !is ViewHolder){
+            return null
+        }else{
+            return viewHolder.getView<VI>(viewId)
+        }
+    }
+
 
 
     fun addChildClickViewIds(onChildItemClickListener :OnChildItemClickListener,@IdRes vararg viewIds: Int) {
@@ -89,7 +115,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int): Recycler
 
     inner class ChildClass(val position: Int) :View.OnClickListener{
         override fun onClick(view: View) {
-            onChildItemClickListener?.onItemClick(this@BaseRecyclerAdapter,view,position)
+            onChildItemClickListener?.onItemChildClick(this@BaseRecyclerAdapter,view,position)
         }
     }
 }

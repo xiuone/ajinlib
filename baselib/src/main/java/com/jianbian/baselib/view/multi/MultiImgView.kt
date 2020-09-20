@@ -44,9 +44,9 @@ abstract class MultiImgView<T> : MultiView<T> {
             return
         if (ajItemSelectBackground != null && ajItemSelecNotBackground!= null) {
             if (selectEd){
-                view.setBackgroundDrawable(ajItemSelectBackground!!)
+                view.setBackgroundResource(ajItemSelectBackground!!)
             }else{
-                view.setBackgroundDrawable(ajItemSelecNotBackground!!)
+                view.setBackgroundResource(ajItemSelecNotBackground!!)
             }
         }
         setTag(view,selectEd)

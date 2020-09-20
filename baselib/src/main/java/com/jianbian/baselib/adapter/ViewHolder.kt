@@ -18,7 +18,7 @@ class  ViewHolder : RecyclerView.ViewHolder {
         this.adapter = adapter
         if (itemClickListener != null){
             itemView.setOnClick(View.OnClickListener {
-                itemClickListener?.onItemClick(adapter,it,layoutPosition)
+                itemClickListener.onItemClick(adapter,it,layoutPosition)
             })
         }
     }

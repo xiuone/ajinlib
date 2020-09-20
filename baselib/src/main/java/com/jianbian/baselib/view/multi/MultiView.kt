@@ -4,13 +4,13 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.annotation.Nullable
-import androidx.core.view.size
 import com.jianbian.baselib.R
 import com.jianbian.baselib.mvp.impl.MultiChoseListener
 import com.jianbian.baselib.utils.AppUtil
@@ -24,12 +24,13 @@ abstract class MultiView <T>:LinearLayout {
     var ajItemPaddingRight:Int = 0
     var ajItemPaddingTop:Int = 0
     var ajItemPaddingBottom:Int = 0
+    var ajItemMinSize = 0
     var ajItemTextSelectColor = 0X000000
     var ajItemTextSelectNotColor = 0X000000
     var ajItemTextSelectSize = 15F
     var ajItemTextSelectNotSize = 15F
-    var ajItemSelectBackground: Drawable?= null
-    var ajItemSelecNotBackground: Drawable?=null
+    var ajItemSelectBackground: Int=R.drawable.bg_transparent
+    var ajItemSelecNotBackground: Int=R.drawable.bg_transparent
 
     var widthSize : Int = 0
 
@@ -39,8 +40,20 @@ abstract class MultiView <T>:LinearLayout {
     var ajItemHaveAverage: Boolean = false
 
     private var firstSelect : Boolean = false
-    private var data: MutableList<T> = ArrayList()
+    private var data: ArrayList<T> = ArrayList()
     var listener : MultiChoseListener<T>?= null
+
+    private val viewHandler  = object :Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if (width >0 ){
+                widthSize = width - paddingLeft - paddingRight
+                resetView()
+            }else{
+                sendEmptyMessageDelayed(1,200)
+            }
+        }
+    }
 
     constructor(context: Context?) : super(context) { initView(null) }
 
@@ -65,6 +78,7 @@ abstract class MultiView <T>:LinearLayout {
             ajItemPaddingRight = array.getDimensionPixelSize(R.styleable.MultiView_aj_multi_padding_right, 0)
             ajItemPaddingTop = array.getDimensionPixelSize(R.styleable.MultiView_aj_multi_padding_top, 0)
             ajItemPaddingBottom = array.getDimensionPixelSize(R.styleable.MultiView_aj_multi_padding_bottom, 0)
+            ajItemMinSize = array.getDimensionPixelSize(R.styleable.MultiView_aj_multi_min_size, 0)
 
             ajItemTextSelectNotColor = array.getColor(R.styleable.MultiView_aj_multi_select_not_color, AppUtil.getColor(context, R.color.black))
             ajItemTextSelectColor = array.getColor(R.styleable.MultiView_aj_multi_select_color, ajItemTextSelectNotColor)
@@ -72,18 +86,10 @@ abstract class MultiView <T>:LinearLayout {
             ajItemTextSelectNotSize = array.getDimension(R.styleable.MultiView_aj_multi_select_not_textSize, AppUtil.dp2px(context, 15F).toFloat())
             ajItemTextSelectSize = array.getDimension(R.styleable.MultiView_aj_multi_select_textSize, ajItemTextSelectNotSize)
 
-            ajItemSelecNotBackground = array.getDrawable(R.styleable.MultiView_aj_multi_select_not_background)
-            ajItemSelectBackground = array.getDrawable(R.styleable.MultiView_aj_multi_select_background)
+            ajItemSelecNotBackground = array.getResourceId(R.styleable.MultiView_aj_multi_select_not_background,R.drawable.bg_transparent)
+            ajItemSelectBackground = array.getResourceId(R.styleable.MultiView_aj_multi_select_background,R.drawable.bg_transparent)
         }
-        if (ajItemSelectBackground == null){
-            ajItemSelectBackground = AppUtil.getDrawable(context,R.drawable.bg_transparent)
-        }
-        if (ajItemSelecNotBackground == null){
-            ajItemSelecNotBackground = AppUtil.getDrawable(context,R.drawable.bg_transparent)
-        }
-
     }
-
 
     /**
      * 设置数据
@@ -92,10 +98,15 @@ abstract class MultiView <T>:LinearLayout {
         if (data == null)return
         this.data.clear()
         this.data.addAll(data)
-        this.post {
-            widthSize = width - paddingLeft - paddingRight
-            resetView()
-        }
+        viewHandler.removeCallbacksAndMessages(null)
+        viewHandler.sendEmptyMessage(1)
+    }
+
+    /**
+     * 销毁
+     */
+    fun onDestory(){
+        viewHandler.removeCallbacksAndMessages(null)
     }
 
     protected fun resetView(){
@@ -121,11 +132,9 @@ abstract class MultiView <T>:LinearLayout {
             }else{
                 var itemViewWidth = 0
                 for (viewIndex in 0 until layout.childCount){
-                    layout.getChildAt(viewIndex).post {
-                        itemViewWidth += this.width
-                    }
+                    itemViewWidth += measureView(layout.getChildAt(viewIndex))
                 }
-                itemViewWidth = intervalLeftRight + this.width
+                itemViewWidth += intervalLeftRight*layout.childCount + measureView(this)
                 if (itemViewWidth > widthSize){
                     layout = addHorizontalItem()
                     addItem(layout,view,index,item)
@@ -137,6 +146,18 @@ abstract class MultiView <T>:LinearLayout {
     }
 
     /**
+     * 测量宽度
+     */
+    protected fun measureView(view: View): Int {
+        if (view.layoutParams.width > 0){
+            return view.layoutParams.width
+        }
+        val spec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        view.measure(spec, spec)
+        return view.measuredWidth
+    }
+
+    /**
      * 添加存放横线布局的布局
      */
     fun addHorizontalItem():LinearLayout{
@@ -145,6 +166,7 @@ abstract class MultiView <T>:LinearLayout {
         if (childCount > 0){
             params.setMargins(0,intervalUpDown,0,0)
         }
+        layout.layoutParams = params
         this.addView(layout)
         return layout
     }
@@ -202,7 +224,17 @@ abstract class MultiView <T>:LinearLayout {
     fun setTag(view: View,status:Boolean){
         view.tag = status
     }
-    fun getData():MutableList<T>{return data}
+
+    fun getSelectItem():T ?{
+        val viewData = getItemList()
+        for (index in data.indices){
+            if (getViewTag(viewData[index]) && index < data.size){
+                return data[index]
+            }
+        }
+        return null
+    }
+    fun getData():ArrayList<T>{return data}
     abstract fun actionClicked(view: View,item:T,position: Int)
     abstract fun actionClicked(views: ArrayList<View>,view: View,item:T,position: Int)
     abstract fun actionView(data:MutableList<T>,item:T,position:Int,selectEd:Boolean):View?

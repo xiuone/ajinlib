@@ -4,5 +4,5 @@ import android.view.View
 import com.jianbian.baselib.adapter.BaseRecyclerAdapter
 
 interface OnChildItemClickListener{
-    fun onItemClick(adapter: BaseRecyclerAdapter<*> ,view:View,position:Int)
+    fun onItemChildClick(adapter: BaseRecyclerAdapter<*> ,view:View,position:Int)
 }

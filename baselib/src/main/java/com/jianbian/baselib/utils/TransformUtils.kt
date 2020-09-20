@@ -26,8 +26,7 @@ object TransformUtils {
  */
     fun stampToDate(s: Long): String? {
         val res: String
-        val simpleDateFormat =
-            SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val date = Date(s)
         res = simpleDateFormat.format(date)
         return res

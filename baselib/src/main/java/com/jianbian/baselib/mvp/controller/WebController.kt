@@ -56,7 +56,7 @@ class WebController(private var webViewImpl: WebViewImpl?) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     fun setWebView(webView: WebView, mLayout: FrameLayout, activity:Activity) {
         webView.webChromeClient = MyWebChromeClient(mLayout,activity)
-        webView?.webViewClient = MyWebViewClient(webViewImpl)
+        webView.webViewClient = MyWebViewClient(webViewImpl)
         webView.overScrollMode = WebView.OVER_SCROLL_NEVER
         //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         val settings: WebSettings = webView.settings

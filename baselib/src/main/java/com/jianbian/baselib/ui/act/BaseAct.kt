@@ -21,13 +21,14 @@ import kotlinx.android.synthetic.main.layout_base_view.*
 
 abstract class BaseAct :FragmentActivity(){
     private var loadingDialog: LoadingDialog ?=null
-    protected var defindPage:Int = 1
+    protected var defindPage:Int = 0
+    protected var pageSize = 20;
+    protected var page = defindPage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityController.instance?.addAct(this)
         setContentView(R.layout.layout_base_view)
         initView()
-        getData(defindPage)
         setStatusBarMode(statusBarView(),statusBarDurk())
     }
 
@@ -163,7 +164,7 @@ abstract class BaseAct :FragmentActivity(){
 
     abstract fun initView()
     abstract fun statusBarView():View?
-    open fun statusBarDurk():Boolean = false
+    open fun statusBarDurk():Boolean = true
 
     override fun onDestroy() {
         super.onDestroy()
