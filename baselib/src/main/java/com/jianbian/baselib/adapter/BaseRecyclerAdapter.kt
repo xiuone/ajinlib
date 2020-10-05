@@ -8,6 +8,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
+import com.j256.ormlite.stmt.query.In
 import com.jianbian.baselib.R
 import com.jianbian.baselib.mvp.impl.OnChildItemClickListener
 import com.jianbian.baselib.mvp.impl.OnItemClickListener
@@ -18,6 +19,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     var onItemClickListener:OnItemClickListener?=null
     private var onChildItemClickListener:OnChildItemClickListener?=null
     private var childs = ArrayList<@IdRes Int>()
+
 
     open fun addData(item: T?) {
         if (item != null) {
@@ -40,7 +42,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     open fun addData(data: List<T>?) {
         if (data != null) {
             this.data.addAll(data)
-            notifyItemRangeInserted(data.size - data.size, data.size)
+            notifyItemRangeInserted(this.data.size - data.size, data.size)
         }
     }
 

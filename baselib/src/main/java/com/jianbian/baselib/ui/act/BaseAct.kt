@@ -41,6 +41,12 @@ abstract class BaseAct :FragmentActivity(){
         })
     }
 
+    fun setResetView(view: View){
+        view.setOnClick(View.OnClickListener {
+            reLoadData()
+        })
+    }
+
     /**
      * 设置正文
      */
@@ -118,7 +124,7 @@ abstract class BaseAct :FragmentActivity(){
     /**
      * 显示预加载
      */
-    fun showPreLoading(){
+    open fun showPreLoading(){
         Handler(Looper.getMainLooper()).run {
             pre_loading_frame_layout.visibility = View.VISIBLE
             err_loading_frame_layout.visibility = View.GONE
@@ -129,10 +135,10 @@ abstract class BaseAct :FragmentActivity(){
     /**
      * 加载失败
      */
-    fun showError(){
+    open fun showError(){
         Handler(Looper.getMainLooper()).run {
             pre_loading_frame_layout.visibility = View.GONE
-            err_loading_frame_layout.visibility = View.GONE
+            err_loading_frame_layout.visibility = View.VISIBLE
             content_frame_layout.visibility = View.GONE
         }
     }
@@ -140,7 +146,7 @@ abstract class BaseAct :FragmentActivity(){
     /**
      * 加载完成
      */
-    fun loadSuc(){
+    open fun loadSuc(){
         Handler(Looper.getMainLooper()).run {
             pre_loading_frame_layout.visibility = View.GONE
             err_loading_frame_layout.visibility = View.GONE
@@ -148,18 +154,19 @@ abstract class BaseAct :FragmentActivity(){
         }
     }
 
-    fun showLoading(str: String?) {
+    open fun showLoading(str: String?) {
         if (loadingDialog == null)
             loadingDialog= LoadingDialog(this)
         loadingDialog!!.show()
         loadingDialog?.setText(str)
     }
 
-    fun disLoading() {
+    open fun disLoading() {
         loadingDialog?.dismiss()
     }
 
-    open fun getData(page:Int){}
+    open fun getData(page:Int,pageSize:Int){}
+    open fun reLoadData(){}
 
 
     abstract fun initView()

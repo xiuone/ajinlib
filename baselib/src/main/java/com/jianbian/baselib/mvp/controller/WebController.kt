@@ -5,17 +5,18 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
+import android.text.TextUtils
 import android.view.View
 import android.webkit.*
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
-import com.jianbian.baselib.mvp.impl.WebViewImpl
+import com.jianbian.baselib.mvp.impl.BaseImpl
 
 private const val FILE_CHOOSER_RESULT_CODE = 10000
 private var uploadMessage: ValueCallback<Uri?>? = null
 private var uploadMessageAboveL: ValueCallback<Array<Uri>>? = null
 
-class WebController(private var webViewImpl: WebViewImpl?) {
+class WebController(private var webViewImpl: BaseImpl?) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_CHOOSER_RESULT_CODE) { //处理返回的图片，并进行上传
@@ -88,16 +89,44 @@ class WebController(private var webViewImpl: WebViewImpl?) {
         }
         return version
     }
+
+    fun loadUrl(webView: WebView,url: String?){
+        if (TextUtils.isEmpty(url))
+            webViewImpl?.showError()
+        else webView.loadUrl(url!!)
+    }
+
+    fun loadDataWithBaseURL(webView: WebView,content: String?){
+        if (TextUtils.isEmpty(content))
+            webViewImpl?.showError()
+        else {
+            val sb = StringBuilder()
+            sb.append(getHtmlData(content))
+            webView.loadDataWithBaseURL("about:blank", sb.toString(), "text/html", "utf-8", null as String?)
+        }
+    }
+
+    private fun getHtmlData(bodyHTML: String?): String? {
+        val head = """<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Title</title>
+                    <style>
+                        img{ max-width:100%;max-height:100%}  
+                     </style>
+                </head>
+                <body>"""
+        return "$head$bodyHTML</body>\n</html>"
+    }
+
+
 }
 
-private class MyWebViewClient(private var impl:WebViewImpl?) : WebViewClient(){
+private class MyWebViewClient(private var impl:BaseImpl?) : WebViewClient(){
     private var loadError = false
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        return if (impl != null) {
-            impl!!.shouldOverrideUrlLoading()
-        }else{
-            super.shouldOverrideUrlLoading(view, request)
-        }
+        return super.shouldOverrideUrlLoading(view, request)
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {

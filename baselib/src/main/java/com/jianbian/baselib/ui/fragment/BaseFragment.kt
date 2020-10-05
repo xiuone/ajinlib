@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.gyf.barlibrary.ImmersionBar
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
+import com.jianbian.baselib.utils.setOnClick
 import kotlinx.android.synthetic.main.layout_base_view.*
 
 abstract class BaseFragment :Fragment() {
@@ -23,6 +24,12 @@ abstract class BaseFragment :Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+    }
+
+    fun setResetView(view: View){
+        view.setOnClick(View.OnClickListener {
+            reLoadData()
+        })
     }
 
 
@@ -135,6 +142,7 @@ abstract class BaseFragment :Fragment() {
     }
 
     open fun getData(page:Int){}
+    open fun reLoadData(){}
 
     abstract fun initView()
 

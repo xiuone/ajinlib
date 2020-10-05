@@ -11,6 +11,8 @@
         <attr name="aj_multi_padding_top" format="dimension"/>
         <attr name="aj_multi_padding_bottom" format="dimension"/>
 
+        <attr name="aj_multi_min_size" format="dimension"/>
+
         <attr name="aj_multi_select_textSize" format="dimension"/>//选中的文字大小
         <attr name="aj_multi_select_not_textSize" format="dimension"/>//未选中的文字大小
 

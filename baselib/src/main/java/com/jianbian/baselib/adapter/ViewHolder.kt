@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jianbian.baselib.mvp.impl.OnItemClickListener
 import com.jianbian.baselib.utils.setOnClick
 
-class  ViewHolder : RecyclerView.ViewHolder {
+open class  ViewHolder : RecyclerView.ViewHolder {
     private val views: SparseArray<View?> = SparseArray()
     private var itemClickListener: OnItemClickListener?=null
     private var adapter:BaseRecyclerAdapter<*>?=null

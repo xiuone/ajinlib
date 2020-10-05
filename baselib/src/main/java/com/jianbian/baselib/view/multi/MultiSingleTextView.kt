@@ -17,9 +17,11 @@ abstract class MultiSingleTextView<T> : MultiTextView<T> {
 
      override fun actionClicked(views: ArrayList<View>, view: View, item: T, position: Int) {
          for (index in views.indices){
-             if (index<getData().size)
-                 setTextViewStatus(views[index],getData()[index],index,false)
+             if (index<getData().size) {
+                 setTextViewStatus(views[index], getData()[index], index, false)
+             }
          }
-         setTextViewStatus(view,item,position,true)
+         setTextViewStatus(view, item, position, false)
+         listener?.onMultiChoseView(view,item,position,false,false)
      }
 }

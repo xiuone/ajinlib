@@ -94,7 +94,7 @@ abstract class MultiView <T>:LinearLayout {
     /**
      * 设置数据
      */
-    fun setData(data: MutableList<T>?){
+    open fun setData(data: MutableList<T>?){
         if (data == null)return
         this.data.clear()
         this.data.addAll(data)
@@ -109,7 +109,7 @@ abstract class MultiView <T>:LinearLayout {
         viewHandler.removeCallbacksAndMessages(null)
     }
 
-    protected fun resetView(){
+     fun resetView(){
         this.removeAllViews()
         for (index in data.indices){
             val item:T = data[index]
@@ -119,7 +119,7 @@ abstract class MultiView <T>:LinearLayout {
         actionEnd()
     }
 
-    fun addItemView(view: View?,index :Int,item: T){
+    open fun addItemView(view: View?,index :Int,item: T){
         view?.run {
             var layout :LinearLayout ?= null
             if (childCount<=0){

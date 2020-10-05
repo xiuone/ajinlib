@@ -35,7 +35,13 @@ abstract class MultiTextView<T> : MultiView<T> {
          textView.setPadding(ajItemPaddingLeft,ajItemPaddingTop,ajItemPaddingRight,ajItemPaddingBottom)
          textView.isSingleLine = true
          textView.gravity = Gravity.CENTER
-         setTextViewStatus(textView,item,position,selectEd)
+         textView.setTextColor(ajItemTextSelectNotColor)
+         if (ajItemSelecNotBackground != null) {
+             textView.setBackgroundResource(ajItemSelecNotBackground)
+         }
+         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ajItemTextSelectNotSize)
+         setTag(textView,selectEd)
+
          if (measureView(textView) < ajItemMinSize && ajItemMinSize >0){
              textView.minWidth = ajItemMinSize
          }
@@ -58,7 +64,6 @@ abstract class MultiTextView<T> : MultiView<T> {
             }
             view.setTextSize(TypedValue.COMPLEX_UNIT_PX, ajItemTextSelectNotSize)
         }
-        listener?.onMultiChoseView(view,item,position,selectEd,getViewTag(view) == selectEd)
         setTag(view,selectEd)
     }
 
