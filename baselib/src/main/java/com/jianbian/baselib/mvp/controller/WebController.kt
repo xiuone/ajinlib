@@ -137,6 +137,11 @@ private class MyWebViewClient(private var impl:BaseImpl?) : WebViewClient(){
             impl?.loadSuc()
     }
 
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        super.onPageStarted(view, url, favicon)
+        loadError = false
+    }
+
     override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
         super.onReceivedError(view, request, error)
         loadError = true
