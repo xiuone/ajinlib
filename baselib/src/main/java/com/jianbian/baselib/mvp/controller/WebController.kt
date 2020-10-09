@@ -3,6 +3,7 @@ package com.jianbian.baselib.mvp.controller
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.text.TextUtils
@@ -136,6 +137,7 @@ private class MyWebViewClient(private var impl:BaseImpl?) : WebViewClient(){
         else
             impl?.loadSuc()
     }
+
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)

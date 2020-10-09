@@ -58,7 +58,7 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
      */
     fun setEmtryView(emtryView:FrameLayout,@LayoutRes emtryLayoutId:Int){
         this.emtryView = emtryView
-        emtryView?.removeAllViews()
+        emtryView.removeAllViews()
         this.emtryView?.addView(LayoutInflater.from(emtryView.context).inflate(emtryLayoutId,null))
     }
 

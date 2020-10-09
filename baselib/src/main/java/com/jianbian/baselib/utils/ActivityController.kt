@@ -17,12 +17,10 @@ class ActivityController {
     }
 
     fun removeAct(activity: Activity) {
-        if (activity == null) return
         activities.remove(activity)
     }
 
     fun closeAct(mClass: Class<*>) {
-        if (mClass == null) return
         for (activity in activities) {
             if (activity != null && activity.javaClass == mClass) {
                 if (!activity.isFinishing) activity.finish()
