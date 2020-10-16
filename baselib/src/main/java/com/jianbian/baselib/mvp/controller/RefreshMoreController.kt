@@ -103,6 +103,11 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
         showEntryView()
     }
 
+    fun addItem(postion:Int,item:T?){
+        adapter?.addData(postion,item)
+        showEntryView()
+    }
+
     fun remove(position:Int){
         adapter?.remove(position)
         showEntryView()
