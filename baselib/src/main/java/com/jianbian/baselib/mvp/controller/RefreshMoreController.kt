@@ -95,25 +95,25 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
             pullTo?.setNoMoreData(false)
             page++
         }
-        showEntryView()
+        showEmtryView()
     }
 
     fun addItem(item:T?){
         adapter?.addData(item)
-        showEntryView()
+        showEmtryView()
     }
 
     fun addItem(postion:Int,item:T?){
         adapter?.addData(postion,item)
-        showEntryView()
+        showEmtryView()
     }
 
     fun remove(position:Int){
         adapter?.remove(position)
-        showEntryView()
+        showEmtryView()
     }
 
-    fun showEntryView(){
+    fun showEmtryView(){
         if (adapter == null || adapter!!.data.size <= 0){
             emtryView?.visibility = View.VISIBLE
         }else{
