@@ -69,7 +69,7 @@ class RadioFragmentController :RadioGroup.OnCheckedChangeListener, ViewPager.OnP
         }
         transaction?.commitAllowingStateLoss()
         viewPager?.currentItem = checkPosition
-        listener?.onRadioChoseCallBack(position)
+        listener?.onRadioChoseCallBack(checkPosition)
     }
 
     override fun onPageScrollStateChanged(state: Int) {
@@ -90,8 +90,8 @@ class RadioFragmentController :RadioGroup.OnCheckedChangeListener, ViewPager.OnP
                         if (view is RadioButton){
                             view.isChecked = true
                         }
+                        break
                     }
-
                 }
             }
         }
