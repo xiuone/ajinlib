@@ -37,6 +37,8 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
 
     fun getAdapter():BaseRecyclerAdapter<T>? = adapter
 
+    fun getEmtryView():View? = emtryView
+
     fun initPage(defindPage:Int,pageSize:Int){
         this.defindPage = defindPage
         this.pageSize = pageSize
@@ -93,6 +95,20 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
             pullTo?.setNoMoreData(false)
             page++
         }
+        showEntryView()
+    }
+
+    fun addItem(item:T?){
+        adapter?.addData(item)
+        showEntryView()
+    }
+
+    fun remove(position:Int){
+        adapter?.remove(position)
+        showEntryView()
+    }
+
+    fun showEntryView(){
         if (adapter == null || adapter!!.data.size <= 0){
             emtryView?.visibility = View.VISIBLE
         }else{
