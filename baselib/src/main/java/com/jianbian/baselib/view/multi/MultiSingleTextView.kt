@@ -21,7 +21,7 @@ abstract class MultiSingleTextView<T> : MultiTextView<T> {
                  setTextViewStatus(views[index], getData()[index], index, false)
              }
          }
-         setTextViewStatus(view, item, position, false)
+         setTextViewStatus(view, item, position, true)
          listener?.onMultiChoseView(view,item,position,false,false)
      }
 }
