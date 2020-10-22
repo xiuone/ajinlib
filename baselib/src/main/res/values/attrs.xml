@@ -50,6 +50,7 @@
 
     <declare-styleable name="RoundLayout">
         <attr name="aj_round_layout_radius" format="dimension" />
+        <attr name="aj_intercept" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="RoundImageView">
         <attr name="aj_round_radius" format="dimension" />
