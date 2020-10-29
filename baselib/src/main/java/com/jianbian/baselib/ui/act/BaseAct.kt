@@ -18,6 +18,7 @@ import com.jianbian.baselib.utils.ActivityController
 import com.jianbian.baselib.utils.AppUtil
 import com.jianbian.baselib.utils.setOnClick
 import kotlinx.android.synthetic.main.layout_base_view.*
+import org.greenrobot.eventbus.EventBus
 
 abstract class BaseAct :FragmentActivity(){
     private var loadingDialog: LoadingDialog ?=null
@@ -98,7 +99,6 @@ abstract class BaseAct :FragmentActivity(){
         navigation_bar_frame_layout.addView(view)
     }
 
-
     /**
      * 设置预加载
      */
@@ -172,6 +172,21 @@ abstract class BaseAct :FragmentActivity(){
     abstract fun initView()
     abstract fun statusBarView():View?
     open fun statusBarDurk():Boolean = true
+    open fun registerEventBus():Boolean = false
+
+
+    override fun onStart() {
+        super.onStart()
+        if (registerEventBus())
+            EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (registerEventBus())
+            EventBus.getDefault().register(this);
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
