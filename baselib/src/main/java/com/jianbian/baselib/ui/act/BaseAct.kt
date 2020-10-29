@@ -178,7 +178,7 @@ abstract class BaseAct :FragmentActivity(){
     override fun onStart() {
         super.onStart()
         if (registerEventBus())
-            EventBus.getDefault().register(this);
+            EventBus.getDefault().register(this)
     }
 
     override fun onStop() {
