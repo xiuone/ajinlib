@@ -185,6 +185,7 @@ abstract class BaseAct :FragmentActivity(){
         super.onStop()
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
+
     }
 
 
