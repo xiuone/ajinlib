@@ -73,6 +73,9 @@ abstract class BaseAct :FragmentActivity(){
     fun getTitleFrameLayout():View{
         return title_layout_frame_layout
     }
+    fun getErrorFrameLayout():View{
+        return err_loading_frame_layout
+    }
     fun getContentLayout():View{
         return content_frame_layout
     }

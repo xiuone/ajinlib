@@ -1,3 +1,2 @@
 include ':baselib'
 include ':app'
-rootProject.name = "ajinLib"

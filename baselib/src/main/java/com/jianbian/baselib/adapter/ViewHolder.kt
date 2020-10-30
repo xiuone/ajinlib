@@ -6,20 +6,28 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
+import com.jianbian.baselib.mvp.impl.OnChildItemClickListener
 import com.jianbian.baselib.mvp.impl.OnItemClickListener
 import com.jianbian.baselib.utils.setOnClick
 
 open class  ViewHolder : RecyclerView.ViewHolder {
     private val views: SparseArray<View?> = SparseArray()
-    private var itemClickListener: OnItemClickListener?=null
-    private var adapter:BaseRecyclerAdapter<*>?=null
-    constructor(itemView: View,adapter:BaseRecyclerAdapter<*>,itemClickListener: OnItemClickListener?=null) : super(itemView) {
-        this.itemClickListener = itemClickListener
-        this.adapter = adapter
+    constructor(itemView: View,adapter:BaseRecyclerAdapter<*>
+                ,itemClickListener: OnItemClickListener?=null
+                ,onChildItemClickListener:OnChildItemClickListener ?= null
+                ,viewIds: ArrayList<Int>) : super(itemView) {
         if (itemClickListener != null){
             itemView.setOnClick(View.OnClickListener {
                 itemClickListener.onItemClick(adapter,it,layoutPosition)
             })
+        }
+
+        if (onChildItemClickListener != null){
+            for (id in viewIds){
+                itemView.findViewById<View>(id).setOnClick(View.OnClickListener {
+                    onChildItemClickListener.onItemChildClick(adapter,it,layoutPosition)
+                })
+            }
         }
     }
 

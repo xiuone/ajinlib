@@ -12,6 +12,7 @@ import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
 import com.jianbian.baselib.utils.setOnClick
 import kotlinx.android.synthetic.main.layout_base_view.*
+import org.greenrobot.eventbus.EventBus
 
 abstract class BaseFragment :Fragment() {
     protected var defindPage:Int = 1
@@ -57,6 +58,9 @@ abstract class BaseFragment :Fragment() {
     }
     fun getTitleFrameLayout():View{
         return title_layout_frame_layout
+    }
+    fun getErrorFrameLayout():View{
+        return err_loading_frame_layout
     }
     fun setStatusBarMode(view: View?, dark: Boolean) {
         val bar = ImmersionBar.with(this)
@@ -143,7 +147,17 @@ abstract class BaseFragment :Fragment() {
 
     open fun getData(page:Int){}
     open fun reLoadData(){}
+    open fun registerEventBus():Boolean = false
+    override fun onStart() {
+        super.onStart()
+        if (registerEventBus())
+            EventBus.getDefault().register(this)
+    }
+    override fun onStop() {
+        super.onStop()
+        if (registerEventBus())
+            EventBus.getDefault().unregister(this)
 
+    }
     abstract fun initView()
-
 }

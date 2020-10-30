@@ -17,14 +17,16 @@ import com.jianbian.baselib.utils.setOnClick
 abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.dialog_common_load): RecyclerView.Adapter<ViewHolder>(){
     var data: MutableList<T> = ArrayList<T>()
     var onItemClickListener:OnItemClickListener?=null
-    private var onChildItemClickListener:OnChildItemClickListener?=null
-    private var childs = ArrayList<@IdRes Int>()
-
+    var onChildItemClickListener:OnChildItemClickListener?=null
+    var childs = ArrayList<@IdRes Int>()
 
     open fun addData(item: T?) {
-        if (item != null) {
-            data.add(item)
+        if (item == null)return
+        data.add(item)
+        if (data.size >1 ){
             notifyItemInserted(data.size)
+        }else{
+            notifyDataSetChanged()
         }
     }
 
@@ -98,26 +100,15 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     @NonNull
     override fun onCreateViewHolder(@NonNull viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(viewGroup.context).inflate(layoutResId, viewGroup, false)
-        return ViewHolder(view,this,onItemClickListener)
+        return ViewHolder(view,this,onItemClickListener,onChildItemClickListener,childs)
     }
 
     override fun onBindViewHolder(@NonNull viewHolder: ViewHolder, position: Int) {
         if (position < data.size) {
             val data: T = data[position]
             convert(viewHolder.itemView.context,viewHolder, data, position)
-            if (onChildItemClickListener != null){
-                for (index in childs.indices){
-                    viewHolder.getView<View>(childs[index])?.setOnClick(ChildClass(position))
-                }
-            }
         }
     }
 
     abstract fun convert(context:Context,viewHolder: ViewHolder,item: T,position: Int)
-
-    inner class ChildClass(val position: Int) :View.OnClickListener{
-        override fun onClick(view: View) {
-            onChildItemClickListener?.onItemChildClick(this@BaseRecyclerAdapter,view,position)
-        }
-    }
 }
