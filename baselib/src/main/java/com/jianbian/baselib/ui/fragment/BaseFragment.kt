@@ -22,9 +22,12 @@ abstract class BaseFragment :Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        if (registerEventBus())
+            EventBus.getDefault().register(this)
     }
 
     fun setResetView(view: View){
@@ -148,16 +151,11 @@ abstract class BaseFragment :Fragment() {
     open fun getData(page:Int){}
     open fun reLoadData(){}
     open fun registerEventBus():Boolean = false
-    override fun onStart() {
-        super.onStart()
-        if (registerEventBus())
-            EventBus.getDefault().register(this)
-    }
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
-
     }
+
     abstract fun initView()
 }
