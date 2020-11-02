@@ -31,6 +31,8 @@ abstract class BaseAct :FragmentActivity(){
         setContentView(R.layout.layout_base_view)
         initView()
         setStatusBarMode(statusBarView(),statusBarDurk())
+        if (registerEventBus())
+            EventBus.getDefault().register(this)
     }
 
     /**
@@ -178,22 +180,10 @@ abstract class BaseAct :FragmentActivity(){
     open fun registerEventBus():Boolean = false
 
 
-    override fun onStart() {
-        super.onStart()
-        if (registerEventBus())
-            EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (registerEventBus())
-            EventBus.getDefault().unregister(this)
-
-    }
-
-
     override fun onDestroy() {
         super.onDestroy()
         ActivityController.instance?.removeAct(this)
+        if (registerEventBus())
+            EventBus.getDefault().unregister(this)
     }
 }
