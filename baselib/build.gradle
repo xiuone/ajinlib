@@ -54,4 +54,5 @@ dependencies {
     api  'com.scwang.smart:refresh-header-classics:2.0.1'
 
     api 'org.greenrobot:eventbus:3.2.0'//事件分发
+
 }

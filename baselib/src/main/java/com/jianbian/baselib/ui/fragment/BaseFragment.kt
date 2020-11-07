@@ -11,6 +11,7 @@ import com.gyf.barlibrary.ImmersionBar
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
 import com.jianbian.baselib.utils.setOnClick
+import com.lzy.okgo.OkGo
 import kotlinx.android.synthetic.main.layout_base_view.*
 import org.greenrobot.eventbus.EventBus
 
@@ -153,6 +154,7 @@ abstract class BaseFragment :Fragment() {
     open fun registerEventBus():Boolean = false
     override fun onDestroy() {
         super.onDestroy()
+        OkGo.getInstance().cancelTag(this)
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
     }
