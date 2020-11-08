@@ -187,5 +187,6 @@ abstract class BaseAct :FragmentActivity(){
         ActivityController.instance?.removeAct(this)
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
+        ImmersionBar.with(this).destroy()
     }
 }
