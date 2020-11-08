@@ -66,7 +66,7 @@ abstract class BaseFragment :Fragment() {
     fun getErrorFrameLayout():View{
         return err_loading_frame_layout
     }
-    fun setStatusBarMode(view: View?, dark: Boolean) {
+    open fun setStatusBarMode(view: View?, dark: Boolean) {
         val bar = ImmersionBar.with(this)
             .supportActionBar(false)
             .navigationBarEnable(false)

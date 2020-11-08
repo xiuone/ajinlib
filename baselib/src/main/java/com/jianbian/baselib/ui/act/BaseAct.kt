@@ -82,7 +82,7 @@ abstract class BaseAct :FragmentActivity(){
     fun getContentLayout():View{
         return content_frame_layout
     }
-    fun setStatusBarMode(view: View?, dark: Boolean) {
+    open fun setStatusBarMode(view: View?, dark: Boolean) {
         val bar = ImmersionBar.with(this)
             .supportActionBar(false)
             .navigationBarEnable(false)
