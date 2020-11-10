@@ -50,9 +50,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     api 'com.yanzhenjie:permission:1.1.2'//权限
     api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.9'//相机相册
+
     api  'com.scwang.smart:refresh-layout-kernel:2.0.1'//加载和刷新
     api  'com.scwang.smart:refresh-header-classics:2.0.1'
-
+    api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    
     api 'org.greenrobot:eventbus:3.2.0'//事件分发
 
 }

@@ -15,7 +15,7 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 
-class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemClickListener, OnChildItemClickListener {
+class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemClickListener, OnChildItemClickListener {
     private var pullTo:SmartRefreshLayout?=null
     private var defindPage = 1
     private var page = defindPage
@@ -37,7 +37,7 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
 
     fun getAdapter():BaseRecyclerAdapter<T>? = adapter
 
-    fun getEmtryView():View? = emtryView
+    fun getEntryView():View? = emtryView
 
     fun initPage(defindPage:Int,pageSize:Int){
         this.defindPage = defindPage
@@ -58,7 +58,7 @@ class RefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnItemCl
     /**
      * 设置空数据加载加框
      */
-    fun setEmtryView(emtryView:FrameLayout,@LayoutRes emtryLayoutId:Int){
+    fun setEntryView(emtryView:FrameLayout,@LayoutRes emtryLayoutId:Int){
         this.emtryView = emtryView
         emtryView.removeAllViews()
         this.emtryView?.addView(LayoutInflater.from(emtryView.context).inflate(emtryLayoutId,null))
