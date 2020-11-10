@@ -14,9 +14,6 @@ import com.jianbian.baselib.mvp.impl.RefreshMoreImpl
 
 class SwiperRefreshMoreController <T> : SwipeRefreshLayout.OnRefreshListener,OnItemClickListener, OnChildItemClickListener {
     private var pullTo:SwipeRefreshLayout?=null
-    private var defindPage = 1
-    private var page = defindPage
-    private var pageSize = 20
     private var listener:RefreshMoreImpl?=null
     private var adapter:BaseRecyclerAdapter<T>?=null
     private var emtryView:FrameLayout?=null
@@ -29,18 +26,9 @@ class SwiperRefreshMoreController <T> : SwipeRefreshLayout.OnRefreshListener,OnI
         adapter.onItemClickListener = this
     }
 
-    fun getDefindPage():Int = defindPage
-
     fun getAdapter():BaseRecyclerAdapter<T>? = adapter
 
     fun getEntryView():View? = emtryView
-
-    fun initPage(defindPage:Int,pageSize:Int){
-        this.defindPage = defindPage
-        this.pageSize = pageSize
-        page = defindPage
-        autoRefresh()
-    }
 
     /**
      * 设置空数据加载加框
@@ -63,7 +51,7 @@ class SwiperRefreshMoreController <T> : SwipeRefreshLayout.OnRefreshListener,OnI
      */
     fun autoRefresh(){
         pullTo?.isRefreshing = true
-        listener?.getData(defindPage,pageSize)
+        listener?.getData(0,0)
     }
 
     /**
@@ -108,7 +96,6 @@ class SwiperRefreshMoreController <T> : SwipeRefreshLayout.OnRefreshListener,OnI
 
 
     override fun onRefresh() {
-        page = defindPage
-        listener?.getData(page,pageSize)
+        listener?.getData(0,0)
     }
 }
