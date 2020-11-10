@@ -149,7 +149,7 @@ abstract class BaseFragment :Fragment() {
         loadingDialog?.dismiss()
     }
 
-    open fun getData(page:Int){}
+    open fun getData(page:Int,pageSize:Int){}
     open fun reLoadData(){}
     open fun registerEventBus():Boolean = false
     override fun onDestroy() {
