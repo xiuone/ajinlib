@@ -24,7 +24,7 @@ open class  ViewHolder : RecyclerView.ViewHolder {
 
         if (onChildItemClickListener != null){
             for (id in viewIds){
-                itemView.findViewById<View>(id).setOnClick(View.OnClickListener {
+                getView<View>(id)?.setOnClick(View.OnClickListener {
                     onChildItemClickListener.onItemChildClick(adapter,it,layoutPosition)
                 })
             }
@@ -51,9 +51,12 @@ open class  ViewHolder : RecyclerView.ViewHolder {
         var view = views[viewId]
         if (view == null) {
             view = itemView.findViewById(viewId)
-            views.put(viewId, view)
         }
-        return view as VI?
+        if (view != null) {
+            views.put(viewId, view)
+            return view as VI
+        }else
+            return null
     }
 
 }
