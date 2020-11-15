@@ -11,16 +11,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.j256.ormlite.stmt.query.In
 import com.jianbian.baselib.R
 import com.jianbian.baselib.mvp.impl.OnChildItemClickListener
+import com.jianbian.baselib.mvp.impl.OnChildItemLongClickListener
 import com.jianbian.baselib.mvp.impl.OnItemClickListener
+import com.jianbian.baselib.mvp.impl.OnItemLongClickListener
 import com.jianbian.baselib.utils.setOnClick
 
 abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.dialog_common_load): RecyclerView.Adapter<ViewHolder>(){
     val data: MutableList<T> = ArrayList<T>()
     val head = ArrayList<View>()
-    protected val headType:Int = -10000
+    private val headType:Int = -10000
     var onItemClickListener:OnItemClickListener?=null
+    var onItemLongClickListener:OnItemLongClickListener?=null
     var onChildItemClickListener:OnChildItemClickListener?=null
-    var childs = ArrayList<@IdRes Int>()
+    var onChildItemLongClickListener:OnChildItemLongClickListener?=null
+    var itemClickChilds = ArrayList<@IdRes Int>()
+    var itemLongClickChilds = ArrayList<@IdRes Int>()
 
     fun addHead(view:View){
         this.head.add(view)
@@ -123,7 +128,13 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     fun addChildClickViewIds(onChildItemClickListener :OnChildItemClickListener,@IdRes vararg viewIds: Int) {
         this.onChildItemClickListener = onChildItemClickListener
         for (viewId in viewIds) {
-            childs.add(viewId)
+            itemClickChilds.add(viewId)
+        }
+    }
+    fun addChildLongClickViewIds(onChildItemLongClickListener :OnChildItemLongClickListener,@IdRes vararg viewIds: Int) {
+        this.onChildItemLongClickListener = onChildItemLongClickListener
+        for (viewId in viewIds) {
+            itemLongClickChilds.add(viewId)
         }
     }
 
@@ -141,7 +152,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     @NonNull
     override fun onCreateViewHolder(@NonNull viewGroup: ViewGroup, viewType: Int): ViewHolder {
         if (viewType == headType){
-            return ViewHolder(head[viewType],this,null,null,ArrayList<@IdRes Int>())
+            return ViewHolder(head[viewType],this)
         }
         return onCreateMineViewHolder(viewGroup, viewType)
     }
@@ -149,6 +160,10 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     override fun onBindViewHolder(@NonNull viewHolder: ViewHolder, position: Int) {
         if (position in head.size..(head.size+data.size)) {
             val data: T = data[position-head.size]
+            viewHolder.setItemClickListener(onItemClickListener)
+            viewHolder.setItemLongClickListener(onItemLongClickListener)
+            viewHolder.setChildItemClickListener(itemClickChilds,onChildItemClickListener)
+            viewHolder.setChildItemLongClickListener(itemLongClickChilds,onChildItemLongClickListener)
             convert(viewHolder.itemView.context,viewHolder, data, position)
         }
     }
@@ -159,6 +174,6 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     open fun onCreateMineViewHolder(@NonNull viewGroup: ViewGroup, viewType: Int):ViewHolder{
         val view: View = LayoutInflater.from(viewGroup.context).inflate(layoutResId, viewGroup, false)
-        return ViewHolder(view,this,onItemClickListener,onChildItemClickListener,childs)
+        return ViewHolder(view,this)
     }
 }
