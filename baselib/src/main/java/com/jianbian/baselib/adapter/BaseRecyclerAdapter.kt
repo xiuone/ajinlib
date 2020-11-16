@@ -18,7 +18,7 @@ import com.jianbian.baselib.utils.setOnClick
 
 abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.dialog_common_load): RecyclerView.Adapter<ViewHolder>(){
     val data: MutableList<T> = ArrayList<T>()
-    val head = ArrayList<View>()
+    var headView:View?=null
     private val headType:Int = -10000
     var onItemClickListener:OnItemClickListener?=null
     var onItemLongClickListener:OnItemLongClickListener?=null
@@ -28,54 +28,35 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     var itemLongClickChilds = ArrayList<@IdRes Int>()
 
     fun addHead(view:View){
-        this.head.add(view)
-        notifyItemInserted(head.size)
+        var haveHead = false
+        if (headView != null)
+            haveHead = true
+        headView = view
+        notifyItemInserted(1)
     }
 
-    fun addHead(position: Int,view: View){
-        if (position < head.size){
-            head.add(position, view)
-            notifyItemInserted(position)
-        }else{
-            addHead(view)
-        }
-    }
-
-    fun addHead(data: MutableList<View>?){
-        if (data != null) {
-            this.head.addAll(data)
-            notifyItemRangeInserted(head.size - data.size, data.size)
-        }
-    }
-
-    fun setNewHead(data: MutableList<View>){
-        this.head.clear()
-        this.head.addAll(data)
-        notifyDataSetChanged()
-    }
-
-    fun removeHead(position:Int){
-        if (position<head.size) {
-            head.removeAt(position)
-            notifyItemRemoved(position)
-        }
+    fun removeHead(){
+        if (headView != null)
+            notifyItemRemoved(0)
+        headView = null
     }
 
     open fun addData(item: T?) {
         if (item == null)return
         data.add(item)
         if (data.size >1 ){
-            notifyItemInserted(head.size+data.size)
+            notifyItemInserted(getHeadSize()+data.size)
         }else{
             notifyDataSetChanged()
         }
     }
+    fun getHeadSize():Int = if (headView == null) 0 else 1
 
     open fun addData(position:Int,item: T?) {
         if (item != null) {
             if (position < data.size){
                 data.add(position, item)
-                notifyItemInserted(head.size+position)
+                notifyItemInserted(getHeadSize()+position)
             }else{
                 addData(item)
             }
@@ -85,7 +66,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     open fun addData(data: List<T>?) {
         if (data != null) {
             this.data.addAll(data)
-            notifyItemRangeInserted(head.size+this.data.size - data.size, data.size)
+            notifyItemRangeInserted(getHeadSize()+this.data.size - data.size, data.size)
         }
     }
 
@@ -98,15 +79,15 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     }
 
     fun getItem(position:Int):T?{
-        if (position in head.size..(head.size+data.size)){
-            return data[position-head.size]
+        if (position in getHeadSize()..(getHeadSize()+data.size)){
+            return data[position-getHeadSize()]
         }
         return null
     }
 
     open fun remove(position: Int) {
-        if (position in head.size..(head.size+data.size)){
-            data.removeAt(position-head.size)
+        if (position in getHeadSize()..(getHeadSize()+data.size)){
+            data.removeAt(position-getHeadSize())
             notifyItemRemoved(position)
         }
     }
@@ -140,26 +121,26 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     //获取数据的数量
     override fun getItemCount(): Int {
-        return head.size+data.size
+        return getHeadSize()+data.size
     }
 
     override fun getItemViewType(position: Int): Int{
-        if (position<head.size)
+        if (position<getHeadSize())
             return headType
-        else return itemType(position-head.size)
+        else return itemType(position-getHeadSize())
     }
 
     @NonNull
     override fun onCreateViewHolder(@NonNull viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        if (viewType == headType){
-            return ViewHolder(head[viewType],this)
+        if (viewType == headType && headView != null){
+            return ViewHolder(headView!!,this)
         }
         return onCreateMineViewHolder(viewGroup, viewType)
     }
 
     override fun onBindViewHolder(@NonNull viewHolder: ViewHolder, position: Int) {
-        if (position in head.size..(head.size+data.size)) {
-            val data: T = data[position-head.size]
+        if (position in getHeadSize()..(getHeadSize()+data.size)) {
+            val data: T = data[position-getHeadSize()]
             viewHolder.setItemClickListener(onItemClickListener)
             viewHolder.setItemLongClickListener(onItemLongClickListener)
             viewHolder.setChildItemClickListener(itemClickChilds,onChildItemClickListener)

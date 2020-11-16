@@ -21,7 +21,7 @@ abstract class MultiBaseRecyclerAdapter<T :MultiImpl>():BaseRecyclerAdapter<T>()
 
 
     override fun itemType(position: Int): Int {
-        val item = data[position-head.size]
+        val item = data[position-getHeadSize()]
         return item.getType()
     }
 }
