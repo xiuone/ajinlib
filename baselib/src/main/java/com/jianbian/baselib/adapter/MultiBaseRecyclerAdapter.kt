@@ -16,7 +16,7 @@ abstract class MultiBaseRecyclerAdapter<T :MultiImpl>():BaseRecyclerAdapter<T>()
     override fun onCreateMineViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val res = layoutResHashMap[viewType]?:layoutResId
         val view: View = LayoutInflater.from(viewGroup.context).inflate(res, viewGroup, false)
-        return ViewHolder(view,this,onItemClickListener,onChildItemClickListener,childs)
+        return ViewHolder(view,this)
     }
 
 
