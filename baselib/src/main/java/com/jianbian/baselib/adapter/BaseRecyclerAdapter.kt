@@ -18,8 +18,12 @@ import com.jianbian.baselib.utils.setOnClick
 
 abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.dialog_common_load): RecyclerView.Adapter<ViewHolder>(){
     val data: MutableList<T> = ArrayList<T>()
-    var headView:View?=null
+    private var headView:View?=null
+    private var entryView:View?=null
+    private var footView:View?=null
     private val headType:Int = -10000
+    private val entryType:Int = -10001
+    private val footType:Int = -10002
     var onItemClickListener:OnItemClickListener?=null
     var onItemLongClickListener:OnItemLongClickListener?=null
     var onChildItemClickListener:OnChildItemClickListener?=null
@@ -28,18 +32,36 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     var itemLongClickChilds = ArrayList<@IdRes Int>()
 
     fun addHead(view:View){
-        var haveHead = false
-        if (headView != null)
-            haveHead = true
         headView = view
-        notifyItemInserted(1)
+        notifyItemInserted(0)
     }
 
     fun removeHead(){
-        if (headView != null)
-            notifyItemRemoved(0)
+        var status = headView != null
         headView = null
+        if (status) notifyItemRemoved(0)
     }
+
+    fun getHeadSize():Int = if (headView == null) 0 else 1
+
+    fun addFoot(view:View){
+        footView = view
+        notifyItemInserted(getHeadSize()+data.size)
+    }
+
+    fun removeFoot(){
+        var status = footView != null
+        footView = null
+        if (status) notifyItemRemoved(getHeadSize()+data.size)
+    }
+
+    fun getFootSize():Int = if (footView == null) 0 else 1
+
+    fun setEntryView(view: View?){
+        entryView = view
+    }
+
+    fun getEntrySize():Int = if (entryView == null) 0 else 1
 
     open fun addData(item: T?) {
         if (item == null)return
@@ -50,7 +72,6 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
             notifyDataSetChanged()
         }
     }
-    fun getHeadSize():Int = if (headView == null) 0 else 1
 
     open fun addData(position:Int,item: T?) {
         if (item != null) {
@@ -78,18 +99,18 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
         }
     }
 
-    fun getItem(position:Int):T?{
-        if (position in getHeadSize()..(getHeadSize()+data.size)){
-            return data[position-getHeadSize()]
-        }
-        return null
-    }
-
     open fun remove(position: Int) {
         if (position in getHeadSize()..(getHeadSize()+data.size)){
             data.removeAt(position-getHeadSize())
             notifyItemRemoved(position)
         }
+    }
+
+    fun getItem(position:Int):T?{
+        if (position in getHeadSize()..(getHeadSize()+data.size)){
+            return data[position-getHeadSize()]
+        }
+        return null
     }
 
     /**
@@ -121,20 +142,24 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     //获取数据的数量
     override fun getItemCount(): Int {
-        return getHeadSize()+data.size
+        return getHeadSize()+data.size+getEntrySize()+getFootSize()
     }
 
     override fun getItemViewType(position: Int): Int{
         if (position<getHeadSize())
             return headType
-        else return itemType(position-getHeadSize())
+        else if (position<getHeadSize()+data.size)
+            return itemType(position-getHeadSize())
+        else if (position < getHeadSize()+getEntrySize())
+            return entryType
+        else return footType
     }
 
     @NonNull
     override fun onCreateViewHolder(@NonNull viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        if (viewType == headType && headView != null){
-            return ViewHolder(headView!!,this)
-        }
+        if (viewType == headType && headView != null)  return ViewHolder(headView!!,this)
+        else if (viewType == entryType && entryView != null)  return ViewHolder(entryView!!,this)
+        else if (viewType == footType && footView != null)  return ViewHolder(footView!!,this)
         return onCreateMineViewHolder(viewGroup, viewType)
     }
 

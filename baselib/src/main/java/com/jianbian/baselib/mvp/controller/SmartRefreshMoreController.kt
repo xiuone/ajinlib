@@ -22,7 +22,6 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
     private var pageSize = 20
     private var listener:RefreshMoreImpl?=null
     private var adapter:BaseRecyclerAdapter<T>?=null
-    private var emtryView:FrameLayout?=null
     constructor(pullTo:SmartRefreshLayout,recyclerView: RecyclerView,adapter:BaseRecyclerAdapter<T>,listener:RefreshMoreImpl){
         pullTo.setOnRefreshListener(this)
         this.adapter = adapter
@@ -37,7 +36,6 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
 
     fun getAdapter():BaseRecyclerAdapter<T>? = adapter
 
-    fun getEntryView():View? = emtryView
 
     fun initPage(defindPage:Int,pageSize:Int){
         this.defindPage = defindPage
@@ -53,15 +51,6 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
         pullTo?.setEnableLoadMore(canMore)
         if (canMore)
             pullTo?.setOnLoadMoreListener(this)
-    }
-
-    /**
-     * 设置空数据加载加框
-     */
-    fun setEntryView(emtryView:FrameLayout,@LayoutRes emtryLayoutId:Int){
-        this.emtryView = emtryView
-        emtryView.removeAllViews()
-        this.emtryView?.addView(LayoutInflater.from(emtryView.context).inflate(emtryLayoutId,null))
     }
 
     /**
@@ -94,30 +83,6 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
         }else{
             pullTo?.setNoMoreData(false)
             page++
-        }
-        showEmtryView()
-    }
-
-    fun addItem(item:T?){
-        adapter?.addData(item)
-        showEmtryView()
-    }
-
-    fun addItem(postion:Int,item:T?){
-        adapter?.addData(postion,item)
-        showEmtryView()
-    }
-
-    fun remove(position:Int){
-        adapter?.remove(position)
-        showEmtryView()
-    }
-
-    fun showEmtryView(){
-        if (adapter == null || adapter!!.data.size <= 0){
-            emtryView?.visibility = View.VISIBLE
-        }else{
-            emtryView?.visibility = View.GONE
         }
     }
 
