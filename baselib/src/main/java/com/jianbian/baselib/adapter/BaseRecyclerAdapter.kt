@@ -33,7 +33,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     fun addHead(view:View){
         headView = view
-        notifyItemInserted(0)
+        notifyItemInserted(1)
     }
 
     fun removeHead(){
@@ -46,19 +46,21 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     fun addFoot(view:View){
         footView = view
-        notifyItemInserted(getHeadSize()+data.size)
+        notifyItemInserted(getHeadSize()+data.size+getFootSize())
     }
 
     fun removeFoot(){
         var status = footView != null
         footView = null
-        if (status) notifyItemRemoved(getHeadSize()+data.size)
+        if (status) notifyItemRemoved(getHeadSize()+data.size+getEntrySize())
     }
 
     fun getFootSize():Int = if (footView == null) 0 else 1
 
     fun setEntryView(view: View?){
         entryView = view
+        if (data.size<0)
+            notifyItemInserted(getHeadSize()+getEntrySize())
     }
 
     fun getEntrySize():Int = if (entryView == null) 0 else 1
@@ -142,7 +144,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     //获取数据的数量
     override fun getItemCount(): Int {
-        return getHeadSize()+data.size+getEntrySize()+getFootSize()
+        return getHeadSize()+getEntrySize()+(if (data.size>0) data.size else getFootSize())
     }
 
     override fun getItemViewType(position: Int): Int{
