@@ -1,6 +1,7 @@
 package com.jianbian.baselib.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     fun addHead(view:View){
         headView = view
+        headView?.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
         notifyItemInserted(1)
     }
 
@@ -46,6 +48,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     fun addFoot(view:View){
         footView = view
+        footView?.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
         notifyItemInserted(getHeadSize()+data.size+getFootSize())
     }
 
@@ -59,6 +62,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     fun setEntryView(view: View?){
         entryView = view
+        entryView?.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
         if (data.size<0)
             notifyItemInserted(getHeadSize()+getEntrySize())
     }
@@ -68,7 +72,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     open fun addData(item: T?) {
         if (item == null)return
         data.add(item)
-        if (data.size >1 ){
+        if (data.size >1){
             notifyItemInserted(getHeadSize()+data.size)
         }else{
             notifyDataSetChanged()
@@ -79,7 +83,10 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
         if (item != null) {
             if (position < data.size){
                 data.add(position, item)
-                notifyItemInserted(getHeadSize()+position)
+                if (data.size == 1){
+                    notifyItemChanged(getHeadSize())
+                }else
+                    notifyItemInserted(getHeadSize()+position)
             }else{
                 addData(item)
             }
@@ -144,7 +151,8 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     //获取数据的数量
     override fun getItemCount(): Int {
-        return getHeadSize()+getEntrySize()+(if (data.size>0) data.size else getFootSize())
+        return getHeadSize()+getFootSize()+(if (data.size>0) data.size else
+            getEntrySize())
     }
 
     override fun getItemViewType(position: Int): Int{
@@ -166,7 +174,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     }
 
     override fun onBindViewHolder(@NonNull viewHolder: ViewHolder, position: Int) {
-        if (position in getHeadSize()..(getHeadSize()+data.size)) {
+        if (position in getHeadSize() until (getHeadSize()+data.size)) {
             val data: T = data[position-getHeadSize()]
             viewHolder.setItemClickListener(onItemClickListener)
             viewHolder.setItemLongClickListener(onItemLongClickListener)

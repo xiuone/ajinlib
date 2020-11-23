@@ -18,7 +18,6 @@ open class  ViewHolder (itemView: View,val adapter: BaseRecyclerAdapter<*>): Rec
         if (itemClickListener!=null)
             itemView.setOnClick(View.OnClickListener {
                 itemClickListener.onItemClick(adapter,it,layoutPosition)
-
             })
     }
 
