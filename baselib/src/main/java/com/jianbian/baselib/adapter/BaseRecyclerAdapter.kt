@@ -25,6 +25,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     private val headType:Int = -10000
     private val entryType:Int = -10001
     private val footType:Int = -10002
+    private var loadFirst = false;
     var onItemClickListener:OnItemClickListener?=null
     var onItemLongClickListener:OnItemLongClickListener?=null
     var onChildItemClickListener:OnChildItemClickListener?=null
@@ -71,6 +72,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     open fun addData(item: T?) {
         if (item == null)return
+        loadFirst = true
         data.add(item)
         if (data.size >1){
             notifyItemInserted(getHeadSize()+data.size)
@@ -80,6 +82,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     }
 
     open fun addData(position:Int,item: T?) {
+        loadFirst = true
         if (item != null) {
             if (position < data.size){
                 data.add(position, item)
@@ -94,6 +97,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     }
 
     open fun addData(data: List<T>?) {
+        loadFirst = true
         if (data != null) {
             this.data.addAll(data)
             notifyItemRangeInserted(getHeadSize()+this.data.size - data.size, data.size)
@@ -101,6 +105,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     }
 
     open fun setNewData(data: List<T>?) {
+        loadFirst = true
         this.data.clear()
         if (data != null) {
             this.data.addAll(data)
@@ -109,6 +114,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     }
 
     open fun remove(position: Int) {
+        loadFirst = true
         if (position in getHeadSize()..(getHeadSize()+data.size)){
             data.removeAt(position-getHeadSize())
             notifyItemRemoved(position)
@@ -151,8 +157,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     //获取数据的数量
     override fun getItemCount(): Int {
-        return getHeadSize()+getFootSize()+(if (data.size>0) data.size else
-            getEntrySize())
+        return getHeadSize()+getFootSize()+(if (data.size>0) data.size else if (!loadFirst) getEntrySize() else 0)
     }
 
     override fun getItemViewType(position: Int): Int{
