@@ -157,7 +157,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     //获取数据的数量
     override fun getItemCount(): Int {
-        return getHeadSize()+getFootSize()+(if (data.size>0) data.size else if (!loadFirst) getEntrySize() else 0)
+        return getHeadSize()+getFootSize()+(if (data.size>0) data.size else if (loadFirst) getEntrySize() else 0)
     }
 
     override fun getItemViewType(position: Int): Int{
