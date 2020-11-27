@@ -25,7 +25,7 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
     private var year:Int = 0
     private var month :Int = 0
     init {
-        LayoutInflater.from(context).inflate(R.layout.date_view,null)
+        LayoutInflater.from(context).inflate(R.layout.date_view,this)
         date_recyclerView.layoutManager = NestScrollGridLayoutManager(context,7,false)
 
 
