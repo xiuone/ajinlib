@@ -111,4 +111,14 @@
         <attr name="bb_borderWidth" format="dimension"/>
         <attr name="bb_borderColor" format="reference|color"/>
     </declare-styleable>
+
+    <declare-styleable name="DateView">
+        <attr name="date_select_background" format="reference"/>
+        <attr name="date_select_textColor" format="color"/>
+        <attr name="date_select_background_not" format="reference"/>
+        <attr name="date_select_textColor_not" format="color"/>
+        <attr name="date_toDay_background" format="reference"/>
+        <attr name="date_toDay_textColor" format="color"/>
+        <attr name="date_common_textColor" format="color"/>
+    </declare-styleable>
 </resources>

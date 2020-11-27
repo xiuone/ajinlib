@@ -11,7 +11,6 @@ abstract class BaseToast (context: Context):Toast(context) {
         try {
             val view = LayoutInflater.from(context).inflate(LayoutRes(), null)
             if (view != null)
-                this
                 setView(view)
             setGravity(Gravity(),0,0)
         }catch (e:Exception){

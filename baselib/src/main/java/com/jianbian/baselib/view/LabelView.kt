@@ -7,9 +7,11 @@ import android.util.Log
 import androidx.appcompat.widget.AppCompatTextView
 import com.jianbian.baselib.R
 
+/**
+ * 旋转的标签
+ */
 class LabelView(context: Context, attributeSet: AttributeSet?):AppCompatTextView(context,attributeSet){
     private var viewPosition = 1
-
 
     companion object{
         const val leftTop = 1

@@ -18,14 +18,14 @@ abstract class BasePop(context: Context) : PopupWindow(context) {
         isOutsideTouchable = true
         contentView = LayoutInflater.from(context).inflate(LayoutRes(), null)
         setBackgroundDrawable(ColorDrawable(AppUtil.getColor(context,R.color.transparent)))
-        this.width = ViewGroup.LayoutParams.MATCH_PARENT
+        this.width = ViewGroup.LayoutParams.WRAP_CONTENT
         this.height = ViewGroup.LayoutParams.WRAP_CONTENT
-        initView()
+        initView(context)
     }
 
     @LayoutRes
     abstract fun LayoutRes(): Int
-    abstract fun initView()
+    abstract fun initView(context: Context)
 
     fun changeHeight(anchor:View?){
         if (Build.VERSION.SDK_INT >= 24 && anchor != null) {

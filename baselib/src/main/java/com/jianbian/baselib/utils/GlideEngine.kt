@@ -27,11 +27,7 @@ class GlideEngine private constructor() : ImageEngine {
      * @param url
      * @param imageView
      */
-    override fun loadImage(
-        context: Context,
-        url: String,
-        imageView: ImageView
-    ) {
+    override fun loadImage(context: Context, url: String, imageView: ImageView) {
         Glide.with(context)
             .load(url)
             .into(imageView)
@@ -50,8 +46,7 @@ class GlideEngine private constructor() : ImageEngine {
     override fun loadImage(
         context: Context, url: String,
         imageView: ImageView,
-        longImageView: SubsamplingScaleImageView, callback: OnImageCompleteCallback
-    ) {
+        longImageView: SubsamplingScaleImageView, callback: OnImageCompleteCallback) {
         Glide.with(context)
             .asBitmap()
             .load(url)
@@ -109,8 +104,7 @@ class GlideEngine private constructor() : ImageEngine {
     override fun loadImage(
         context: Context, url: String,
         imageView: ImageView,
-        longImageView: SubsamplingScaleImageView
-    ) {
+        longImageView: SubsamplingScaleImageView) {
         Glide.with(context)
             .asBitmap()
             .load(url)
@@ -154,8 +148,7 @@ class GlideEngine private constructor() : ImageEngine {
     override fun loadFolderImage(
         context: Context,
         url: String,
-        imageView: ImageView
-    ) {
+        imageView: ImageView) {
         Glide.with(context)
             .asBitmap()
             .load(url)
@@ -182,8 +175,7 @@ class GlideEngine private constructor() : ImageEngine {
      */
     override fun loadAsGifImage(
         context: Context, url: String,
-        imageView: ImageView
-    ) {
+        imageView: ImageView) {
         Glide.with(context)
             .asGif()
             .load(url)
@@ -200,8 +192,7 @@ class GlideEngine private constructor() : ImageEngine {
     override fun loadGridImage(
         context: Context,
         url: String,
-        imageView: ImageView
-    ) {
+        imageView: ImageView) {
         Glide.with(context)
             .load(url)
             .override(200, 200)
