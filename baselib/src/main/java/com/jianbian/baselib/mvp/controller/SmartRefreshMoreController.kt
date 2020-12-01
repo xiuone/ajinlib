@@ -65,7 +65,6 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
      */
     fun autoRefresh(){
         pullTo?.autoRefresh()
-        listener?.getData(defindPage,pageSize)
     }
 
     /**
