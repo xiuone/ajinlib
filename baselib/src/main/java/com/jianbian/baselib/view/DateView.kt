@@ -2,6 +2,7 @@ package com.jianbian.baselib.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -33,10 +34,10 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
 
         val selectBackground = array.getResourceId(R.styleable.DateView_date_select_background,R.drawable.bg_black_0000_corners_30)
         val selectBackgroundNot = array.getResourceId(R.styleable.DateView_date_select_background_not,R.drawable.bg_transparent)
-        val toDayBackGround = array.getResourceId(R.styleable.DateView_date_toDay_background,R.drawable.bg_red_e32c_corners_30)
+        val toDayBackGround = array.getResourceId(R.styleable.DateView_date_toDay_background,R.drawable.bg_transparent)
         val selectTextColor = array.getColor(R.styleable.DateView_date_select_textColor,AppUtil.getColor(context,R.color.white))
-        val selectTextColorNot = array.getColor(R.styleable.DateView_date_select_textColor_not,AppUtil.getColor(context,R.color.white))
-        val toDayTextColor = array.getColor(R.styleable.DateView_date_toDay_textColor,AppUtil.getColor(context,R.color.gray_9999))
+        val selectTextColorNot = array.getColor(R.styleable.DateView_date_select_textColor_not,AppUtil.getColor(context,R.color.gray_9999))
+        val toDayTextColor = array.getColor(R.styleable.DateView_date_toDay_textColor,AppUtil.getColor(context,R.color.red_e32c))
         val commonTextColor = array.getColor(R.styleable.DateView_date_common_textColor,AppUtil.getColor(context,R.color.gray_3333))
 
         adpater = DateAdapter(selectBackground,selectBackgroundNot,toDayBackGround,selectTextColor,selectTextColorNot,toDayTextColor,commonTextColor)
@@ -46,7 +47,8 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
         val cal = Calendar.getInstance()
         val year = cal[Calendar.YEAR]
         val month = cal[Calendar.MONTH] + 1
-        setNewData(year,month)
+        val nowDay = cal[Calendar.DAY_OF_MONTH]
+        setNewData(year,month,nowDay)
 
         date_right_button.setOnClick(this)
         date_left_button.setOnClick(this)
@@ -55,10 +57,10 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
     override fun onItemClick(adapter: BaseRecyclerAdapter<*>, view: View, position: Int) {
         val data = adapter.getItem(position)
         if (data != null && data is DateMode) {
-            if (!data.isRightMore && !data.isLeftMore) {
-                setSeletDay(data.day)
-            } else {
-                jumpMonth(year, month, data.isLeftMore)
+            if (data.nowMoth){
+                setSeletDay(position)
+            }else{
+                jumpMonth(year, month,data.day, data.day>position)
             }
         }
     }
@@ -66,31 +68,23 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
     /**
      * 设置当月选中
      */
-    private fun setSeletDay(seletDay:Int){
+    private fun setSeletDay(position:Int){
         if (adpater == null)return
         for (index in adpater!!.data.indices){
-            var item = adpater!!.data[index]
-            if (!item.isLeftMore && !item.isRightMore){
-                if (item.day == seletDay && !item.isSelect){
-                    adpater!!.data[index].isSelect = true
-                    adpater!!.notifyItemChanged(index)
-                }else if (item.day != seletDay && item.isSelect){
-                    adpater!!.data[index].isSelect = false
-                    adpater!!.notifyItemChanged(index)
-                }
-            }
+            adpater!!.data[index].isSelect = index == position
+            adpater!!.notifyItemChanged(index)
         }
     }
 
     /**
      * 跳动月份
      */
-    private fun jumpMonth(nowYear:Int,nowMoth:Int,isLeft:Boolean){
+    private fun jumpMonth(nowYear:Int,nowMoth:Int,nowDay:Int,isLeft:Boolean){
         val selectDate = getJumpDate(nowYear,nowMoth,isLeft)
-        setNewData(selectDate[0],selectDate[1])
+        setNewData(selectDate[0],selectDate[1],nowDay)
     }
     
-    private fun setNewData(year: Int,month: Int){
+    private fun setNewData(year: Int,month: Int,nowDay:Int){
         val maxDay =getMaxDay(year,month)
         val minWeek = getDayWeek(year,month,1)
         val maxWeek = getDayWeek(year,month,maxDay)
@@ -100,10 +94,7 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
 
         val nweData = ArrayList<DateMode>()
         for (index in(leftMaxDay-minWeek+2) ..leftMaxDay){
-            val item = DateMode(
-                year, month, index
-                , false, true, false, false
-            )
+            val item = DateMode(year, month, index, false, false,false)
             adpater?.notifychangeItem(nweData.size,item)
             nweData.add(item)
         }
@@ -111,19 +102,12 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
             val cal = Calendar.getInstance()
             val nowYear = cal[Calendar.YEAR]
             val nowMonth = cal[Calendar.MONTH] + 1
-            val nowDay = cal[Calendar.DAY_OF_MONTH]
-            val item = DateMode(
-                year, month, index
-                , (nowYear == year && nowMonth == month && nowDay == index), false, false, nowDay == index
-            )
+            val item = DateMode(year, month, index, (nowYear == year && nowMonth == month && nowDay == index), nowDay == index)
             adpater?.notifychangeItem(nweData.size,item)
             nweData.add(item)
         }
         for (index in 1..(7-maxWeek)){
-            val item = DateMode(
-                year, month, index,
-                false, false, true, false
-            )
+            val item = DateMode(year, month, index, false, false,false)
             adpater?.notifychangeItem(nweData.size,item)
             nweData.add(item)
         }
@@ -178,16 +162,16 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
         cal.set(Calendar.YEAR, year)
         cal.set(Calendar.MONTH, month+1)
         cal.set(Calendar.DAY_OF_MONTH, day)
-        return cal.get(Calendar.DAY_OF_WEEK) +1
+        return (cal.get(Calendar.DAY_OF_WEEK) +1)%7
     }
 
     override fun onClick(view: View) {
         when(view.id){
             R.id.date_left_button->{
-                jumpMonth(year,month,true)
+                jumpMonth(year,month,1,true)
             }
             R.id.date_right_button->{
-                jumpMonth(year,month,false)
+                jumpMonth(year,month,1,false)
             }
         }
     }

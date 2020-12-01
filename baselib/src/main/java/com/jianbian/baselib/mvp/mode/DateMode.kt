@@ -8,7 +8,7 @@ data class DateMode(
     var month:Int = 1,
     var day:Int = 1,
     var isToDay :Boolean= false,
-    var isLeftMore :Boolean= false,
-    var isRightMore :Boolean= false,
-    var isSelect :Boolean= false
+    var isSelect :Boolean= false,
+    var nowMoth:Boolean = true
+
 )

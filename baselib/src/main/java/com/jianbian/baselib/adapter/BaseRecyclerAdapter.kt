@@ -115,7 +115,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     open fun remove(position: Int) {
         loadFirst = true
-        if (position in getHeadSize() until (getHeadSize()+data.size)){
+        if (position in getHeadSize() until  (getHeadSize()+data.size)){
             data.removeAt(position-getHeadSize())
             notifyItemRemoved(position)
         }

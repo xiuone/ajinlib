@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import com.jianbian.baselib.R
 import com.jianbian.baselib.mvp.mode.DateMode
 import com.jianbian.baselib.utils.AppUtil
+import java.util.*
 
 class DateAdapter(private val selectBackground:Int,private val selectBackgroundNot:Int,private val toDayBackGround:Int
                   ,private val selectTextColor:Int,private val selectTextColorNot:Int,private val toDayTextColor:Int
@@ -22,7 +23,7 @@ class DateAdapter(private val selectBackground:Int,private val selectBackgroundN
         }else if (item.isToDay){
             text?.setBackgroundResource(toDayBackGround)
             text?.setTextColor(toDayTextColor)
-        }else if (item.isLeftMore || item.isRightMore){
+        }else if (!item.nowMoth){
             text?.setTextColor(selectTextColorNot)
             text?.setBackgroundResource(selectBackgroundNot)
         }else{
@@ -30,14 +31,14 @@ class DateAdapter(private val selectBackground:Int,private val selectBackgroundN
             text?.setBackgroundResource(selectBackgroundNot)
         }
     }
+
     
     fun notifychangeItem(index:Int,date: DateMode){
         getItem(index)?.year = date.year
         getItem(index)?.month = date.month
         getItem(index)?.day = date.day
         getItem(index)?.isToDay = date.isToDay
-        getItem(index)?.isLeftMore = date.isLeftMore
-        getItem(index)?.isRightMore = date.isRightMore
+        getItem(index)?.nowMoth = date.nowMoth
         getItem(index)?.isSelect = date.isSelect
         notifyItemChanged(index)
     }
