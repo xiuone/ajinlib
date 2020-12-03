@@ -64,8 +64,6 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     fun setEntryView(view: View?){
         entryView = view
         entryView?.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        if (data.size<0)
-            notifyItemInserted(getHeadSize()+getEntrySize())
     }
 
     fun getEntrySize():Int = if (entryView == null) 0 else 1
@@ -165,7 +163,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
             return headType
         else if (position<getHeadSize()+data.size)
             return itemType(position-getHeadSize())
-        else if (position < getHeadSize()+getEntrySize())
+        else if (position < getHeadSize()+ (if (loadFirst) getEntrySize() else 0 ) )
             return entryType
         else return footType
     }
