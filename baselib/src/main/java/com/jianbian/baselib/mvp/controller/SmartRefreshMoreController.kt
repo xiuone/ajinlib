@@ -24,6 +24,8 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
     private var adapter:BaseRecyclerAdapter<T>?=null
     constructor(pullTo:SmartRefreshLayout,recyclerView: RecyclerView,adapter:BaseRecyclerAdapter<T>,listener:RefreshMoreImpl){
         pullTo.setOnRefreshListener(this)
+        pullTo?.setEnableLoadMore(true)
+        pullTo?.setOnLoadMoreListener(this)
         this.adapter = adapter
         this.listener = listener
         this.pullTo = pullTo
@@ -42,15 +44,6 @@ class SmartRefreshMoreController <T> : OnRefreshListener, OnLoadMoreListener,OnI
         this.pageSize = pageSize
         page = defindPage
         autoRefresh()
-    }
-
-    /**
-     * 设置能不能加载更多
-     */
-    fun setCanMore(canMore:Boolean){
-        pullTo?.setEnableLoadMore(canMore)
-        if (canMore)
-            pullTo?.setOnLoadMoreListener(this)
     }
 
     /**
