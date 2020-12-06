@@ -22,9 +22,12 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     private var headView:View?=null
     private var entryView:View?=null
     private var footView:View?=null
-    private val headType:Int = -10000
-    private val entryType:Int = -10001
-    private val footType:Int = -10002
+    companion object{
+        const val headType:Int = -10000
+        const val entryType:Int = -10001
+        const val footType:Int = -10002
+    }
+
     private var loadFirst = false;
     var onItemClickListener:OnItemClickListener?=null
     var onItemLongClickListener:OnItemLongClickListener?=null
