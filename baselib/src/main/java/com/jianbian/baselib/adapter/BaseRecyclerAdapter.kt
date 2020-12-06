@@ -1,21 +1,21 @@
 package com.jianbian.baselib.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.RecyclerView
-import com.j256.ormlite.stmt.query.In
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jianbian.baselib.R
 import com.jianbian.baselib.mvp.impl.OnChildItemClickListener
 import com.jianbian.baselib.mvp.impl.OnChildItemLongClickListener
 import com.jianbian.baselib.mvp.impl.OnItemClickListener
 import com.jianbian.baselib.mvp.impl.OnItemLongClickListener
-import com.jianbian.baselib.utils.setOnClick
 
 abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.dialog_common_load): RecyclerView.Adapter<ViewHolder>(){
     val data: MutableList<T> = ArrayList<T>()
@@ -166,6 +166,36 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
         else if (position < getHeadSize()+ (if (loadFirst) getEntrySize() else 0 ) )
             return entryType
         else return footType
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        val manager = recyclerView.layoutManager?:return
+        if (manager is GridLayoutManager){
+            manager.spanSizeLookup = object : SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val type = getItemViewType(position)
+                    val count: Int = manager.spanCount
+                    return when (type) {
+                        headType,entryType,footType -> count
+                        else -> 1
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        val index = holder.layoutPosition
+        when(getItemViewType(index)){
+            headType,entryType,footType ->{
+                val lp = holder.itemView.layoutParams
+                if (lp != null && lp is StaggeredGridLayoutManager.LayoutParams) {
+                    lp.isFullSpan = true
+                }
+            }
+        }
     }
 
     @NonNull
