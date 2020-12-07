@@ -36,9 +36,9 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     var itemClickChilds = ArrayList<@IdRes Int>()
     var itemLongClickChilds = ArrayList<@IdRes Int>()
 
-    fun addHead(view:View){
+    fun addHead(view:View,params:RecyclerView.LayoutParams?=null){
         headView = view
-        headView?.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        headView?.layoutParams = params?:RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
         notifyItemInserted(1)
     }
 
@@ -50,9 +50,9 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
 
     fun getHeadSize():Int = if (headView == null) 0 else 1
 
-    fun addFoot(view:View){
+    fun addFoot(view:View,params:RecyclerView.LayoutParams?=null){
         footView = view
-        footView?.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        footView?.layoutParams =params?: RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
         notifyItemInserted(getHeadSize()+data.size+getFootSize())
     }
 
