@@ -5,7 +5,8 @@ import android.util.Log
 import java.util.*
 
 
-class ActivityController {
+object ActivityController {
+    private val activities: MutableList<Activity> = ArrayList()
     fun addAct(activity: Activity?) {
         if (activity == null) return
         for (act in activities) {
@@ -43,15 +44,5 @@ class ActivityController {
 
     fun getActivitys():MutableList<Activity>{
         return activities
-    }
-
-
-    companion object {
-        private var controller: ActivityController? = null
-        private val activities: MutableList<Activity> = ArrayList()
-        val instance: ActivityController? get() {
-                if (controller == null) controller = ActivityController()
-                return controller
-            }
     }
 }
