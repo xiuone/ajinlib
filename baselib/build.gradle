@@ -45,7 +45,6 @@ dependencies {
     api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
 
     api 'androidx.recyclerview:recyclerview:1.2.0-alpha05'//列表
-    api 'com.github.chrisbanes:PhotoView:2.0.0'//放大缩小view
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     api 'com.yanzhenjie:permission:1.1.2'//权限
     api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.9'//相机相册
@@ -53,7 +52,8 @@ dependencies {
     api  'com.scwang.smart:refresh-layout-kernel:2.0.1'//加载和刷新
     api  'com.scwang.smart:refresh-header-classics:2.0.1'
     api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    
-    api 'org.greenrobot:eventbus:3.2.0'//事件分发
 
+    api 'org.greenrobot:eventbus:3.2.0'//事件分发
+    //阴影效果
+    api 'com.github.lihangleo2:ShadowLayout:3.1.6'
 }
