@@ -14,6 +14,7 @@ object ActivityController {
                 return
             }
         }
+
         activities.add(activity)
     }
 
