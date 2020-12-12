@@ -28,7 +28,7 @@ abstract class BaseAct :FragmentActivity(){
     protected var page = defindPage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ActivityController.instance?.addAct(this)
+        ActivityController.addAct(this)
         setContentView(R.layout.layout_base_view)
         initView()
         setStatusBarMode(statusBarView(),statusBarDurk())
@@ -184,7 +184,7 @@ abstract class BaseAct :FragmentActivity(){
     override fun onDestroy() {
         super.onDestroy()
         OkGo.getInstance().cancelTag(this)
-        ActivityController.instance?.removeAct(this)
+        ActivityController.removeAct(this)
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
         ImmersionBar.with(this).destroy()
