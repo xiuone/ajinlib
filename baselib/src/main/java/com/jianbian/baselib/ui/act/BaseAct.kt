@@ -93,17 +93,6 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     }
 
     /**
-     * 设置底部导航栏
-     */
-    fun setNavigationLayout(@LayoutRes layout: Int){
-        setNavigationView(LayoutInflater.from(this).inflate(layout,null))
-    }
-    fun setNavigationView(view: View){
-        navigation_bar_frame_layout.removeAllViews()
-        navigation_bar_frame_layout.addView(view)
-    }
-
-    /**
      * 设置预加载
      */
     fun setPreloadingLayout(@LayoutRes layout: Int){

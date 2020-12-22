@@ -29,8 +29,4 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </RelativeLayout>
-    <FrameLayout
-        android:id="@+id/navigation_bar_frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 </LinearLayout>

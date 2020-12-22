@@ -61,12 +61,10 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
         title_layout_frame_layout.removeAllViews()
         title_layout_frame_layout.addView(view)
     }
-    fun getTitleFrameLayout():View{
-        return title_layout_frame_layout
-    }
-    fun getErrorFrameLayout():View{
-        return err_loading_frame_layout
-    }
+    fun getTitleFrameLayout():View= title_layout_frame_layout
+    fun getContentLayout():View = content_frame_layout
+    fun getErrorFrameLayout():View =err_loading_frame_layout
+
     open fun setStatusBarMode(view: View?, dark: Boolean) {
         val bar = ImmersionBar.with(this,true)
             .reset()
@@ -81,17 +79,6 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
         bar.keyboardEnable(true)
             .setOnBarListener {  }
         bar.init()
-    }
-
-    /**
-     * 设置底部导航栏
-     */
-    fun setNavigationLayout(@LayoutRes layout: Int){
-        setNavigationView(LayoutInflater.from(context).inflate(layout,null))
-    }
-    fun setNavigationView(view: View){
-        navigation_bar_frame_layout.removeAllViews()
-        navigation_bar_frame_layout.addView(view)
     }
 
     /**
