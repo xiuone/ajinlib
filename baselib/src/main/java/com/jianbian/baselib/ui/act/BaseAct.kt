@@ -6,22 +6,19 @@ import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.FragmentActivity
-import com.gyf.barlibrary.ImmersionBar
+import com.gyf.immersionbar.ImmersionBar
+import com.gyf.immersionbar.OnKeyboardListener
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
 import com.jianbian.baselib.utils.ActivityController
-import com.jianbian.baselib.utils.AppUtil
 import com.jianbian.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
 import kotlinx.android.synthetic.main.layout_base_view.*
 import org.greenrobot.eventbus.EventBus
 
-abstract class BaseAct :FragmentActivity(){
+abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     private var loadingDialog: LoadingDialog ?=null
     protected var defindPage:Int = 0
     protected var pageSize = 20;
@@ -90,7 +87,8 @@ abstract class BaseAct :FragmentActivity(){
             .statusBarDarkFont(dark)
         if (view != null)
             bar.titleBar(view)
-        bar.keyboardEnable(true, WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED)
+        bar.keyboardEnable(true)
+        bar.setOnKeyboardListener (this)
         bar.init()
     }
 
@@ -173,6 +171,9 @@ abstract class BaseAct :FragmentActivity(){
 
     open fun getData(page:Int,pageSize:Int){}
     open fun reLoadData(){}
+    override fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {
+
+    }
 
 
     abstract fun initView()
@@ -187,6 +188,5 @@ abstract class BaseAct :FragmentActivity(){
         ActivityController.removeAct(this)
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
-        ImmersionBar.with(this).destroy()
     }
 }

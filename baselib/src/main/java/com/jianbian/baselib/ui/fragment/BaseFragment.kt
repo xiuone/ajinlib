@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import com.gyf.barlibrary.ImmersionBar
+import com.gyf.immersionbar.ImmersionBar
+import com.gyf.immersionbar.OnKeyboardListener
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
 import com.jianbian.baselib.utils.setOnClick
@@ -15,7 +16,7 @@ import com.lzy.okgo.OkGo
 import kotlinx.android.synthetic.main.layout_base_view.*
 import org.greenrobot.eventbus.EventBus
 
-abstract class BaseFragment :Fragment() {
+abstract class BaseFragment :Fragment() , OnKeyboardListener {
     protected var defindPage:Int = 1
     protected var pageSize:Int = 20
     protected var page = 1
@@ -67,14 +68,18 @@ abstract class BaseFragment :Fragment() {
         return err_loading_frame_layout
     }
     open fun setStatusBarMode(view: View?, dark: Boolean) {
-        val bar = ImmersionBar.with(this)
+        val bar = ImmersionBar.with(this,true)
+            .reset()
             .supportActionBar(false)
             .navigationBarEnable(false)
             .transparentBar()
             .statusBarDarkFont(dark)
+            .navigationBarDarkIcon(dark)
+            .navigationBarDarkIcon(dark)
         if (view != null)
             bar.titleBar(view)
-        bar.keyboardEnable(true, WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED)
+        bar.keyboardEnable(true)
+            .setOnBarListener {  }
         bar.init()
     }
 
@@ -127,6 +132,10 @@ abstract class BaseFragment :Fragment() {
         pre_loading_frame_layout.visibility = View.GONE
         err_loading_frame_layout.visibility = View.VISIBLE
         content_frame_layout.visibility = View.GONE
+    }
+
+    override fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {
+
     }
 
     /**
