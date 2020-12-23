@@ -6,6 +6,7 @@ import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.FragmentActivity
 import com.gyf.immersionbar.ImmersionBar
@@ -87,7 +88,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
             .statusBarDarkFont(dark)
         if (view != null)
             bar.titleBar(view)
-        bar.keyboardEnable(true)
+        bar.keyboardEnable(true, WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED)
         bar.setOnKeyboardListener (this)
         bar.init()
     }

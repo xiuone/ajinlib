@@ -76,7 +76,7 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
             .navigationBarDarkIcon(dark)
         if (view != null)
             bar.titleBar(view)
-        bar.keyboardEnable(true)
+        bar.keyboardEnable(true, WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED)
             .setOnBarListener {  }
         bar.init()
     }

@@ -25,21 +25,18 @@ object ActivityController {
     fun closeAct(mClass: Class<*>) {
         for (activity in activities) {
             if (activity != null && activity.javaClass == mClass) {
-                if (!activity.isFinishing) activity.finish()
-                return
+                if (!activity.isFinishing) {
+                    activity.finish()
+                    activities.remove(activity)
+                    return
+                }
             }
         }
     }
 
     fun closeAllAct() {
-        closeAct(getActivitys())
-    }
-
-    fun closeAct(data:List<Activity>){
-        for (index in data.indices) {
-            if (!data[index].isFinishing){
-                data[index].finish()
-            }
+        for (activity in activities) {
+            activity.finish()
         }
     }
 
