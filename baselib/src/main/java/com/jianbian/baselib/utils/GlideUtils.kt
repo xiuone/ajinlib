@@ -48,7 +48,7 @@ object GlideUtils {
 
     fun show(context: Context?, `object`: Any?, imageView: ImageView?
              ,requestOptions :RequestOptions?) {
-        if (`object` != null && imageView != null) {
+        if (`object` != null && imageView != null && context?.isRestricted == false) {
             var requestBuilder = Glide.with(context!!)
                 .load(`object`)
             if (requestOptions != null)
