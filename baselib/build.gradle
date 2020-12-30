@@ -48,7 +48,7 @@ dependencies {
     api 'androidx.recyclerview:recyclerview:1.2.0-alpha05'//列表
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     api 'com.yanzhenjie:permission:1.1.2'//权限
-    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.9'//相机相册
+    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'//相机相册
 
     api  'com.scwang.smart:refresh-layout-kernel:2.0.1'//加载和刷新
     api  'com.scwang.smart:refresh-header-classics:2.0.1'
@@ -57,4 +57,8 @@ dependencies {
     api 'org.greenrobot:eventbus:3.2.0'//事件分发
     //阴影效果
     api 'com.github.lihangleo2:ShadowLayout:3.1.6'
+
+    implementation "androidx.camera:camera-core:1.0.0-beta03"
+    implementation "androidx.camera:camera-camera2:1.0.0-beta12"
+    implementation "androidx.camera:camera-view:1.0.0-alpha19"
 }

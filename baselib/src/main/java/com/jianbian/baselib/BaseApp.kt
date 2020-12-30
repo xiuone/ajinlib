@@ -1,13 +1,16 @@
 package com.jianbian.baselib
 
 import android.content.Context
+import androidx.annotation.NonNull
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.core.CameraXConfig
 import androidx.multidex.MultiDexApplication
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 
 
-abstract class BaseApp :MultiDexApplication() {
+abstract class BaseApp :MultiDexApplication(), CameraXConfig.Provider {
     companion object{
         var context:Context ?= null
     }
@@ -23,5 +26,10 @@ abstract class BaseApp :MultiDexApplication() {
         SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ -> //指定为经典Footer，默认是 BallPulseFooter
             ClassicsFooter(context).setDrawableSize(20F)
         }
+    }
+
+    @NonNull
+    override fun getCameraXConfig(): CameraXConfig {
+        return Camera2Config.defaultConfig()
     }
 }
