@@ -23,7 +23,6 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     protected var page = 1
     private var loadingDialog: LoadingDialog ?=null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        AutoSize.autoConvertDensity(activity, sizeInDp(), true)
         return LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
     }
 
@@ -150,7 +149,7 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     open fun getData(page:Int,pageSize:Int){}
     open fun reLoadData(){}
     open fun registerEventBus():Boolean = false
-    open fun sizeInDp():Float = 1080F
+    open fun sizeInDp():Float = 360F
 
     override fun onDestroy() {
         super.onDestroy()
