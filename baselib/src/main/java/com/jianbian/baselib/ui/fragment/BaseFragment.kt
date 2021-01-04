@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.gyf.immersionbar.ImmersionBar
 import com.gyf.immersionbar.OnKeyboardListener
+import com.jianbian.baselib.BaseApp
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
+import com.jianbian.baselib.utils.GlideUtils
 import com.jianbian.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
 import kotlinx.android.synthetic.main.layout_base_view.*
@@ -154,6 +157,7 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     override fun onDestroy() {
         super.onDestroy()
         OkGo.getInstance().cancelTag(this)
+        GlideUtils.pauseRequests()
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
     }

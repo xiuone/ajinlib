@@ -14,6 +14,7 @@ import com.gyf.immersionbar.OnKeyboardListener
 import com.jianbian.baselib.R
 import com.jianbian.baselib.ui.dialog.LoadingDialog
 import com.jianbian.baselib.utils.ActivityController
+import com.jianbian.baselib.utils.GlideUtils
 import com.jianbian.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
 import kotlinx.android.synthetic.main.layout_base_view.*
@@ -175,6 +176,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     override fun onDestroy() {
         super.onDestroy()
         OkGo.getInstance().cancelTag(this)
+        GlideUtils.pauseRequests()
         ActivityController.removeAct(this)
         if (registerEventBus())
             EventBus.getDefault().unregister(this)

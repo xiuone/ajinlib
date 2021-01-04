@@ -8,6 +8,7 @@ import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.jianbian.baselib.BaseApp
 import com.jianbian.baselib.R
 
 object GlideUtils {
@@ -46,15 +47,20 @@ object GlideUtils {
 
 
 
-    fun show(context: Context?, `object`: Any?, imageView: ImageView?
+    fun show(`object`: Any?, imageView: ImageView?
              ,requestOptions :RequestOptions?) {
-        if (`object` != null && imageView != null) {
-            var requestBuilder = Glide.with(context!!)
+        if (`object` != null && imageView != null && BaseApp.context != null) {
+            var requestBuilder = Glide.with(BaseApp.context!!)
                 .load(`object`)
             if (requestOptions != null)
                 requestBuilder.apply(requestOptions)
             requestBuilder.thumbnail(0.5f)
                 .into(imageView)
         }
+    }
+
+    fun pauseRequests(){
+        if (BaseApp.context != null)
+            Glide.with(BaseApp.context!!).pauseRequests();
     }
 }
