@@ -157,7 +157,6 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     override fun onDestroy() {
         super.onDestroy()
         OkGo.getInstance().cancelTag(this)
-        GlideUtils.pauseRequests()
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
     }

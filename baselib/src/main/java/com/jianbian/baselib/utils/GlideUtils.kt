@@ -59,8 +59,4 @@ object GlideUtils {
         }
     }
 
-    fun pauseRequests(){
-        if (BaseApp.context != null)
-            Glide.with(BaseApp.context!!).pauseRequests();
-    }
 }

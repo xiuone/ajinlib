@@ -176,7 +176,6 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     override fun onDestroy() {
         super.onDestroy()
         OkGo.getInstance().cancelTag(this)
-        GlideUtils.pauseRequests()
         ActivityController.removeAct(this)
         if (registerEventBus())
             EventBus.getDefault().unregister(this)
