@@ -39,7 +39,7 @@ abstract class BaseRecyclerAdapter <T>(@LayoutRes val layoutResId:Int =R.layout.
     fun addHead(view:View,params:RecyclerView.LayoutParams?=null){
         headView = view
         headView?.layoutParams = params?:RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        notifyItemInserted(1)
+        notifyDataSetChanged()
     }
 
     fun removeHead(){
