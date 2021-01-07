@@ -8,8 +8,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.jianbian.baselib.R
-import com.jianbian.baselib.adapter.BaseRecyclerAdapter
+import com.xiuone.adapter.adapter.RecyclerBaseAdapter
 
 /**
  * @author jin
@@ -42,9 +41,7 @@ open class DiverItemDecoration : ItemDecoration {
     }
     private fun onDraw(parent: RecyclerView,index: Int,canvas: Canvas){
         val adapter = parent.adapter?:return
-        when(adapter.getItemViewType(index)){
-            BaseRecyclerAdapter.headType,BaseRecyclerAdapter.footType,BaseRecyclerAdapter.entryType->return
-        }
+        if(adapter.getItemViewType(index)<0)  return
         val child = parent.getChildAt(index)
         var top = child.top
         var bottom = child.bottom
@@ -68,9 +65,7 @@ open class DiverItemDecoration : ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state)
         var position = parent.getChildLayoutPosition(view)
         val adapter = parent.adapter?:return
-        when(adapter.getItemViewType(position)){
-            BaseRecyclerAdapter.headType,BaseRecyclerAdapter.footType,BaseRecyclerAdapter.entryType->return
-        }
+        if(adapter.getItemViewType(position)<0)  return
         val column = (position-getHeadSize(adapter)) % spanCount
         outRect.left = column * horizontalWidth / spanCount;
         outRect.right = horizontalWidth - (column + 1) * horizontalWidth / spanCount
@@ -78,7 +73,6 @@ open class DiverItemDecoration : ItemDecoration {
             outRect.top = verticalHeight
     }
     private fun getHeadSize(adapter:RecyclerView.Adapter<*>):Int{
-        if (adapter is BaseRecyclerAdapter<*>) return adapter.getHeadSize()
-        else return 0
+        return if (adapter is RecyclerBaseAdapter<*>) adapter.dataController.getHeadSize() else 0
     }
 }

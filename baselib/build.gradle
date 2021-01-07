@@ -64,4 +64,6 @@ dependencies {
 
     //适配
     api 'me.jessyan:autosize:1.2.1'
+    //adapter
+    api 'com.github.xiuone:adapter:v0.0.4'
 }

@@ -2,18 +2,17 @@ package com.jianbian.baselib.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import com.jianbian.baselib.R
-import com.jianbian.baselib.adapter.BaseRecyclerAdapter
 import com.jianbian.baselib.adapter.DateAdapter
-import com.jianbian.baselib.mvp.impl.OnItemClickListener
 import com.jianbian.baselib.mvp.mode.DateMode
 import com.jianbian.baselib.utils.AppUtil
 import com.jianbian.baselib.utils.NestScrollGridLayoutManager
 import com.jianbian.baselib.utils.setOnClick
+import com.xiuone.adapter.adapter.RecyclerBaseAdapter
+import com.xiuone.adapter.listener.OnItemClickListener
 import kotlinx.android.synthetic.main.date_view.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -21,8 +20,8 @@ import kotlin.collections.ArrayList
 /**
  * 年月日筛选
  */
-class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,attrs),OnItemClickListener,View.OnClickListener{
-    private var adpater: DateAdapter ?=null
+class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,attrs), OnItemClickListener,View.OnClickListener{
+    private var adapter: DateAdapter ?=null
     private var year:Int = 0
     private var month :Int = 0
     init {
@@ -40,9 +39,9 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
         val toDayTextColor = array.getColor(R.styleable.DateView_date_toDay_textColor,AppUtil.getColor(context,R.color.red_e32c))
         val commonTextColor = array.getColor(R.styleable.DateView_date_common_textColor,AppUtil.getColor(context,R.color.gray_3333))
 
-        adpater = DateAdapter(selectBackground,selectBackgroundNot,toDayBackGround,selectTextColor,selectTextColorNot,toDayTextColor,commonTextColor)
-        date_recyclerView.adapter = adpater
-        adpater?.onItemClickListener=this
+        adapter = DateAdapter(selectBackground,selectBackgroundNot,toDayBackGround,selectTextColor,selectTextColorNot,toDayTextColor,commonTextColor)
+        date_recyclerView.adapter = adapter
+        adapter?.itemClickListener=this
 
         val cal = Calendar.getInstance()
         val year = cal[Calendar.YEAR]
@@ -54,25 +53,14 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
         date_left_button.setOnClick(this)
     }
 
-    override fun onItemClick(adapter: BaseRecyclerAdapter<*>, view: View, position: Int) {
-        val data = adapter.getItem(position)
+    override fun onItemClick(adapter: RecyclerBaseAdapter<*>, view: View, position: Int) {
+        val data = adapter.dataController.getItem(position)
         if (data != null && data is DateMode) {
-            if (data.nowMoth){
-                setSeletDay(position)
-            }else{
+            if (data.nowMoth && adapter is DateAdapter){                 
+                adapter?.changeSelectPosition(position)
+            }else if (!data.nowMoth){
                 jumpMonth(year, month,data.day, data.day>position)
             }
-        }
-    }
-
-    /**
-     * 设置当月选中
-     */
-    private fun setSeletDay(position:Int){
-        if (adpater == null)return
-        for (index in adpater!!.data.indices){
-            adpater!!.data[index].isSelect = index == position
-            adpater!!.notifyItemChanged(index)
         }
     }
 
@@ -95,7 +83,7 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
         val nweData = ArrayList<DateMode>()
         for (index in(leftMaxDay-minWeek+2) ..leftMaxDay){
             val item = DateMode(year, month, index, false, false,false)
-            adpater?.notifychangeItem(nweData.size,item)
+            adapter?.notifyChangeItem(nweData.size,item)
             nweData.add(item)
         }
         for (index in 1 .. maxDay){
@@ -103,19 +91,19 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
             val nowYear = cal[Calendar.YEAR]
             val nowMonth = cal[Calendar.MONTH] + 1
             val item = DateMode(year, month, index, (nowYear == year && nowMonth == month && nowDay == index), nowDay == index)
-            adpater?.notifychangeItem(nweData.size,item)
+            adapter?.notifyChangeItem(nweData.size,item)
             nweData.add(item)
         }
         for (index in 1..(7-maxWeek)){
             val item = DateMode(year, month, index, false, false,false)
-            adpater?.notifychangeItem(nweData.size,item)
+            adapter?.notifyChangeItem(nweData.size,item)
             nweData.add(item)
         }
         date_title.text = "${year}年${if (month<10) "0$month" else "$month"}月"
         this.year = year
         this.month = month
-        if (adpater?.data?.size?:0 <= 0)
-            adpater?.setNewData(nweData)
+        if (adapter?.dataController?.datas?.size?:0 <= 0)
+            adapter?.dataController?.setNewData(nweData)
     }
 
     /**
@@ -177,10 +165,10 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
     }
 
     fun getSelectDate(): DateMode?{
-        if (adpater == null)return null
-        for (index in adpater!!.data.indices){
-            if ( adpater!!.data[index].isSelect)
-                return adpater!!.data[index]
+        val adapter = this.adapter?:return null
+        for (index in adapter.dataController.datas.indices){
+            if ( adapter.dataController.datas[index].isSelect)
+                return adapter.dataController.datas[index]
         }
         return null
     }
