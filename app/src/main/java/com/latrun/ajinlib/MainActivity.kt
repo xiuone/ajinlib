@@ -1,8 +1,8 @@
 package com.latrun.ajinlib
 
 import android.view.View
-import com.jianbian.baselib.ui.act.BaseAct
-import com.jianbian.baselib.utils.GlideUtils
+import com.xy.baselib.ui.act.BaseAct
+import com.xy.baselib.utils.GlideUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity :BaseAct() {

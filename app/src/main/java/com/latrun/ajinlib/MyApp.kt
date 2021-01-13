@@ -1,6 +1,6 @@
 package com.latrun.ajinlib
 
-import com.jianbian.baselib.BaseApp
+import com.xy.baselib.BaseApp
 
 class MyApp :BaseApp() {
 }
