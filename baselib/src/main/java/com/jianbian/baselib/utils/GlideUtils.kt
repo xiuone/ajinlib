@@ -1,6 +1,5 @@
 package com.jianbian.baselib.utils
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -10,11 +9,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.jianbian.baselib.BaseApp
 import com.jianbian.baselib.R
+import com.jianbian.baselib.utils.gilde.ProgressManager
+import com.jianbian.baselib.view.GlideLoadImgView
+import com.jianbian.baselib.view.GlidePhotoImgView
 
 object GlideUtils {
 
-    var placePic:Int = R.color.gray_9999
-    var errPic:Int = R.color.gray_9999
+    var placePic:Int = R.color.transparent
+    var errPic:Int = R.mipmap.icon_logo
 
     fun getOption(transformation: Transformation<Bitmap>, placePic: Int = GlideUtils.placePic, errPic: Int = GlideUtils.errPic): RequestOptions {
         return  RequestOptions.bitmapTransform(transformation)
@@ -50,6 +52,10 @@ object GlideUtils {
     fun show(`object`: Any?, imageView: ImageView?
              ,requestOptions :RequestOptions?) {
         if (`object` != null && imageView != null && BaseApp.context != null) {
+            if (imageView is GlideLoadImgView)
+                ProgressManager.addListener(`object`,imageView.glideProgressController)
+            else if (imageView is GlidePhotoImgView)
+                ProgressManager.addListener(`object`,imageView.glideProgressController)
             var requestBuilder = Glide.with(BaseApp.context!!)
                 .load(`object`)
             if (requestOptions != null)

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:text="Hello Word"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <com.jianbian.baselib.view.GlideLoadImgView
+        android:id="@+id/loading"
+        android:scaleType="centerCrop"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_50"/>
 </LinearLayout>

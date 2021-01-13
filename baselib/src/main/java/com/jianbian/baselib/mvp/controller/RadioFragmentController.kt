@@ -87,9 +87,7 @@ class RadioFragmentController :RadioGroup.OnCheckedChangeListener, ViewPager.OnP
                 if (view is RadioButton){
                     checkPosition++
                     if (checkPosition == position){
-                        if (view is RadioButton){
-                            view.isChecked = true
-                        }
+                        view.isChecked = true
                         break
                     }
                 }
