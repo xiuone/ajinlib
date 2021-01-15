@@ -8,7 +8,7 @@ import com.lzy.okgo.model.Progress
 import com.lzy.okgo.model.Response
 import java.io.File
 
-object DownFileController {
+object DownFileUtils {
     fun startDown(context:Context,url:String?,dir:String,downListener: DownListener){
         var dirFile = File(dir)
         if (dirFile.exists() && !dirFile.isDirectory){

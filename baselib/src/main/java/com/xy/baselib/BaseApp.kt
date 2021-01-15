@@ -2,13 +2,11 @@ package com.xy.baselib
 
 import android.content.Context
 import androidx.annotation.NonNull
-import androidx.camera.camera2.Camera2Config
-import androidx.camera.core.CameraXConfig
 import androidx.multidex.MultiDexApplication
 import me.jessyan.autosize.AutoSize
 
 
-abstract class BaseApp :MultiDexApplication(), CameraXConfig.Provider {
+abstract class BaseApp :MultiDexApplication() {
     companion object{
         var context:Context ?= null
     }
@@ -19,8 +17,4 @@ abstract class BaseApp :MultiDexApplication(), CameraXConfig.Provider {
         AutoSize.initCompatMultiProcess(this)
     }
 
-    @NonNull
-    override fun getCameraXConfig(): CameraXConfig {
-        return Camera2Config.defaultConfig()
-    }
 }
