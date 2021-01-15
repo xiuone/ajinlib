@@ -10,8 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.xy.baselib.BaseApp
 import com.xy.baselib.R
 import com.xy.baselib.utils.gilde.ProgressManager
-import com.xy.baselib.view.GlideLoadImgView
-import com.xy.baselib.view.GlidePhotoImgView
 
 object GlideUtils {
 
