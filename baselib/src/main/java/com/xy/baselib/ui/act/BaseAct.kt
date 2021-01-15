@@ -148,14 +148,17 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     }
 
     open fun showLoading(str: String?) {
-        if (loadingDialog == null)
-            loadingDialog= LoadingDialog(this)
-        loadingDialog!!.show()
-        loadingDialog?.setText(str)
+        if (!isFinishing) {
+            if (loadingDialog == null)
+                loadingDialog = LoadingDialog(this)
+            loadingDialog?.show()
+            loadingDialog?.setText(str)
+        }
     }
 
     open fun disLoading() {
-        loadingDialog?.dismiss()
+        if (!isFinishing)
+            loadingDialog?.dismiss()
     }
 
     open fun getData(page:Int,pageSize:Int){}

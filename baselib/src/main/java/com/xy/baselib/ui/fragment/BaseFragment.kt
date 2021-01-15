@@ -135,13 +135,15 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     }
 
     fun showLoading(str: String?) {
+        if (isDetached)return
         if (loadingDialog == null)
             loadingDialog= LoadingDialog(context!!)
-        loadingDialog!!.show()
+        loadingDialog?.show()
         loadingDialog?.setText(str)
     }
 
     fun disLoading() {
+        if (isDetached)return
         loadingDialog?.dismiss()
     }
 
