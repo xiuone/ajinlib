@@ -90,7 +90,7 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
             val cal = Calendar.getInstance()
             val nowYear = cal[Calendar.YEAR]
             val nowMonth = cal[Calendar.MONTH] + 1
-            val item = DateMode(year, month, index, (nowYear == year && nowMonth == month && nowDay == index), nowDay == index)
+            val item = DateMode(year, month, index, (nowYear == year && nowMonth == month && nowDay == index))
             adapter?.notifyChangeItem(nweData.size,item)
             nweData.add(item)
         }

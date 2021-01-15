@@ -9,5 +9,4 @@ data class DateMode(
     var day:Int = 1,
     var isToDay :Boolean= false,
     var nowMoth:Boolean = true
-
 )
