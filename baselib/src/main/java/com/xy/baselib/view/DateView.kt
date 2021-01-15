@@ -82,7 +82,7 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
 
         val nweData = ArrayList<DateMode>()
         for (index in(leftMaxDay-minWeek+2) ..leftMaxDay){
-            val item = DateMode(year, month, index, false, false,false)
+            val item = DateMode(year, month, index, false, false)
             adapter?.notifyChangeItem(nweData.size,item)
             nweData.add(item)
         }
@@ -95,7 +95,7 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
             nweData.add(item)
         }
         for (index in 1..(7-maxWeek)){
-            val item = DateMode(year, month, index, false, false,false)
+            val item = DateMode(year, month, index, false,false)
             adapter?.notifyChangeItem(nweData.size,item)
             nweData.add(item)
         }
@@ -166,10 +166,8 @@ class DateView(context: Context, attrs: AttributeSet?=null):FrameLayout(context,
 
     fun getSelectDate(): DateMode?{
         val adapter = this.adapter?:return null
-        for (index in adapter.dataController.datas.indices){
-            if ( adapter.dataController.datas[index].isSelect)
-                return adapter.dataController.datas[index]
-        }
+        if (adapter.selectPosition in adapter.dataController.datas.indices)
+            return adapter.dataController.datas[adapter.selectPosition]
         return null
     }
 }

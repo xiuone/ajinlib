@@ -13,7 +13,7 @@ class DateAdapter(private val selectBackground:Int,private val selectBackgroundN
                   ,private val commonTextColor:Int)
     :RecyclerSingleAdapter<DateMode>(R.layout.item_date) {
 
-    private var selectPosition = -1
+    var selectPosition = -1
     fun changeSelectPosition(position: Int){
         val oldSelectPosition = selectPosition
         this.selectPosition = position
@@ -27,7 +27,6 @@ class DateAdapter(private val selectBackground:Int,private val selectBackgroundN
         dataController.getItem(index)?.day = date.day
         dataController.getItem(index)?.isToDay = date.isToDay
         dataController.getItem(index)?.nowMoth = date.nowMoth
-        dataController.getItem(index)?.isSelect = date.isSelect
         notifyItemChanged(index+dataController.getHeadSize())
     }
 
@@ -36,7 +35,7 @@ class DateAdapter(private val selectBackground:Int,private val selectBackgroundN
         holder.getView<View>(R.id.date_title)?.layoutParams = LinearLayout.LayoutParams(itemWidth,itemWidth)
         val text = holder.getTextView(R.id.date_title)
         text?.text = "${item.day}"
-        if (item.isSelect){
+        if (selectPosition == position){
             text?.setBackgroundResource(selectBackground)
             text?.setTextColor(selectTextColor)
         }else if (item.isToDay){
