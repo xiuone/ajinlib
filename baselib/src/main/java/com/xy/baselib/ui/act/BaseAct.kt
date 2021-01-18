@@ -15,10 +15,11 @@ import com.xy.baselib.ui.dialog.LoadingDialog
 import com.xy.baselib.utils.ActivityController
 import com.xy.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
+import com.xy.baselib.mvp.impl.BaseImpl
 import kotlinx.android.synthetic.main.layout_base_view.*
 import org.greenrobot.eventbus.EventBus
 
-abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
+abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     private var loadingDialog: LoadingDialog ?=null
     protected var defindPage:Int = 0
     protected var pageSize = 20;
@@ -117,7 +118,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     /**
      * 显示预加载
      */
-    open fun showPreLoading(){
+    override fun showPreLoading(){
         Handler(Looper.getMainLooper()).run {
             pre_loading_frame_layout.visibility = View.VISIBLE
             err_loading_frame_layout.visibility = View.GONE
@@ -128,7 +129,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     /**
      * 加载失败
      */
-    open fun showError(){
+    override fun showError(){
         Handler(Looper.getMainLooper()).run {
             pre_loading_frame_layout.visibility = View.GONE
             err_loading_frame_layout.visibility = View.VISIBLE
@@ -139,7 +140,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
     /**
      * 加载完成
      */
-    open fun loadSuc(){
+    override fun loadSuc(){
         Handler(Looper.getMainLooper()).run {
             pre_loading_frame_layout.visibility = View.GONE
             err_loading_frame_layout.visibility = View.GONE
@@ -147,7 +148,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
         }
     }
 
-    open fun showLoading(str: String?) {
+    override fun showLoading(str: String?) {
         if (!isFinishing) {
             if (loadingDialog == null)
                 loadingDialog = LoadingDialog(this)
@@ -156,7 +157,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener {
         }
     }
 
-    open fun disLoading() {
+    override fun disLoading() {
         if (!isFinishing)
             loadingDialog?.dismiss()
     }
