@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.view.View
 import android.webkit.*
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat.startActivity
 import com.luck.picture.lib.config.PictureMimeType
 import com.xy.baselib.mvp.impl.BaseImpl
 import com.xy.baselib.utils.PictureSelectorUtils
