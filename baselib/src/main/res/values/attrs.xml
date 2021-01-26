@@ -82,36 +82,6 @@
         </attr>
     </declare-styleable>
 
-
-    <declare-styleable name="BubbleStyle">
-        <attr name="bb_fillColor" format="reference|color"/>
-        <attr name="bb_fillPadding" format="dimension"/>
-        <attr name="bb_arrowTo" format="reference"/>
-        <attr name="bb_arrowDirection" format="enum">
-            <enum name="None" value="0"/>
-            <enum name="Left" value="1"/>
-            <enum name="Up" value="2"/>
-            <enum name="Right" value="3"/>
-            <enum name="Down" value="4"/>
-        </attr>
-        <attr name="bb_arrowHeight" format="dimension"/>
-        <attr name="bb_arrowWidth" format="dimension"/>
-        <attr name="bb_arrowPosPolicy" format="enum">
-            <enum name="TargetCenter" value="0"/>
-            <enum name="SelfCenter" value="1"/>
-            <enum name="SelfBegin" value="2"/>
-            <enum name="SelfEnd" value="3"/>
-        </attr>
-        <attr name="bb_arrowPosDelta" format="dimension"/>
-        <attr name="bb_cornerRadius" format="dimension"/>
-        <attr name="bb_cornerTopLeftRadius" format="dimension"/>
-        <attr name="bb_cornerTopRightRadius" format="dimension"/>
-        <attr name="bb_cornerBottomLeftRadius" format="dimension"/>
-        <attr name="bb_cornerBottomRightRadius" format="dimension"/>
-        <attr name="bb_borderWidth" format="dimension"/>
-        <attr name="bb_borderColor" format="reference|color"/>
-    </declare-styleable>
-
     <declare-styleable name="DateView">
         <attr name="date_select_background" format="reference"/>
         <attr name="date_select_textColor" format="color"/>
