@@ -32,10 +32,7 @@ fun selectImg(any: Any?,data:MutableList<LocalMedia>?,camera:Boolean,more:Int,li
 }
 
 fun selectImg(any: Any?,chooseMode: Int,data:MutableList<LocalMedia>?,camera:Boolean,more:Int,listener:OnResultCallbackListener<LocalMedia>){
-    selectImg(any, chooseMode, data,camera, more, false, listener)
-}
-fun selectImg(any: Any?,chooseMode: Int,data:MutableList<LocalMedia>?,camera:Boolean,more:Int,enableCrop:Boolean,listener:OnResultCallbackListener<LocalMedia>){
-    selectMedia(any, chooseMode, more,camera, enableCrop, data, listener)
+    selectMedia(any, chooseMode, more,camera, data, listener)
 }
 
 
@@ -56,31 +53,28 @@ fun selectImg(any: Any?,data:MutableList<LocalMedia>?,camera: Boolean,more:Int,c
 }
 
 fun selectImg(any: Any?,chooseMode: Int,data:MutableList<LocalMedia>?,camera:Boolean,more:Int,code:Int){
-    selectImg(any, chooseMode, data,camera, more, false, code)
-}
-
-fun selectImg(any: Any?,chooseMode: Int,data:MutableList<LocalMedia>?,camera:Boolean,more:Int,enableCrop:Boolean,code:Int){
-    selectMedia(any, chooseMode, more,camera, enableCrop, data, code)
-}
-
-/**
- * 选择头像
- */
-private fun selectMedia(any:Any?,chooseMode:Int,more: Int,camera: Boolean ,enableCrop:Boolean,data:MutableList<LocalMedia>?,code:Int){
-    getPictureSelector(any, chooseMode, more,camera, enableCrop, data)?.forResult(code)
+    selectMedia(any, chooseMode, more,camera, data, code)
 }
 
 
 /**
  * 选择头像
  */
-private fun selectMedia(any:Any?,chooseMode:Int,more: Int,camera: Boolean ,enableCrop:Boolean,data:MutableList<LocalMedia>?,listener: OnResultCallbackListener<LocalMedia>){
-    getPictureSelector(any, chooseMode, more,camera, enableCrop, data)?.forResult(listener)
+private fun selectMedia(any:Any?,chooseMode:Int,more: Int,camera: Boolean ,data:MutableList<LocalMedia>?,code:Int){
+    getPictureSelector(any, chooseMode, more,camera, data)?.forResult(code)
+}
+
+
+/**
+ * 选择头像
+ */
+private fun selectMedia(any:Any?,chooseMode:Int,more: Int,camera: Boolean ,data:MutableList<LocalMedia>?,listener: OnResultCallbackListener<LocalMedia>){
+    getPictureSelector(any, chooseMode, more,camera, data)?.forResult(listener)
 }
 
 
 
-private fun getPictureSelector(any:Any?,chooseMode:Int,more: Int,camera: Boolean ,enableCrop:Boolean,data:MutableList<LocalMedia>?): PictureSelectionModel?{
+private fun getPictureSelector(any:Any?,chooseMode:Int,more: Int,camera: Boolean ,data:MutableList<LocalMedia>?): PictureSelectionModel?{
     var pictureSelector:PictureSelector?=null
     if (any == null || BaseApp.engine == null)return null
     if (any is Activity)
@@ -102,8 +96,6 @@ private fun getPictureSelector(any:Any?,chooseMode:Int,more: Int,camera: Boolean
         ?.maxSelectNum(if (more<=1) 9 else more)
         ?.maxVideoSelectNum(more)
         ?.isCompress(true)
-        ?.isEnableCrop(enableCrop) // 是否裁剪
-        ?.withAspectRatio(1, 1) // 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
         ?.freeStyleCropEnabled(false) // 裁剪框是否可拖拽
         ?.circleDimmedLayer(false) // 是否圆形裁剪
         ?.showCropFrame(true) // 是否显示裁剪矩形边框 圆形裁剪时建议设为false
