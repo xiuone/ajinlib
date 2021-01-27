@@ -20,6 +20,6 @@ abstract class BaseApp :MultiDexApplication() {
         engine = getEngine()
     }
 
-    abstract fun getEngine():ImageEngine
+    abstract fun getEngine():ImageEngine?
 
 }

@@ -2,6 +2,7 @@
     package="com.latrun.ajinlib">
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/icon_logo"
         android:label="@string/app_name"
