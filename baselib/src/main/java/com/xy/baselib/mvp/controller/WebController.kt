@@ -27,8 +27,8 @@ class WebController(private var webViewImpl: BaseImpl?) {
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_CHOOSER_RESULT_CODE) { //处理返回的图片，并进行上传
             if (null == uploadMessage && null == uploadMessageAboveL) return
-            val medias = getPath(resultCode,data)
-            val path = getOnePath(medias)
+            val medias = getOnePath(resultCode,data)
+            val path = getPath(medias)
             if (path != null){
                 val file = File(path)
                 if (file.exists()){
