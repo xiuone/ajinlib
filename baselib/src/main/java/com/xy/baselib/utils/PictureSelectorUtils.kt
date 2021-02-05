@@ -13,6 +13,7 @@ import com.luck.picture.lib.engine.ImageEngine
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.listener.OnResultCallbackListener
 import com.xy.baselib.BaseApp
+import java.io.File
 
 
 fun selectImg(any: Any?,listener:OnResultCallbackListener<LocalMedia>){
@@ -127,41 +128,69 @@ private fun getCameraSelector(any: Any?):PictureSelectionModel?{
         ?.isCompress(true)
 }
 
-fun getPath(resultCode:Int,data: Intent?):MutableList<LocalMedia>{
-    if (resultCode != Activity.RESULT_OK || data == null)
-        return ArrayList<LocalMedia>()
-    return PictureSelector.obtainMultipleResult(data)?:ArrayList<LocalMedia>()
+
+
+fun getPath(data:LocalMedia?):String?{
+    if (data==null)return null
+    if (!TextUtils.isEmpty(data.compressPath)){
+        val file = File(data.compressPath)
+        if (file.exists())
+            return data.compressPath
+    }
+    if (!TextUtils.isEmpty(data.cutPath)){
+        val file = File(data.cutPath)
+        if (file.exists())
+            return data.cutPath
+    }
+    if (!TextUtils.isEmpty(data.originalPath)){
+        val file = File(data.originalPath)
+        if (file.exists())
+            return data.originalPath
+    }
+    if (!TextUtils.isEmpty(data.androidQToPath)){
+        val file = File(data.androidQToPath)
+        if (file.exists())
+            return data.androidQToPath
+    }
+    if (!TextUtils.isEmpty(data.realPath)){
+        val file = File(data.realPath)
+        if (file.exists())
+            return data.realPath
+    }
+    if (!TextUtils.isEmpty(data.path)){
+        val file = File(data.path)
+        if (file.exists())
+            return data.path
+    }
+    return null
 }
 
 fun getOnePath(resultCode: Int,data: Intent?):LocalMedia?{
-    val datas = getPath(resultCode, data)
-    return if (datas.size<=0) null else datas[0]
+    val datas = getPaths(resultCode, data)
+    for (item in datas){
+        val path = getPath(item)
+        if (path != null)return item
+    }
+    return null
 }
 
-fun getPath(data:LocalMedia?):String?{
-    return if (!TextUtils.isEmpty(data?.compressPath)){
-        data?.compressPath
-    }
-    else if (!TextUtils.isEmpty(data?.cutPath)){
-        data?.cutPath
-    }
-    else if (!TextUtils.isEmpty(data?.originalPath)){
-        data?.originalPath
-    }
-    else if (!TextUtils.isEmpty(data?.androidQToPath)){
-        data?.androidQToPath
-    }
-    else if (!TextUtils.isEmpty(data?.realPath)){
-        data?.realPath
-    }
-    else if (!TextUtils.isEmpty(data?.path)){
-        data?.path
-    }else{
-        ""
-    }
-}
-
-fun getOnePath(data: MutableList<LocalMedia>?):String?{
+fun getOnePath(data: List<LocalMedia>?):String?{
     if (data==null)return null
-    return getPath(data[0])
+    for (item in data){
+        val path = getPath(item)
+        if (path != null)return path
+    }
+    return null
+}
+
+fun getPaths(resultCode:Int,data: Intent?):MutableList<LocalMedia>{
+    if (resultCode != Activity.RESULT_OK || data == null)
+        return ArrayList<LocalMedia>()
+    val data = PictureSelector.obtainMultipleResult(data)?:ArrayList<LocalMedia>()
+    val newData = ArrayList<LocalMedia>()
+    for (item in data){
+        val path = getPath(item)
+        if (path != null)newData.add(item)
+    }
+    return newData
 }
