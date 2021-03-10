@@ -95,7 +95,7 @@ private fun getPictureSelector(any:Any?,chooseMode:Int,more: Int,camera: Boolean
         ?.isPreviewImage(true) // 是否可预览图片
         ?.isCamera(camera) // 是否显示拍照按钮
         ?.maxSelectNum(if (more<=1) 9 else more)
-        ?.maxVideoSelectNum(more)
+        ?.maxVideoSelectNum(1)
         ?.isCompress(true)
         ?.freeStyleCropEnabled(false) // 裁剪框是否可拖拽
         ?.circleDimmedLayer(false) // 是否圆形裁剪
@@ -187,6 +187,16 @@ fun getPaths(resultCode:Int,data: Intent?):MutableList<LocalMedia>{
     if (resultCode != Activity.RESULT_OK || data == null)
         return ArrayList<LocalMedia>()
     val data = PictureSelector.obtainMultipleResult(data)?:ArrayList<LocalMedia>()
+    val newData = ArrayList<LocalMedia>()
+    for (item in data){
+        val path = getPath(item)
+        if (path != null)newData.add(item)
+    }
+    return newData
+}
+
+fun getPaths(data: List<LocalMedia>?):MutableList<LocalMedia>{
+    if (data == null)return ArrayList<LocalMedia>()
     val newData = ArrayList<LocalMedia>()
     for (item in data){
         val path = getPath(item)
