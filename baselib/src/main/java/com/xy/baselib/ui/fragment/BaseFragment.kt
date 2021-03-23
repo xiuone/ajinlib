@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.gyf.immersionbar.ImmersionBar
@@ -13,7 +14,6 @@ import com.xy.baselib.R
 import com.xy.baselib.ui.dialog.LoadingDialog
 import com.xy.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
-import kotlinx.android.synthetic.main.layout_base_view.*
 import org.greenrobot.eventbus.EventBus
 
 abstract class BaseFragment :Fragment() , OnKeyboardListener {
@@ -21,19 +21,36 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     protected var pageSize:Int = 20
     protected var page = 1
     private var loadingDialog: LoadingDialog ?=null
+    protected var contentView : FrameLayout?=null
+    protected var preView : FrameLayout?=null
+    protected var errorView : FrameLayout?=null
+    protected var titleView: FrameLayout?=null
+
+    private var rootView:View ?= null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
+        rootView = LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        contentView = rootView?.findViewById(R.id.content_frame_layout)
+        preView = rootView?.findViewById(R.id.pre_loading_frame_layout)
+        errorView = rootView?.findViewById(R.id.err_loading_frame_layout)
+        titleView = rootView?.findViewById(R.id.title_layout_frame_layout)
         initView()
         if (registerEventBus())
             EventBus.getDefault().register(this)
     }
 
-    open fun setResetView(view: View){
-        view.setOnClick(View.OnClickListener {
+    open fun setGoBack(view: View?){
+        view?.setOnClick(View.OnClickListener {
+            activity?.finish()
+        })
+    }
+
+    open fun setResetView(view: View?){
+        view?.setOnClick(View.OnClickListener {
             reLoadData()
         })
     }
@@ -46,9 +63,10 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
         setContentLayout(LayoutInflater.from(context).inflate(layout,null))
     }
 
-    open fun setContentLayout(view: View){
-        content_frame_layout.removeAllViews()
-        content_frame_layout.addView(view)
+    open fun setContentLayout(view: View?){
+        if (view == null)return
+        contentView?.removeAllViews()
+        contentView?.addView(view)
     }
 
     /**
@@ -57,14 +75,10 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     open fun setTitleLayout(@LayoutRes layout: Int){
         setTitleView(LayoutInflater.from(context).inflate(layout,null))
     }
-    open fun setTitleView(view: View){
-        title_layout_frame_layout.removeAllViews()
-        title_layout_frame_layout.addView(view)
+    open fun setTitleView(view: View?){
+        titleView?.removeAllViews()
+        titleView?.addView(view)
     }
-    open fun getTitleFrameLayout():View= title_layout_frame_layout
-    open fun getContentLayout():View = content_frame_layout
-    open fun getErrorFrameLayout():View =err_loading_frame_layout
-
     open fun setStatusBarMode(view: View?, dark: Boolean) {
         val bar = ImmersionBar.with(this,true)
             .reset()
@@ -87,9 +101,9 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     open fun setPreloadingLayout(@LayoutRes layout: Int){
         setPreloadingView(LayoutInflater.from(context).inflate(layout,null))
     }
-    open fun setPreloadingView(view: View){
-        pre_loading_frame_layout.removeAllViews()
-        pre_loading_frame_layout.addView(view)
+    open fun setPreloadingView(view: View?){
+        preView?.removeAllViews()
+        preView?.addView(view)
     }
 
     /**
@@ -98,27 +112,28 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
     open fun setErrorLayout(@LayoutRes layout: Int){
         setErrorView(LayoutInflater.from(context).inflate(layout,null))
     }
-    open fun setErrorView(view: View){
-        err_loading_frame_layout.removeAllViews()
-        err_loading_frame_layout.addView(view)
+    open fun setErrorView(view: View?){
+        if (view == null)return
+        errorView?.removeAllViews()
+        errorView?.addView(view)
     }
 
     /**
      * 显示预加载
      */
     open fun showPreLoading(){
-        pre_loading_frame_layout.visibility = View.VISIBLE
-        err_loading_frame_layout.visibility = View.GONE
-        content_frame_layout.visibility = View.GONE
+        preView?.visibility = View.VISIBLE
+        errorView?.visibility = View.GONE
+        contentView?.visibility = View.GONE
     }
 
     /**
      * 加载失败
      */
     open fun showError(){
-        pre_loading_frame_layout.visibility = View.GONE
-        err_loading_frame_layout.visibility = View.VISIBLE
-        content_frame_layout.visibility = View.GONE
+        preView?.visibility = View.GONE
+        errorView?.visibility = View.VISIBLE
+        contentView?.visibility = View.GONE
     }
 
     override fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {
@@ -129,9 +144,9 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
      * 加载完成
      */
     open fun loadSuc(){
-        pre_loading_frame_layout.visibility = View.GONE
-        err_loading_frame_layout.visibility = View.GONE
-        content_frame_layout.visibility = View.VISIBLE
+        preView?.visibility = View.GONE
+        errorView?.visibility = View.GONE
+        contentView?.visibility = View.VISIBLE
     }
 
     open fun showLoading(str: String?) {

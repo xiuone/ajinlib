@@ -6,7 +6,9 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.gyf.immersionbar.ImmersionBar
 import com.gyf.immersionbar.OnKeyboardListener
@@ -16,7 +18,6 @@ import com.xy.baselib.utils.ActivityController
 import com.xy.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
 import com.xy.baselib.mvp.impl.BaseImpl
-import kotlinx.android.synthetic.main.layout_base_view.*
 import org.greenrobot.eventbus.EventBus
 
 abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
@@ -24,10 +25,18 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     protected var defindPage:Int = 0
     protected var pageSize = 20;
     protected var page = defindPage
+    protected var contentView :FrameLayout?=null
+    protected var preView :FrameLayout?=null
+    protected var errorView :FrameLayout?=null
+    protected var titleView:FrameLayout?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityController.addAct(this)
         setContentView(R.layout.layout_base_view)
+        contentView = findViewById(R.id.content_frame_layout)
+        preView = findViewById(R.id.pre_loading_frame_layout)
+        errorView = findViewById(R.id.err_loading_frame_layout)
+        titleView = findViewById(R.id.title_layout_frame_layout)
         initView()
         setStatusBarMode(statusBarView(),statusBarDurk())
         if (registerEventBus())
@@ -37,14 +46,14 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     /**
      * 设置返回按钮
      */
-    open fun setGoBackView(view: View){
-        view.setOnClick(View.OnClickListener {
+    open fun setGoBackView(view: View?){
+        view?.setOnClick(View.OnClickListener {
             finish()
         })
     }
 
-    open fun setResetView(view: View){
-        view.setOnClick(View.OnClickListener {
+    open fun setResetView(view: View?){
+        view?.setOnClick(View.OnClickListener {
             reLoadData()
         })
     }
@@ -56,9 +65,10 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
         setContentLayout(LayoutInflater.from(this).inflate(layout,null))
     }
 
-    open fun setContentLayout(view: View){
-        content_frame_layout.removeAllViews()
-        content_frame_layout.addView(view)
+    open fun setContentLayout(view: View?){
+        if (view == null)return
+        contentView?.removeAllViews()
+        contentView?.addView(view)
     }
 
     /**
@@ -67,19 +77,12 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     open fun setTitleLayout(@LayoutRes layout: Int){
         setTitleView(LayoutInflater.from(this).inflate(layout,null))
     }
-    open fun setTitleView(view: View){
-        title_layout_frame_layout.removeAllViews()
-        title_layout_frame_layout.addView(view)
+    open fun setTitleView(view: View?){
+        if (view == null)return
+        contentView?.removeAllViews()
+        contentView?.addView(view)
     }
-    open fun getTitleFrameLayout():View{
-        return title_layout_frame_layout
-    }
-    open fun getErrorFrameLayout():View{
-        return err_loading_frame_layout
-    }
-    open fun getContentLayout():View{
-        return content_frame_layout
-    }
+
     open fun setStatusBarMode(view: View?, dark: Boolean) {
         val bar = ImmersionBar.with(this)
             .supportActionBar(false)
@@ -99,9 +102,10 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     open fun setPreloadingLayout(@LayoutRes layout: Int){
         setPreloadingView(LayoutInflater.from(this).inflate(layout,null))
     }
-    open fun setPreloadingView(view: View){
-        pre_loading_frame_layout.removeAllViews()
-        pre_loading_frame_layout.addView(view)
+    open fun setPreloadingView(view: View?){
+        if (view == null)return
+        preView?.removeAllViews()
+        preView?.addView(view)
     }
 
     /**
@@ -110,9 +114,10 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     open fun setErrorLayout(@LayoutRes layout: Int){
         setErrorView(LayoutInflater.from(this).inflate(layout,null))
     }
-    open fun setErrorView(view: View){
-        err_loading_frame_layout.removeAllViews()
-        err_loading_frame_layout.addView(view)
+    open fun setErrorView(view: View?){
+        if (view == null)return
+        errorView?.removeAllViews()
+        errorView?.addView(view)
     }
 
     /**
@@ -120,9 +125,9 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
      */
     override fun showPreLoading(){
         Handler(Looper.getMainLooper()).run {
-            pre_loading_frame_layout.visibility = View.VISIBLE
-            err_loading_frame_layout.visibility = View.GONE
-            content_frame_layout.visibility = View.GONE
+            preView?.visibility = View.VISIBLE
+            errorView?.visibility = View.GONE
+            contentView?.visibility = View.GONE
         }
     }
 
@@ -131,9 +136,9 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
      */
     override fun showError(){
         Handler(Looper.getMainLooper()).run {
-            pre_loading_frame_layout.visibility = View.GONE
-            err_loading_frame_layout.visibility = View.VISIBLE
-            content_frame_layout.visibility = View.GONE
+            preView?.visibility = View.GONE
+            errorView?.visibility = View.VISIBLE
+            contentView?.visibility = View.GONE
         }
     }
 
@@ -142,9 +147,9 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
      */
     override fun loadSuc(){
         Handler(Looper.getMainLooper()).run {
-            pre_loading_frame_layout.visibility = View.GONE
-            err_loading_frame_layout.visibility = View.GONE
-            content_frame_layout.visibility = View.VISIBLE
+            preView?.visibility = View.GONE
+            errorView?.visibility = View.GONE
+            contentView?.visibility = View.VISIBLE
         }
     }
 
