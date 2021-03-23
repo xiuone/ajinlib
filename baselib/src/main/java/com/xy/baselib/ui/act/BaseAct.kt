@@ -37,13 +37,13 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     /**
      * 设置返回按钮
      */
-    fun setGoBackView(view: View){
+    open fun setGoBackView(view: View){
         view.setOnClick(View.OnClickListener {
             finish()
         })
     }
 
-    fun setResetView(view: View){
+    open fun setResetView(view: View){
         view.setOnClick(View.OnClickListener {
             reLoadData()
         })
@@ -52,11 +52,11 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     /**
      * 设置正文
      */
-    fun setContentLayout(@LayoutRes layout:Int){
+    open fun setContentLayout(@LayoutRes layout:Int){
         setContentLayout(LayoutInflater.from(this).inflate(layout,null))
     }
 
-    fun setContentLayout(view: View){
+    open fun setContentLayout(view: View){
         content_frame_layout.removeAllViews()
         content_frame_layout.addView(view)
     }
@@ -64,20 +64,20 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     /**
      * 设置状态栏的view
      */
-    fun setTitleLayout(@LayoutRes layout: Int){
+    open fun setTitleLayout(@LayoutRes layout: Int){
         setTitleView(LayoutInflater.from(this).inflate(layout,null))
     }
-    fun setTitleView(view: View){
+    open fun setTitleView(view: View){
         title_layout_frame_layout.removeAllViews()
         title_layout_frame_layout.addView(view)
     }
-    fun getTitleFrameLayout():View{
+    open fun getTitleFrameLayout():View{
         return title_layout_frame_layout
     }
-    fun getErrorFrameLayout():View{
+    open fun getErrorFrameLayout():View{
         return err_loading_frame_layout
     }
-    fun getContentLayout():View{
+    open fun getContentLayout():View{
         return content_frame_layout
     }
     open fun setStatusBarMode(view: View?, dark: Boolean) {
@@ -96,10 +96,10 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     /**
      * 设置预加载
      */
-    fun setPreloadingLayout(@LayoutRes layout: Int){
+    open fun setPreloadingLayout(@LayoutRes layout: Int){
         setPreloadingView(LayoutInflater.from(this).inflate(layout,null))
     }
-    fun setPreloadingView(view: View){
+    open fun setPreloadingView(view: View){
         pre_loading_frame_layout.removeAllViews()
         pre_loading_frame_layout.addView(view)
     }
@@ -107,10 +107,10 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     /**
      * 设置加载失败的时候
      */
-    fun setErrorLayout(@LayoutRes layout: Int){
+    open fun setErrorLayout(@LayoutRes layout: Int){
         setErrorView(LayoutInflater.from(this).inflate(layout,null))
     }
-    fun setErrorView(view: View){
+    open fun setErrorView(view: View){
         err_loading_frame_layout.removeAllViews()
         err_loading_frame_layout.addView(view)
     }

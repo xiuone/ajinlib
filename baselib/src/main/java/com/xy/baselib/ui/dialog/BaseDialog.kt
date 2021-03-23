@@ -30,7 +30,6 @@ abstract class BaseDialog(context: Context) : Dialog(context) {
         setContentView(view!!)
         initView()
     }
-
     @LayoutRes
     abstract fun LayoutRes(): Int
     abstract fun initView()

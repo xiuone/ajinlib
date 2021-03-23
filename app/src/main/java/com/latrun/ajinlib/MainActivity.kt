@@ -2,7 +2,6 @@ package com.latrun.ajinlib
 
 import android.view.View
 import com.xy.baselib.ui.act.BaseAct
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity :BaseAct() {
     private val defind_img_url = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1346711909,1199089208&fm=26&gp=0.jpg"
