@@ -79,8 +79,8 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl{
     }
     open fun setTitleView(view: View?){
         if (view == null)return
-        contentView?.removeAllViews()
-        contentView?.addView(view)
+        titleView?.removeAllViews()
+        titleView?.addView(view)
     }
 
     open fun setStatusBarMode(view: View?, dark: Boolean) {
