@@ -10,5 +10,5 @@ class MainActivity :BaseAct() {
 //        GlideUtils.show(defind_img_url,loading,GlideUtils.getOption())
     }
 
-    override fun statusBarView(): View? = getTitleFrameLayout()
+    override fun statusBarView(): View? = contentView
 }
