@@ -11,10 +11,8 @@ import androidx.annotation.LayoutRes
 import com.xy.baselib.utils.AppUtil
 
 abstract class BaseDialog(context: Context) : Dialog(context) {
-    var view: View? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        view = LayoutInflater.from(context).inflate(LayoutRes(), null)
         window?.decorView?.setPadding(15, 0, 15, 0)
         val lp = window?.attributes
         lp?.height = WindowManager.LayoutParams.WRAP_CONTENT
@@ -27,11 +25,17 @@ abstract class BaseDialog(context: Context) : Dialog(context) {
         window?.attributes = lp
         window?.setBackgroundDrawableResource(R.color.transparent)
         window?.setGravity(Gravity())
-        setContentView(view!!)
+        setContent()
         initView()
     }
+
+    open fun setContent(){
+        val view = LayoutInflater.from(context).inflate(LayoutRes(), null)
+        setContentView(view!!)
+    }
+
     @LayoutRes
-    abstract fun LayoutRes(): Int
+    open fun LayoutRes(): Int = R.layout.select_dialog_item
     abstract fun initView()
     abstract fun proportion(): Double
     abstract fun Gravity(): Int
