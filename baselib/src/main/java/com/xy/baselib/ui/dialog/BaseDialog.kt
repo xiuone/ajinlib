@@ -31,7 +31,7 @@ abstract class BaseDialog(context: Context) : Dialog(context) {
 
     open fun setContent(){
         val view = LayoutInflater.from(context).inflate(LayoutRes(), null)
-        setContentView(view!!)
+        setContentView(view)
     }
 
     @LayoutRes
