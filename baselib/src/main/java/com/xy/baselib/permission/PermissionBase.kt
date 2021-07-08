@@ -9,7 +9,6 @@ import com.yanzhenjie.permission.Request
 
 abstract class PermissionBase {
     var view: Any? = null
-    var fragment: Fragment? = null
     var permissionListener: PermissionListener
 
     constructor(

@@ -26,7 +26,7 @@ object DownFileUtils {
         }
         val urlEndIndex = url.lastIndexOf("/") + 1
         val filename = url.substring(urlEndIndex, url.length)
-        OkGo.get<File>(url).tag(this).execute(object : FileCallback(dir,   filename) {
+        OkGo.get<File>(url).tag(url).execute(object : FileCallback(dir,   filename) {
             override fun onSuccess(response: Response<File?>) {
                 if (response.body() == null || response.body()?.exists() != true) {
                     onError(response)
@@ -51,7 +51,8 @@ object DownFileUtils {
         })
     }
 
-    fun stopDown(){
-        OkGo.getInstance().cancelTag(this)
+    fun stopDown(url:String?){
+        url?:return
+        OkGo.getInstance().cancelTag(url)
     }
 }

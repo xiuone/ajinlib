@@ -5,10 +5,9 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
-import com.xy.baselib.utils.AppUtil
+import com.xy.baselib.utils.expandRes
 
 abstract class BaseDialog(context: Context) : Dialog(context) {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +18,7 @@ abstract class BaseDialog(context: Context) : Dialog(context) {
         val width = WindowManager.LayoutParams.FILL_PARENT
         val proportion: Double = proportion()
         if (proportion != 0.0)
-            lp?.width = ((AppUtil.getScreenWidth(context) * proportion).toInt())
+            lp?.width = ((expandRes.getScreenWidth(context) * proportion).toInt())
         else
             lp?.width = width
         window?.attributes = lp
