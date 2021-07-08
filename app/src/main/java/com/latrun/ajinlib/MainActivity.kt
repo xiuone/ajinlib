@@ -5,11 +5,11 @@ import com.xy.baselib.ui.act.BaseAct
 
 class MainActivity :BaseAct() {
     override fun initView() {
-        setContentLayout(R.layout.activity_main)
-        var dialog :TestDialog  = TestDialog(this);
+        baseActController?.setContentLayout(R.layout.activity_main)
+        var dialog   = TestDialog(this);
         dialog.show()
 
     }
 
-    override fun statusBarView(): View? = contentView
+    override fun statusBarView(): View? = baseActController?.contentView
 }

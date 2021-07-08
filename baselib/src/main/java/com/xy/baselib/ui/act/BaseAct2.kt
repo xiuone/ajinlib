@@ -28,7 +28,7 @@ abstract class BaseAct2 :AppCompatActivity(), OnKeyboardListener ,BaseImpl,BaseA
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_base_view)
-        baseActController = BaseActController(this,this,this,this)
+        baseActController = BaseActController(this,findViewById(R.id.base_view),this,this,this)
         baseActController?.onCreate()
         baseActController?.initStatusStatusBar()
         initView()

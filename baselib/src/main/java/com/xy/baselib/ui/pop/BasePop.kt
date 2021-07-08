@@ -10,14 +10,14 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.annotation.LayoutRes
 import com.xy.baselib.R
-import com.xy.baselib.utils.expandRes
+import com.xy.baselib.utils.getColor
 
 abstract class BasePop(context: Context) : PopupWindow(context) {
     init {
         isFocusable = true
         isOutsideTouchable = true
         contentView = LayoutInflater.from(context).inflate(LayoutRes(), null)
-        setBackgroundDrawable(ColorDrawable(expandRes.getColor(context,R.color.transparent)))
+        setBackgroundDrawable(ColorDrawable(getColor(context,R.color.transparent)))
         this.width = ViewGroup.LayoutParams.WRAP_CONTENT
         this.height = ViewGroup.LayoutParams.WRAP_CONTENT
         initView(context)

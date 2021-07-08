@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/base_view"
     android:orientation="vertical"
     android:background="@color/white"
     android:focusable="true"

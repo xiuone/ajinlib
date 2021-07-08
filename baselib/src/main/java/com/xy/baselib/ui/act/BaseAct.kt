@@ -27,7 +27,8 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl,BaseAct
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_base_view)
-        baseActController = BaseActController(this,this,this,this)
+        baseActController = BaseActController(this,findViewById(R.id.base_view)
+            ,this,this,this)
         baseActController?.onCreate()
         baseActController?.initStatusStatusBar()
         initView()
@@ -82,17 +83,59 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl,BaseAct
             loadingDialog?.dismiss()
     }
 
+    /**
+     * 重新加载
+     */
     open fun reLoadData(){}
+
+    /**
+     * 软键盘的显示隐藏 及软键盘的高度
+     */
     override fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {}
+
+    /**
+     * 设置显示 留下扩展自定义
+     */
     override fun setTitleView(view: View?) :Boolean = true
+
+    /**
+     * 设置正文留下扩展自定义
+     */
     override fun setContentLayout(view: View?) :Boolean = true
+
+    /**
+     * 设置错误布局 留下扩展自定义
+     */
     override fun setErrorView(view: View?) :Boolean = true
+
+    /**
+     * 设置与加载布局  留下扩展自定义
+     */
     override fun setPreloadingView(view: View?):Boolean = true
+
+    /**
+     * 设置状态栏的view  通常用于沉静式布局
+     */
     override fun statusBarView():View? = null
+
+    /**
+     * 状态栏文字和图标的颜色  true 为黑  false为白
+     */
     override fun statusBarDurk():Boolean = true
+
+    /**
+     * 注册EventBus事件
+     */
     override fun registerEventBus():Boolean = false
+
+    /**
+     * 初始化的时候用到
+     */
     abstract fun initView()
 
+    /**
+     * activity销毁的时候
+     */
     override fun onDestroy() {
         super.onDestroy()
         baseActController?.onDestroy()

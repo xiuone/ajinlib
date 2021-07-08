@@ -16,7 +16,7 @@ import com.xy.baselib.R
 import com.xy.baselib.ui.dialog.LoadingDialog
 import org.greenrobot.eventbus.EventBus
 
-class BaseActController(private val activity:Activity,private val onKeyboardListener: OnKeyboardListener
+class BaseActController(private val activity:Activity?,private val baseView:View?,private val onKeyboardListener: OnKeyboardListener
                         ,private val subscribe: Any,private val listener:BaseActListener) {
     private val dialogs = ArrayList<Dialog>()
 
@@ -122,6 +122,7 @@ class BaseActController(private val activity:Activity,private val onKeyboardList
 
 
     fun showDialog(dialog: Dialog?){
+        val activity = this.activity?:return
         if (activity.isFinishing)return
         dialog?:return
 
@@ -135,16 +136,17 @@ class BaseActController(private val activity:Activity,private val onKeyboardList
 
 
     fun onCreate(){
-        contentView = activity.findViewById(R.id.content_frame_layout)
-        preView = activity.findViewById(R.id.pre_loading_frame_layout)
-        errorView = activity.findViewById(R.id.err_loading_frame_layout)
-        titleView = activity.findViewById(R.id.title_layout_frame_layout)
+        contentView = baseView?.findViewById(R.id.content_frame_layout)
+        preView = baseView?.findViewById(R.id.pre_loading_frame_layout)
+        errorView = baseView?.findViewById(R.id.err_loading_frame_layout)
+        titleView = baseView?.findViewById(R.id.title_layout_frame_layout)
         if (listener.registerEventBus())
             EventBus.getDefault().register(subscribe)
     }
 
 
     fun initStatusStatusBar(){
+        val activity = this.activity?:return
         val bar = ImmersionBar.with(activity)
             .supportActionBar(false)
             .navigationBarEnable(false)

@@ -1,6 +1,8 @@
 package com.xy.baselib.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,18 +16,14 @@ import com.xy.baselib.R
 import com.xy.baselib.ui.dialog.LoadingDialog
 import com.xy.baselib.utils.setOnClick
 import com.lzy.okgo.OkGo
+import com.xy.baselib.mvp.impl.BaseImpl
+import com.xy.baselib.ui.act.BaseActController
+import com.xy.baselib.ui.act.BaseActListener
 import org.greenrobot.eventbus.EventBus
 
-abstract class BaseFragment :Fragment() , OnKeyboardListener {
-    protected var defindPage:Int = 1
-    protected var pageSize:Int = 20
-    protected var page = 1
+abstract class BaseFragment :Fragment() , OnKeyboardListener ,BaseImpl,BaseActListener{
     private var loadingDialog: LoadingDialog ?=null
-    protected var contentView : FrameLayout?=null
-    protected var preView : FrameLayout?=null
-    protected var errorView : FrameLayout?=null
-    protected var titleView: FrameLayout?=null
-
+    private var baseActController:BaseActController?=null
     private var rootView:View ?= null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
@@ -34,13 +32,9 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        contentView = rootView?.findViewById(R.id.content_frame_layout)
-        preView = rootView?.findViewById(R.id.pre_loading_frame_layout)
-        errorView = rootView?.findViewById(R.id.err_loading_frame_layout)
-        titleView = rootView?.findViewById(R.id.title_layout_frame_layout)
+        baseActController = BaseActController(activity,rootView,this,this,this)
+        baseActController?.onCreate()
         initView()
-        if (registerEventBus())
-            EventBus.getDefault().register(this)
     }
 
     open fun setGoBack(view: View?){
@@ -54,125 +48,96 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener {
             reLoadData()
         })
     }
-
-
-    /**
-     * 设置正文
-     */
-    open fun setContentLayout(@LayoutRes layout:Int){
-        setContentLayout(LayoutInflater.from(context).inflate(layout,null))
-    }
-
-    open fun setContentLayout(view: View?){
-        if (view == null)return
-        contentView?.removeAllViews()
-        contentView?.addView(view)
-    }
-
-    /**
-     * 设置状态栏的view
-     */
-    open fun setTitleLayout(@LayoutRes layout: Int){
-        setTitleView(LayoutInflater.from(context).inflate(layout,null))
-    }
-    open fun setTitleView(view: View?){
-        titleView?.removeAllViews()
-        titleView?.addView(view)
-    }
-    open fun setStatusBarMode(view: View?, dark: Boolean) {
-        val bar = ImmersionBar.with(this,true)
-            .reset()
-            .supportActionBar(false)
-            .navigationBarEnable(false)
-            .transparentBar()
-            .statusBarDarkFont(dark)
-            .navigationBarDarkIcon(dark)
-            .navigationBarDarkIcon(dark)
-        if (view != null)
-            bar.titleBar(view)
-        bar.keyboardEnable(true, WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED)
-            .setOnBarListener {  }
-        bar.init()
-    }
-
-    /**
-     * 设置预加载
-     */
-    open fun setPreloadingLayout(@LayoutRes layout: Int){
-        setPreloadingView(LayoutInflater.from(context).inflate(layout,null))
-    }
-    open fun setPreloadingView(view: View?){
-        preView?.removeAllViews()
-        preView?.addView(view)
-    }
-
-    /**
-     * 设置加载失败的时候
-     */
-    open fun setErrorLayout(@LayoutRes layout: Int){
-        setErrorView(LayoutInflater.from(context).inflate(layout,null))
-    }
-    open fun setErrorView(view: View?){
-        if (view == null)return
-        errorView?.removeAllViews()
-        errorView?.addView(view)
-    }
-
     /**
      * 显示预加载
      */
-    open fun showPreLoading(){
-        preView?.visibility = View.VISIBLE
-        errorView?.visibility = View.GONE
-        contentView?.visibility = View.GONE
+    override fun showPreLoading(){
+        baseActController?.showPreLoading()
     }
 
     /**
      * 加载失败
      */
-    open fun showError(){
-        preView?.visibility = View.GONE
-        errorView?.visibility = View.VISIBLE
-        contentView?.visibility = View.GONE
-    }
-
-    override fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {
-
+    override fun showError(){
+        baseActController?.showError()
     }
 
     /**
      * 加载完成
      */
-    open fun loadSuc(){
-        preView?.visibility = View.GONE
-        errorView?.visibility = View.GONE
-        contentView?.visibility = View.VISIBLE
+    override fun loadSuc(){
+        baseActController?.loadSuc()
     }
 
-    open fun showLoading(str: String?) {
-        if (isDetached)return
-        if (loadingDialog == null)
-            loadingDialog= LoadingDialog(context!!)
-        loadingDialog?.show()
-        loadingDialog?.setText(str)
+    override fun showLoading(str: String?) {
+        val context = context?:return
+        Handler(Looper.getMainLooper()).run {
+            loadingDialog = loadingDialog?: LoadingDialog(context)
+            baseActController?.showDialog(loadingDialog)
+            loadingDialog?.setText(str)
+        }
     }
 
-    open fun disLoading() {
-        if (isDetached)return
-        loadingDialog?.dismiss()
+    override fun disLoading() {
+        if (!isDetached)
+            loadingDialog?.dismiss()
     }
 
-    open fun getData(page:Int,pageSize:Int){}
+    /**
+     * 重新加载
+     */
     open fun reLoadData(){}
-    open fun registerEventBus():Boolean = false
-    open fun sizeInDp():Float = 360F
 
+    /**
+     * 软键盘的显示隐藏 及软键盘的高度
+     */
+    override fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {}
+
+    /**
+     * 设置显示 留下扩展自定义
+     */
+    override fun setTitleView(view: View?) :Boolean = true
+
+    /**
+     * 设置正文留下扩展自定义
+     */
+    override fun setContentLayout(view: View?) :Boolean = true
+
+    /**
+     * 设置错误布局 留下扩展自定义
+     */
+    override fun setErrorView(view: View?) :Boolean = true
+
+    /**
+     * 设置与加载布局  留下扩展自定义
+     */
+    override fun setPreloadingView(view: View?):Boolean = true
+
+    /**
+     * 设置状态栏的view  通常用于沉静式布局
+     */
+    override fun statusBarView():View? = null
+
+    /**
+     * 状态栏文字和图标的颜色  true 为黑  false为白
+     */
+    override fun statusBarDurk():Boolean = true
+
+    /**
+     * 注册EventBus事件
+     */
+    override fun registerEventBus():Boolean = false
+
+    /**
+     * 初始化的时候用到
+     */
+    abstract fun initView()
+
+    /**
+     * activity销毁的时候
+     */
     override fun onDestroy() {
         super.onDestroy()
-        OkGo.getInstance().cancelTag(this)
-        if (registerEventBus())
-            EventBus.getDefault().unregister(this)
+        baseActController?.onDestroy()
     }
-
-    abstract fun initView()
 }
