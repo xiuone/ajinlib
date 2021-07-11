@@ -23,7 +23,7 @@ import org.greenrobot.eventbus.EventBus
 
 abstract class BaseFragment :Fragment() , OnKeyboardListener ,BaseImpl,BaseActListener{
     private var loadingDialog: LoadingDialog ?=null
-    private var baseActController:BaseActController?=null
+    protected var baseActController:BaseActController?=null
     private var rootView:View ?= null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = LayoutInflater.from(context).inflate(R.layout.layout_base_view,null)
