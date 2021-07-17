@@ -39,7 +39,7 @@ abstract class BaseAct2 :AppCompatActivity(), OnKeyboardListener ,BaseImpl,BaseA
      */
     open fun setGoBackView(view: View?){
         view?.setOnClick(View.OnClickListener {
-            onKeyDown(KeyEvent.KEYCODE_BACK,  null)
+            onBackPressed()
         })
     }
 

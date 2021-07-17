@@ -39,7 +39,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl,BaseAct
      */
     open fun setGoBackView(view: View?){
         view?.setOnClick(View.OnClickListener {
-            onKeyDown(KeyEvent.KEYCODE_BACK,  null)
+            onBackPressed()
         })
     }
 
