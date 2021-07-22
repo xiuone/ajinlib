@@ -7,19 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
-import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import com.gyf.immersionbar.ImmersionBar
 import com.gyf.immersionbar.OnKeyboardListener
 import com.xy.baselib.R
 import com.xy.baselib.ui.dialog.LoadingDialog
 import com.xy.baselib.utils.setOnClick
-import com.lzy.okgo.OkGo
 import com.xy.baselib.mvp.impl.BaseImpl
 import com.xy.baselib.ui.act.BaseActController
 import com.xy.baselib.ui.act.BaseActListener
-import org.greenrobot.eventbus.EventBus
 
 abstract class BaseFragment :Fragment() , OnKeyboardListener ,BaseImpl,BaseActListener{
     private var loadingDialog: LoadingDialog ?=null
@@ -127,6 +122,8 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener ,BaseImpl,BaseActLi
      * 注册EventBus事件
      */
     override fun registerEventBus():Boolean = false
+
+    override fun keyboardMode(): Int = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
 
     /**
      * 初始化的时候用到

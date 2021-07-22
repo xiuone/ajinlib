@@ -128,6 +128,8 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl,BaseAct
      */
     override fun registerEventBus():Boolean = false
 
+    override fun keyboardMode(): Int = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
+
     /**
      * 初始化的时候用到
      */
