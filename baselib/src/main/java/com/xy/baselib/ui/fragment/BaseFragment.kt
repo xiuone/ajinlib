@@ -123,8 +123,11 @@ abstract class BaseFragment :Fragment() , OnKeyboardListener ,BaseImpl,BaseActLi
      */
     override fun registerEventBus():Boolean = false
 
+    /**
+     * 软件盘控制
+     */
     override fun keyboardMode(): Int = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
-
+    override fun keyboardEnable(): Boolean = true
     /**
      * 初始化的时候用到
      */

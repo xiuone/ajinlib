@@ -155,7 +155,7 @@ class BaseActController(private val activity:Activity?,private val baseView:View
         val view = listener.statusBarView()
         if (view != null)
             bar.titleBar(view)
-        bar.keyboardEnable(true, listener.keyboardMode())
+        bar.keyboardEnable(listener.keyboardEnable(), listener.keyboardMode())
         bar.setOnKeyboardListener (onKeyboardListener)
         bar.init()
     }

@@ -11,4 +11,6 @@ interface BaseActListener {
     fun setErrorView(view: View?):Boolean
     fun setPreloadingView(view: View?):Boolean
     fun keyboardMode():Int
+    fun keyboardEnable():Boolean
+
 }

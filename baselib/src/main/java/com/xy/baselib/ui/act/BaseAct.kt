@@ -130,6 +130,7 @@ abstract class BaseAct :FragmentActivity(), OnKeyboardListener ,BaseImpl,BaseAct
 
     override fun keyboardMode(): Int = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
 
+    override fun keyboardEnable(): Boolean = true
     /**
      * 初始化的时候用到
      */

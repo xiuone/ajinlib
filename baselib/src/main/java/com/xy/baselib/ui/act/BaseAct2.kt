@@ -79,7 +79,7 @@ abstract class BaseAct2 :AppCompatActivity(), OnKeyboardListener ,BaseImpl,BaseA
     }
 
     override fun keyboardMode(): Int = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
-
+    override fun keyboardEnable(): Boolean = true
     override fun disLoading() {
         if (!isFinishing)
             loadingDialog?.dismiss()
