@@ -37,7 +37,7 @@ dependencies {
     api 'com.lzy.net:okgo:3.0.4'//请求框架
 
     api 'com.yanzhenjie:permission:1.1.2'//权限
-    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'//相机相册
+    api 'io.github.lucksiege:pictureselector:v2.7.3-rc06'
     api "androidx.camera:camera-core:1.0.0-beta03"
     api "androidx.camera:camera-camera2:1.0.0-beta12"
     api "androidx.camera:camera-view:1.0.0-alpha19"
