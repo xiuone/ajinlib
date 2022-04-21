@@ -1,10 +1,9 @@
 package com.xy.baselib
 
 import android.content.Context
-import androidx.annotation.NonNull
 import androidx.multidex.MultiDexApplication
 import com.luck.picture.lib.engine.ImageEngine
-import com.xy.baselib.utils.ActivityController
+import com.xy.baselib.life.ActivityController
 import me.jessyan.autosize.AutoSize
 
 

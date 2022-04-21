@@ -1,2 +1,4 @@
 include ':baselib'
-include ':app'
+include ':testapp'
+include ':greenDb'
+include ':utils'

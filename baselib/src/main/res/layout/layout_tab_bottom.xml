@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mv="http://schemas.android.com/apk/res-auto"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/ll_tap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_tab_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"/>
+        <ImageView
+            android:id="@+id/iv_tab_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <com.xy.baselib.widget.msg.MsgView
+        android:id="@+id/rtv_msg_tip"
+        android:layout_toRightOf="@+id/ll_tap"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_20"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_11"
+        mv:mv_backgroundColor="@color/red_e32c"
+        android:visibility="gone"
+        android:minWidth="@dimen/dp_20"
+        android:padding="@dimen/dp_2"
+        mv:mv_strokeColor="@color/white"
+        mv:mv_strokeWidth="@dimen/dp_1"/>
+</merge>

@@ -9,18 +9,16 @@ import androidx.annotation.LayoutRes
 abstract class BaseToast (context: Context):Toast(context) {
     init {
         try {
-            val view = LayoutInflater.from(context).inflate(LayoutRes(), null)
-            if (view != null)
-                setView(view)
-            setGravity(Gravity(),0,0)
+            val view = LayoutInflater.from(context).inflate(layoutRes(), null)
+            if (view != null) setView(view)
+            setGravity(gravity(),0,0)
         }catch (e:Exception){
-            Log.e("==``","BaseToast:${e.message}")
         }
     }
 
     @LayoutRes
-    abstract fun LayoutRes(): Int
-    open fun Gravity(): Int{
+    abstract fun layoutRes(): Int
+    open fun gravity(): Int{
         return android.view.Gravity.BOTTOM
     }
 }

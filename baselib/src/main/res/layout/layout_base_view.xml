@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/base_view"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
+<com.xy.baselib.widget.swipe.view.SwipeBackRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/render_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <FrameLayout
-        android:id="@+id/title_layout_frame_layout"
+        android:id="@+id/title_render_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <RelativeLayout
-        android:layout_weight="1"
+    <FrameLayout
+        android:id="@+id/content_render_layout"
+        android:layout_below="@id/title_render_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <FrameLayout
-            android:id="@+id/content_frame_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <FrameLayout
-            android:id="@+id/pre_loading_frame_layout"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <FrameLayout
-            android:id="@+id/err_loading_frame_layout"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
-</LinearLayout>
+        android:layout_height="match_parent"/>
+    <FrameLayout
+        android:id="@+id/pr_render_layout"
+        android:layout_below="@id/title_render_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/error_render_layout"
+        android:layout_below="@id/title_render_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <FrameLayout
+        android:id="@+id/loading_render_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</com.xy.baselib.widget.swipe.view.SwipeBackRelativeLayout>

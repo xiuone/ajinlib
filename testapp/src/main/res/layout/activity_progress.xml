@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ProgressAct">
+    <com.xy.baselib.widget.progress.ProgressStripView
+        android:layout_marginHorizontal="@dimen/dp_20"
+        app:progress_background_color="@color/gray_6666"
+        app:progress_progress_color="@color/red_e32c"
+        app:progress_progress_tv_color="@color/white"
+        app:progress_progress_tv_size="@dimen/sp_16"
+        app:progress_progress_number="10"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"/>
+
+    <com.xy.baselib.widget.progress.ProgressCircleView
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        app:progress_background_color="@color/gray_6666"
+        app:progress_progress_color="@color/red_e32c"
+        app:progress_progress_tv_color="@color/gray_9999"
+        app:progress_progress_tv_size="@dimen/sp_12"
+        app:progress_progress_number="10"
+        app:progress_progress_circle_stoke_width="@dimen/dp_3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"/>
+
+</LinearLayout>

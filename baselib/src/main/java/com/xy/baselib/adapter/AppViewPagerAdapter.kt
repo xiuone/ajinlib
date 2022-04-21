@@ -8,7 +8,6 @@ class AppViewPagerAdapter(fm: FragmentManager, val framentList: List<Fragment>, 
 
     override fun getItemPosition(`object`: Any): Int {
         return POSITION_NONE
-
     }
 
     override fun getItem(position: Int): Fragment {

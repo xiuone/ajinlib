@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="SwipeBackColor">#504E4E</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="white_aa">#AAFFFFFF</color>
     <color name="black">#000000</color>
     <color name="gray_2222">#222222</color>
     <color name="gray_3333">#333333</color>
@@ -15,7 +17,15 @@
 
     <color name="red_e32c">#E32C27</color>
 
+    <color name="white_4b6a">#4B6A87</color>
     <color name="blue_078a">#078AF3</color>
+
+    <color name="color_green_34c7">#34C759</color>
+    <color name="color_green_34c7_80">#CC34C759</color>
+
+    <color name="color_line1">#1a1C1C1E</color>
+
+
 
 
 <!--    100% — FF-->
