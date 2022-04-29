@@ -1,22 +1,14 @@
-package com.xy.baselib.widget.progress
+package com.xy.baselib.widget.bar.progress
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.RectF
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
 import android.view.MotionEvent
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.xy.baselib.R
 import com.xy.utils.addAlpha
 import com.xy.utils.getResDimension
-import kotlin.math.max
-import kotlin.math.min
 
 abstract class ProgressBarBaseView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     :ProgressStripView(context, attrs, defStyleAttr)  {
@@ -26,7 +18,7 @@ abstract class ProgressBarBaseView @JvmOverloads constructor(context: Context, a
     protected var thumbShadowRadius : Float = 0F
     //监听滑动进度
     var progressListener:ProgressListener ? = null;
-    protected val animHelper:ProgressAnimHelper by lazy { ProgressAnimHelper(this) }
+    protected val animHelper: ProgressAnimHelper by lazy { ProgressAnimHelper(this) }
 
     init {
         attrs?.run {

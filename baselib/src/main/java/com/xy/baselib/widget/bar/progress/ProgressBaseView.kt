@@ -1,11 +1,10 @@
-package com.xy.baselib.widget.progress
+package com.xy.baselib.widget.bar.progress
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import android.widget.FrameLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -91,7 +90,6 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
             drawProgressTv(canvas)
         }
     }
-
 
 
     protected fun drawText(canvas: Canvas,x:Float,y:Float,text:String){

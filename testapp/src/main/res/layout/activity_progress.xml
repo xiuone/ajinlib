@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ProgressAct">
-    <com.xy.baselib.widget.progress.ProgressStripView
+    <com.xy.baselib.widget.bar.progress.ProgressStripView
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginHorizontal="@dimen/dp_20"
         app:progress_background_color="@color/gray_6666"
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"/>
 
-    <com.xy.baselib.widget.progress.ProgressCircleView
+    <com.xy.baselib.widget.bar.progress.ProgressCircleView
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginHorizontal="@dimen/dp_20"
         app:progress_background_color="@color/gray_6666"
@@ -29,8 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"/>
 
-
-    <com.xy.baselib.widget.progress.ProgressBarView
+    <com.xy.baselib.widget.bar.progress.ProgressBarView
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginHorizontal="@dimen/dp_20"
         app:progress_background_color="@color/gray_e5e5"
@@ -48,8 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"/>
 
-
-    <com.xy.baselib.widget.progress.ProgressBar2View
+    <com.xy.baselib.widget.bar.progress.ProgressBar2View
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginHorizontal="@dimen/dp_20"
         app:progress_background_color="@color/gray_e5e5"
@@ -65,4 +63,34 @@
         app:progress_thumb_color="@color/white"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_30"/>
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.xy.baselib.widget.bar.switch.SwitchBarView
+            app:switch_default_background_color="@color/gray_f2f2"
+            app:switch_select_background_color="@color/blue_078a"
+            app:switch_thumb_off_color="@color/white"
+            app:switch_thumb_open_color="@color/white"
+            app:switch_thumb_shadow_radius="@dimen/dp_1_5"
+            app:switch_thumb_shadow_color="@color/gray_9999"
+            app:switch_is_select="true"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_30"/>
+
+        <com.xy.baselib.widget.bar.switch.SwitchBarView
+            android:layout_marginLeft="@dimen/dp_20"
+            app:switch_default_background_color="@color/gray_f2f2"
+            app:switch_select_background_color="@color/blue_078a"
+            app:switch_thumb_off_color="@color/white"
+            app:switch_thumb_open_color="@color/white"
+            app:switch_thumb_shadow_radius="@dimen/dp_1_5"
+            app:switch_thumb_shadow_color="@color/gray_9999"
+            app:switch_is_select="true"
+            android:layout_width="@dimen/dp_30"
+            android:layout_height="@dimen/dp_50"/>
+    </LinearLayout>
 </LinearLayout>

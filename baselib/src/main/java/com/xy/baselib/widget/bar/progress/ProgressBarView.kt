@@ -1,19 +1,11 @@
-package com.xy.baselib.widget.progress
+package com.xy.baselib.widget.bar.progress
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
-import android.view.MotionEvent
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import com.xy.baselib.R
-import com.xy.utils.addAlpha
 import com.xy.utils.getResDimension
 
 class ProgressBarView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
