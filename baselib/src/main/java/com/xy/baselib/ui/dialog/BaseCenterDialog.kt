@@ -19,8 +19,7 @@ abstract class BaseCenterDialog(context: Context) : BaseDialog(context) {
      */
     override fun showAnimation(view: View?){
         view?.run {
-            val animator = ScaleAnimation(0F,1F,0F,1F,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            val animator = ScaleAnimation(0F,1F,0F,1F, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
             animator.duration = 300
             startAnimation(animator)
         }

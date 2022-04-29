@@ -21,6 +21,23 @@
         <attr name="progress_progress_tv_color" format="color"/>
         <attr name="progress_progress_tv_size" format="dimension"/>
         <attr name="progress_progress_number" format="integer"/>
+        <attr name="progress_real" format="boolean"/>
+        <attr name="progress_show_tv" format="boolean"/>
+
+
+        <attr name="progress_thumb_width" format="dimension"/>
+        <attr name="progress_thumb_height" format="dimension"/>
+        <attr name="progress_thumb_radius" format="dimension"/>
+        <attr name="progress_thumb_color" format="color"/>
+        <attr name="progress_thumb_shadow_color" format="color"/>
+        <attr name="progress_thumb_shadow_radius" format="dimension"/>
+        <attr name="progress_min_height" format="dimension"/>
+        <attr name="progress_max_height" format="dimension"/>
+
+        <attr name="progress_height" format="dimension"/>
+        <attr name="progress_thumb_min_size" format="dimension"/>
+        <attr name="progress_thumb_max_size" format="dimension"/>
+
 
         <attr name="progress_progress_circle_stoke_width" format="dimension"/>
     </declare-styleable>

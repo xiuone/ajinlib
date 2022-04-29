@@ -7,32 +7,40 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import com.xy.baselib.R
 import com.xy.utils.Logger
+import kotlin.math.abs
 import kotlin.math.min
 
-class ProgressStripView  @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ProgressBaseView(context, attrs, defStyleAttr) {
+open class ProgressStripView  @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ProgressBaseView(context, attrs, defStyleAttr) {
 
     override fun drawBackground(canvas: Canvas) {
-        val rectF = RectF(0F, 0F, width.toFloat(), height.toFloat())
-        val radius = min(width, height) / 2
+        val rectF = RectF(startLeft(), startTop(), startRight(), startBottom())
+        val radius = min(abs(startRight()-startLeft()), abs(startBottom()-startTop())) / 2
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = mBackgroundColor
-        canvas.drawRoundRect(rectF, radius.toFloat(), radius.toFloat(), paint)
+        canvas.drawRoundRect(rectF, radius, radius, paint)
     }
 
     override fun drawProgress(canvas: Canvas) {
         val rectF = RectF()
         val radius = min(width, height) / 2
-        rectF.top = 0f
-        rectF.left = 0f
-        rectF.bottom = height.toFloat()
-        rectF.right = height + (width - radius * 2f) * progress / 100f
+        rectF.top = startTop()
+        rectF.left = startLeft()
+        rectF.bottom = startBottom()
+        rectF.right = startLength() + (startRight() - startLength()) * progress / 100f
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = progressColor
         canvas.drawRoundRect(rectF, radius.toFloat(), radius.toFloat(), paint)
     }
 
     override fun drawProgressTv(canvas: Canvas) {
-        val centerX = ((width - height) * progress / 100f).toInt() + height / 2
+        val centerX = ((startRight()-startLeft() - startLength()) * progress / 100f).toInt() + height / 2
         drawText(canvas,centerX.toFloat(),height/2F,"$progress%")
     }
+
+
+    open fun startLeft():Float = 0F//左边的开始距离
+    open fun startRight():Float = width.toFloat()//右边的开始距离
+    open fun startTop():Float = 0F//上边的开始距离
+    open fun startBottom():Float = height.toFloat()//下边的开始距离
+    open fun startLength():Float = startBottom() - startTop()// 开始的时候   百分比为0的时候的长度
 }

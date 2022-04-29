@@ -12,27 +12,57 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.xy.baselib.R
 import com.xy.utils.drawCenterText
+import com.xy.utils.getResColor
 
 abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     View(context, attrs, defStyleAttr) ,Runnable, LifecycleObserver {
+    protected val white by lazy { context.getResColor(R.color.white) }
     protected var progress :Int = 0
     protected var mBackgroundColor = -0x1a1a16
     protected var progressColor = -0xc9ac01
     protected var progressTvColor = -0x1
     protected var progressTvSize = 48
+    protected var progressReal = false
+    protected var showTv = true;
 
+    init {
+        attrs?.run {
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ProgressView)
+            mBackgroundColor = typedArray.getColor(R.styleable.ProgressView_progress_background_color, mBackgroundColor)
+            progressColor = typedArray.getColor(R.styleable.ProgressView_progress_progress_color, progressColor)
+            progressTvColor = typedArray.getColor(R.styleable.ProgressView_progress_progress_tv_color, progressTvColor)
+            progressTvSize = typedArray.getDimensionPixelSize(R.styleable.ProgressView_progress_progress_tv_size, progressTvSize)
+            progress = typedArray.getInt(R.styleable.ProgressView_progress_progress_number, 0)
+            progressReal = typedArray.getBoolean(R.styleable.ProgressView_progress_real, false)
+            showTv = typedArray.getBoolean(R.styleable.ProgressView_progress_show_tv, defaultShowTv())
+        }
+    }
 
-
-
-
-    fun updateProgress(progress: Int) {
+    /**
+     * 更新进度后自动刷新
+     */
+    fun updateRealProgress(progress: Int) {
         var progress = progress
         if (progress < 0) progress = 0
         if (progress > 100) progress = 100
         this.progress = progress
         invalidate()
         handler.removeCallbacksAndMessages(null)
-        handler.postDelayed(this, 20)
+    }
+
+    /**
+     * 更新进度后自动刷新
+     */
+    fun updateUnRealProgress(progress: Int) {
+        var progress = progress
+        if (progress < 0) progress = 0
+        if (progress > 100) progress = 100
+        this.progress = progress
+        invalidate()
+        handler.removeCallbacksAndMessages(null)
+        if (!progressReal) {
+            handler.postDelayed(this, 20)
+        }
     }
 
     fun success() {
@@ -57,13 +87,12 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
         super.onDraw(canvas)
         drawBackground(canvas)
         drawProgress(canvas)
-        drawProgressTv(canvas)
+        if (showTv) {
+            drawProgressTv(canvas)
+        }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    open fun onDestroyed(owner: LifecycleOwner) {
-        handler.removeCallbacksAndMessages(null)
-    }
+
 
     protected fun drawText(canvas: Canvas,x:Float,y:Float,text:String){
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -75,16 +104,11 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
     abstract fun drawBackground(canvas: Canvas)
     abstract fun drawProgress(canvas: Canvas)
     abstract fun drawProgressTv(canvas: Canvas)
+    open fun defaultShowTv():Boolean = true
 
 
-    init {
-        attrs?.run {
-            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ProgressView)
-            mBackgroundColor = typedArray.getColor(R.styleable.ProgressView_progress_background_color, mBackgroundColor)
-            progressColor = typedArray.getColor(R.styleable.ProgressView_progress_progress_color, progressColor)
-            progressTvColor = typedArray.getColor(R.styleable.ProgressView_progress_progress_tv_color, progressTvColor)
-            progressTvSize = typedArray.getDimensionPixelSize(R.styleable.ProgressView_progress_progress_tv_size, progressTvSize)
-            progress = typedArray.getInt(R.styleable.ProgressView_progress_progress_number, 0)
-        }
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    open fun onDestroyed(owner: LifecycleOwner) {
+        handler.removeCallbacksAndMessages(null)
     }
 }

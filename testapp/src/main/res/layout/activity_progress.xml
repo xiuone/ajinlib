@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context=".ProgressAct">
     <com.xy.baselib.widget.progress.ProgressStripView
+        android:layout_marginTop="@dimen/dp_20"
         android:layout_marginHorizontal="@dimen/dp_20"
         app:progress_background_color="@color/gray_6666"
         app:progress_progress_color="@color/red_e32c"
@@ -28,4 +29,40 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"/>
 
+
+    <com.xy.baselib.widget.progress.ProgressBarView
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        app:progress_background_color="@color/gray_e5e5"
+        app:progress_progress_color="@color/blue_078a"
+        app:progress_progress_number="10"
+        app:progress_show_tv="false"
+        app:progress_min_height="@dimen/dp_4"
+        app:progress_max_height="@dimen/dp_20"
+        app:progress_thumb_shadow_radius="@dimen/dp_2"
+        app:progress_thumb_shadow_color="@color/gray_9999"
+        app:progress_thumb_color="@color/white"
+        app:progress_thumb_radius="@dimen/dp_4"
+        app:progress_thumb_height="@dimen/dp_35"
+        app:progress_thumb_width="@dimen/dp_15"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"/>
+
+
+    <com.xy.baselib.widget.progress.ProgressBar2View
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        app:progress_background_color="@color/gray_e5e5"
+        app:progress_progress_color="@color/blue_078a"
+        app:progress_progress_number="10"
+        app:progress_show_tv="false"
+        app:progress_height="@dimen/dp_4"
+
+        app:progress_thumb_shadow_radius="@dimen/dp_2"
+        app:progress_thumb_shadow_color="@color/gray_9999"
+        app:progress_thumb_min_size="@dimen/dp_12"
+        app:progress_thumb_max_size="@dimen/dp_30"
+        app:progress_thumb_color="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_30"/>
 </LinearLayout>

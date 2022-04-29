@@ -24,7 +24,6 @@ class ProgressCircleView @JvmOverloads constructor(context: Context, attrs: Attr
         val right = width/2F + radius - stokeWidth/2
         val top = height/2F - radius + stokeWidth/2
         val bottom = height/2F + radius - stokeWidth/2
-        Logger.e("====="+top)
         return RectF(left,top,right,bottom)
     }
 

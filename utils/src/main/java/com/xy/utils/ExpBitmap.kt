@@ -2,6 +2,7 @@ package com.xy.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import java.io.File
 import java.io.FileOutputStream
@@ -58,4 +59,14 @@ fun getBitmapFromColor(colorRes: Int,width:Int,height:Int): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     bitmap.eraseColor(colorRes) //填充颜色
     return bitmap
+}
+
+/**
+ * 获取bitmap某一点的颜色
+ */
+fun Bitmap.getBitmapColor(context: Context,x:Int,y:Int,@ColorRes defaultColor: Int): Int {
+    if (this.width<=0 || this.height<=0)return context.getResColor(defaultColor)
+    val currentX = if (x < 0) 0 else if (x > width) width else x
+    val currentY = if (y < 0) 0 else if (y > height) width else y
+    return getPixel(currentX,currentY)
 }
