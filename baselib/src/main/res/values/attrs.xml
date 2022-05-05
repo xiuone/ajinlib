@@ -47,7 +47,11 @@
         <attr name="switch_default_background_color" format="color"/>
         <attr name="switch_select_background_color" format="color"/>
         <attr name="switch_thumb_off_color" format="color"/>
+        <attr name="switch_thumb_off_text_size" format="dimension"/>
+        <attr name="switch_thumb_off_text_color" format="color"/>
         <attr name="switch_thumb_open_color" format="color"/>
+        <attr name="switch_thumb_open_text_size" format="dimension"/>
+        <attr name="switch_thumb_open_text_color" format="color"/>
         <attr name="switch_thumb_off_text" format="string"/>
         <attr name="switch_thumb_open_text" format="string"/>
         <attr name="switch_thumb_shadow_color" format="color"/>

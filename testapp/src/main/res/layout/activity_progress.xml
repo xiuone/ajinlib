@@ -78,6 +78,13 @@
             app:switch_thumb_shadow_radius="@dimen/dp_1_5"
             app:switch_thumb_shadow_color="@color/gray_9999"
             app:switch_is_select="true"
+            app:switch_draw_text="true"
+            app:switch_thumb_off_text="关"
+            app:switch_thumb_off_text_color="@color/white"
+            app:switch_thumb_off_text_size="@dimen/sp_14"
+            app:switch_thumb_open_text="开"
+            app:switch_thumb_open_text_color="@color/white"
+            app:switch_thumb_open_text_size="@dimen/sp_14"
             android:layout_width="@dimen/dp_50"
             android:layout_height="@dimen/dp_30"/>
 
@@ -90,6 +97,13 @@
             app:switch_thumb_shadow_radius="@dimen/dp_1_5"
             app:switch_thumb_shadow_color="@color/gray_9999"
             app:switch_is_select="true"
+            app:switch_draw_text="true"
+            app:switch_thumb_off_text="关"
+            app:switch_thumb_off_text_color="@color/white"
+            app:switch_thumb_off_text_size="@dimen/sp_14"
+            app:switch_thumb_open_text="开"
+            app:switch_thumb_open_text_color="@color/white"
+            app:switch_thumb_open_text_size="@dimen/sp_14"
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_50"/>
     </LinearLayout>
