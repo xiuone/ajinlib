@@ -19,11 +19,13 @@
         <entry key="baselib/src/main/res/layout/layout_base_view.xml" value="0.41203703703703703" />
         <entry key="baselib/src/main/res/layout/layout_tab_bottom.xml" value="0.4244791666666667" />
         <entry key="baselib/src/main/res/layout/layout_tab_left.xml" value="0.4244791666666667" />
+        <entry key="baselib/src/main/res/layout/layout_tab_nono.xml" value="0.34355828220858897" />
         <entry key="baselib/src/main/res/layout/layout_tab_right.xml" value="0.4244791666666667" />
         <entry key="baselib/src/main/res/layout/layout_tab_segment.xml" value="0.4244791666666667" />
         <entry key="baselib/src/main/res/layout/layout_tab_top.xml" value="0.4244791666666667" />
         <entry key="testapp/src/main/res/layout/activity_main.xml" value="0.2353830973307291" />
         <entry key="testapp/src/main/res/layout/activity_progress.xml" value="0.4244791666666667" />
+        <entry key="testapp/src/main/res/layout/activity_tab.xml" value="0.34355828220858897" />
       </map>
     </option>
   </component>

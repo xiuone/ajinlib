@@ -19,7 +19,6 @@ import com.xy.utils.drawCenterText
 import com.xy.utils.getResColor
 import com.xy.utils.showToast
 import kotlin.math.abs
-import kotlin.math.max
 import kotlin.math.min
 
 class SwitchBarView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)

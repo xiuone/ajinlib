@@ -3,11 +3,9 @@ package com.xy.baselib.widget.tab.utils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 
-class FragmentChangeManager
-    (private val mFragmentManager: FragmentManager,  mContainerViewId: Int, private val mFragments: ArrayList<Fragment>) {
+class FragmentChangeManager(private val mFragmentManager: FragmentManager
+,  mContainerViewId: Int, private val mFragments: ArrayList<Fragment>) {
     var currentTab = 0
-        private set
-
     init {
         for (fragment in mFragments) {
             mFragmentManager.beginTransaction().add(mContainerViewId, fragment).hide(fragment).commit()
@@ -29,9 +27,4 @@ class FragmentChangeManager
         }
         currentTab = index
     }
-
-    val currentFragment: Fragment
-        get() = mFragments[currentTab]
-
-
 }

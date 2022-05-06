@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".tab.TabViewPagerAct">
+    <com.xy.baselib.widget.tab.TabLayout
+        android:id="@+id/equally_nono_tabLayout"
+        android:paddingHorizontal="@dimen/dp_20"
+        android:paddingVertical="@dimen/dp_5"
+        android:background="@color/red_e32c"
+        app:tab_block_type="BLOCK"
+        app:tab_select_block_height="@dimen/dp_2"
+        app:tab_select_block_width="@dimen/dp_8"
+        app:tab_select_block_color="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"/>
+
+    <com.xy.baselib.widget.tab.TabScrollerLayout
+        android:id="@+id/scroller_nono_tabLayout"
+        android:paddingHorizontal="@dimen/dp_20"
+        android:paddingVertical="@dimen/dp_5"
+        android:background="@color/red_e32c"
+        app:tab_block_type="BLOCK"
+        app:tab_select_spacing="@dimen/dp_4"
+        app:tab_select_block_height="@dimen/dp_2"
+        app:tab_select_block_width="@dimen/dp_8"
+        app:tab_select_block_color="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"/>
+</LinearLayout>

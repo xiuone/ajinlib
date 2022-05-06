@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.xy.baselib.ui.act.ActivityBaseSwipeBack
+import com.xy.hk.testapp.tab.TabViewPagerAct
 
 class MainActivity : ActivityBaseSwipeBack() ,View.OnClickListener{
 
@@ -30,7 +31,7 @@ class MainActivity : ActivityBaseSwipeBack() ,View.OnClickListener{
                 //glide 演示
             }
             R.id.tab_viewpager_button->{
-                //tab 演示 和viewPage的演示
+                startActivity(Intent(this, TabViewPagerAct::class.java))
             }
             R.id.tab_fragment_button->{
                 //tab 演示 和fragment的演示
@@ -54,7 +55,7 @@ class MainActivity : ActivityBaseSwipeBack() ,View.OnClickListener{
                 //选择图片
             }
             R.id.progress_button->{
-                startActivity(Intent(this,ProgressAct::class.java))
+                startActivity(Intent(this, ProgressAct::class.java))
             }
         }
     }

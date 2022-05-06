@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mv="http://schemas.android.com/apk/res-auto"
-    android:clipChildren="false"
-    android:clipToPadding="false">
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/tv_tab_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_15"
+        android:textColor="@color/gray_3333"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:singleLine="true"/>
@@ -21,10 +23,10 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_11"
-        mv:mv_backgroundColor="@color/red_e32c"
         android:visibility="gone"
+        mv:mv_backgroundColor="@color/red_e32c"
         android:minWidth="@dimen/dp_20"
         android:padding="@dimen/dp_2"
         mv:mv_strokeColor="@color/white"
         mv:mv_strokeWidth="@dimen/dp_1"/>
-</merge>
+</RelativeLayout>
