@@ -4,6 +4,32 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="LibBase/src/main/res/drawable/bg_transparent.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/bg_transparent_focused.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/button_green_56dc_radius_30.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/button_green_56dc_radius_30_stroke.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/button_toorbar_right.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/button_transparent.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/dialog_corner_bg.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/dialog_corner_bg_top.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/dialog_progress.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/shape_toorbar_right_default.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/shape_toorbar_right_press.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/drawable/shape_toorbar_right_un_clicked.xml" value="0.2335" />
+        <entry key="LibBase/src/main/res/layout/a_layout_toolbar_top_default.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/a_layout_toolbar_top_default_right_button.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/a_layout_toolbar_top_default_right_iv_button.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/a_page_err.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/a_page_load.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/dialog_common_load.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/item_left_top.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/item_right_bottom.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_base_view.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_recycler_view.xml" value="0.39166666666666666" />
+        <entry key="LibBase/src/main/res/layout/layout_tab_bottom.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_tab_left.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_tab_nono.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_tab_right.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_tab_top.xml" value="0.4244791666666667" />
       </map>
     </option>
   </component>

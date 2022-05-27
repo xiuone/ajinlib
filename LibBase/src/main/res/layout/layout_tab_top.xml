@@ -22,19 +22,5 @@
             android:layout_height="wrap_content"
             android:singleLine="true"/>
     </LinearLayout>
-    <com.xy.baselib.widget.msg.MsgView
-        android:id="@+id/rtv_msg_tip"
-        android:layout_toRightOf="@+id/ll_tap"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_20"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_11"
-        mv:mv_backgroundColor="@color/red_e32c"
-        android:visibility="gone"
-        android:minWidth="@dimen/dp_20"
-        android:padding="@dimen/dp_2"
-        mv:mv_strokeColor="@color/white"
-        mv:mv_strokeWidth="@dimen/dp_1"/>
 
 </RelativeLayout>

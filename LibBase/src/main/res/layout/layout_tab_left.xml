@@ -25,17 +25,4 @@
             android:singleLine="true"/>
     </LinearLayout>
 
-    <com.xy.baselib.widget.msg.MsgView
-        android:layout_toRightOf="@+id/ll_tap"
-        android:id="@+id/rtv_msg_tip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_11"
-        android:visibility="gone"
-        mv:mv_backgroundColor="@color/red_e32c"
-        mv:mv_strokeColor="@color/white"
-        mv:mv_strokeWidth="@dimen/dp_1"/>
-
 </RelativeLayout>
