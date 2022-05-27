@@ -44,7 +44,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">@dimen/dp_12</item>
         <item name="android:background">@drawable/button_toorbar_right</item>
-        <item name="android:textColor">@color/color_button_toolbar_right</item>
         <item name="android:paddingTop">@dimen/dp_5</item>
         <item name="android:paddingBottom">@dimen/dp_5</item>
         <item name="android:paddingLeft">@dimen/dp_12</item>
