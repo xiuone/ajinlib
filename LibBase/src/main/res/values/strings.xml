@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">BaseLib</string>
+
+    <string name="download_add_fail">添加下载任务失败</string>
+    <string name="logout_app">再按一次退出</string>
+    <string name="click_down_load">点击加载更多</string>
+    <string name="down_load_ing1">加载中.</string>
+    <string name="down_load_ing2">加载中..</string>
+    <string name="down_load_ing3">加载中...</string>
+    <string name="down_load_end">没有更多</string>
+
+    <string name="font_very_small">非常小</string>
+    <string name="font_small">小</string>
+    <string name="font_middle">中</string>
+    <string name="font_max">大</string>
+    <string name="font_very_max">非常大</string>
+</resources>

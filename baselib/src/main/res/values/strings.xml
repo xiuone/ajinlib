@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">BaseLib</string>
-
-    <string name="download_add_fail">添加下载任务失败</string>
-    <string name="logout_app">再按一次退出</string>
-</resources>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MsgView">
+        <!-- 圆角矩形背景色 -->
+        <attr name="mv_backgroundColor" format="color"/>
+        <!-- 圆角弧度,单位dp-->
+        <attr name="mv_cornerRadius" format="dimension"/>
+        <!-- 圆角弧度,单位dp-->
+        <attr name="mv_strokeWidth" format="dimension"/>
+        <!-- 圆角边框颜色-->
+        <attr name="mv_strokeColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="TabLayout">
+        <attr name="tab_select_text_color" format="color"/>
+        <attr name="tab_select_text_size" format="dimension"/>
+        <attr name="tab_select_un_text_color" format="color"/>
+        <attr name="tab_select_un_text_size" format="dimension"/>
+        <attr name="tab_select_block_width" format="dimension"/>
+        <attr name="tab_select_block_height" format="dimension"/>
+        <attr name="tab_select_block_color" format="color"/>
+        <attr name="tab_select_spacing" format="dimension"/>
+        <attr name="tab_draw_size" format="dimension"/>
+        <attr name="tab_draw_margin" format="dimension"/>
+
+        <attr name="tab_block_type" format="enum">
+            <enum name="BLOCK" value="1"/>
+            <enum name="ANGLE" value="2"/>
+            <enum name="FOLLOW" value="3"/>
+        </attr>
+        <attr name="tab_select_direction" format="enum">
+            <enum name="NONO" value="0"/>
+            <enum name="LEFT" value="1"/>
+            <enum name="RIGHT" value="2"/>
+            <enum name="TOP" value="3"/>
+            <enum name="BOTTOM" value="4"/>
+        </attr>
+    </declare-styleable>
+
+
+    <declare-styleable name="LabelView">
+        <!-- 横排数量 -->
+        <attr name="label_cow" format="integer"/>
+        <attr name="label_textSize" format="dimension"/>
+        <attr name="label_textColor" format="color"/>
+        <attr name="label_paddingLeft" format="dimension"/>
+        <attr name="label_paddingRight" format="dimension"/>
+        <attr name="label_paddingTop" format="dimension"/>
+        <attr name="label_paddingBottom" format="dimension"/>
+        <attr name="label_space_horizontal" format="dimension"/>
+        <attr name="label_space_vertical" format="dimension"/>
+        <attr name="label_height" format="dimension"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="MultiTabLayout">
+        <!-- 横排数量 -->
+        <attr name="multi_img_size" format="dimension"/>
+        <attr name="multi_margin" format="dimension"/>
+        <attr name="multi_direction" format="enum">
+            <enum name="LEFT" value="1"/>
+            <enum name="RIGHT" value="2"/>
+            <enum name="TOP" value="3"/>
+            <enum name="BOTTOM" value="4"/>
+        </attr>
+    </declare-styleable>
+
+
+    <declare-styleable name="ProgressView">
+        <attr name="progress_background_color" format="color"/>
+        <attr name="progress_progress_color" format="color"/>
+        <attr name="progress_progress_tv_color" format="color"/>
+        <attr name="progress_progress_tv_size" format="dimension"/>
+        <attr name="progress_progress_number" format="integer"/>
+        <attr name="progress_real" format="boolean"/>
+        <attr name="progress_show_tv" format="boolean"/>
+
+
+        <attr name="progress_thumb_width" format="dimension"/>
+        <attr name="progress_thumb_height" format="dimension"/>
+        <attr name="progress_thumb_radius" format="dimension"/>
+        <attr name="progress_thumb_color" format="color"/>
+        <attr name="progress_thumb_shadow_color" format="color"/>
+        <attr name="progress_thumb_shadow_radius" format="dimension"/>
+        <attr name="progress_min_height" format="dimension"/>
+        <attr name="progress_max_height" format="dimension"/>
+
+        <attr name="progress_height" format="dimension"/>
+        <attr name="progress_thumb_min_size" format="dimension"/>
+        <attr name="progress_thumb_max_size" format="dimension"/>
+
+
+        <attr name="progress_progress_circle_stoke_width" format="dimension"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="SwitchBarView">
+        <attr name="switch_default_background_color" format="color"/>
+        <attr name="switch_select_background_color" format="color"/>
+        <attr name="switch_thumb_off_color" format="color"/>
+        <attr name="switch_thumb_off_text_size" format="dimension"/>
+        <attr name="switch_thumb_off_text_color" format="color"/>
+        <attr name="switch_thumb_open_color" format="color"/>
+        <attr name="switch_thumb_open_text_size" format="dimension"/>
+        <attr name="switch_thumb_open_text_color" format="color"/>
+        <attr name="switch_thumb_off_text" format="string"/>
+        <attr name="switch_thumb_open_text" format="string"/>
+        <attr name="switch_thumb_shadow_color" format="color"/>
+        <attr name="switch_thumb_shadow_radius" format="dimension"/>
+        <attr name="switch_draw_text" format="boolean"/>
+        <attr name="switch_is_select" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ItemView">
+        <attr name="item_draw_size" format="dimension"/>
+        <attr name="item_draw_res" format="reference"/>
+        <attr name="item_text" format="string"/>
+        <attr name="item_text_size" format="dimension"/>
+        <attr name="item_text_color" format="color"/>
+        <attr name="item_draw_margin" format="dimension"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="ShadowLayout">
+        <!-- 1、关于阴影 -->
+        <!--阴影：是否要显示阴影，可能有只想用shape和selector功能，不想要阴影-->
+        <attr name="hl_backgroundColor" format="color" />
+
+        <attr name="hl_shadowHidden" format="boolean" />
+        <!--阴影：阴影颜色-->
+        <attr name="hl_shadowColor" format="color" />
+        <!--阴影：阴影的扩散范围(也可以理解为扩散程度)-->
+        <attr name="hl_shadowLimit" format="dimension" />
+        <!--阴影：左边是否隐藏阴影-->
+        <attr name="hl_shadowHiddenLeft" format="boolean" />
+        <!--阴影：右边是否隐藏阴影-->
+        <attr name="hl_shadowHiddenRight" format="boolean" />
+        <!--阴影：上边是否隐藏阴影-->
+        <attr name="hl_shadowHiddenTop" format="boolean" />
+        <!--阴影：下面是否隐藏阴影-->
+        <attr name="hl_shadowHiddenBottom" format="boolean" />
+
+
+        <!-- 2、关于圆角 -->
+        <!--圆角：统一大小，其中包括了阴影，shape、背景图、stroke边框圆角-->
+        <attr name="hl_cornerRadius" format="dimension" />
+        <!--圆角：左上圆角。设置后会忽略hl_cornerRadius的值-->
+        <attr name="hl_cornerRadius_leftTop" format="dimension" />
+        <!--圆角：右上圆角。同上-->
+        <attr name="hl_cornerRadius_rightTop" format="dimension" />
+        <!--圆角：左下圆角。同上-->
+        <attr name="hl_cornerRadius_leftBottom" format="dimension" />
+        <!--圆角：右下圆角。同上-->
+        <attr name="hl_cornerRadius_rightBottom" format="dimension" />
+
+        <!--箭头高度-->
+        <attr name="hl_arrow_height" format="dimension" />
+        <!--箭头宽度-->
+        <attr name="hl_arrow_width" format="dimension" />
+        <!--箭头偏移-->
+        <attr name="hl_arrow_off" format="dimension" />
+        <attr name="hl_arrow_radius" format="dimension" />
+        <!--箭头方向-->
+        <attr name="hl_arrow_direction" >
+            <flag name="leftTop" value="0x01" />
+            <flag name="leftBottom" value="0x02" />
+            <flag name="rightTop" value="0x03" />
+            <flag name="rightBottom" value="0x04" />
+            <flag name="topLeft" value="0x05" />
+            <flag name="topRight" value="0x06" />
+            <flag name="bottomLeft" value="0x07" />
+            <flag name="bottomRight" value="0x08" />
+        </attr>
+
+
+        <!-- 4、关于填充的渐变色 -->
+        <!-- 要知道，如果设置了渐变色。那么将以渐变色为主。hl_layoutBackground属性将无效 -->
+        <!-- 渐变的起始颜色 -->
+        <attr name="hl_startColor" format="color" />
+        <!-- 渐变的中间颜色 -->
+        <attr name="hl_centerColor" format="color" />
+        <!-- 渐变的终止颜色 -->
+        <attr name="hl_endColor" format="color" />
+        <!-- 渐变角度，默认值为0-->
+        <attr name="hl_angle" format="integer" />
+
+
+    </declare-styleable>
+
+
+    <declare-styleable name="CommonDrawView">
+        <attr name="common_draw_stoke_color" format="color"/>
+        <attr name="common_draw_focus_stoke_color" format="color"/>
+        <attr name="common_draw_press_stoke_color" format="color"/>
+
+        <attr name="common_draw_stoke_size" format="dimension"/>
+        <attr name="common_draw_radius" format="dimension"/>
+
+        <attr name="common_draw_background" format="color"/>
+        <attr name="common_draw_focus_background" format="color"/>
+        <attr name="common_draw_press_background" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="DownTimerTextView">
+        <attr name="down_timer_run_string" format="string"/>
+        <attr name="down_timer_end_string" format="string"/>
+    </declare-styleable>
+</resources>

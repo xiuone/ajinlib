@@ -3,29 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/drawable/button_toorbar_right.xml" value="0.2445" />
-        <entry key="baselib/src/main/res/drawable/dialog_progress.xml" value="0.3675925925925926" />
-        <entry key="baselib/src/main/res/drawable/shape_gray_9999_radius_8.xml" value="0.2445" />
-        <entry key="baselib/src/main/res/drawable/shape_toorbar_right_default.xml" value="0.2445" />
-        <entry key="baselib/src/main/res/drawable/shape_toorbar_right_press.xml" value="0.2445" />
-        <entry key="baselib/src/main/res/drawable/shape_toorbar_right_un_clicked.xml" value="0.2445" />
-        <entry key="baselib/src/main/res/layout/a_layout_toolbar_top_default.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/a_layout_toolbar_top_default_right_button.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/a_layout_toolbar_top_default_right_iv_button.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/a_page_err.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/a_page_load.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/dialog_common_load.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/layout_base_view.xml" value="0.41203703703703703" />
-        <entry key="baselib/src/main/res/layout/layout_tab_bottom.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/layout_tab_left.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/layout_tab_nono.xml" value="0.34355828220858897" />
-        <entry key="baselib/src/main/res/layout/layout_tab_right.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/layout_tab_segment.xml" value="0.4244791666666667" />
-        <entry key="baselib/src/main/res/layout/layout_tab_top.xml" value="0.4244791666666667" />
-        <entry key="testapp/src/main/res/layout/activity_main.xml" value="0.2353830973307291" />
-        <entry key="testapp/src/main/res/layout/activity_progress.xml" value="0.4244791666666667" />
-        <entry key="testapp/src/main/res/layout/activity_tab.xml" value="0.34355828220858897" />
+        <entry key="LibBase/src/main/res/drawable/bg_transparent.xml" value="0.2335" />
       </map>
     </option>
   </component>

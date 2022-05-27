@@ -1,0 +1,50 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+android {
+    compileSdkVersion rootProject.ext.compileSdk_version
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdk_version
+        targetSdkVersion rootProject.ext.targetSdk_version
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    api 'androidx.constraintlayout:constraintlayout:2.1.3'
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api 'androidx.appcompat:appcompat:1.4.1'
+    api 'com.google.android.material:material:1.6.0'
+
+    api 'com.gyf.immersionbar:immersionbar:3.0.0'
+
+    api 'com.lzy.net:okgo:3.0.4'//请求框架
+
+    api 'com.github.getActivity:XXPermissions:13.5'
+
+    //适配
+    api 'me.jessyan:autosize:1.2.1'
+
+    //下载上传
+    api "com.arialyy.aria:core:3.8.15"
+    annotationProcessor "com.arialyy.aria:compiler:3.8.15"
+
+    api 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+
+    api 'com.android.support:multidex:1.0.3'
+    api 'com.android.support:multidex-instrumentation:1.0.3'
+    api "org.greenrobot:greendao:$greendao_version" // add library
+    api 'androidx.core:core-ktx:1.7.0'
+    api 'com.alibaba:fastjson:1.2.72'
+}

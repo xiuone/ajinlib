@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ToolbarLayout">
+    <ImageView
+        android:id="@+id/back_iv_button"
+        style="@style/ToolbarBackIv"/>
+    <TextView
+        android:id="@+id/middle_title"
+        style="@style/ToolbarTitleTv"/>
+    <ImageView
+        android:id="@+id/right_iv_button"
+        style="@style/ToolbarRightIv"/>
+    <View
+        android:id="@+id/tabbar_line"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/color_line1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0_5"/>
+</RelativeLayout>
