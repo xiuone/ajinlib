@@ -21,7 +21,7 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     //脚脚
     private val footMap :HashMap<Int,View> by lazy { HashMap() }
 
-    private var showHaveHeadEmpty:Boolean = true
+    var showHaveHeadEmpty:Boolean = true
         set(value) {
             field = value
             if (onItemContentCount() == 0) {
@@ -29,7 +29,7 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
             }
         }
 
-    private var showHaveFootEmpty:Boolean = true
+    var showHaveFootEmpty:Boolean = true
         set(value) {
             field = value
             if (onItemContentCount() == 0) {
@@ -37,7 +37,7 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
             }
         }
 
-    private var emptyView :View?=null
+    var emptyView :View?=null
         set(value) {
             field = value
             if (onItemContentCount() == 0) {

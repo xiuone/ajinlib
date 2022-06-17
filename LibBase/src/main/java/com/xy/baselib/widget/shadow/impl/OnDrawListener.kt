@@ -4,4 +4,5 @@ import android.graphics.Canvas
 
 interface OnDrawListener : OnSizeChangeListener {
     fun onDraw(canvas: Canvas?)
+    fun onClipPathDraw(canvas: Canvas?)
 }

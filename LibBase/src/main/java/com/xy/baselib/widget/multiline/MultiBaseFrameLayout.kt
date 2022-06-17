@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.xy.baselib.exp.Logger
 
 open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {
@@ -13,6 +14,7 @@ open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, pri
 
 
     protected fun resetEqualView(horSize:Int) {
+        if (width == 0)return
         for (index in 0 until childCount) {
             val childView = getChildAt(index)
             val itemWidth = (width - spaceHorizontal * (horSize - 1)) / horSize
@@ -24,6 +26,7 @@ open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, pri
 
 
     protected fun resetEqualView(horSize:Int,itemHeight: Int) {
+        if (width == 0)return
         for (index in 0 until childCount) {
             val childView = getChildAt(index)
             val itemWidth = (width -paddingLeft-paddingRight- spaceHorizontal * (horSize - 1)) / horSize
@@ -34,6 +37,7 @@ open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, pri
     }
 
     protected fun resetMoreView(itemHeight: Int) {
+        if (width == 0)return
         var lineMap = HashMap<Int,Int>()
         var lineViewMap = HashMap<Int,ArrayList<View>>()
         val canUseViewWidth = width-paddingLeft-paddingRight
@@ -42,13 +46,17 @@ open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, pri
             val itemWidth = childView.width
             var isAdd = false
             var line = lineViewMap.size
-            for (key in lineMap.keys){
-                val value = lineMap[key]?:0
-                val useWidth = itemWidth+value+spaceHorizontal
-                if (useWidth < canUseViewWidth){//判断使用的长度是否能在这一行放下
+            for (key in lineMap.keys) {
+                val value = lineMap[key] ?: 0
+                val useWidth = itemWidth + value + spaceHorizontal
+                if (useWidth < canUseViewWidth) {//判断使用的长度是否能在这一行放下
                     lineMap[key] = useWidth
                     var topMargin = key * (itemHeight + spaceVertical)
-                    resetView(childView,itemWidth,itemHeight,value+spaceHorizontal,topMargin)
+                    resetView(childView,
+                        itemWidth,
+                        itemHeight,
+                        value + spaceHorizontal,
+                        topMargin)
                     isAdd = true
                     line = key
                     break
@@ -59,7 +67,7 @@ open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, pri
                 resetView(childView, itemWidth, itemHeight, 0, topMargin)
                 lineMap[lineMap.size] = itemWidth
             }
-            val list = lineViewMap[line]?:ArrayList<View>()
+            val list = lineViewMap[line] ?: ArrayList<View>()
             list.add(childView)
             lineViewMap[line] = list
         }

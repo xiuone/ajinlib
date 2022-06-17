@@ -3,7 +3,7 @@ package com.xy.baselib.widget.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import com.xy.baselib.mode.AdapterViewType
+import com.xy.baselib.widget.recycler.AdapterViewType
 
 abstract class RecyclerSingleAdapter<T>(@LayoutRes private val layoutId:Int) : RecyclerBaseAdapter<T>() {
 

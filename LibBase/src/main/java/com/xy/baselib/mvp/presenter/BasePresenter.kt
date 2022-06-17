@@ -1,5 +1,6 @@
 package com.xy.baselib.mvp.presenter
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.Lifecycle
@@ -32,5 +33,9 @@ abstract class BasePresenter<T : BaseView>(var view:T?) : LifecycleObserver{
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     open fun onDestroyed(owner: LifecycleOwner) {
         view = null
+    }
+
+    fun getContext():Context?{
+        return view?.getPageContext()
     }
 }

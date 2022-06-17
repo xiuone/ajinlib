@@ -14,11 +14,13 @@ abstract class ProgressPresenter<T : BaseView>(view:T) :BasePresenter<T>(view),D
     private var loadProgressDialog: LoadProgressBaseDialog?=null
 
     private fun createProgressDialog():LoadProgressBaseDialog?{
-        val context:Context? = view?.getPageContext();
-        if (loadProgressDialog == null && context != null){
-            loadProgressDialog = LoadProgressBaseDialog(context,this)
+        getContext()?.run {
+            if (loadProgressDialog == null){
+                loadProgressDialog = LoadProgressBaseDialog(this,this@ProgressPresenter)
+            }
+            return loadProgressDialog
         }
-        return loadProgressDialog
+        return null
     }
 
     /**
@@ -30,6 +32,17 @@ abstract class ProgressPresenter<T : BaseView>(view:T) :BasePresenter<T>(view),D
             createProgressDialog()?.show(progressIdRes(),strRes)
         }
     }
+
+    /**
+     * 显示进度
+     * @param str
+     */
+    fun show(content:String) {
+        mainHandler.post {
+            createProgressDialog()?.show(progressIdRes(),content)
+        }
+    }
+
 
     /**
      * 隐藏进度

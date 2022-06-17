@@ -20,7 +20,7 @@ class DownTimerTextView @JvmOverloads constructor(context: Context, attrs: Attri
         attrs?.run {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.DownTimerTextView)
             finishString = typedArray.getString(R.styleable.DownTimerTextView_down_timer_end_string)?:""
-            runString = typedArray.getString(R.styleable.DownTimerTextView_down_timer_run_string)?:""
+            runString = typedArray.getString(R.styleable.DownTimerTextView_down_timer_run_string)?:"%s"
         }
     }
 
@@ -41,5 +41,9 @@ class DownTimerTextView @JvmOverloads constructor(context: Context, attrs: Attri
             isClickable = true //重新获得点击
             isSelected = false
         }
+    }
+
+    fun onDestroy(){
+        downTimer.cancel()
     }
 }

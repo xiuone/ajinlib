@@ -2,10 +2,16 @@ package com.xy.baselib.widget.common.text
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
+import com.xy.baselib.R
+import com.xy.baselib.exp.Logger
+import com.xy.baselib.exp.getResColor
 import com.xy.baselib.widget.common.CommonDrawListener
 import com.xy.baselib.widget.common.draw.CommonDrawImpl
 
@@ -14,13 +20,20 @@ open class CommonTextView @JvmOverloads constructor(context: Context, attrs: Att
     private val editBackDrawImpl by lazy { CommonDrawImpl(this,context) }
     init {
         editBackDrawImpl.init(attrs)
-        gravity = Gravity.CENTER_VERTICAL
+        attrs?.run {
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.MaterialTextView)
+        }
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     override fun onDraw(canvas: Canvas?) {
+        canvas?.save()
+        canvas?.translate(scrollX.toFloat(),scrollY.toFloat())
         editBackDrawImpl.onDraw(canvas)
+        canvas?.restore()
         super.onDraw(canvas)
     }
+
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         editBackDrawImpl.onTouch(event)

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import com.xy.baselib.widget.common.CommonDrawListener
 import com.xy.baselib.widget.common.draw.CommonDrawImpl
 

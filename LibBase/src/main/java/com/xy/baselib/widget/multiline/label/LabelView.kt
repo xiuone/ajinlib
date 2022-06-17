@@ -2,8 +2,10 @@ package com.xy.baselib.widget.multiline.label
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import com.xy.baselib.R
@@ -18,7 +20,7 @@ import com.xy.baselib.exp.setOnClick
 
 open class LabelView<T :LabelEntry>  @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
     MultiBaseFrameLayout(context, attrs, defStyleAttr) {
-    private val editBackDrawImpl by lazy { CommonDrawImpl(this,context) }
+    protected val editBackDrawImpl by lazy { CommonDrawImpl(this,context) }
     var itemClickListener: AppItemClickListener<T>?=null
 
     protected var cow = 0
@@ -54,12 +56,8 @@ open class LabelView<T :LabelEntry>  @JvmOverloads constructor(context: Context,
         }
     }
 
-    fun setNewView(data:MutableList<T>){
+    open fun setNewView(data:MutableList<T>){
         removeAllViews()
-        addView(data)
-    }
-
-    fun addView(data:MutableList<T>){
         for (item in data){
             addView(item)
         }
@@ -70,6 +68,7 @@ open class LabelView<T :LabelEntry>  @JvmOverloads constructor(context: Context,
             val commonTextView = CommonTextView(context)
             setItemDraw(commonTextView)
             commonTextView.text = data.onLabel()
+            commonTextView.gravity = Gravity.CENTER
             commonTextView.isSingleLine = true
             commonTextView.setTextColor(textColorList)
             commonTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize)
@@ -77,19 +76,45 @@ open class LabelView<T :LabelEntry>  @JvmOverloads constructor(context: Context,
         }
     }
 
-    protected fun addView(view: View,data: T){
+    protected open fun addView(view: View,data: T):View{
         val wrapContent = ViewGroup.LayoutParams.WRAP_CONTENT
-        val params = ViewGroup.LayoutParams(wrapContent,if (labelItemHeight<=0) wrapContent else labelItemHeight)
+        val params = LayoutParams(wrapContent,if (labelItemHeight<=0) wrapContent else labelItemHeight)
         view.layoutParams = params
         super.addView(view)
         view.tag = data
         view.setPadding(labelPaddingLeft,labelPaddingTop,labelPaddingRight,labelPaddingBottom)
         view.setOnClick {
-            view.isSelected = !view.isSelected
-            itemClickListener?.onClicked(data)
+           setOnClick(view, data)
+        }
+        return view
+    }
+
+    protected open fun setOnClick(view: View,data: T){
+        setItemSelected(view)
+        itemClickListener?.onClicked(data)
+    }
+
+    open fun setItemSelected(data:T?){
+        for (index in 0 until childCount){
+            val childView = getChildAt(index)
+            if (childView.tag == data){
+                setItemSelected(childView)
+                return
+            }
         }
     }
 
+    open fun setItemSelected(view:View){
+        for (index in 0 until childCount){
+            val childView = getChildAt(index);
+            childView.isSelected = childView == view
+        }
+    }
+
+    open fun setItemSelected(position:Int){
+        if (position < childCount)
+            setItemSelected(getChildAt(position))
+    }
 
     protected fun setItemDraw(commonDrawListener: CommonDrawListener){
         commonDrawListener.onCommonDrawImpl().stokeColor = editBackDrawImpl.stokeColor
@@ -102,10 +127,15 @@ open class LabelView<T :LabelEntry>  @JvmOverloads constructor(context: Context,
         commonDrawListener.onCommonDrawImpl().radius = editBackDrawImpl.radius
     }
 
-
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        if (labelItemHeight<=0)return
+        if (labelItemHeight<=0 )return
+        post {
+            resetView()
+        }
+    }
+
+    open fun resetView(){
         if (cow>0){
             resetEqualView(cow,labelItemHeight)
         }else{

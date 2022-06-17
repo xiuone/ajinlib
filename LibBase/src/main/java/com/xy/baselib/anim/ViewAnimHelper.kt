@@ -15,13 +15,13 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun hintView(builder: AnimatorSet.Builder, vararg views: View?) {
+    fun hintView(builder: AnimatorSet.Builder?, vararg views: View?) {
         for (view in views) {
             if (view != null) {
                 val alphaAnim: ValueAnimator = ObjectAnimator.ofFloat(view, "alpha", view.alpha, 0f)
                 val scaleX: ValueAnimator = ObjectAnimator.ofFloat(view, "scaleX", view.scaleX, 0f)
                 val scaleY: ValueAnimator = ObjectAnimator.ofFloat(view, "scaleY", view.scaleX, 0f)
-                builder.with(alphaAnim).with(scaleX).with(scaleY)
+                builder?.with(alphaAnim)?.with(scaleX)?.with(scaleY)
             }
         }
     }
@@ -31,13 +31,13 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun showView(builder: AnimatorSet.Builder, vararg views: View?) {
+    fun showView(builder: AnimatorSet.Builder?, vararg views: View?) {
         for (view in views) {
             if (view != null) {
                 val alphaAnim: ValueAnimator = ObjectAnimator.ofFloat(view, "alpha", view.alpha, 1f)
                 val scaleX: ValueAnimator = ObjectAnimator.ofFloat(view, "scaleX", view.scaleX, 1f)
                 val scaleY: ValueAnimator = ObjectAnimator.ofFloat(view, "scaleY", view.scaleX, 1f)
-                builder.with(alphaAnim).with(scaleX).with(scaleY)
+                builder?.with(alphaAnim)?.with(scaleX)?.with(scaleY)
             }
         }
     }
@@ -47,11 +47,11 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun scaleYView(builder: AnimatorSet.Builder,targetValue: Float, vararg views: View?) {
+    fun scaleYView(builder: AnimatorSet.Builder?,targetValue: Float, vararg views: View?) {
         for (view in views) {
             if (view != null) {
                 val scaleY: ValueAnimator = ObjectAnimator.ofFloat(view, "scaleY", view.scaleX, targetValue)
-                builder.with(scaleY)
+                builder?.with(scaleY)
             }
         }
     }
@@ -61,12 +61,12 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun rotationView(builder: AnimatorSet.Builder,targetValue: Float, vararg views: View?) {
+    fun rotationView(builder: AnimatorSet.Builder?,targetValue: Float, vararg views: View?) {
         for (view in views) {
             if (view != null) {
                 view.rotation
                 val rotationAnim: ValueAnimator = ObjectAnimator.ofFloat(view, "rotation", view.rotation, targetValue)
-                builder.with(rotationAnim)
+                builder?.with(rotationAnim)
             }
         }
     }
@@ -76,12 +76,12 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun setWidth(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setWidth(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator =
                 ObjectAnimator.ofInt(viewWrapper, "Width", viewWrapper.width, targetValue)
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -90,11 +90,11 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun setHeight(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setHeight(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(viewWrapper, "Height", viewWrapper.height, targetValue)
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -103,10 +103,10 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun setScaleX(builder: AnimatorSet.Builder, targetValue: Float, vararg views: View) {
+    fun setScaleX(builder: AnimatorSet.Builder?, targetValue: Float, vararg views: View) {
         for (view in views) {
             val animator = ObjectAnimator.ofFloat(view, "ScaleX", view.scaleX, targetValue)
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -115,14 +115,14 @@ object ViewAnimHelper {
      * @param builder
      * @param views
      */
-    fun setScaleY(builder: AnimatorSet.Builder, targetValue: Float, vararg views: View) {
+    fun setScaleY(builder: AnimatorSet.Builder?, targetValue: Float, vararg views: View) {
         for (view in views) {
             val animator = ObjectAnimator.ofFloat(view, "ScaleY", view.scaleY, targetValue)
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
-    fun setMarginLeft(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setMarginLeft(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -131,11 +131,11 @@ object ViewAnimHelper {
                 viewWrapper.marginLeft,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
-    fun setMarginTop(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setMarginTop(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -144,7 +144,7 @@ object ViewAnimHelper {
                 viewWrapper.marginTop,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -154,7 +154,7 @@ object ViewAnimHelper {
      * @param targetValue
      * @param views
      */
-    fun setMarginRight(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setMarginRight(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -163,7 +163,7 @@ object ViewAnimHelper {
                 viewWrapper.marginRight,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -173,7 +173,7 @@ object ViewAnimHelper {
      * @param targetValue
      * @param views
      */
-    fun setMarginBottom(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setMarginBottom(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -182,7 +182,7 @@ object ViewAnimHelper {
                 viewWrapper.marginBottom,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -192,7 +192,7 @@ object ViewAnimHelper {
      * @param targetValue
      * @param views
      */
-    fun setPaddingLeft(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setPaddingLeft(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -201,7 +201,7 @@ object ViewAnimHelper {
                 viewWrapper.paddingLeft,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -211,7 +211,7 @@ object ViewAnimHelper {
      * @param targetValue
      * @param views
      */
-    fun setPaddingRight(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setPaddingRight(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -220,7 +220,7 @@ object ViewAnimHelper {
                 viewWrapper.paddingRight,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -230,7 +230,7 @@ object ViewAnimHelper {
      * @param targetValue
      * @param views
      */
-    fun setPaddingTop(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setPaddingTop(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -239,7 +239,7 @@ object ViewAnimHelper {
                 viewWrapper.paddingTop,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -249,7 +249,7 @@ object ViewAnimHelper {
      * @param targetValue
      * @param views
      */
-    fun setPaddingBottom(builder: AnimatorSet.Builder, targetValue: Int, vararg views: View?) {
+    fun setPaddingBottom(builder: AnimatorSet.Builder?, targetValue: Int, vararg views: View?) {
         for (view in views) {
             val viewWrapper = WrapperView(view)
             val animator = ObjectAnimator.ofInt(
@@ -258,7 +258,7 @@ object ViewAnimHelper {
                 viewWrapper.paddingBottom,
                 targetValue
             )
-            builder.with(animator)
+            builder?.with(animator)
         }
     }
 
@@ -273,8 +273,8 @@ object ViewAnimHelper {
         return animatorSet
     }
 
-    fun getBuilder(animatorSet: AnimatorSet): AnimatorSet.Builder {
+    fun getBuilder(animatorSet: AnimatorSet?): AnimatorSet.Builder? {
         val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
-        return animatorSet.play(valueAnimator)
+        return animatorSet?.play(valueAnimator)
     }
 }

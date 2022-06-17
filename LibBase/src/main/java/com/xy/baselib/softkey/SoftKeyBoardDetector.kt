@@ -35,7 +35,6 @@ object SoftKeyBoardDetector {
     }
 
     fun unregister(activity: Activity) {
-//        sIsRegistered = false;
         val globalCallBack = hashMap[activity]
         val mRootView = activity.window.decorView
         if (globalCallBack != null) {
@@ -46,7 +45,9 @@ object SoftKeyBoardDetector {
 
     fun removeListener(activity: Activity, listener: OnSoftKeyBoardChangeListener?) {
         val globalCallBack = hashMap[activity]
-        globalCallBack!!.removeListener(listener!!)
+        listener?.run {
+            globalCallBack?.removeListener(listener)
+        }
     }
 
     fun showKeyBord(activity: Activity?) {

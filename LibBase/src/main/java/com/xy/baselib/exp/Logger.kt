@@ -3,9 +3,6 @@ package com.xy.baselib.exp
 import android.util.Log
 import com.xy.baselib.BuildConfig
 
-/**
- * Created by wangyalei on 18/1/5.
- */
 object Logger {
     const val TAG = "==``"
 
@@ -13,6 +10,7 @@ object Logger {
      * 类名
      */
     private var sClassName: String? = null
+    var debug = true
 
     /**
      * 方法名
@@ -29,14 +27,14 @@ object Logger {
     }
 
     fun d(tag: String?, msg: String) {
-        if (BuildConfig.DEBUG) {
+        if (debug) {
             getMethodNames(Throwable().stackTrace)
             Log.d(tag, createLog(msg))
         }
     }
 
     fun d(tag: String?, msg: String, e: Exception?) {
-        if (BuildConfig.DEBUG) {
+        if (debug) {
             getMethodNames(Throwable().stackTrace)
             Log.d(tag, createLog(msg), e)
         }
@@ -51,7 +49,7 @@ object Logger {
     }
 
     fun e(tag: String?, msg: String?) {
-        if (BuildConfig.DEBUG && !msg.isNullOrEmpty()) {
+        if (debug && !msg.isNullOrEmpty()) {
             getMethodNames(Throwable().stackTrace)
             Log.e(tag, createLog(msg))
         }

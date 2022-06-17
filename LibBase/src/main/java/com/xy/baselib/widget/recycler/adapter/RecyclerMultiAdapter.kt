@@ -3,8 +3,8 @@ package com.xy.baselib.widget.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import com.xy.baselib.mode.AdapterViewType
-import com.xy.baselib.mode.MultiEntry
+import com.xy.baselib.widget.recycler.AdapterViewType
+import com.xy.baselib.widget.recycler.MultiEntry
 import com.xy.baselib.exp.getSpace
 
 abstract class RecyclerMultiAdapter<T : MultiEntry>() : RecyclerBaseAdapter<T>() {

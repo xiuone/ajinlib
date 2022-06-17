@@ -13,7 +13,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -43,4 +43,12 @@ dependencies {
     api "org.greenrobot:greendao:$greendao_version" // add library
     api 'androidx.core:core-ktx:1.7.0'
     api 'com.alibaba:fastjson:1.2.72'
+
+    api  'io.github.scwang90:refresh-layout-kernel:2.0.5'
+    api  'io.github.scwang90:refresh-header-material:2.0.5'
+    api  'io.github.scwang90:refresh-footer-ball:2.0.5'
+
+
+    api "io.reactivex.rxjava3:rxjava:3.0.0"
+    api "io.reactivex.rxjava3:rxandroid:3.0.0"
 }

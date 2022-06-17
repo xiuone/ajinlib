@@ -49,7 +49,8 @@ fun Long.stampToDate(model:String): String? {
 /**
  * 给字符串某些关键字上色
  */
-fun SpannableString.replaceContentColor(color: Int, keyword: String): SpannableString {
+fun SpannableString.replaceContentColor(color: Int, keyword: String?): SpannableString {
+    if (keyword == null)return this
     findSpanPosition(toString(),keyword) { start, end ->
         this.setSpan(ForegroundColorSpan(color), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
@@ -70,14 +71,16 @@ fun SpannableString.setContentSize(size: Int, keyword: String): SpannableString 
 /**
  * 给字符串某些关键字大小
  */
-fun SpannableString.setStyleBold(keyword: String): SpannableString {
+fun SpannableString.setStyleBold(keyword: String?): SpannableString {
+    if (keyword == null)return this
     return setStyle(Typeface.BOLD,keyword)
 }
 
 /**
  * 给字符串某些关键字大小
  */
-fun SpannableString.setStyle(style:Int,keyword: String): SpannableString {
+fun SpannableString.setStyle(style:Int,keyword: String?): SpannableString {
+    if (keyword == null)return this
     findSpanPosition(toString(),keyword) { start, end ->
         this.setSpan(StyleSpan(style), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
@@ -87,7 +90,8 @@ fun SpannableString.setStyle(style:Int,keyword: String): SpannableString {
 /**
  * 让文字可以点击
  */
-fun SpannableString.setContentClicked( keyword: String,l: () -> Unit):SpannableString{
+fun SpannableString.setContentClicked( keyword: String?,l: () -> Unit):SpannableString{
+    if (keyword == null)return this
     findSpanPosition(toString(),keyword) { start, end ->
         this.setSpan(object : ClickableSpan() {
             override fun onClick(p0: View) {
@@ -99,15 +103,17 @@ fun SpannableString.setContentClicked( keyword: String,l: () -> Unit):SpannableS
 }
 
 
-private fun findSpanPosition(string: String,key:String,method:(start:Int,end:Int)->Unit){
-    val string = string.toLowerCase()
-    val key = key.toLowerCase()
-    val pattern = Pattern.compile(key)
-    val matcher = pattern.matcher(string)
-    while (matcher.find()) {
-        val start = matcher.start()
-        val end = matcher.end()
-        method(start,end)
+private fun findSpanPosition(string: String,key:String?,method:(start:Int,end:Int)->Unit){
+    if (key != null) {
+        val string = string.toLowerCase()
+        val key = key.toLowerCase()
+        val pattern = Pattern.compile(key)
+        val matcher = pattern.matcher(string)
+        while (matcher.find()) {
+            val start = matcher.start()
+            val end = matcher.end()
+            method(start, end)
+        }
     }
 }
 

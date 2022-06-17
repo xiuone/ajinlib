@@ -15,6 +15,8 @@ abstract class BaseBottomDialog(context: Context) : BaseDialog(context) {
         return Gravity.BOTTOM
     }
 
+
+
     /**
      * 显示动画
      */

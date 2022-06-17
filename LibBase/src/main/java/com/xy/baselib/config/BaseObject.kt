@@ -1,13 +1,17 @@
 package com.xy.baselib.config
 
-import com.infinitybrowser.baselib.sp.SPHelperUtils
+import com.xy.baselib.sp.SPHelperUtils
 import com.xy.baselib.font.FontManger
 import com.xy.baselib.language.LanguageManger
 import com.xy.baselib.life.ActivityController
+import com.xy.baselib.receiver.NetStateChangeReceiver
+import com.xy.baselib.softkey.SoftKeyBoardDetectorHeightController
 
-object BaseConfig {
+object BaseObject {
     val actController = ActivityController()
+    val keyHeightController = SoftKeyBoardDetectorHeightController()
     val spHelperUtils = SPHelperUtils()
     val languageManger = LanguageManger()
     val fontManger = FontManger()
+    val netStateManager = NetStateChangeReceiver()
 }

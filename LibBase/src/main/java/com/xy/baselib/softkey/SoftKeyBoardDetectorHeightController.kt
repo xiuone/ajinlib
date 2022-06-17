@@ -1,8 +1,8 @@
 package com.xy.baselib.softkey
 
+import android.app.Activity
 import android.content.Context
-import com.xy.baselib.config.BaseConfig
-import com.xy.baselib.life.ActivityController.Companion.controller
+import com.xy.baselib.config.BaseObject
 import com.xy.baselib.softkey.SoftKeyBoardDetector.register
 import com.xy.baselib.softkey.SoftKeyBoardDetector.removeListener
 
@@ -12,10 +12,10 @@ class SoftKeyBoardDetectorHeightController : OnSoftKeyBoardChangeListener {
 
     override fun keyBoardShow(context: Context, height: Int) {
         if (height > 0) {
-            BaseConfig.spHelperUtils.setInt(context,KEY_SP_KEYBORD_HEIGHT, height)
+            BaseObject.spHelperUtils.setInt(context,KEY_SP_KEYBORD_HEIGHT, height)
             sKeybordHeight = height
-            controller.currentActivity?.run {
-                removeListener(this, heightController)
+            BaseObject.actController.currentActivity?.run {
+                removeListener(this, BaseObject.keyHeightController)
             }
         }
     }
@@ -23,27 +23,17 @@ class SoftKeyBoardDetectorHeightController : OnSoftKeyBoardChangeListener {
     /**
      * 监听润键盘的高度
      */
-    fun detectKeyBord(context: Context) {
+    fun detectKeyBord(activity:Activity) {
         if (sKeybordHeight == 0) {
-            controller.currentActivity?.run {
-                register(this, heightController)
-            }
+            register(activity, BaseObject.keyHeightController)
         }
     }
 
     fun getKeyBordHeight(context: Context):Int{
-        var keyWordHeight: Int =  BaseConfig.spHelperUtils.getInt(context,KEY_SP_KEYBORD_HEIGHT, 0)
+        var keyWordHeight: Int =  BaseObject.spHelperUtils.getInt(context,KEY_SP_KEYBORD_HEIGHT, 0)
         if (keyWordHeight == 0) {
             keyWordHeight = 833
         }
         return keyWordHeight
-    }
-
-    companion object {
-        val heightController = SoftKeyBoardDetectorHeightController()
-
-
-
-
     }
 }

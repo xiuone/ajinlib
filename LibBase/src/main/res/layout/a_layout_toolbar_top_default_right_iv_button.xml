@@ -11,7 +11,7 @@
         android:id="@+id/right_iv_button"
         style="@style/ToolbarRightIv"/>
     <View
-        android:id="@+id/tabbar_line"
+        android:id="@+id/title_line"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
         android:background="@color/color_line1"

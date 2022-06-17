@@ -51,7 +51,4 @@ class ActivityController : BaseActivityLifecycleCallbacks() {
         removeAct(activity)
     }
 
-    companion object{
-        val controller: ActivityController = ActivityController()
-    }
 }

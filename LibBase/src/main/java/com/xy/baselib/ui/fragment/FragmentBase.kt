@@ -14,7 +14,7 @@ import com.xy.baselib.ui.act.ActivityBase
 
 abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult> {
     private val FRAGMENT_BASE_LAUNCH:String = "FRAGMENT:BASE:LAUNCH:";
-    private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<*>> by lazy { HashMap() }
+    private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindLifecycleObserve()
@@ -48,8 +48,8 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
     /**
      * 进入历史界面
      */
-    fun startActivityForResult(tag:String,intent: Intent?) {
-        activityResultLauncherList[tag]?.launch(intent as Nothing?)
+    fun startActivityForResult(tag:String,intent: Intent) {
+        activityResultLauncherList[tag]?.launch(intent)
     }
 
     override fun onActivityResult(result: ActivityResult?) {}

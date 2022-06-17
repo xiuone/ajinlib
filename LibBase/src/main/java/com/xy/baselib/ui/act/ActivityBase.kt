@@ -11,8 +11,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleObserver
 
 abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<ActivityResult> {
-    private val ACTIVITY_BASE_LAUNCH:String = "ACTIVITY:BASE:LAUNCH:";
-    private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<*>> by lazy { HashMap() }
+    val ACTIVITY_BASE_LAUNCH:String = "ACTIVITY:BASE:LAUNCH:";
+    private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerLaunch(ACTIVITY_BASE_LAUNCH,this)
@@ -34,8 +34,8 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
     /**
      * 进入历史界面
      */
-    fun startActivityForResult(tag:String,intent: Intent?) {
-        activityResultLauncherList[tag]?.launch(intent as Nothing?)
+    fun startActivityForResult(tag:String,intent: Intent) {
+        activityResultLauncherList[tag]?.launch(intent)
     }
 
     fun switchFullScreen(toFull: Boolean) {

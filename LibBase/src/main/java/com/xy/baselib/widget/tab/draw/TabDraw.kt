@@ -46,7 +46,7 @@ class TabDraw (private val view:View, private val attrs: AttributeSet?){
                 if (blockHeight <=0){
                     onDrawBlock(canvas,valueAnimCenterY,blockWidth,valueAnimHeight)
                 }else{
-                    onDrawBlock(canvas,view.height - blockHeight/2,blockWidth,blockHeight)
+                    onDrawBlock(canvas,view.height - blockHeight/2 - view.paddingBottom,blockWidth,blockHeight)
                 }
             }
             SelectType.FOLLOW->onDrawBlock(canvas,valueAnimCenterY,valueAnimWidth,valueAnimHeight)

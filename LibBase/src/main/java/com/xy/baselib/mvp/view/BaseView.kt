@@ -13,7 +13,9 @@ interface BaseView {
     fun showPre():View
     fun showPre(@LayoutRes layoutRes:Int):View
     fun showLoading(@IdRes idRes: Int, @StringRes strRes:Int) :View
+    fun showLoading(@IdRes idRes: Int,str:String) :View
     fun showLoading(@LayoutRes layoutRes:Int,@IdRes idRes: Int, @StringRes strRes:Int):View
+    fun showLoading(@LayoutRes layoutRes:Int,@IdRes idRes: Int, strRes:String?):View
     fun disLoading()
     fun getPageContext():Context?
 }

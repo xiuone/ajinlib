@@ -159,8 +159,8 @@ class ShadowBuilder(var view: View, attrs: AttributeSet?) {
      * 设置角度
      * @param mCornerRadius
      */
-    fun setCornerRadius(mCornerRadius: Int) {
-        this.mCornerRadius = mCornerRadius.toFloat()
+    fun setCornerRadius(mCornerRadius: Float) {
+        this.mCornerRadius = mCornerRadius
         view.invalidate()
     }
 
@@ -195,7 +195,6 @@ class ShadowBuilder(var view: View, attrs: AttributeSet?) {
         mShadowLimit = attr.getDimension(R.styleable.ShadowLayout_hl_shadowLimit, 0f)
         mShadowColor = attr.getColor(R.styleable.ShadowLayout_hl_shadowColor, 0X2A000000)
         backgroundColor = attr.getColor(R.styleable.ShadowLayout_hl_backgroundColor, Color.TRANSPARENT)
-
         //x轴偏移量
         if (mShadowLimit == 0f) {
             isShowShadow = false

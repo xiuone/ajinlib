@@ -14,10 +14,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.xy.baselib.R
-import com.xy.baselib.exp.addAlpha
-import com.xy.baselib.exp.drawCenterText
-import com.xy.baselib.exp.getResColor
-import com.xy.baselib.exp.showToast
+import com.xy.baselib.exp.*
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -47,7 +44,11 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
     private var thumbShadowRadius : Float = 0F
     private var center = -1F
     private var valueAnim : ValueAnimator?= null
-    private var isSwitchSelect = false;
+    var isSwitchSelect = false
+        set(value) {
+            field = value
+            invalidate()
+        }
     var switchBarListener:SwitchBarListener?=null
     
     init {
@@ -136,7 +137,7 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
                 center > height/2
             }
             if (this.isSwitchSelect != isSwitchSelect) {
-                context.showToast("当前状态$isSwitchSelect")
+                Logger.e("当前状态$isSwitchSelect")
                 switchBarListener?.onSwitchCallBack(isSwitchSelect)
             }
             isSelected = isSwitchSelect;

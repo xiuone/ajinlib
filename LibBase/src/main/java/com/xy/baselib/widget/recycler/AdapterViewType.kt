@@ -1,4 +1,4 @@
-package com.xy.baselib.mode
+package com.xy.baselib.widget.recycler
 
 object AdapterViewType {
     const val VIEW_TYPE_SPACE = 1

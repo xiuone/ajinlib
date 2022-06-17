@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -17,35 +18,24 @@ import com.xy.baselib.exp.getResColor
  * @date: 2015/11/12 9:47
  * @version: V1.0
  */
-open class DiverItemAverageHorizontalDecoration : ItemDecoration {
-    private val horizontalPaint: Paint = Paint()
-    private var horizontalWidth:Int = 0
-    private var showLeft = false
-    private var showRight = false
+open class DiverItemAverageHorizontalDecoration (@ColorInt horizontalColor: Int,private val horizontalWidth: Int,
+                                                 private val showLeft:Boolean,private val showRight:Boolean): ItemDecoration() {
+    private val drawer = Drawer(horizontalColor,horizontalWidth,0)
 
-    constructor(context:Context,@ColorRes horizontalColor: Int, horizontalWidth: Float,showLeft:Boolean,showRight:Boolean)  {
-        horizontalPaint.color = context.getResColor(horizontalColor)
-        this.horizontalWidth = context.dp2px(horizontalWidth)
-        this.showLeft = showLeft
-        this.showRight = showRight
-    }
 
     override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(canvas, parent, state)
         for (position in 0 until parent.childCount) {
             val child = parent.getChildAt(position)
-            var top = child.top
-            var bottom = child.bottom
-            var left = child.left
-            var right = child.right
-
+            val endPosition = parent.childCount - 1
             if (position == 0 && showLeft){
-                canvas.drawRect(left.toFloat() - horizontalWidth, top.toFloat()
-                    ,left.toFloat(), bottom.toFloat(), horizontalPaint)
+                drawer.drawLeft(child,canvas)
             }
-            if ((position == (parent.childCount - 1) && showRight) || (position != (parent.childCount - 1))){
-                canvas.drawRect(right.toFloat(), top.toFloat()
-                    ,right.toFloat() + horizontalWidth, bottom.toFloat(), horizontalPaint)
+            if (position == endPosition && showRight){
+                drawer.drawRight(child,canvas)
+            }
+            if (position != endPosition){
+                drawer.drawRight(child,canvas)
             }
         }
     }
@@ -54,11 +44,14 @@ open class DiverItemAverageHorizontalDecoration : ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state)
         parent.adapter?.run {
             val position = parent.getChildLayoutPosition(view)
-            val itemCount = this.itemCount
+            val endPosition = itemCount - 1
             if (position == 0 && showLeft){
                 outRect.left = horizontalWidth
             }
-            if ((position == (itemCount - 1) && showRight) || (position != (itemCount - 1))){
+            if ((position == endPosition && showRight)){
+                outRect.right = horizontalWidth
+            }
+            if (position != endPosition){
                 outRect.right = horizontalWidth
             }
         }

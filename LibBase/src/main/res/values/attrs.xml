@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="MsgView">
-        <!-- 圆角矩形背景色 -->
-        <attr name="mv_backgroundColor" format="color"/>
-        <!-- 圆角弧度,单位dp-->
-        <attr name="mv_cornerRadius" format="dimension"/>
-        <!-- 圆角弧度,单位dp-->
-        <attr name="mv_strokeWidth" format="dimension"/>
-        <!-- 圆角边框颜色-->
-        <attr name="mv_strokeColor" format="color"/>
-    </declare-styleable>
 
     <declare-styleable name="TabLayout">
         <attr name="tab_select_text_color" format="color"/>
         <attr name="tab_select_text_size" format="dimension"/>
+        <attr name="tab_select_text_bold" format="boolean"/>
+        <attr name="tab_select_un_text_bold" format="boolean"/>
         <attr name="tab_select_un_text_color" format="color"/>
         <attr name="tab_select_un_text_size" format="dimension"/>
         <attr name="tab_select_block_width" format="dimension"/>
@@ -38,6 +30,27 @@
     </declare-styleable>
 
 
+    <declare-styleable name="TabScrollerSelectLayout">
+        <attr name="tab_scroller_line_color" format="color"/>
+        <attr name="tab_scroller_line_radius" format="dimension"/>
+        <attr name="tab_scroller_line_width" format="dimension"/>
+        <attr name="tab_scroller_line_height" format="dimension"/>
+        <attr name="tab_scroller_item_padding_left" format="dimension"/>
+        <attr name="tab_scroller_item_padding_right" format="dimension"/>
+        <attr name="tab_scroller_item_padding_top" format="dimension"/>
+        <attr name="tab_scroller_item_padding_bottom" format="dimension"/>
+        <attr name="tab_scroller_item_margin_left" format="dimension"/>
+        <attr name="tab_scroller_item_margin_right" format="dimension"/>
+        <attr name="tab_scroller_item_space" format="dimension"/>
+        <attr name="tab_scroller_item_select_size" format="dimension"/>
+        <attr name="tab_scroller_item_select_color" format="color"/>
+        <attr name="tab_scroller_item_select_is_bold" format="boolean"/>
+        <attr name="tab_scroller_item_common_size" format="dimension"/>
+        <attr name="tab_scroller_item_common_color" format="color"/>
+        <attr name="tab_scroller_item_common_is_bold" format="boolean"/>
+    </declare-styleable>
+
+
     <declare-styleable name="LabelView">
         <!-- 横排数量 -->
         <attr name="label_cow" format="integer"/>
@@ -56,6 +69,7 @@
     <declare-styleable name="MultiTabLayout">
         <!-- 横排数量 -->
         <attr name="multi_img_size" format="dimension"/>
+        <attr name="multi_img_padding" format="dimension"/>
         <attr name="multi_margin" format="dimension"/>
         <attr name="multi_direction" format="enum">
             <enum name="LEFT" value="1"/>

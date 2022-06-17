@@ -14,6 +14,11 @@ abstract class BaseCenterDialog(context: Context) : BaseDialog(context) {
         return Gravity.CENTER
     }
 
+    override fun show() {
+        super.show()
+
+    }
+
     /**
      * 显示动画
      */

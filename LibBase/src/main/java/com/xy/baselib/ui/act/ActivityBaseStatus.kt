@@ -11,9 +11,11 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import com.xy.baselib.R
+import com.xy.baselib.config.BaseObject
 import com.xy.baselib.exp.getResString
 import com.xy.baselib.mvp.view.BaseView
 import com.xy.baselib.exp.setOnClick
+import com.xy.baselib.softkey.SoftKeyBoardDetector
 
 /**
  * 加载状态
@@ -112,16 +114,25 @@ abstract class ActivityBaseStatus : ActivityBase(), BaseView {
         return showLoading(loadProgressLayoutRes(),idRes,strRes)
     }
 
+    override fun showLoading(@IdRes idRes: Int, strRes:String) :View{
+        return showLoading(loadProgressLayoutRes(),idRes,strRes)
+    }
+
     override fun showLoading(@LayoutRes layoutRes:Int, @IdRes idRes: Int, @StringRes strRes:Int):View {
+        return  return showLoading(loadProgressLayoutRes(),idRes,getResString(strRes));
+    }
+
+    override fun showLoading(@LayoutRes layoutRes:Int, @IdRes idRes: Int,  strRes:String?):View {
         val loadView = createView(layoutRes,loadingLayout)
-        loadView.findViewById<TextView>(idRes)?.text = getResString(strRes)
-        loadingLayout?.visibility = View.VISIBLE
+        loadView.findViewById<TextView>(idRes)?.text = strRes
+        loadingLayout.visibility = View.VISIBLE
+        SoftKeyBoardDetector.closeKeyBord(titleFrameLayout)
         return loadView;
     }
 
     override fun disLoading() {
-        loadingLayout?.removeAllViews()
-        loadingLayout?.visibility = View.GONE
+        loadingLayout.removeAllViews()
+        loadingLayout.visibility = View.GONE
     }
 
     override fun getPageContext(): Context = this
@@ -131,6 +142,6 @@ abstract class ActivityBaseStatus : ActivityBase(), BaseView {
     abstract fun contentLayoutRes(): Int
     open fun prLayoutRes(): Int = R.layout.a_page_load
     open fun titleLayoutRes(): Int = R.layout.a_layout_toolbar_top_default
-    open fun loadProgressLayoutRes() = R.layout.dialog_common_load
+    open fun loadProgressLayoutRes() = R.layout.load_page_common_load
     open fun errorLayoutRes(): Int = R.layout.a_page_err
 }

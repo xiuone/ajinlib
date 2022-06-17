@@ -83,6 +83,8 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
         imageView?.setImageResource(drawRes)
     }
 
+    fun getImageView():ImageView? = findViewById(R.id.item_iv)
+
     @LayoutRes
     abstract fun layoutRes():Int
 

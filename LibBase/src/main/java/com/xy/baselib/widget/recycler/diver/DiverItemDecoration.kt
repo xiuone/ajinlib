@@ -19,22 +19,11 @@ import com.xy.baselib.exp.getResDimension
  * @date: 2015/11/12 9:47
  * @version: V1.0
  */
-open class DiverItemDecoration : ItemDecoration {
-    private val horizontalPaint: Paint = Paint()
-    private val verticalPaint: Paint = Paint()
-    private var spanCount = 0
-    private var horizontalWidth:Int = 0
-    private var verticalHeight:Int = 0
-
-
-    constructor(context:Context, @ColorRes horizontalColor: Int, @DimenRes horizontalWidth: Int, @ColorRes verticalColor: Int
-                , @DimenRes verticalHeight: Int, spanCount:Int)  {
-        horizontalPaint.color = context.getResColor(horizontalColor)
-        verticalPaint.color = context.getResColor(verticalColor)
-        this.horizontalWidth = context.getResDimension(horizontalWidth)
-        this.verticalHeight = context.getResDimension(verticalHeight)
-        this.spanCount = spanCount
-    }
+open class DiverItemDecoration(verticalColor: Int = 0X00FFFFFF,val verticalHeight: Int,
+                               horizontalColor: Int = 0X00FFFFFF,val horizontalWidth: Int =0,
+                               val spanCount:Int = 1) : ItemDecoration() {
+    private val horizontalDrawer:Drawer = Drawer(horizontalColor,horizontalWidth,0)
+    private val verticalDrawer:Drawer = Drawer(verticalColor,0,verticalHeight)
 
     override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(canvas, parent, state)
@@ -42,26 +31,24 @@ open class DiverItemDecoration : ItemDecoration {
            onDraw(parent, index, canvas)
         }
     }
+
     private fun onDraw(parent: RecyclerView,index: Int,canvas: Canvas){
         val adapter = parent.adapter?:return
         if(adapter.getItemViewType(index)<0)  return
         val child = parent.getChildAt(index)
-        var top = child.top
-        var bottom = child.bottom
-        var left = child.left
-        var right = child.right
-        val column = index % spanCount
+        val currentPosition = getCurrentPosition(index,adapter)
+        val column = currentPosition % spanCount
         val rightSize = horizontalWidth - (column + 1) * horizontalWidth / spanCount
         val leftSize = column * horizontalWidth / spanCount
 
-        canvas.drawRect(left.toFloat()-leftSize, top.toFloat(),left
-            .toFloat(), bottom.toFloat(), horizontalPaint)
-
-        canvas.drawRect(right.toFloat(), top.toFloat(),(right+rightSize)
-            .toFloat(), bottom.toFloat(), horizontalPaint)
-        if (index >= spanCount)
-            canvas.drawRect(left.toFloat(), top.toFloat() - verticalHeight,right.toFloat()
-                , top.toFloat(), verticalPaint)
+        if (currentPosition < spanCount) {
+            horizontalDrawer.drawLeft(child, canvas, leftSize)
+            horizontalDrawer.drawRight(child, canvas, rightSize)
+        }else{
+            horizontalDrawer.drawLeft(child, canvas, leftSize,verticalHeight)
+            horizontalDrawer.drawRight(child, canvas, rightSize,verticalHeight)
+            verticalDrawer.drawTop(child,canvas,0,verticalHeight)
+        }
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
@@ -69,14 +56,16 @@ open class DiverItemDecoration : ItemDecoration {
         var position = parent.getChildLayoutPosition(view)
         val adapter = parent.adapter?:return
         if(adapter.getItemViewType(position)<0)  return
-        val column = (position-getHeadSize(adapter)) % spanCount
-        outRect.left = column * horizontalWidth / spanCount;
+        val currentPosition = getCurrentPosition(position,adapter)
+        val column = currentPosition % spanCount
+        outRect.left = column * horizontalWidth / spanCount
         outRect.right = horizontalWidth - (column + 1) * horizontalWidth / spanCount
-        if ((position-getHeadSize(adapter)) >= spanCount)
+        if (currentPosition >= spanCount)
             outRect.top = verticalHeight
     }
-    private fun getHeadSize(adapter:RecyclerView.Adapter<*>):Int{
-        return if (adapter is RecyclerAdapterWrapper<*>) adapter.heardMap.size else 0
-    }
 
+    private fun getCurrentPosition(index:Int,adapter:RecyclerView.Adapter<*>):Int{
+        val headSize = if (adapter is RecyclerAdapterWrapper<*>) adapter.heardMap.size else 0
+        return index - headSize;
+    }
 }

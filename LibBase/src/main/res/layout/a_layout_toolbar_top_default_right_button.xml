@@ -13,6 +13,7 @@
         android:enabled="false"
         android:text="确定" />
     <View
+        android:id="@+id/title_line"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@color/color_line1"

@@ -3,12 +3,14 @@ package com.xy.baselib.life
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import com.xy.baselib.config.BaseObject
+import com.xy.baselib.softkey.SoftKeyBoardDetector
 import com.xy.baselib.softkey.SoftKeyBoardDetectorHeightController
 
 open class BaseActivityLifecycleCallbacks : Application.ActivityLifecycleCallbacks{
     var currentActivity:Activity?=null
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {
-        SoftKeyBoardDetectorHeightController.heightController.detectKeyBord(p0)
+        BaseObject.keyHeightController.detectKeyBord(p0)
     }
 
     override fun onActivityStarted(p0: Activity) {}
@@ -23,5 +25,7 @@ open class BaseActivityLifecycleCallbacks : Application.ActivityLifecycleCallbac
 
     override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
-    override fun onActivityDestroyed(p0: Activity) {}
+    override fun onActivityDestroyed(p0: Activity) {
+        SoftKeyBoardDetector.unregister(p0)
+    }
 }

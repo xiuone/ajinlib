@@ -5,11 +5,11 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import java.security.MessageDigest
 
-class BorderRoundedCornersTransformation(private val radius: Float,private val margin: Float
-            ,private val borderColor: Int = -1,private val borderWidth:Int = 0) :
+class BorderRoundedCornersTransformation(private val radius: Float,private val margin: Float,
+                                         private val borderColor: Int = -1,private val borderWidth:Int = 0) :
     BitmapTransformation() {
     private val VERSION = 1
-    private val ID = "jp.wasabeef.glide.transformations.RoundedCornersTransformation.$VERSION"
+    private val ID = "com.xy.baselib.transformation.RoundedCornersTransformation.$VERSION"
     private val diameter: Float by lazy { radius * 2 }
     private val borderPaint: Paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
 

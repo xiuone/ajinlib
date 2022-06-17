@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import com.xy.baselib.R
 import com.xy.baselib.exp.getResDimension
 
-class ProgressBarView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+open class ProgressBarView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     :ProgressBarBaseView(context, attrs, defStyleAttr) {
     private var thumbHeight :Int =  -1
     private var thumbWidth : Int = -1

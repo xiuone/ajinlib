@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import com.xy.baselib.R
 
-class ItemRightView @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0)
+open class ItemRightView @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0)
     : ItemBaseView(context, attrs, defStyleAttr) {
     init {
         orientation = HORIZONTAL

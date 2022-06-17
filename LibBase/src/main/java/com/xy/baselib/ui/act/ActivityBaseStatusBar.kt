@@ -61,7 +61,7 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
      * 是否显示黑色状态拦
      * @return
      */
-    protected fun statusBarDarkFont(): Boolean {
+    open fun statusBarDarkFont(): Boolean {
         return true
     }
 

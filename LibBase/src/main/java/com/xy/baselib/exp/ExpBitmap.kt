@@ -15,6 +15,7 @@ fun Bitmap.saveBitmap(context: Context): String? {
 }
 
 fun Bitmap.saveBitmap(path: String?): String? {
+    path?.createDirs()
     path?.deleteFile()?:return null
     var fos: FileOutputStream? = null
     try {
@@ -37,10 +38,10 @@ fun Bitmap.saveBitmap(path: String?): String? {
  * @param context
  * @param *bitmap   要保存的图片
  */
-fun Bitmap.saveImageToGallery(context: Context,@StringRes strRes:Int) {
+fun Bitmap.saveImageToGallery(context: Context, strRes:String) {
     val fileName = "IMG_" + System.currentTimeMillis() + ".PNG"
     // 保存图片至指定路径
-    val storePath = getSdImagePath(context,strRes, fileName)
+    val storePath = context.getSdImagePath(strRes, fileName)
     storePath.createDirs()
     val file = File(storePath)
     val saveImgOut = FileOutputStream(file)
@@ -100,4 +101,29 @@ fun Bitmap.toRoundCorner(pixels: Int): Bitmap {
     paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
     canvas.drawBitmap(this, rect, rect, paint)
     return output
+}
+
+
+fun Bitmap.cropBitmap(startX: Int, startY: Int, width: Int, height: Int): Bitmap {
+    var startX = startX
+    var startY = startY
+    var width = width
+    var height = height
+    val w = this.width // 得到图片的宽，高
+    val h = this.height
+    if (startX < 0) startX = 0
+    if (startX + width > w) {
+        startX = 0
+    }
+    if (startX + width > w) {
+        width = w
+    }
+    if (startY < 0) startY = 0
+    if (startY + height > h) {
+        startY = 0
+    }
+    if (startX + height > h) {
+        height = h
+    }
+    return Bitmap.createBitmap(this, startX, startY, width, height, null, false)
 }

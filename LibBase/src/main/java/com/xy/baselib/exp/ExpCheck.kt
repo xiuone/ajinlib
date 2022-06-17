@@ -1,6 +1,7 @@
 package com.xy.baselib.exp
 
 
+
 /**
  * 用来做校验用的。。。。。。。。。。。
  */
@@ -16,6 +17,11 @@ fun String.isMobileNO(): Boolean {
     return matches(Regex(telRegex, RegexOption.IGNORE_CASE))
 }
 
+fun String.isEmail():Boolean{
+    if (isNullOrEmpty())return false
+    val telRegex = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$"
+    return matches(Regex(telRegex, RegexOption.IGNORE_CASE))
+}
 /**
  * 验证身份证格式
  */

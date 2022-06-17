@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
+import android.view.ViewGroup
 
 fun View.setBar() {
     setPadding(paddingLeft, paddingTop + context.getSystemBarHeight(), paddingRight, paddingBottom)
@@ -39,4 +40,20 @@ fun View.getViewBitmap(): Bitmap? {
     //我们在用滑动View获得它的Bitmap时候，获得的是整个View的区域（包括隐藏的），如果想得到当前区域，需要重新定位到当前可显示的区域
     draw(canvas) // 将 view 画到画布上
     return screenshot
+}
+
+
+fun View.measureViewHeight(): Int {
+    var p = layoutParams
+    if (p == null) {
+        p = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+    val childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, p.width)
+    val childHeightSpec: Int = if (p.height > 0) {
+        View.MeasureSpec.makeMeasureSpec(p.height, View.MeasureSpec.EXACTLY)
+    } else {
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+    }
+    measure(childWidthSpec, childHeightSpec)
+    return measuredHeight
 }

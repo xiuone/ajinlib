@@ -10,7 +10,7 @@ class GlobalCallBack(private val mRootView: View, mOnSoftKeyBoardChangeListener:
 
     fun setOnSoftKeyBoardChangeListener(mOnSoftKeyBoardChangeListener: OnSoftKeyBoardChangeListener?) {
         for (listener in mOnSoftKeyBoardChangeListenerList) {
-            if (listener === mOnSoftKeyBoardChangeListener) return
+            if (listener == mOnSoftKeyBoardChangeListener) return
         }
         if (mOnSoftKeyBoardChangeListener == null) return
         mOnSoftKeyBoardChangeListenerList.add(mOnSoftKeyBoardChangeListener)

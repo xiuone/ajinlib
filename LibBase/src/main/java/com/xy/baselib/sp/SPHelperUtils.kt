@@ -1,4 +1,4 @@
-package com.infinitybrowser.baselib.sp
+package com.xy.baselib.sp
 
 import android.content.Context
 import android.content.SharedPreferences

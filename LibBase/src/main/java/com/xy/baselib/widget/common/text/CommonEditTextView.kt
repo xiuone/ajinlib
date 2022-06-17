@@ -10,8 +10,8 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.xy.baselib.widget.common.CommonDrawListener
 import com.xy.baselib.widget.common.draw.CommonDrawImpl
 
-open class CommonEditTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
-    AppCompatEditText(context, attrs, defStyleAttr), View.OnFocusChangeListener ,
+open class CommonEditTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null) :
+    AppCompatEditText(context, attrs), View.OnFocusChangeListener ,
     CommonDrawListener {
     private val editBackDrawImpl by lazy { CommonDrawImpl(this,context) }
     private var mFocusListener:OnFocusChangeListener ?=null
@@ -35,11 +35,11 @@ open class CommonEditTextView @JvmOverloads constructor(context: Context, attrs:
         mFocusListener?.onFocusChange(p0, p1)
         editBackDrawImpl.selected = p1
     }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        editBackDrawImpl.onTouch(event)
-        return super.onTouchEvent(event)
-    }
+//
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        editBackDrawImpl.onTouch(event)
+//        return super.onTouchEvent(event)
+//    }
 
     override fun onCommonDrawImpl(): CommonDrawImpl = editBackDrawImpl
 

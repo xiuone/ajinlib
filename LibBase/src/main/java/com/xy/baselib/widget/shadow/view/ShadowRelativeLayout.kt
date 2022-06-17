@@ -8,10 +8,10 @@ import com.xy.baselib.widget.shadow.impl.ShadowBuilderImpl
 import com.xy.baselib.widget.shadow.ShadowBuilder
 import com.xy.baselib.widget.shadow.impl.OnDrawImpl
 
-class ShadowRelativeLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, ) :
+open class ShadowRelativeLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, ) :
     RelativeLayout(context, attrs, defStyleAttr) {
     private val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
-    private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
+    val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
 
     init {
         onDrawImpl.initView()

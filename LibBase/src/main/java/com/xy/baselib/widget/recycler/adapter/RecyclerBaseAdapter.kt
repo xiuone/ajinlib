@@ -15,6 +15,12 @@ abstract class RecyclerBaseAdapter<T> :RecyclerAdapterWrapper<BaseViewHolder>(){
 
     private val childTouchMap :HashMap<Int,OnItemTouchListener<T>> by lazy {  HashMap() }
 
+    fun addChildClicked(listener: OnChildItemClickListener<T>?,vararg viewIds: Int,):RecyclerBaseAdapter<T>{
+        for (item in viewIds){
+            addChildClicked(item,listener)
+        }
+        return this
+    }
     fun addChildClicked(viewIds: Int,listener: OnChildItemClickListener<T>?):RecyclerBaseAdapter<T>{
         if (listener == null)return this
         childClickMap[viewIds] = listener;
@@ -94,6 +100,9 @@ abstract class RecyclerBaseAdapter<T> :RecyclerAdapterWrapper<BaseViewHolder>(){
             }
             notifyItemRangeRemoved(index, count)
             notifyItemRangeChanged(index, data.size - index)
+            if (this.data.size<0){
+                notifyDataSetChanged()
+            }
         }
     }
 

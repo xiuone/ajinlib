@@ -1,6 +1,7 @@
 package com.xy.baselib.widget.tab.child
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -10,19 +11,21 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.xy.baselib.R
-import com.xy.baselib.widget.tab.listener.OnTabDrawItemListener
-import com.xy.baselib.widget.tab.listener.OnTabTextItemListener
-import com.xy.baselib.widget.tab.type.DirectionType
 import com.xy.baselib.exp.getResColor
 import com.xy.baselib.exp.getResDimension
+import com.xy.baselib.widget.multiline.label.LabelEntry
+import com.xy.baselib.widget.tab.listener.OnTabDrawItemListener
+import com.xy.baselib.widget.tab.type.DirectionType
 
 class ChildViewHelper<T>(private val context: Context, private val attrs: AttributeSet?) {
     private var directionType: DirectionType = DirectionType.TOP
 
     private var selectTextColor = context.getResColor(R.color.white)
     private var selectTextSize = 15F
+    private var selectTextBold = false
     private var unSelectTextColor = context.getResColor(R.color.gray_9999)
     private var unSelectTextSize = 15F
+    private var unselectTextBold = false
     private var tabDrawSize = 15
     private var tabDrawMargin = 0
 
@@ -32,8 +35,10 @@ class ChildViewHelper<T>(private val context: Context, private val attrs: Attrib
             selectTextColor = typedArray.getColor(R.styleable.TabLayout_tab_select_text_color,selectTextColor)
             unSelectTextColor = typedArray.getColor(R.styleable.TabLayout_tab_select_un_text_color,unSelectTextColor)
             selectTextSize = typedArray.getDimension(R.styleable.TabLayout_tab_select_text_size,context.getResDimension(R.dimen.sp_15).toFloat())
+            selectTextBold = typedArray.getBoolean(R.styleable.TabLayout_tab_select_text_bold,selectTextBold)
             unSelectTextSize = typedArray.getDimension(R.styleable.TabLayout_tab_select_un_text_size,selectTextSize)
             tabDrawSize = typedArray.getDimensionPixelSize(R.styleable.TabLayout_tab_draw_size,ViewGroup.LayoutParams.WRAP_CONTENT)
+            unselectTextBold = typedArray.getBoolean(R.styleable.TabLayout_tab_select_un_text_bold,unselectTextBold)
             tabDrawMargin = typedArray.getDimensionPixelSize(R.styleable.TabLayout_tab_draw_margin,0)
             val type = typedArray.getInteger(R.styleable.TabLayout_tab_select_direction,0);
             directionType = when(type){
@@ -55,8 +60,8 @@ class ChildViewHelper<T>(private val context: Context, private val attrs: Attrib
             else-> R.layout.layout_tab_nono;
         }
         val view = LayoutInflater.from(context).inflate(layoutRes,null)
-        if (data is OnTabTextItemListener) {
-            findTextView(view)?.text = data.onText()
+        if (data is LabelEntry) {
+            findTextView(view)?.text = data.onLabel()
         }
         if (data is OnTabDrawItemListener) {
             findIcon(view)?.setImageResource(data.onUnSelectDrawRes())
@@ -90,8 +95,13 @@ class ChildViewHelper<T>(private val context: Context, private val attrs: Attrib
         if (data is OnTabDrawItemListener) {
             findIcon(view)?.setImageResource(if (isSelect) data.onSelectDrawRes() else data.onUnSelectDrawRes())
         }
-        findTextView(view)?.setTextColor(if (isSelect) selectTextColor else unSelectTextColor)
-        findTextView(view)?.setTextSize(TypedValue.COMPLEX_UNIT_PX,if (isSelect) selectTextSize else unSelectTextSize)
+        val textView = findTextView(view)
+        textView?.setTextColor(if (isSelect) selectTextColor else unSelectTextColor)
+        textView?.setTextSize(TypedValue.COMPLEX_UNIT_PX,if (isSelect) selectTextSize else unSelectTextSize)
+        if (isSelect)
+            textView?.setTypeface(null,if (selectTextBold) Typeface.BOLD else Typeface.NORMAL)
+        else
+            textView?.setTypeface(null,if (unselectTextBold) Typeface.BOLD else Typeface.NORMAL)
     }
 
 }

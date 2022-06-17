@@ -15,6 +15,7 @@
         android:textSize="@dimen/sp_12"
         tools:text="111"
         android:gravity="center"
+        android:includeFontPadding="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </merge>

@@ -13,7 +13,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import androidx.viewpager.widget.ViewPager
 import com.xy.baselib.R
+import com.xy.baselib.adapter.AppFragementPagerAdapter
 import com.xy.baselib.widget.tab.anim.TabAnimHelper
 import com.xy.baselib.widget.tab.anim.TabAnimUpdateListener
 import com.xy.baselib.widget.tab.child.ChildViewHelper
@@ -23,10 +25,10 @@ import com.xy.baselib.widget.tab.type.TabShowType
 import com.xy.baselib.widget.tab.utils.FragmentChangeManager
 import com.xy.baselib.exp.getViewPosRect
 
-class TabLayout<T> @JvmOverloads constructor(context: Context
-                                             , private val attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
+class TabLayout<T> @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
     LinearLayout(context, attrs, defStyleAttr),TabAnimUpdateListener, LifecycleObserver {
     private var mFragmentChangeManager :FragmentChangeManager?=null
+    private var viewPager:ViewPager?=null
     private val matchParent = ViewGroup.LayoutParams.MATCH_PARENT
     private val wrapContent = ViewGroup.LayoutParams.WRAP_CONTENT
 
@@ -45,7 +47,9 @@ class TabLayout<T> @JvmOverloads constructor(context: Context
             val view = itemTabList[value]
             tabAnimHelper.setSelect(view,this)
             if (value == selectPosition)return
+            viewPager?.currentItem = value
             listener?.onTabSelect(value)
+            mFragmentChangeManager?.setFragments(value)
             field = value;
         }
 
@@ -68,6 +72,22 @@ class TabLayout<T> @JvmOverloads constructor(context: Context
         if (tabEntitys == null || manager == null || fragments == null)return
         mFragmentChangeManager = FragmentChangeManager(manager, containerViewId, fragments)
         setTabData(tabEntitys)
+    }
+
+    /** 关联数据支持同时切换fragments  */
+    fun setTabData(tabEntitys: ArrayList<T>?, manager: FragmentManager?,
+                   viewPager: ViewPager?, fragments: ArrayList<Fragment>?) {
+        if (tabEntitys == null || manager == null || fragments == null || viewPager == null)return
+        this.viewPager = viewPager
+        viewPager.adapter = AppFragementPagerAdapter(manager,fragments)
+        setTabData(tabEntitys)
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageSelected(position: Int) {
+                selectPosition = position
+            }
+        })
     }
 
 

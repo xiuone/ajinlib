@@ -201,7 +201,6 @@ fun Context.getSpace(@DimenRes heightRes: Int): View {
 fun Context.copy(text: String) {
     val mClipData = ClipData.newPlainText(getString(R.string.app_name), text)
     (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(mClipData)
-    showToast("复制成功")
 }
 
 

@@ -11,6 +11,7 @@ import androidx.annotation.LayoutRes
 import com.xy.baselib.exp.getScreenWidth
 
 abstract class BaseDialog(context: Context) : Dialog(context) {
+    protected var rootView:View?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window?.decorView?.setPadding(15, 0, 15, 0)
@@ -32,6 +33,17 @@ abstract class BaseDialog(context: Context) : Dialog(context) {
     open fun setContent(){
         val view = LayoutInflater.from(context).inflate(layoutRes(), null)
         setContentView(view)
+    }
+
+    override fun setContentView(view: View) {
+        super.setContentView(view)
+        rootView = view
+    }
+
+    override fun show() {
+        super.show()
+        if (!isShowing)
+        showAnimation(rootView)
     }
 
     /**

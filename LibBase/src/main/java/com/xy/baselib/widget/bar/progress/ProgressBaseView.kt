@@ -16,7 +16,7 @@ import com.xy.baselib.exp.getResColor
 abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     View(context, attrs, defStyleAttr) ,Runnable, LifecycleObserver {
     protected val white by lazy { context.getResColor(R.color.white) }
-    protected var progress :Int = 0
+    var progress :Int = 0
     protected var mBackgroundColor = -0x1a1a16
     protected var progressColor = -0xc9ac01
     protected var progressTvColor = -0x1

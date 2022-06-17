@@ -1,32 +1,29 @@
 package com.xy.baselib.adapter
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import android.view.View
+import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 
-class AppViewPagerAdapter(fm: FragmentManager, val framentList: List<Fragment>, private val titleList:List<String>?=null) : FragmentStatePagerAdapter(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+/**
+ * viewpage分页效果
+ */
+class AppViewPagerAdapter(val list: List<View>) : PagerAdapter() {
 
-    override fun getItemPosition(`object`: Any): Int {
-        return POSITION_NONE
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        if (list.size > position) container.removeView(list[position]) // 删除页卡
     }
 
-    override fun getItem(position: Int): Fragment {
-        return framentList[position]
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        container.addView(list[position], 0) // 添加页卡
+        return list[position]
     }
-
 
     override fun getCount(): Int {
-        return framentList.size
+        return list.size
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
-        return when {
-            titleList != null && position < titleList.size -> {
-                titleList[position]
-            }
-            else -> {
-                super.getPageTitle(position)
-            }
-        }
+    override fun isViewFromObject(arg0: View, arg1: Any): Boolean {
+        return arg0 === arg1
     }
+
 }

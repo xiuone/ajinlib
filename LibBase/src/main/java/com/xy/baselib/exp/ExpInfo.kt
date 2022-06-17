@@ -2,6 +2,7 @@ package com.xy.baselib.exp
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
@@ -42,6 +43,16 @@ fun Context.getVersionName(): String{
     }
 }
 
+fun Context.getAppName():String{
+    try {
+        var appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+        return appInfo.name;
+    } catch (e: PackageManager.NameNotFoundException) {
+    }
+    return "_"
+}
+
+
 fun Context.getDeviceId(): String? {
     var deviceId: String? = getUniqueID()
     if (TextUtils.isEmpty(deviceId))
@@ -58,7 +69,7 @@ private fun Context.getUniqueID(): String? {
 }
 
 @SuppressLint("MissingPermission")
-private fun getUUID(): String? {
+fun Context.getUUID():String {
     var serial: String? = null
     val idShort =
         "35" + Build.BOARD.length % 10 + Build.BRAND.length % 10 + Build.CPU_ABI.length % 10 + Build.DEVICE.length % 10 + Build.DISPLAY.length % 10 + Build.HOST.length % 10 + Build.ID.length % 10 + Build.MANUFACTURER.length % 10 + Build.MODEL.length % 10 + Build.PRODUCT.length % 10 + Build.TAGS.length % 10 + Build.TYPE.length % 10 + Build.USER.length % 10 //13 位

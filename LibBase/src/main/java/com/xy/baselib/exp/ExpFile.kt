@@ -1,6 +1,8 @@
 package com.xy.baselib.exp
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import java.io.*
@@ -308,5 +310,46 @@ fun Closeable.closeRe() {
     } catch (e: IOException) {
         e.printStackTrace()
     }
+}
+
+
+fun String.compressImageByPath( savePath: String?, aimSize: Int): String? {
+    // 注意savePath的文件夹和文件的判断
+    var saveSucPath: String? = null
+    val imgBitmap = BitmapFactory.decodeFile(this)
+    val baos = ByteArrayOutputStream()
+    var percent = 100 // 定义压缩比例，初始为不压缩
+    imgBitmap.compress(Bitmap.CompressFormat.PNG, percent, baos)
+    var currentSize = baos.toByteArray().size
+    while (currentSize > aimSize) { // 循环判断压缩后图片是否大于目的大小，若大于则继续压缩
+        baos.reset() // 重置baos，即清空baos
+        //注意：此处该方法的第一个参数必须为JPEG，若为PNG则无法压缩。
+        imgBitmap.compress(Bitmap.CompressFormat.JPEG, percent, baos)
+        currentSize = baos.toByteArray().size
+        percent -= 5
+        if (percent <= 0) {
+            break
+        }
+    }
+    saveSucPath = try { //将数据写入输出流
+        val fos = FileOutputStream(savePath)
+        baos.writeTo(fos)
+        savePath
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+        null
+    } finally {
+        try { //清空缓存，关闭流
+            baos.flush()
+            baos.close()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+    if (!imgBitmap.isRecycled) {
+        imgBitmap.recycle() //回收图片所占的内存
+        System.gc() //提醒系统及时回收
+    }
+    return saveSucPath
 }
 

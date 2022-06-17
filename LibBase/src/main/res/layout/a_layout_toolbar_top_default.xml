@@ -9,6 +9,7 @@
         android:id="@+id/middle_title"
         style="@style/ToolbarTitleTv"/>
     <View
+        android:id="@+id/title_line"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="@color/color_line1"

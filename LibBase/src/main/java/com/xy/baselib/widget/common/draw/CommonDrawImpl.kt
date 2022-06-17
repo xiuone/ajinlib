@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.xy.baselib.R
+import com.xy.baselib.exp.Logger
 import com.xy.baselib.exp.getResColor
 import com.xy.baselib.exp.getResDimension
 
@@ -77,8 +78,9 @@ open class CommonDrawImpl(protected val view: View, private val context: Context
     open fun onDraw(canvas: Canvas?) {
         val backgroundRectF = RectF(0F,0F,view.width.toFloat(),view.height.toFloat())
         val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        backgroundPaint.color = if (touch && pressBackgroundColor != commonBackgroundColor) pressBackgroundColor
-                                else if (selected) focusBackgroundColor else commonBackgroundColor
+        val backgroundColor = if (touch && pressBackgroundColor != commonBackgroundColor) pressBackgroundColor
+        else if (selected) focusBackgroundColor else commonBackgroundColor
+        backgroundPaint.color = backgroundColor
         canvas?.drawRoundRect(backgroundRectF,radius,radius,backgroundPaint)
 
         val halfStokeSize = stokeSize/2F

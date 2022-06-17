@@ -3,12 +3,13 @@ package com.xy.baselib.widget.shadow.view
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import com.xy.baselib.widget.shadow.impl.ShadowBuilderImpl
 import com.xy.baselib.widget.shadow.ShadowBuilder
 import com.xy.baselib.widget.shadow.impl.OnDrawImpl
 
-class ShadowLinearLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0 ) :
+open class ShadowLinearLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0 ) :
     LinearLayout(context, attrs, defStyleAttr) {
     private val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
     private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }

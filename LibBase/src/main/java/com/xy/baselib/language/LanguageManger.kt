@@ -2,7 +2,7 @@ package com.xy.baselib.language
 
 import android.content.Context
 import com.xy.baselib.BaseApp
-import com.xy.baselib.config.BaseConfig
+import com.xy.baselib.config.BaseObject
 import java.util.*
 
 class LanguageManger {
@@ -42,7 +42,7 @@ class LanguageManger {
      * 获取当前语言
      */
     fun getCurrentLanguage(context: Context): LanguageMode {
-        val languageHistory = BaseConfig.spHelperUtils.getString(context,
+        val languageHistory = BaseObject.spHelperUtils.getString(context,
             LanguageConfig.LANGUAGE_KEY, null)
         languageHistory?.run {
             val languageList = LanguageConfig.getAllLanguage()
@@ -69,7 +69,7 @@ class LanguageManger {
             }
         }
         if (!status) return
-        BaseConfig.spHelperUtils.setString(context, LanguageConfig.LANGUAGE_KEY, language)
+        BaseObject.spHelperUtils.setString(context, LanguageConfig.LANGUAGE_KEY, language)
         val applicationContext = context.applicationContext
         if (applicationContext is BaseApp)
             applicationContext.updateConfiguration()

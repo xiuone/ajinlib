@@ -3,7 +3,7 @@ package com.xy.baselib.font
 import android.content.Context
 import com.xy.baselib.BaseApp
 import com.xy.baselib.R
-import com.xy.baselib.config.BaseConfig
+import com.xy.baselib.config.BaseObject
 import com.xy.baselib.exp.getResString
 
 class FontManger {
@@ -30,7 +30,7 @@ class FontManger {
      * 获取当前 设置的字体大小
      */
     fun getFontTextSize(context: Context): Float{
-        var currentFontSize: Float = BaseConfig.spHelperUtils.getFloat(context,FONT_SIZE_KEY, middleFontSize)
+        var currentFontSize: Float = BaseObject.spHelperUtils.getFloat(context,FONT_SIZE_KEY, middleFontSize)
         if (currentFontSize != verySmallFontSize
             && currentFontSize != smallFontSize
             && currentFontSize != middleFontSize
@@ -53,7 +53,7 @@ class FontManger {
             && currentFontSize != veryMaxFontSize) {
             currentFontSize = middleFontSize
         }
-        BaseConfig.spHelperUtils.setFloat(context,FONT_SIZE_KEY, currentFontSize)
+        BaseObject.spHelperUtils.setFloat(context,FONT_SIZE_KEY, currentFontSize)
         val applicationContext = context.applicationContext
         if (applicationContext is BaseApp)
             applicationContext.updateConfiguration()
