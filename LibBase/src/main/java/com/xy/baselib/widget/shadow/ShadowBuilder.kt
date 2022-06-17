@@ -1,10 +1,8 @@
 package com.xy.baselib.widget.shadow
 
-import android.content.res.TypedArray
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection
 import com.xy.baselib.R
 
 class ShadowBuilder(var view: View, attrs: AttributeSet?) {

@@ -1,14 +1,6 @@
 package com.xy.baselib.widget.shadow.impl
 
 import android.graphics.RectF
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.BottomLeft
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.BottomRight
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.LeftBottom
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.LeftTop
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.RightBottom
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.RightTop
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.TopLeft
-import com.infinitybrowser.mobile.widget.shadow.ArrowDirection.TopRight
 import com.xy.baselib.widget.shadow.ShadowBuilder
 
 class ShadowBuilderImpl(val builder: ShadowBuilder) {
