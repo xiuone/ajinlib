@@ -76,4 +76,16 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+
+    <style name="BottomDialog.Animation" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowEnterAnimation">@anim/bottom_dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_dialog_out</item>
+    </style>
+
+    <style name="CenterDialog.Animation" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowEnterAnimation">@anim/center_dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/center_dialog_out</item>
+    </style>
+
+
 </resources>

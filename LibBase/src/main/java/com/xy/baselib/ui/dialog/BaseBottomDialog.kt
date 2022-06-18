@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
+import com.xy.baselib.R
 
 abstract class BaseBottomDialog(context: Context) : BaseDialog(context) {
 
@@ -21,11 +21,6 @@ abstract class BaseBottomDialog(context: Context) : BaseDialog(context) {
      * 显示动画
      */
     override fun showAnimation(view: View?){
-        view?.run {
-            val animator = TranslateAnimation(Animation.RELATIVE_TO_SELF,0F,Animation.RELATIVE_TO_SELF,0F
-                ,Animation.RELATIVE_TO_SELF,1F,Animation.RELATIVE_TO_SELF,0F)
-            animator.duration = 300
-            startAnimation(animator)
-        }
+        window?.setWindowAnimations(R.style.BottomDialog_Animation)
     }
 }
