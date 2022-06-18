@@ -65,5 +65,5 @@ fun getRequestOptions(vararg transformations: Transformation<Bitmap>): RequestOp
 }
 fun getRequestOptions(res:Int,vararg transformations: Transformation<Bitmap>): RequestOptions {
     val transformation = MultiTransformation(*transformations)
-    return RequestOptions.bitmapTransform(transformation).error(res)
+    return RequestOptions.bitmapTransform(transformation).placeholder(res).error(res)
 }
