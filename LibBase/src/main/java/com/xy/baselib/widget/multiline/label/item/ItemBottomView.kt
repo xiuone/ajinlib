@@ -17,6 +17,4 @@ open class ItemBottomView @JvmOverloads constructor(context: Context, private va
         params.topMargin = drawMargin
         return params
     }
-
-    override fun getDrawMargin(params: ViewGroup.LayoutParams): Int = if (params is LayoutParams) params.topMargin else 0
 }

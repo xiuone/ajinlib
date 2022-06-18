@@ -18,6 +18,5 @@ open class ItemLeftView @JvmOverloads constructor(context: Context, private val 
         return params
     }
 
-    override fun getDrawMargin(params: ViewGroup.LayoutParams): Int = if (params is LayoutParams) params.rightMargin else 0
 
 }

@@ -2,6 +2,8 @@ package com.xy.baselib.widget.multiline.label
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
+import android.widget.TextView
 import com.xy.baselib.R
 import com.xy.baselib.widget.common.draw.CommonDrawImpl
 import com.xy.baselib.widget.multiline.label.item.*
@@ -46,7 +48,8 @@ open class MultiIconTabLayout<T :LabelIconEntry> @JvmOverloads constructor(conte
             itemView.setImageResource(onIcon())
             itemView.setTextColor(textColorList)
             itemView.setTextSize(textSize)
-            itemView.setDrawSize(imageSize,marginIcon)
+            itemView.setDrawSize(imageSize)
+            itemView.setDrawMarginSize(marginIcon)
             setItemDraw(itemView)
             addView(itemView,data)
             itemView.getImageView()?.setPadding(iconPadding,iconPadding,iconPadding,iconPadding)
@@ -59,5 +62,23 @@ open class MultiIconTabLayout<T :LabelIconEntry> @JvmOverloads constructor(conte
                 }
             }
         }
+    }
+
+    fun setReadNumber(position:Int,number:Int){
+        if (position < childCount){
+            val childView = getChildAt(position)
+            val messageView = childView.findViewById<TextView>(R.id.message_tv)
+            if (number<=0){
+                messageView.visibility = View.GONE
+                messageView.text = "0"
+            }else{
+                messageView.visibility = View.VISIBLE
+                messageView.text = "$number"
+                if (number >99){
+                    messageView.text = "99+"
+                }
+            }
+        }
+
     }
 }

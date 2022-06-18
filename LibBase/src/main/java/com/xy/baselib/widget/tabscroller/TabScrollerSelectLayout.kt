@@ -63,6 +63,8 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
             field = value
             resetView()
             invalidate()
+            scrollerHandler.removeCallbacksAndMessages(null)
+            scrollerHandler.post(this)
         }
     init {
         setBackgroundColor(context.getResColor(R.color.transparent))
@@ -88,7 +90,7 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
             isCommonBold = typedArray.getBoolean(R.styleable.TabScrollerSelectLayout_tab_scroller_item_common_is_bold,isCommonBold)
         }
         scrollerHandler.post(this)
-        containerLayout.gravity = Gravity.CENTER_HORIZONTAL
+        containerLayout.gravity = Gravity.CENTER
         this.addView(containerLayout)
 
     }
@@ -231,9 +233,11 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
 
     override fun run() {
         val itemLeft = getItemLeft()
-        if (itemLeft != this.itemLeft)
-            scrollTo(itemLeft.toInt(),0)
-        scrollerHandler.postDelayed(this,100)
+        if (itemLeft != this.itemLeft) {
+            this.itemLeft = itemLeft
+            scrollTo(itemLeft.toInt(), 0)
+            scrollerHandler.postDelayed(this, 100)
+        }
     }
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroyed(owner: LifecycleOwner) {

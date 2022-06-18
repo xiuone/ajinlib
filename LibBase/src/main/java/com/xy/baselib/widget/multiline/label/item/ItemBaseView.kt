@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -33,29 +34,26 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
             setTextColor(textColor)
             setTextSize(textSize)
             setText(textStr)
-            setDrawSize(drawSize,drawMargin)
+            setDrawSize(drawSize)
+            setDrawMarginSize(drawMargin)
             setImageResource(drawRes)
         }
     }
 
-
-
-    fun setDrawSize(drawSize:Int,drawMargin:Int){
-        val imageView :ImageView?= findViewById(R.id.item_iv)
-        imageView?.layoutParams = drawMargin(LayoutParams(drawSize,drawSize),drawMargin)
-    }
-
-    fun setDrawSize(drawSize: Int){
+    fun setDrawSize(drawSize:Int){
         val imageView :ImageView?= findViewById(R.id.item_iv)
         val params = imageView?.layoutParams?: LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        setDrawSize(drawSize,getDrawMargin(params))
+        params.width = drawSize
+        params.height = drawSize
+        imageView?.layoutParams = params
     }
 
-    fun setDrawMargin(drawMargin: Int){
-        val imageView :ImageView?= findViewById(R.id.item_iv)
-        val params = imageView?.layoutParams
-        val drawSize = if (params is LayoutParams) params.width else ViewGroup.LayoutParams.WRAP_CONTENT
-        setDrawSize(drawSize,drawMargin)
+
+
+    fun setDrawMarginSize(drawMargin:Int){
+        val itemIvView :View?= findViewById(R.id.item_iv_view)
+        val params = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        itemIvView?.layoutParams = drawMargin(params,drawMargin)
     }
 
     fun setTextColor(textColor:Int){
@@ -90,6 +88,5 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
 
     abstract fun drawMargin(params:LayoutParams,drawMargin:Int):LayoutParams
 
-    abstract fun getDrawMargin(params:ViewGroup.LayoutParams):Int
 
 }
