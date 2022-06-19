@@ -36,7 +36,7 @@ abstract class NineGridBaseLayout<T> @JvmOverloads constructor(context: Context,
     }
 
 
-    private fun resetView(){
+    open fun resetView(){
         val horSize = if (childCount == 1) 1 else if (childCount == 2 || childCount == 4) 2 else 3
         if (horSize > 1){
             resetEqualView(horSize)
