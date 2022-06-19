@@ -14,8 +14,8 @@ import com.xy.baselib.widget.shadow.ShadowBuilder
 import com.xy.baselib.widget.shadow.impl.OnDrawImpl
 import com.xy.baselib.widget.shadow.impl.ShadowBuilderImpl
 
-open class ShadowWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0 ) :
-    WebView(context, attrs, defStyleAttr) {
+open class ShadowWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    WebView(context, attrs) {
     val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
     protected val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
 
