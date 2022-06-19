@@ -32,6 +32,11 @@ abstract class NineGridBaseLayout<T> @JvmOverloads constructor(context: Context,
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
+       resetView()
+    }
+
+
+    private fun resetView(){
         val horSize = if (childCount == 1) 1 else if (childCount == 2 || childCount == 4) 2 else 3
         if (horSize > 1){
             resetEqualView(horSize)
@@ -46,6 +51,11 @@ abstract class NineGridBaseLayout<T> @JvmOverloads constructor(context: Context,
             val childView = getChildAt(0)
             val childWidth = childView.width
             val childHeight = childView.height
+
+            if (childWidth <=0)return
+            if (childHeight <=0)return
+
+
             val item23 = (width-paddingLeft-paddingRight)*2/3
             if (childHeight > childWidth){
                 val itemHeight = if (childHeight >= item23) item23 else childHeight
