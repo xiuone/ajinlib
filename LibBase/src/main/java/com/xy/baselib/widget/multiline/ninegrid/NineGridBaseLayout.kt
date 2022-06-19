@@ -32,7 +32,9 @@ abstract class NineGridBaseLayout<T> @JvmOverloads constructor(context: Context,
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-       resetView()
+        post {
+            resetView()
+        }
     }
 
 
