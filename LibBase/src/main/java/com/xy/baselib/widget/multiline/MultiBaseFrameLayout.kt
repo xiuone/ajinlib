@@ -5,7 +5,9 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.xy.baselib.R
 import com.xy.baselib.exp.Logger
+import com.xy.baselib.exp.getResColor
 
 open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {
@@ -74,12 +76,18 @@ open class MultiBaseFrameLayout  @JvmOverloads constructor(context: Context, pri
     }
 
     protected fun resetView(childView : View, itemWidth:Int, itemHeight:Int, leftMargin:Int, topMargin:Int) {
-        val params = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.width = itemWidth
-        params.height = itemHeight
-        params.leftMargin = leftMargin
-        params.topMargin = topMargin
-        childView.layoutParams = params
+        var params = childView.layoutParams
+        if (params !is MarginLayoutParams) {
+            params = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+        if (params is MarginLayoutParams
+            && (params.width != itemWidth || params.height != itemHeight || params.leftMargin != leftMargin || params.topMargin != topMargin)){
+            params.width = itemWidth
+            params.height = itemHeight
+            params.leftMargin = leftMargin
+            params.topMargin = topMargin
+            childView.layoutParams = params
+        }
     }
 
 }
