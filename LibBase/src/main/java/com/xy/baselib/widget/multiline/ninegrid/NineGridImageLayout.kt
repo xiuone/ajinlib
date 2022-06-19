@@ -13,7 +13,7 @@ import com.xy.baselib.R
 import com.xy.baselib.transformation.RoundedCornersTransformation
 import com.xy.baselib.exp.getResDimension
 
-class NineGridImageLayout<T :OnNineGridImageListener> @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
+open class NineGridImageLayout<T :OnNineGridImageListener> @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
     NineGridBaseLayout<T>(context, attrs, defStyleAttr) {
     protected var simapleIv = true
     private val radius by lazy { context.getResDimension(R.dimen.dp_5) }
