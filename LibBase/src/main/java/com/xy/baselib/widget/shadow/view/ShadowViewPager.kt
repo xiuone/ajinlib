@@ -12,7 +12,7 @@ import com.xy.baselib.widget.shadow.impl.OnDrawImpl
 
 open class ShadowViewPager @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null ) :
     ViewPager(context, attrs) {
-    private val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
+    val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
     private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
 
     init {

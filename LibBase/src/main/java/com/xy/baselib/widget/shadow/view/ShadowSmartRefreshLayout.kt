@@ -12,7 +12,7 @@ import com.xy.baselib.widget.shadow.impl.OnDrawImpl
 
 open class ShadowSmartRefreshLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     SmartRefreshLayout(context, attrs) {
-    protected val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
+    val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
     protected val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
 
     init {
