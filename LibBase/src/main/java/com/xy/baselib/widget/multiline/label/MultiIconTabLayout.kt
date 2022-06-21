@@ -49,7 +49,7 @@ open class MultiIconTabLayout<T :LabelIconEntry> @JvmOverloads constructor(conte
             itemView.setTextColor(textColorList)
             itemView.setTextSize(textSize)
             itemView.setDrawSize(imageSize)
-            itemView.setDrawMarginSize(marginIcon)
+            itemView.setDrawMarginSize(imageSize,marginIcon)
             setItemDraw(itemView)
             addView(itemView,data)
             itemView.getImageView()?.setPadding(iconPadding,iconPadding,iconPadding,iconPadding)

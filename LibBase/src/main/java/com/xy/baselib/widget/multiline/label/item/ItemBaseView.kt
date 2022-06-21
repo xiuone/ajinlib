@@ -35,7 +35,7 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
             setTextSize(textSize)
             setText(textStr)
             setDrawSize(drawSize)
-            setDrawMarginSize(drawMargin)
+            setDrawMarginSize(drawSize,drawMargin)
             setImageResource(drawRes)
         }
     }
@@ -50,10 +50,10 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
 
 
 
-    fun setDrawMarginSize(drawMargin:Int){
+    fun setDrawMarginSize(drawSize:Int,drawMargin:Int){
         val itemIvView :View?= findViewById(R.id.item_iv_view)
         val params = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        itemIvView?.layoutParams = drawMargin(params,drawMargin)
+        itemIvView?.layoutParams = drawMargin(params,drawSize,drawMargin)
     }
 
     fun setTextColor(textColor:Int){
@@ -86,7 +86,7 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
     @LayoutRes
     abstract fun layoutRes():Int
 
-    abstract fun drawMargin(params:LayoutParams,drawMargin:Int):LayoutParams
+    abstract fun drawMargin(params:LayoutParams,drawSize:Int,drawMargin:Int):LayoutParams
 
 
 }

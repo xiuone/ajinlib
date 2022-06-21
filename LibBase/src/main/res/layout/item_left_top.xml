@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <RelativeLayout
         android:id="@+id/item_iv_view"
+        android:paddingLeft="@dimen/dp_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
@@ -16,16 +17,16 @@
             android:layout_height="@dimen/dp_40"/>
         <TextView
             android:id="@+id/message_tv"
-            android:layout_alignRight="@id/item_iv"
+            android:layout_toRightOf="@id/item_iv"
+            android:layout_marginLeft="-8dp"
             android:background="@drawable/bg_red_fe40_radius_100"
             android:text="1"
+            android:visibility="gone"
             android:textSize="@dimen/sp_10"
             android:gravity="center"
-            android:visibility="gone"
             android:textColor="@color/white"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/dp_18"
             android:padding="@dimen/dp_2"
-            android:minWidth="@dimen/dp_18"
             android:layout_height="@dimen/dp_18"/>
     </RelativeLayout>
     <TextView
