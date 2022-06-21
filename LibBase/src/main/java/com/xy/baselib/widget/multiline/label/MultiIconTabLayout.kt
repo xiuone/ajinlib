@@ -52,8 +52,8 @@ open class MultiIconTabLayout<T :LabelIconEntry> @JvmOverloads constructor(conte
             itemView.setDrawMarginSize(marginIcon)
             setItemDraw(itemView)
             addView(itemView,data)
-            itemView.imageView?.setPadding(iconPadding,iconPadding,iconPadding,iconPadding)
-            itemView.imageView?.setOnClick{
+            itemView.getImageView()?.setPadding(iconPadding,iconPadding,iconPadding,iconPadding)
+            itemView.getImageView()?.setOnClick{
                 if (iconTabListener != null)
                     iconTabListener?.onMultiIconCallBack(data)
                 else{
