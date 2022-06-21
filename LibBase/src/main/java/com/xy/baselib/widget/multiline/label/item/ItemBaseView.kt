@@ -19,6 +19,9 @@ import com.xy.baselib.exp.getResDimension
 
 abstract class ItemBaseView @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0)
     : CommonLinearLayout(context, attrs, defStyleAttr) {
+    val imageView = findViewById<ImageView>(R.id.item_iv)
+    val itemTextView = findViewById<TextView>(R.id.item_tv)
+    val messageTv = findViewById<TextView>(R.id.message_tv)
     init {
         LayoutInflater.from(context).inflate(layoutRes(),this,true)
         gravity = Gravity.CENTER
@@ -57,31 +60,24 @@ abstract class ItemBaseView @JvmOverloads constructor(context: Context, private 
     }
 
     fun setTextColor(textColor:Int){
-        val textView :TextView? = findViewById(R.id.item_tv)
-        textView?.setTextColor(textColor)
+        itemTextView?.setTextColor(textColor)
     }
 
     fun setTextColor(textColor:ColorStateList){
-        val textView :TextView? = findViewById(R.id.item_tv)
-        textView?.setTextColor(textColor)
+        itemTextView?.setTextColor(textColor)
     }
 
     fun setTextSize(textSize:Float){
-        val textView :TextView?= findViewById(R.id.item_tv)
-        textView?.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize)
+        itemTextView?.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize)
     }
 
     fun setText(textStr:String?){
-        val textView:TextView? = findViewById(R.id.item_tv)
-        textView?.text = textStr
+        itemTextView?.text = textStr
     }
 
     fun setImageResource(@DrawableRes drawRes:Int){
-        val imageView:ImageView? = findViewById(R.id.item_iv)
         imageView?.setImageResource(drawRes)
     }
-
-    fun getImageView():ImageView? = findViewById(R.id.item_iv)
 
     @LayoutRes
     abstract fun layoutRes():Int
