@@ -2,8 +2,10 @@ package com.xy.baselib.net
 
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.Callback
+import com.lzy.okgo.callback.FileCallback
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor
 import com.lzy.okgo.model.HttpHeaders
+import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.PostRequest
 import com.lzy.okgo.request.base.Request
 import java.io.File
@@ -88,7 +90,32 @@ fun String.get(tag: String?, paramsMap: HashMap<String, String>?, headMap: HashM
     val request = OkGo.get<String>(this)
     request.tag(tag).addHead(headMap).addParams(paramsMap)
     request.execute(callback)
+
+    val requestFile = OkGo.get<File>(this)
+    requestFile.tag(tag).addHead(headMap).addParams(paramsMap)
+    requestFile.execute(object :FileCallback(""){
+        override fun onSuccess(response: Response<File>?) {
+
+        }
+    })
 }
+
+
+fun String.down(tag: String?, callback: FileCallback){
+    down(tag, null, callback)
+}
+
+fun String.down(tag: String?, paramsMap: HashMap<String, String>?, callback: FileCallback){
+    down(tag, paramsMap,null, callback)
+}
+
+fun String.down(tag: String?, paramsMap: HashMap<String, String>?, headMap: HashMap<String, String>?,
+                callback: FileCallback){
+    val requestFile = OkGo.get<File>(this)
+    requestFile.tag(tag).addHead(headMap).addParams(paramsMap)
+    requestFile.execute(callback)
+}
+
 
 private fun PostRequest<*>.addFile(fileMap: HashMap<String, List<File>>?) :PostRequest<*>{
     fileMap?:return this
