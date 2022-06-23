@@ -8,7 +8,7 @@ import com.xy.baselib.widget.shadow.impl.ShadowBuilderImpl
 import com.xy.baselib.widget.shadow.ShadowBuilder
 import com.xy.baselib.widget.shadow.impl.OnDrawImpl
 
-class ShadowImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0 ) :
+open class ShadowImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0 ) :
     AppCompatImageView(context, attrs, defStyleAttr) {
     val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
     private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
