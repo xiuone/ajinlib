@@ -204,20 +204,6 @@
 
     </declare-styleable>
 
-
-    <declare-styleable name="CommonDrawView">
-        <attr name="common_draw_stoke_color" format="color"/>
-        <attr name="common_draw_focus_stoke_color" format="color"/>
-        <attr name="common_draw_press_stoke_color" format="color"/>
-
-        <attr name="common_draw_stoke_size" format="dimension"/>
-        <attr name="common_draw_radius" format="dimension"/>
-
-        <attr name="common_draw_background" format="color"/>
-        <attr name="common_draw_focus_background" format="color"/>
-        <attr name="common_draw_press_background" format="color"/>
-    </declare-styleable>
-
     <declare-styleable name="DownTimerTextView">
         <attr name="down_timer_run_string" format="string"/>
         <attr name="down_timer_end_string" format="string"/>
