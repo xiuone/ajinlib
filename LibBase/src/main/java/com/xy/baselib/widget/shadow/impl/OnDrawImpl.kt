@@ -30,4 +30,15 @@ class OnDrawImpl(view: View, builderImpl: ShadowBuilderImpl) : OnSizeChangeImpl(
         path.reset()
         canvas?.drawPath(path,stokePaint)
     }
+
+
+    /**
+     * 直接裁剪view
+     * @param canvas
+     */
+    override fun onClipPathDraw(canvas: Canvas?) {
+        val path: Path = ShadowPath(builderImpl, view)
+        path.reset()
+        canvas?.clipPath(path)
+    }
 }
