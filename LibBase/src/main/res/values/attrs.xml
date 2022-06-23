@@ -35,6 +35,7 @@
         <attr name="tab_scroller_line_radius" format="dimension"/>
         <attr name="tab_scroller_line_width" format="dimension"/>
         <attr name="tab_scroller_line_height" format="dimension"/>
+        <attr name="tab_scroller_line_center" format="boolean"/>
         <attr name="tab_scroller_item_padding_left" format="dimension"/>
         <attr name="tab_scroller_item_padding_right" format="dimension"/>
         <attr name="tab_scroller_item_padding_top" format="dimension"/>

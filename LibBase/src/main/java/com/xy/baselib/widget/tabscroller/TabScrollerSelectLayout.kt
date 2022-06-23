@@ -34,7 +34,7 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
     private val containerLayout by lazy { LinearLayout(context) }
     private var selectListener:TabSelectListener<T>?=null
 
-
+    private var isCenter = false
     private var lineColor = context.getResColor(R.color.transparent)
     private var lineRadius = context.getResDimension(R.dimen.dp_0).toFloat()
     private var lineWidth = context.getResDimension(R.dimen.dp_0).toFloat()
@@ -74,6 +74,7 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
             lineRadius = typedArray.getDimension(R.styleable.TabScrollerSelectLayout_tab_scroller_line_radius,lineRadius)
             lineWidth = typedArray.getDimension(R.styleable.TabScrollerSelectLayout_tab_scroller_line_width,lineWidth)
             lineHeight = typedArray.getDimension(R.styleable.TabScrollerSelectLayout_tab_scroller_line_height,lineHeight)
+            isCenter = typedArray.getBoolean(R.styleable.TabScrollerSelectLayout_tab_scroller_line_center,false)
             itemPaddingLeft = typedArray.getDimensionPixelOffset(R.styleable.TabScrollerSelectLayout_tab_scroller_item_padding_left,itemPaddingLeft)
             itemPaddinRight = typedArray.getDimensionPixelOffset(R.styleable.TabScrollerSelectLayout_tab_scroller_item_padding_right,itemPaddinRight)
             itemPaddinTop = typedArray.getDimensionPixelOffset(R.styleable.TabScrollerSelectLayout_tab_scroller_item_padding_top,itemPaddinTop)
@@ -196,7 +197,7 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
     }
 
 
-    private fun getItemLeft():Float{
+    open fun getItemLeft():Float{
         var useWidth = 0F
         for (index in 0 until containerLayout.childCount){
             val childView = containerLayout.getChildAt(index)
@@ -205,7 +206,7 @@ class TabScrollerSelectLayout<T: TabScrollerEntry> @JvmOverloads constructor(con
                 useWidth += params.leftMargin
             }
             if (index  == selectPosition){
-                return useWidth
+                return useWidth + if (isCenter) ((childView.width-lineWidth)/2) else 0F
             }else if (params is MarginLayoutParams){
                 useWidth += params.rightMargin+childView.width
             }
