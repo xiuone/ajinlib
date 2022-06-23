@@ -169,7 +169,7 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
         if (manager is GridLayoutManager){
             manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return  if (isHeadOrFootOrEmpty(position)) 1 else manager.spanCount
+                    return if (isHeadOrFootOrEmpty(position)) manager.spanCount else 1
                 }
             }
         }
