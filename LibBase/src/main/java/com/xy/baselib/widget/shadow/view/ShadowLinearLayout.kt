@@ -29,5 +29,6 @@ open class ShadowLinearLayout @JvmOverloads constructor(context: Context, attrs:
     override fun onDraw(canvas: Canvas) {
         onDrawImpl.onDraw(canvas)
         super.onDraw(canvas)
+        onDrawImpl.onDrawStoke(canvas)
     }
 }

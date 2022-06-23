@@ -28,6 +28,7 @@ open class ShadowRelativeLayout @JvmOverloads constructor(context: Context, attr
     override fun onDraw(canvas: Canvas) {
         onDrawImpl.onDraw(canvas)
         super.onDraw(canvas)
+        onDrawImpl.onDrawStoke(canvas)
     }
 
 }

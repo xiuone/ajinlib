@@ -1,23 +1,22 @@
-package com.xy.baselib.widget.multiline.label.item
+package com.xy.baselib.widget.item
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
-import android.view.ViewGroup
 import com.xy.baselib.R
 import com.xy.baselib.exp.getResDimension
 
-open class ItemTopView @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0)
+open class ItemRightView @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0)
     : ItemBaseView(context, attrs, defStyleAttr) {
     init {
-        orientation = VERTICAL
+        orientation = HORIZONTAL
     }
 
-    override fun layoutRes(): Int = R.layout.item_left_top
+    override fun layoutRes(): Int = R.layout.item_xiu_right_bottom
 
     override fun drawMargin(params: LayoutParams,drawSize:Int, drawMargin: Int): LayoutParams {
-        params.bottomMargin = drawMargin
+        params.leftMargin = drawMargin
         params.width = drawSize+context.getResDimension(R.dimen.dp_10)*2
         return params
     }
+
 }

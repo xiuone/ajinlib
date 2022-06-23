@@ -1,4 +1,4 @@
-package com.xy.baselib.widget.multiline.label.item
+package com.xy.baselib.widget.item
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -13,12 +13,12 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import com.xy.baselib.R
-import com.xy.baselib.widget.common.linear.CommonLinearLayout
 import com.xy.baselib.exp.getResColor
 import com.xy.baselib.exp.getResDimension
+import com.xy.baselib.widget.shadow.view.ShadowLinearLayout
 
 abstract class ItemBaseView @JvmOverloads constructor(context: Context, private val attrs: AttributeSet?=null, defStyleAttr:Int = 0)
-    : CommonLinearLayout(context, attrs, defStyleAttr) {
+    : ShadowLinearLayout(context, attrs, defStyleAttr) {
     init {
         LayoutInflater.from(context).inflate(layoutRes(),this,true)
         gravity = Gravity.CENTER

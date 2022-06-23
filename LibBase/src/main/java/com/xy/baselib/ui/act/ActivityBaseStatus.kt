@@ -11,7 +11,6 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import com.xy.baselib.R
-import com.xy.baselib.config.BaseObject
 import com.xy.baselib.exp.getResString
 import com.xy.baselib.mvp.view.BaseView
 import com.xy.baselib.exp.setOnClick
@@ -22,7 +21,7 @@ import com.xy.baselib.softkey.SoftKeyBoardDetector
  */
 abstract class ActivityBaseStatus : ActivityBase(), BaseView {
     private val baseLayoutRes = -1
-    protected val rootView by lazy { LayoutInflater.from(this).inflate(R.layout.layout_base_view, null) }
+    protected val rootView by lazy { LayoutInflater.from(this).inflate(R.layout.layout_xiu_base_view, null) }
     protected val titleFrameLayout: FrameLayout by lazy { findViewById(R.id.title_render_layout) }
     protected val contentFrameLayout: FrameLayout by lazy { findViewById(R.id.content_render_layout) }
     protected val loadingLayout: FrameLayout by lazy { findViewById(R.id.loading_render_layout) }
@@ -140,7 +139,7 @@ abstract class ActivityBaseStatus : ActivityBase(), BaseView {
     open fun loadData() {}
     @LayoutRes
     abstract fun contentLayoutRes(): Int
-    open fun prLayoutRes(): Int = R.layout.a_page_load
+    open fun prLayoutRes(): Int = R.layout.load_page_common_load
     open fun titleLayoutRes(): Int = R.layout.a_layout_toolbar_top_default
     open fun loadProgressLayoutRes() = R.layout.load_page_common_load
     open fun errorLayoutRes(): Int = R.layout.a_page_err

@@ -21,8 +21,10 @@
         <entry key="LibBase/src/main/res/layout/a_page_err.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/a_page_load.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/dialog_common_load.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/dialog_xiu_common_load.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/item_left_top.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/item_right_bottom.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/item_xiu_left_top.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/layout_base_view.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/layout_recycler_view.xml" value="0.39166666666666666" />
         <entry key="LibBase/src/main/res/layout/layout_tab.xml" value="0.4244791666666667" />
@@ -31,6 +33,10 @@
         <entry key="LibBase/src/main/res/layout/layout_tab_nono.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/layout_tab_right.xml" value="0.4244791666666667" />
         <entry key="LibBase/src/main/res/layout/layout_tab_top.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_xiu_base_view.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_xiu_recycler_view.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_xiu_tab.xml" value="0.4244791666666667" />
+        <entry key="LibBase/src/main/res/layout/layout_xiu_tab_bottom.xml" value="0.4244791666666667" />
       </map>
     </option>
   </component>

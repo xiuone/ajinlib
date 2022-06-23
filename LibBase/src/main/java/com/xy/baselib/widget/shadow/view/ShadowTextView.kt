@@ -29,5 +29,6 @@ class ShadowTextView @JvmOverloads constructor(context: Context, attrs: Attribut
     override fun onDraw(canvas: Canvas) {
         onDrawImpl.onDraw(canvas)
         super.onDraw(canvas)
+        onDrawImpl.onDrawStoke(canvas)
     }
 }

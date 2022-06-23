@@ -28,5 +28,6 @@ class ShadowImageView @JvmOverloads constructor(context: Context, attrs: Attribu
     override fun onDraw(canvas: Canvas) {
         onDrawImpl.onDraw(canvas)
         super.onDraw(canvas)
+        onDrawImpl.onDrawStoke(canvas)
     }
 }

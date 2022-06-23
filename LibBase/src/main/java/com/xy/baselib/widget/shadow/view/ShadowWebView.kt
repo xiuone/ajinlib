@@ -89,6 +89,7 @@ open class ShadowWebView @JvmOverloads constructor(context: Context, attrs: Attr
     override fun onDraw(canvas: Canvas) {
         onDrawImpl.onDraw(canvas)
         super.onDraw(canvas)
+        onDrawImpl.onDrawStoke(canvas)
     }
 
     fun loadDataWithBaseURL(html:String?) {

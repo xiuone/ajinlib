@@ -140,6 +140,8 @@
         <!-- 1、关于阴影 -->
         <!--阴影：是否要显示阴影，可能有只想用shape和selector功能，不想要阴影-->
         <attr name="hl_backgroundColor" format="color" />
+        <attr name="hl_stokeColor" format="color" />
+        <attr name="hl_stokeSize" format="dimension" />
 
         <attr name="hl_shadowHidden" format="boolean" />
         <!--阴影：阴影颜色-->

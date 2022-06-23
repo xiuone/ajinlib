@@ -19,7 +19,7 @@ import com.xy.baselib.softkey.SoftKeyBoardDetector
  * 加载状态
  */
 abstract class FragmentBaseStatus : FragmentBase() ,BaseView{
-    protected val rootView by lazy { LayoutInflater.from(context).inflate(R.layout.layout_base_view, null) }
+    protected val rootView by lazy { LayoutInflater.from(context).inflate(R.layout.layout_xiu_base_view, null) }
     protected val titleFrameLayout: FrameLayout by lazy { rootView.findViewById(R.id.title_render_layout) }
     protected val contentFrameLayout: FrameLayout by lazy { rootView.findViewById(R.id.content_render_layout) }
     protected val loadingLayout: FrameLayout by lazy { rootView.findViewById(R.id.loading_render_layout) }
@@ -139,7 +139,7 @@ abstract class FragmentBaseStatus : FragmentBase() ,BaseView{
     open fun loadData() {}
     @LayoutRes
     abstract fun contentLayoutRes(): Int
-    open fun prLayoutRes(): Int = R.layout.a_page_load
+    open fun prLayoutRes(): Int = R.layout.load_page_common_load
     open fun titleLayoutRes(): Int = R.layout.a_layout_toolbar_top_default
     open fun loadProgressLayoutRes() = R.layout.load_page_common_load
     open fun errorLayoutRes(): Int = R.layout.a_page_err

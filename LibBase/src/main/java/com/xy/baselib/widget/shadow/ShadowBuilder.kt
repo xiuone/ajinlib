@@ -10,6 +10,10 @@ class ShadowBuilder(var view: View, attrs: AttributeSet?) {
     val defaultBackgroundColor = 0X00FFFFFF
     var defaultCornerRadius = 0f
 
+
+    var stokeColor = 0X00FFFFFF
+    var stokeSize = 0f
+
     //是否隐藏阴影
     var isShowShadow = false
     var isShowLeftShadow = false
@@ -34,6 +38,8 @@ class ShadowBuilder(var view: View, attrs: AttributeSet?) {
     var centerColor = 0
     var endColor = 0
     var angle = 0
+
+
 
     /*-------------------------------------------------设置偏移量----------------------------------------------------------------*/
     /**
@@ -184,15 +190,23 @@ class ShadowBuilder(var view: View, attrs: AttributeSet?) {
         isShowRightShadow = attr.getBoolean(R.styleable.ShadowLayout_hl_shadowHiddenRight, !isShowShadow)
         isShowBottomShadow = attr.getBoolean(R.styleable.ShadowLayout_hl_shadowHiddenBottom, !isShowShadow)
         isShowTopShadow = attr.getBoolean(R.styleable.ShadowLayout_hl_shadowHiddenTop, !isShowShadow)
+
         defaultCornerRadius = attr.getDimension(R.styleable.ShadowLayout_hl_cornerRadius, 0F)
         mCornerRadius = attr.getDimension(R.styleable.ShadowLayout_hl_cornerRadius, defaultCornerRadius)
         mCornerRadiusLeftTop = attr.getDimension(R.styleable.ShadowLayout_hl_cornerRadius_leftTop, defaultCornerRadius)
         mCornerRadiusLeftBottom = attr.getDimension(R.styleable.ShadowLayout_hl_cornerRadius_leftBottom, defaultCornerRadius)
         mCornerRadiusRightTop = attr.getDimension(R.styleable.ShadowLayout_hl_cornerRadius_rightTop, defaultCornerRadius)
         mCornerRadiusRightBottom = attr.getDimension(R.styleable.ShadowLayout_hl_cornerRadius_rightBottom, defaultCornerRadius)
+
         mShadowLimit = attr.getDimension(R.styleable.ShadowLayout_hl_shadowLimit, 0f)
         mShadowColor = attr.getColor(R.styleable.ShadowLayout_hl_shadowColor, 0X2A000000)
+
         backgroundColor = attr.getColor(R.styleable.ShadowLayout_hl_backgroundColor, Color.TRANSPARENT)
+
+        stokeColor = attr.getColor(R.styleable.ShadowLayout_hl_stokeColor, Color.TRANSPARENT)
+        stokeSize = attr.getDimension(R.styleable.ShadowLayout_hl_stokeSize, 0F)
+
+
         //x轴偏移量
         if (mShadowLimit == 0f) {
             isShowShadow = false

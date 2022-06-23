@@ -30,5 +30,6 @@ open class ShadowViewPager @JvmOverloads constructor(context: Context, attrs: At
     override fun onDraw(canvas: Canvas) {
         onDrawImpl.onDraw(canvas)
         super.onDraw(canvas)
+        onDrawImpl.onDrawStoke(canvas)
     }
 }

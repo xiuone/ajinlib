@@ -1,6 +1,5 @@
 package com.xy.baselib.mvp.presenter
 
-import android.content.Context
 import android.view.Gravity
 import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleOwner
@@ -62,7 +61,7 @@ abstract class ProgressPresenter<T : BaseView>(view:T) :BasePresenter<T>(view),D
 
     override fun dialogGravity(): Int =Gravity.CENTER
 
-    override fun dialogLayoutRes(): Int = R.layout.dialog_common_load
+    override fun dialogLayoutRes(): Int = R.layout.dialog_xiu_common_load
 
     override fun onDestroyed(owner: LifecycleOwner) {
         loadProgressDialog?.dismiss()

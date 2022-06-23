@@ -38,7 +38,6 @@ class ShadowPaint(private val builderImpl: ShadowBuilderImpl) : Paint(ANTI_ALIAS
                 if (!endColor.startsWith("#")) {
                     endColor = "#$endColor"
                 }
-                Logger.e("终点颜色" + endColor + "===" + -0x66c9ac01)
                 argbColor = parseColor(endColor)
             } catch (e: Exception) {
             }
