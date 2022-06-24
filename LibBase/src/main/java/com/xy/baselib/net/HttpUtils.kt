@@ -90,14 +90,6 @@ fun String.get(tag: String?, paramsMap: HashMap<String, String>?, headMap: HashM
     val request = OkGo.get<String>(this)
     request.tag(tag).addHead(headMap).addParams(paramsMap)
     request.execute(callback)
-
-    val requestFile = OkGo.get<File>(this)
-    requestFile.tag(tag).addHead(headMap).addParams(paramsMap)
-    requestFile.execute(object :FileCallback(""){
-        override fun onSuccess(response: Response<File>?) {
-
-        }
-    })
 }
 
 
