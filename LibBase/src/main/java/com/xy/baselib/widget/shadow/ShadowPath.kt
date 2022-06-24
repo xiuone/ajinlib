@@ -10,8 +10,7 @@ class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: V
     private val builder: ShadowBuilder by lazy { builderImpl.builder }
     override fun reset() {
         super.reset()
-        val shadowRect = RectF(shadowRectLeft(), shadowRectTop(), shadowRectRight(), shadowRectBottom())
-        addRoundRect(shadowRect, getCornerValue(), Direction.CW)
+        addRoundRect(getShadowRect())
     }
 
     private fun shadowRectLeft(): Float =  if(builder.isShowLeftShadow) builder.mShadowLimit else 0F
@@ -19,11 +18,19 @@ class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: V
     private fun shadowRectRight(): Float =  if(builder.isShowRightShadow) (view.width - builder.mShadowLimit) else view.width.toFloat()
     private fun shadowRectBottom(): Float =  if(builder.isShowBottomShadow) (view.height - builder.mShadowLimit) else view.height.toFloat()
 
+
+    fun getShadowRect() = RectF(shadowRectLeft(), shadowRectTop(), shadowRectRight(), shadowRectBottom())
+
+
+    fun addRoundRect(rect: RectF) {
+        super.addRoundRect(rect, getCornerValue(), Direction.CW)
+    }
+
     /**
      * 获取圆角
      * @return
      */
-    private fun getCornerValue(): FloatArray{
+    fun getCornerValue(): FloatArray{
         val maxRadius = min(view.height, view.height) / 2F
         var leftTop = builderImpl.leftTopRadius()
         var rightTop = builderImpl.rightTopRadius()

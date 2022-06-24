@@ -26,9 +26,18 @@ class OnDrawImpl(view: View, builderImpl: ShadowBuilderImpl) : OnSizeChangeImpl(
         stokePaint.strokeWidth = builder.stokeSize
         stokePaint.color = builder.stokeColor
 
+
         val path = ShadowPath(builderImpl, view)
-        path.reset()
-        canvas?.drawPath(path,stokePaint)
+        val rectF = path.getShadowRect()
+        rectF.left = rectF.left + builder.stokeSize/2
+        rectF.right = rectF.right - builder.stokeSize/2
+        rectF.top = rectF.top + builder.stokeSize/2
+        rectF.bottom = rectF.bottom - builder.stokeSize/2
+
+        val newPath = Path()
+        newPath.addRoundRect(rectF,path.getCornerValue(), Path.Direction.CW)
+
+        canvas?.drawPath(newPath,stokePaint)
     }
 
 
