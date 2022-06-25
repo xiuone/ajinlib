@@ -3,6 +3,8 @@ package com.xy.baselib.widget.bar.progress
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -16,6 +18,7 @@ import com.xy.baselib.exp.getResColor
 abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     View(context, attrs, defStyleAttr) ,Runnable, LifecycleObserver {
     protected val white by lazy { context.getResColor(R.color.white) }
+    private val runHandler by lazy { Handler(Looper.getMainLooper()) }
     var progress :Int = 0
     protected var mBackgroundColor = -0x1a1a16
     protected var progressColor = -0xc9ac01
@@ -46,7 +49,7 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
         if (progress > 100) progress = 100
         this.progress = progress
         invalidate()
-        handler.removeCallbacksAndMessages(null)
+        runHandler.removeCallbacksAndMessages(null)
     }
 
     /**
@@ -58,16 +61,16 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
         if (progress > 100) progress = 100
         this.progress = progress
         invalidate()
-        handler.removeCallbacksAndMessages(null)
+        runHandler.removeCallbacksAndMessages(null)
         if (!progressReal) {
-            handler.postDelayed(this, 20)
+            runHandler.postDelayed(this, 20)
         }
     }
 
     fun success() {
         progress = 100
         invalidate()
-        handler.removeCallbacksAndMessages(null)
+        runHandler.removeCallbacksAndMessages(null)
     }
 
     override fun run() {
@@ -75,10 +78,10 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
         if (progress > 98) progress = 98
         invalidate()
         when (progress) {
-            in 0..20 -> handler.postDelayed(this, 20)
-            in 20..45 -> handler.postDelayed(this, 30)
-            in 45..60 -> handler.postDelayed(this, 40)
-            in 60..98 -> handler.postDelayed(this, 50)
+            in 0..20 -> runHandler.postDelayed(this, 20)
+            in 20..45 -> runHandler.postDelayed(this, 30)
+            in 45..60 -> runHandler.postDelayed(this, 40)
+            in 60..98 -> runHandler.postDelayed(this, 50)
         }
     }
 
@@ -107,6 +110,6 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     open fun onDestroyed(owner: LifecycleOwner) {
-        handler.removeCallbacksAndMessages(null)
+        runHandler.removeCallbacksAndMessages(null)
     }
 }
