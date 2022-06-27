@@ -11,7 +11,6 @@ class WrapperView(private val mTarget: View?) {
             var width = width
             if (width <= 0) width = 0
             mTarget?.layoutParams?.width = width
-            mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
         }
 
     //必须调用，否则宽度改变但UI没有刷新
@@ -21,7 +20,6 @@ class WrapperView(private val mTarget: View?) {
             var height = height
             if (height <= 0) height = 0
             mTarget?.layoutParams?.height = height
-            mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
         }
 
     //必须调用，否则宽度改变但UI没有刷新
@@ -36,7 +34,6 @@ class WrapperView(private val mTarget: View?) {
             val params = mTarget?.layoutParams
             if (params is MarginLayoutParams) {
                 params.topMargin = marginTop
-                mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
             }
         }
 
@@ -52,7 +49,6 @@ class WrapperView(private val mTarget: View?) {
             val params = mTarget?.layoutParams
             if (params is MarginLayoutParams) {
                 params.leftMargin = marginLeft
-                mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
             }
         }
 
@@ -68,7 +64,6 @@ class WrapperView(private val mTarget: View?) {
             val params = mTarget?.layoutParams
             if (params is MarginLayoutParams) {
                 params.rightMargin = marginRight
-                mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
             }
         }
 
@@ -84,7 +79,6 @@ class WrapperView(private val mTarget: View?) {
             val params = mTarget?.layoutParams
             if (params is MarginLayoutParams) {
                 params.bottomMargin = marginBottom
-                mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
             }
         }
 
@@ -96,7 +90,6 @@ class WrapperView(private val mTarget: View?) {
             val paddingRight = mTarget?.paddingRight?:0
             val paddingBottom = mTarget?.paddingBottom?:0
             mTarget?.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-            mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
         }
 
     //必须调用，否则宽度改变但UI没有刷新
@@ -107,7 +100,6 @@ class WrapperView(private val mTarget: View?) {
             val paddingRight = mTarget?.paddingRight?:0
             val paddingBottom = mTarget?.paddingBottom?:0
             mTarget?.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-            mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
         }
 
     //必须调用，否则宽度改变但UI没有刷新
@@ -118,7 +110,6 @@ class WrapperView(private val mTarget: View?) {
             val paddingTop = mTarget?.paddingTop?:0
             val paddingBottom = mTarget?.paddingBottom?:0
             mTarget?.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-            mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
         }
 
     //必须调用，否则宽度改变但UI没有刷新
@@ -129,7 +120,6 @@ class WrapperView(private val mTarget: View?) {
             val paddingTop = mTarget?.paddingTop?:0
             val paddingRight = mTarget?.paddingRight?:0
             mTarget?.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-            mTarget?.requestLayout() //必须调用，否则宽度改变但UI没有刷新
         }
 
 }
