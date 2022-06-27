@@ -277,4 +277,11 @@ object ViewAnimHelper {
         val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
         return animatorSet?.play(valueAnimator)
     }
+
+    fun cancel(animatorSet: AnimatorSet?){
+        animatorSet?.removeAllListeners()
+        if (animatorSet?.isRunning == true) {
+            animatorSet.cancel()
+        }
+    }
 }
