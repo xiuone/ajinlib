@@ -2,6 +2,7 @@ package com.xy.baselib
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.gyf.immersionbar.ImmersionBar
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.listener.DefaultRefreshHeaderCreator
