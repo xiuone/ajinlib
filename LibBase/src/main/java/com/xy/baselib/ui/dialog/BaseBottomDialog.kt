@@ -21,6 +21,11 @@ abstract class BaseBottomDialog(context: Context) : BaseDialog(context) {
      * 显示动画
      */
     override fun showAnimation(view: View?){
-        window?.setWindowAnimations(R.style.BottomDialog_Animation)
+        view?.run {
+            val animator = TranslateAnimation(Animation.RELATIVE_TO_SELF,0F,Animation.RELATIVE_TO_SELF,0F
+                ,Animation.RELATIVE_TO_SELF,1F,Animation.RELATIVE_TO_SELF,0F)
+            animator.duration = 300
+            startAnimation(animator)
+        }
     }
 }

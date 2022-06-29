@@ -34,15 +34,15 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
     }
 
     fun setKeyboardEnable(enable: Boolean, keyboardMode: Int,statusBarBgColor :Int) {
-        val bar = ImmersionBar.with(this)
+        ImmersionBar.with(this)
             .supportActionBar(false)
             .navigationBarEnable(false)
             .statusBarDarkFont(statusBarDarkFont())
-        bar.transparentBar()
-        bar.statusBarColorInt(statusBarBgColor)
-        bar.titleBar(statusBarView())
-        bar.keyboardEnable(enable, keyboardMode)
-        bar.init()
+            .transparentBar()
+            .statusBarColorInt(statusBarBgColor)
+            .titleBar(statusBarView())
+            .keyboardEnable(enable, keyboardMode)
+            .init()
     }
 
     fun adjustResize() {
@@ -56,6 +56,8 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
     fun initBar() {
         setKeyboardEnable(true, WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED or WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     }
+
+
 
     /**
      * 是否显示黑色状态拦

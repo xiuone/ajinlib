@@ -23,30 +23,36 @@ object SoftKeyBoardDetector {
     }
 
     fun register(activity: Activity, listener: OnSoftKeyBoardChangeListener?) {
-        val mRootView = activity.window.decorView
-        var globalCallBack = hashMap[activity]
-        if (globalCallBack == null) {
-            globalCallBack = GlobalCallBack(mRootView, listener)
-            mRootView.viewTreeObserver.addOnGlobalLayoutListener(globalCallBack)
-            hashMap[activity] = globalCallBack
-        } else {
-            globalCallBack.setOnSoftKeyBoardChangeListener(listener)
+        synchronized(this){
+            val mRootView = activity.window.decorView
+            var globalCallBack = hashMap[activity]
+            if (globalCallBack == null) {
+                globalCallBack = GlobalCallBack(mRootView, listener)
+                mRootView.viewTreeObserver.addOnGlobalLayoutListener(globalCallBack)
+                hashMap[activity] = globalCallBack
+            } else {
+                globalCallBack.setOnSoftKeyBoardChangeListener(listener)
+            }
         }
     }
 
     fun unregister(activity: Activity) {
-        val globalCallBack = hashMap[activity]
-        val mRootView = activity.window.decorView
-        if (globalCallBack != null) {
-            mRootView.viewTreeObserver.removeOnGlobalLayoutListener(globalCallBack)
-            hashMap.remove(activity)
+        synchronized(this){
+            val globalCallBack = hashMap[activity]
+            val mRootView = activity.window.decorView
+            if (globalCallBack != null) {
+                mRootView.viewTreeObserver.removeOnGlobalLayoutListener(globalCallBack)
+                hashMap.remove(activity)
+            }
         }
     }
 
     fun removeListener(activity: Activity, listener: OnSoftKeyBoardChangeListener?) {
-        val globalCallBack = hashMap[activity]
-        listener?.run {
-            globalCallBack?.removeListener(listener)
+        synchronized(this){
+            val globalCallBack = hashMap[activity]
+            listener?.run {
+                globalCallBack?.removeListener(listener)
+            }
         }
     }
 

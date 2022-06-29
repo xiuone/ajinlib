@@ -8,19 +8,19 @@ open class BaseImplDialog(context: Context,val impl:DialogImpl) :BaseDialog(cont
         impl.initDialogView(this)
     }
 
-    override fun proportion(): Double {
-        return impl.dialogProportion()
-    }
-
-    override fun gravity(): Int {
-        return impl.dialogGravity()
-    }
-
-    override fun layoutRes(): Int {
-        return impl.dialogLayoutRes()
-    }
-
     override fun showAnimation(view: View?) {
         impl.showAnimation(view)
     }
+
+    override fun proportion(): Double = impl.dialogProportion()
+
+    override fun gravity(): Int = impl.dialogGravity()
+
+    override fun layoutRes(): Int = impl.dialogLayoutRes()
+
+    override fun useImmersionBar(): Boolean = impl.useImmersionBar()
+
+    override fun registerKeyBoard(): Boolean = impl.registerKeyBoard()
+
+    override fun getBarView(): View? = impl.getBarView()
 }
