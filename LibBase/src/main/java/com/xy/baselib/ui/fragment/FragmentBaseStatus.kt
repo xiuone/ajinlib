@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import com.xy.baselib.MoveKeyBoardController
 import com.xy.baselib.R
 import com.xy.baselib.exp.getResString
 import com.xy.baselib.mvp.view.BaseView
@@ -25,13 +26,18 @@ abstract class FragmentBaseStatus : FragmentBase() ,BaseView{
     protected val loadingLayout: FrameLayout by lazy { rootView.findViewById(R.id.loading_render_layout) }
     protected val errorLayout: FrameLayout by lazy {  rootView.findViewById(R.id.error_render_layout)}
     protected val prLayout: FrameLayout by lazy { rootView.findViewById(R.id.pr_render_layout) }
-
+    protected val moveKeyBoardController: MoveKeyBoardController by lazy { MoveKeyBoardController(this) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView(savedInstanceState, view)
         setListener()
         loadData()
+        val currentActivity = activity
+        if (registerKeyBoard() && currentActivity != null){
+            SoftKeyBoardDetector.register(currentActivity, moveKeyBoardController)
+            moveKeyBoardController.keyBoardHide(currentActivity, 0)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -135,6 +141,7 @@ abstract class FragmentBaseStatus : FragmentBase() ,BaseView{
 
     override fun getPageContext(): Context? = context
 
+    open fun registerKeyBoard():Boolean = false
     open fun setListener() {}
     open fun loadData() {}
     @LayoutRes
@@ -144,4 +151,10 @@ abstract class FragmentBaseStatus : FragmentBase() ,BaseView{
     open fun loadProgressLayoutRes() = R.layout.load_page_common_load
     open fun errorLayoutRes(): Int = R.layout.a_page_err
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val currentActivity = activity
+        if (registerKeyBoard() && currentActivity != null)
+            SoftKeyBoardDetector.removeListener(currentActivity,moveKeyBoardController)
+    }
 }

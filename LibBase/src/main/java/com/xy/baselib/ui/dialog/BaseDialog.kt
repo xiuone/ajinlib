@@ -67,17 +67,21 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
             moveKeyBoardController.keyBoardHide(context, 0)
         }
         if (useImmersionBar()) {
-            val keyboardMode =
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-            ImmersionBar.with(activity, this)
-                .supportActionBar(false)
-                .navigationBarEnable(false)
-                .statusBarDarkFont(true)
-                .transparentBar()
-                .statusBarView(getBarView())
-                .keyboardEnable(true, keyboardMode)
-                .init()
+           immersionBar(activity)
         }
+    }
+
+    fun immersionBar(activity: Activity){
+        val keyboardMode =
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        ImmersionBar.with(activity, this)
+            .supportActionBar(false)
+            .navigationBarEnable(false)
+            .statusBarDarkFont(true)
+            .transparentBar()
+            .statusBarView(getBarView())
+            .keyboardEnable(true, keyboardMode)
+            .init()
     }
 
 

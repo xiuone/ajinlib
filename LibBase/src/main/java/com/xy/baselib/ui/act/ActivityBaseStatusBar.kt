@@ -7,16 +7,24 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import com.gyf.immersionbar.ImmersionBar
+import com.xy.baselib.MoveKeyBoardController
 import com.xy.baselib.R
 import com.xy.baselib.exp.getResString
+import com.xy.baselib.softkey.SoftKeyBoardDetector
 
 /**
  * 状态栏  和标题拦
  */
 abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    protected val moveKeyBoardController: MoveKeyBoardController by lazy { MoveKeyBoardController(this) }
+
+    override fun initView(savedInstanceState: Bundle?) {
+        super.initView(savedInstanceState)
         initBar()
+        if (registerKeyBoard()) {
+            SoftKeyBoardDetector.register(this, moveKeyBoardController)
+            moveKeyBoardController.keyBoardHide(this, 0)
+        }
     }
 
     fun setKeyboardEnable(enable: Boolean) {
@@ -63,9 +71,7 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
      * 是否显示黑色状态拦
      * @return
      */
-    open fun statusBarDarkFont(): Boolean {
-        return true
-    }
+    open fun statusBarDarkFont(): Boolean = true
 
     /**
      * 状态拦颜色修改
@@ -81,6 +87,7 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
 
     open fun statusBarView():View? = titleFrameLayout
 
+    open fun registerKeyBoard():Boolean = false
 
     /**
      * 初始化标题拦
@@ -124,7 +131,12 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
 
     fun initBlack() {
         val backIv: View = findViewById<View>(R.id.back_iv_button)
-        backIv?.setOnClickListener { v: View? -> finish() }
+        backIv.setOnClickListener { v: View? -> finish() }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (registerKeyBoard())
+            SoftKeyBoardDetector.removeListener(this,moveKeyBoardController)
+    }
 }
