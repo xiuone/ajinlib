@@ -60,7 +60,7 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
         this.activity = activity
     }
 
-    fun bindKeyBoardShow(activity :Activity){
+    open fun bindKeyBoardShow(activity :Activity){
         showBindActivity(activity)
         if (registerKeyBoard()) {
             SoftKeyBoardDetector.register(activity, moveKeyBoardController)
@@ -71,7 +71,7 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
         }
     }
 
-    fun immersionBar(activity: Activity){
+    open fun immersionBar(activity: Activity){
         val keyboardMode =
             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         ImmersionBar.with(activity, this)
