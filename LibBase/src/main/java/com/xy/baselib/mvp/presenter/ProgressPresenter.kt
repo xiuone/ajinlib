@@ -9,7 +9,7 @@ import com.xy.baselib.ui.dialog.BaseDialog
 import com.xy.baselib.ui.dialog.DialogImpl
 import com.xy.baselib.ui.dialog.LoadProgressBaseDialog
 
-abstract class ProgressPresenter<T : BaseView>(view:T) :BasePresenter<T>(view),DialogImpl{
+abstract class ProgressPresenter<T : BaseView>(view:T?) :BasePresenter<T>(view),DialogImpl{
     private var loadProgressDialog: LoadProgressBaseDialog?=null
 
     private fun createProgressDialog():LoadProgressBaseDialog?{
