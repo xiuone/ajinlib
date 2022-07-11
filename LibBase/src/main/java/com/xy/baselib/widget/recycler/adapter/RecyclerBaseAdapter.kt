@@ -92,7 +92,7 @@ abstract class RecyclerBaseAdapter<T> :RecyclerAdapterWrapper<BaseViewHolder>(){
                 addItem(data)
             }else{
                 this@RecyclerBaseAdapter.data.add(position,data)
-                notifyItemRangeChanged(position, this.data.size)
+                notifyItemRangeChanged(heardMap.size+position, heardMap.size+this.data.size)
             }
         }
 
@@ -103,8 +103,8 @@ abstract class RecyclerBaseAdapter<T> :RecyclerAdapterWrapper<BaseViewHolder>(){
             var item: T? = null
             if (position < this.data.size) {
                 item = data.removeAt(position)
-                notifyItemRemoved(position)
-                notifyItemRangeChanged(position, this.data.size - position)
+                notifyItemRemoved(position+heardMap.size)
+                notifyItemRangeChanged(heardMap.size+position, heardMap.size+this.data.size - position)
             }
             if (this.data.size<0){
                 notifyDataSetChanged()
@@ -120,8 +120,8 @@ abstract class RecyclerBaseAdapter<T> :RecyclerAdapterWrapper<BaseViewHolder>(){
                 for (i in last downTo index) {
                     data.removeAt(i)
                 }
-                notifyItemRangeRemoved(index, count)
-                notifyItemRangeChanged(index, data.size - index)
+                notifyItemRangeRemoved(heardMap.size+index, count)
+                notifyItemRangeChanged(heardMap.size+index, heardMap.size+data.size - index)
                 if (this.data.size<0){
                     notifyDataSetChanged()
                 }
