@@ -121,7 +121,7 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
         if (viewType <= 0){
             if (viewType == emptyType && emptyView != null)
                 view = emptyView
-            if (view == null || heardMap.size >0){
+            if (view == null && heardMap.size >0){
                 view = heardMap[viewType]
             }
             if (view == null && footMap.size > 0 ){
