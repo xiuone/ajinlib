@@ -33,19 +33,27 @@ abstract class ActivityBaseStatusBar : ActivityBaseStatus() {
     }
 
     fun setKeyboardEnable(enable: Boolean, keyboardMode: Int) {
-        setKeyboardEnable(enable, keyboardMode,statusBarBgColor())
+        setKeyboardEnable(enable, keyboardMode,statusBarBgColor(),statusBarDarkFont())
     }
 
     fun setKeyboardEnable(statusBarBgColor:Int) {
         val immersionBar = ImmersionBar.with(this)
-        setKeyboardEnable(immersionBar.barParams.keyboardEnable, immersionBar.barParams.keyboardMode,statusBarBgColor)
+        setKeyboardEnable(immersionBar.barParams.keyboardEnable, immersionBar.barParams.keyboardMode,
+            statusBarBgColor,immersionBar.barParams.statusBarDarkFont)
     }
 
-    fun setKeyboardEnable(enable: Boolean, keyboardMode: Int,statusBarBgColor :Int) {
+    fun setStatusBarDarkFont(statusBarDarkFont:Boolean) {
+        val immersionBar = ImmersionBar.with(this)
+        setKeyboardEnable(immersionBar.barParams.keyboardEnable, immersionBar.barParams.keyboardMode,
+            immersionBar.barParams.statusBarColor,statusBarDarkFont)
+    }
+
+
+    fun setKeyboardEnable(enable: Boolean, keyboardMode: Int,statusBarBgColor :Int,statusBarDarkFont:Boolean) {
         ImmersionBar.with(this)
             .supportActionBar(false)
             .navigationBarEnable(false)
-            .statusBarDarkFont(statusBarDarkFont())
+            .statusBarDarkFont(statusBarDarkFont)
             .transparentBar()
             .statusBarColorInt(statusBarBgColor)
             .titleBar(statusBarView())
