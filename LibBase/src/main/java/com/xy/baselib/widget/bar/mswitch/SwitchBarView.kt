@@ -1,4 +1,4 @@
-package com.xy.baselib.widget.bar.switch
+package com.xy.baselib.widget.bar.mswitch
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
