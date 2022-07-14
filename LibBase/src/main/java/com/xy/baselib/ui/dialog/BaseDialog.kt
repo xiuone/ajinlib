@@ -93,7 +93,7 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
         }
     }
 
-    private fun keyBoardEnable() = true
+    open fun keyBoardEnable() = true
 
     /**
      * 显示动画
