@@ -80,7 +80,7 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
             .statusBarDarkFont(true)
             .transparentBar()
             .statusBarView(getBarView())
-            .keyboardEnable(true, keyboardMode)
+            .keyboardEnable(keyBoardEnable(), keyboardMode)
             .init()
     }
 
@@ -92,6 +92,8 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
             }
         }
     }
+
+    private fun keyBoardEnable() = true
 
     /**
      * 显示动画
