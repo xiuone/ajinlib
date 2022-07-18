@@ -2,7 +2,6 @@ package com.xy.baselib
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
-import com.gyf.immersionbar.ImmersionBar
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.listener.DefaultRefreshHeaderCreator
@@ -10,12 +9,14 @@ import com.xy.baselib.config.BaseObject
 import com.xy.baselib.exp.Logger
 import com.xy.baselib.exp.getResColor
 import com.xy.baselib.net.init
+import com.xy.baselib.notify.config.ConfigController
+import com.xy.baselib.notify.config.ConfigListener
 import com.xy.baselib.widget.refresh.header.WaterDropHeader
 import me.jessyan.autosize.AutoSize
 
 
-abstract class BaseApp : MultiDexApplication() {
-
+abstract class BaseApp : MultiDexApplication() , ConfigListener {
+    protected val configController by lazy { ConfigController() }
     fun setDebug(boolean: Boolean){
         Logger.debug = boolean
         init(boolean)
@@ -37,28 +38,16 @@ abstract class BaseApp : MultiDexApplication() {
             pulseFooter.setPrimaryColors(color1,color2,color3)
             return@setDefaultRefreshFooterCreator pulseFooter
         }
+        BaseObject.configNotify.addNotify(this)
     }
-
 
     override fun attachBaseContext(newBase: Context) {
-        val res = newBase.resources
-        val config = res.configuration
-        config.fontScale = BaseObject.fontManger.getFontScaleSize(newBase)
-        config.setLocale(BaseObject.languageManger.getCurrentLanguage(newBase).locales)
-        val context = newBase.createConfigurationContext(config)
-        super.attachBaseContext(context)
+        val newContext = configController.attachBaseContext(newBase)
+        super.attachBaseContext(newContext)
     }
 
-
-    fun updateConfiguration() {
-        val languageMode = BaseObject.languageManger.getCurrentLanguage(this)
-        val fontScaleSize = BaseObject.fontManger.getFontScaleSize(this)
-        val config = resources.configuration
-        config.setLocale(languageMode.locales)
-        config.fontScale = fontScaleSize
-        resources.updateConfiguration(config, null)
-        resources.flushLayoutCache()
-        resources.updateConfiguration(config, resources.displayMetrics)
+    override fun onChangeConfig() {
+        configController.onChangeConfig(this)
     }
 
 }

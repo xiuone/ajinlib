@@ -1,7 +1,6 @@
 package com.xy.baselib.font
 
 import android.content.Context
-import com.xy.baselib.BaseApp
 import com.xy.baselib.R
 import com.xy.baselib.config.BaseObject
 import com.xy.baselib.exp.getResString
@@ -53,10 +52,9 @@ class FontManger {
             && currentFontSize != veryMaxFontSize) {
             currentFontSize = middleFontSize
         }
+        if (currentFontSize == getFontScaleSize(context))return
         BaseObject.spHelperUtils.setFloat(context,FONT_SIZE_KEY, currentFontSize)
-        val applicationContext = context.applicationContext
-        if (applicationContext is BaseApp)
-            applicationContext.updateConfiguration()
+        BaseObject.configNotify.switchRes()
     }
 
     fun getFonts(context: Context): MutableList<FontMode>{
