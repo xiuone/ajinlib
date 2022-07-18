@@ -70,9 +70,7 @@ class LanguageManger {
         }
         if (!status) return
         BaseObject.spHelperUtils.setString(context, LanguageConfig.LANGUAGE_KEY, language)
-        val applicationContext = context.applicationContext
-        if (applicationContext is BaseApp)
-            applicationContext.updateConfiguration()
+        BaseObject.configNotify.switchRes()
     }
 
     /**
