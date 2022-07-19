@@ -1,6 +1,7 @@
 package com.xy.baselib
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.multidex.MultiDexApplication
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -9,14 +10,12 @@ import com.xy.baselib.config.BaseObject
 import com.xy.baselib.exp.Logger
 import com.xy.baselib.exp.getResColor
 import com.xy.baselib.net.init
-import com.xy.baselib.notify.config.ConfigController
-import com.xy.baselib.notify.config.ConfigListener
 import com.xy.baselib.widget.refresh.header.WaterDropHeader
 import me.jessyan.autosize.AutoSize
 
 
-abstract class BaseApp : MultiDexApplication() , ConfigListener {
-    protected val configController by lazy { ConfigController() }
+abstract class BaseApp : MultiDexApplication() {
+    private val configController by lazy { ConfigController() }
     fun setDebug(boolean: Boolean){
         Logger.debug = boolean
         init(boolean)
@@ -38,16 +37,15 @@ abstract class BaseApp : MultiDexApplication() , ConfigListener {
             pulseFooter.setPrimaryColors(color1,color2,color3)
             return@setDefaultRefreshFooterCreator pulseFooter
         }
-        BaseObject.configNotify.addNotify(this)
     }
 
     override fun attachBaseContext(newBase: Context) {
-        val newContext = configController.attachBaseContext(newBase)
-        super.attachBaseContext(newContext)
+        val config = configController.changeConfig(newBase)
+        super.attachBaseContext(newBase.createConfigurationContext(config))
     }
 
-    override fun onChangeConfig() {
-        configController.onChangeConfig(this)
+    fun onChangeConfig() {
+        configController.checkChangeConfig(this)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.xy.baselib.notify
+package com.xy.baselib
 
 import android.os.Handler
 import android.os.Looper

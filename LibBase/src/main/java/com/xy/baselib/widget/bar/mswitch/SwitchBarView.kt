@@ -131,16 +131,8 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
      */
     private fun startAnim(event: MotionEvent){
         if (event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP){
-            val isSwitchSelect = if (isH()){
-                center > width/2
-            }else{
-                center > height/2
-            }
-            if (this.isSwitchSelect != isSwitchSelect) {
-                Logger.e("当前状态$isSwitchSelect")
-                switchBarListener?.onSwitchCallBack(isSwitchSelect)
-            }
-            isSelected = isSwitchSelect;
+            isSelected = !isSelected
+            switchBarListener?.onSwitchCallBack(isSelected)
         }
     }
 

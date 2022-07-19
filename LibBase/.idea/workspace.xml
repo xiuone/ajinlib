@@ -4,7 +4,87 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="345f8edc-019a-4aa4-a668-1831039aa2c3" name="Default Changelist" comment="" />
+    <list default="true" id="345f8edc-019a-4aa4-a668-1831039aa2c3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/xy/baselib/ConfigController.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/exp/ExpFile.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/longclick/BrowserBaseLongClickedView.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/NaviController.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/preview/PreviewAct.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/preview/PreviewFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/res/drawable-xhdpi/bg_white_radius_100_stoke_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/res/layout/preview_activity.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/res/layout/preview_photo_fragment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/res/values/dimens.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LibRes/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../LibRes/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LibThirdLoginOrShare/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../LibThirdLoginOrShare/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/BrowserView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/BrowserView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/config/IconHiddenObject.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/longclick/BrowserLongClickedView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/browser/longclick/BrowserLongClickedView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/MyApp.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/MyApp.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/db/setting/SettingManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/db/setting/SettingManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/db/setting/SettingMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/db/setting/SettingMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/dialog/HistoryClearDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/dialog/HistoryClearDialog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/dialog/navi/NaviDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/dialog/navi/NaviDialog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/upload/UpLoadQiNPresenter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/upload/UpLoadQiNPresenter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/user/sync/backup/AutoBackUpPresenter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/user/sync/backup/AutoBackUpPresenter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/user/sync/backup/BaseBackUpPresenter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/user/sync/backup/BaseBackUpPresenter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/user/sync/recovery/RecoveryPresenter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/mvp/user/sync/recovery/RecoveryPresenter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/add/EngineAddNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/add/EngineAddNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/add/EngineAddView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/add/EngineAddView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/all/EngineAllNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/all/EngineAllNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/all/EngineAllView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/all/EngineAllView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/custom/EngineCustomNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/custom/EngineCustomNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/custom/EngineCustomView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/engine/custom/EngineCustomView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/node/NodeNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/node/NodeNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/setting/SettingNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/setting/SettingNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/auto/AutoBackUpNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/auto/AutoBackUpNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/backup/ManualBackUpNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/backup/ManualBackUpNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/check/CheckNewNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/check/CheckNewNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/down/SyncDownNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/sync/down/SyncDownNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/token/RefreshTokenNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/token/RefreshTokenNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/user/UserNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/user/UserNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/wallpager/WallPagerNotify.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/notifty/wallpager/WallPagerNotify.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/engine/add/EngineAddAdditionalAct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/engine/add/EngineAddAdditionalAct.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/engine/eobject/EngineDefaultServiceObject.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/engine/eobject/EngineDefaultServiceObject.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/engine/index/fragment/EngineAdditionalFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/engine/index/fragment/EngineAdditionalFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/history/HistoryAct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/history/HistoryAct.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/child/BrowserHomeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/child/BrowserHomeFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/child/HomeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/child/HomeFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/child/icon/touch/HomePageDisPatchTouch.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/main/child/icon/touch/HomePageDisPatchTouch.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/qr/QRCallBack.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/qr/QRCallBack.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/setting/conventional/ConventionalActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/setting/conventional/ConventionalActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/setting/conventional/font/FontSelectView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/setting/conventional/font/FontSelectView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/setting/conventional/language/LanguageAct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/ui/setting/conventional/language/LanguageAct.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/RightIconEditView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/RightIconEditView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/custom/CustomBaseView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/custom/CustomBaseView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/custom/CustomSolidView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/custom/CustomSolidView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/custom/CustomView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/custom/CustomView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/SearchLayout.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/SearchLayout.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/page/HomePageView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/page/HomePageView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/page/HomeView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/page/HomeView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/BrowserSearchView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/BrowserSearchView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/history/BrowserSearchContentView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/history/BrowserSearchContentView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/history/BrowserSearchHistoryView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/history/BrowserSearchHistoryView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/history/SearchHistoryManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/history/SearchHistoryManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/input/BrowserInputView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/input/BrowserInputView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/suggestion/SuggestionView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/suggestion/SuggestionView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/type/SelectTypeView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/home/search/type/SelectTypeView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/icon/IconImageView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/icon/IconImageView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/note/RichEditor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/infinitybrowser/mobile/widget/note/RichEditor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/history_dialog_clear.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/history_dialog_clear.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/main_search_add_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/main_search_add_item.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/main_search_suggestion_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/main_search_suggestion_item.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/setting_conventional_font_activity.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/setting_conventional_font_activity.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/user_data_sync_activity.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/user_data_sync_activity.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../picker/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../picker/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../settings.gradle" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,10 +109,12 @@
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="cidr.known.project.marker" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="project.structure.last.edited" value="SDK Location" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">

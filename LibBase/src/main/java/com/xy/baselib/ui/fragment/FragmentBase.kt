@@ -9,12 +9,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleObserver
+import com.xy.baselib.ConfigController
 import com.xy.baselib.ui.act.ActivityBaseStatusBar
 import com.xy.baselib.ui.act.ActivityBase
 
 abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult> {
     private val FRAGMENT_BASE_LAUNCH:String = "FRAGMENT:BASE:LAUNCH:";
     private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
+    private val configController by lazy { ConfigController(::needReCreate) }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindLifecycleObserve()
@@ -32,6 +34,15 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
             return activity as ActivityBaseStatusBar;
         return null
     }
+
+    override fun onResume() {
+        super.onResume()
+        context?.run {
+            configController.onResume(this)
+        }
+    }
+
+    protected open fun needReCreate(){}
 
     /**
      * 注册跳转
