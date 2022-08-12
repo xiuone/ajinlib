@@ -20,6 +20,10 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     internal val heardMap :HashMap<Int,View> by lazy {  HashMap() }
     //脚脚
     private val footMap :HashMap<Int,View> by lazy { HashMap() }
+    
+    fun getHeadSize() = heardMap.size
+    
+    fun getFootSize() = footMap.size
 
     var showHaveHeadEmpty:Boolean = true
         set(value) {
@@ -52,12 +56,12 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
             Logger.e("headView not null")
             return
         }
-        if (heardMap.size >= maxHeadSize){
+        if (getHeadSize() >= maxHeadSize){
             Logger.e("headView is Max")
             return
         }
-        heardMap[-heardMap.size] = view
-        notifyItemInserted(heardMap.size)
+        heardMap[-getHeadSize()] = view
+        notifyItemInserted(getHeadSize())
     }
 
     fun removeHeadView(view: View?){
@@ -83,11 +87,11 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
             Logger.e("footView not null")
             return
         }
-        if (footMap.size >= maxFootSize){
+        if (getFootSize() >= maxFootSize){
             Logger.e("footView is Max")
             return
         }
-        footMap[-footMap.size + emptyType -1] = view
+        footMap[-getFootSize() + emptyType -1] = view
         notifyItemChanged(itemCount)
     }
 
@@ -100,18 +104,18 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
         for ((key, value) in footMap) {
             if (value == view){
                 footMap.remove(key)
-                notifyItemRemoved(abs(key - emptyType +1) + heardMap.size + (if (showEmpty()) 1 else onItemContentCount()))
+                notifyItemRemoved(abs(key - emptyType +1) + getHeadSize() + (if (showEmpty()) 1 else onItemContentCount()))
                 return
             }
         }
         Logger.e("footView not find")
     }
 
-    private fun isHeadOrFootOrEmpty(position: Int) =  position < heardMap.size || (position >= heardMap.size+onItemContentCount())
+    private fun isHeadOrFootOrEmpty(position: Int) =  position < getHeadSize() || (position >= getHeadSize()+onItemContentCount())
 
 
     private fun showEmpty():Boolean{
-        var count = heardMap.size+footMap.size;
+        var count = getHeadSize()+getFootSize();
         return emptyView != null && (showHaveFootEmpty || showHaveHeadEmpty || count == 0) && onItemContentCount()<=0
     }
 
@@ -121,10 +125,10 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
         if (viewType <= 0){
             if (viewType == emptyType && emptyView != null)
                 view = emptyView
-            if (view == null && heardMap.size >0){
+            if (view == null && getHeadSize() >0){
                 view = heardMap[viewType]
             }
-            if (view == null && footMap.size > 0 ){
+            if (view == null && getFootSize() > 0 ){
                 view = footMap[viewType]
             }
             if (view == null)
@@ -135,24 +139,24 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        if (position >= heardMap.size && !showEmpty() && position < (heardMap.size + onItemContentCount())){
-            onItemBindViewHolder(holder,position - heardMap.size)
+        if (position >= getHeadSize() && !showEmpty() && position < (getHeadSize() + onItemContentCount())){
+            onItemBindViewHolder(holder,position - getHeadSize())
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position < heardMap.size){
+        if (position < getHeadSize()){
             return -position
-        }else if (showEmpty() && position == heardMap.size){
+        }else if (showEmpty() && position == getHeadSize()){
             return emptyType
-        }else if (position < (heardMap.size + onItemContentCount())){
-            return  onItemViewType(position-heardMap.size)
+        }else if (position < (getHeadSize() + onItemContentCount())){
+            return  onItemViewType(position-getHeadSize())
         }
-        return emptyType - (position - heardMap.size - (if (showEmpty()) 1 else onItemContentCount()))
+        return emptyType - (position - getHeadSize() - (if (showEmpty()) 1 else onItemContentCount()))
     }
 
     override fun getItemCount(): Int {
-        var count = heardMap.size+footMap.size;
+        var count = getHeadSize()+getFootSize();
         if (showEmpty()){
             return count + 1
         }
