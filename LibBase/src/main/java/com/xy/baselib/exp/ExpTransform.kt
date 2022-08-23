@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextPaint
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
@@ -96,6 +97,9 @@ fun SpannableString.setContentClicked( keyword: String?,l: () -> Unit):Spannable
         this.setSpan(object : ClickableSpan() {
             override fun onClick(p0: View) {
                 l.invoke()
+            }
+            override fun updateDrawState(ds: TextPaint) {
+                ds.isUnderlineText = false; // set to false to remove underline
             }
         }, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
