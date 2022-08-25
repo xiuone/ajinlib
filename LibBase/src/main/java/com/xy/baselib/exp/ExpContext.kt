@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Space
 import android.widget.Toast
+import androidx.annotation.BoolRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
@@ -58,40 +59,36 @@ fun Context.insertImage(path: String?){
         sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://$path")))
     }
 }
+
 /**
  * 获取颜色
  */
-fun Context.getResColor(@ColorRes colorRes: Int): Int {
-    return ContextCompat.getColor(this, colorRes)
-}
+fun Context.getResBool(@BoolRes res: Int): Boolean  = resources.getBoolean(res)
+
+/**
+ * 获取颜色
+ */
+fun Context.getResColor(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
 
 /**
  * 获取drawable
  */
-fun Context.getResDrawable(colorRes: Int): Drawable? {
-    return ContextCompat.getDrawable(this, colorRes)
-}
+fun Context.getResDrawable(colorRes: Int): Drawable? =ContextCompat.getDrawable(this, colorRes)
 
 /**
  * 获取字符串
  */
-fun Context.getResString(res: Int): String {
-    return resources.getString(res)
-}
+fun Context.getResString(res: Int): String = resources.getString(res)
 
 /**
  * 获取尺寸
  */
-fun Context.getResDimension( @DimenRes resId: Int): Int {
-    return resources.getDimensionPixelSize(resId)
-}
+fun Context.getResDimension( @DimenRes resId: Int): Int = resources.getDimensionPixelSize(resId)
 
 /**
  * 获取bitmap
  */
-fun Context.getBitmapFromRes(res: Int): Bitmap {
-    return BitmapFactory.decodeResource(resources, res)
-}
+fun Context.getBitmapFromRes(res: Int): Bitmap = BitmapFactory.decodeResource(resources, res)
 
 /**
  * 将突变变成bitmap并设置大小
@@ -186,9 +183,7 @@ fun Context.getScreenAndStatusHeight(): Int {
 /**
  * 获取站位图
  */
-fun Context.getSpace(): View {
-    return getSpace(R.dimen.dp_20)
-}
+fun Context.getSpace(): View = getSpace(R.dimen.dp_20)
 
 fun Context.getSpace(@DimenRes heightRes: Int): View {
     val space = Space(this);
