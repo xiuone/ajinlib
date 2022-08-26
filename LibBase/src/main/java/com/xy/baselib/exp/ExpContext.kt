@@ -18,10 +18,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Space
 import android.widget.Toast
-import androidx.annotation.BoolRes
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.xy.baselib.R
@@ -64,6 +61,8 @@ fun Context.insertImage(path: String?){
  * 获取颜色
  */
 fun Context.getResBool(@BoolRes res: Int): Boolean  = resources.getBoolean(res)
+
+fun Context.getResInt(@IntegerRes res: Int): Int  = resources.getInteger(res)
 
 /**
  * 获取颜色
