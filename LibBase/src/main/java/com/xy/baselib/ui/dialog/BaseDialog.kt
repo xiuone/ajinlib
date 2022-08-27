@@ -52,7 +52,8 @@ abstract class BaseDialog(context: Context) : Dialog(context) , DialogInterface.
 
     override fun show() {
         super.show()
-        showAnimation(rootView)
+        if (!isShowing)
+            showAnimation(rootView)
     }
 
     fun showBindActivity(activity: Activity){
