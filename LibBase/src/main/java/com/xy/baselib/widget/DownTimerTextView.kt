@@ -1,12 +1,14 @@
-package com.xy.baselib.widget.shadow.view
+package com.xy.baselib.widget
 
 import android.content.Context
 import android.os.CountDownTimer
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatTextView
 import com.xy.baselib.R
+import com.xy.baselib.widget.shadow.view.ShadowTextView
 
 class DownTimerTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
-    ShadowTextView(context, attrs, defStyleAttr){
+    AppCompatTextView(context, attrs, defStyleAttr){
     private val downTimer by lazy { DownTimer() }
     private var runString: String ="%s"
     private var finishString: String =""
