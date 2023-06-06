@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SelectBackGroundWithPaddingTextView">
+        <attr name="select_back_ground" format="color"/>
+        <attr name="select_back_ground_is_stoke" format="boolean"/>
+        <attr name="select_back_ground_stoke_size" format="dimension"/>
+        <attr name="select_back_ground_un" format="color"/>
+        <attr name="select_back_ground_un_is_stoke" format="boolean"/>
+        <attr name="select_back_ground_un_stoke_size" format="dimension"/>
+        <attr name="select_back_ground_radius" format="dimension"/>
+    </declare-styleable>
+</resources>

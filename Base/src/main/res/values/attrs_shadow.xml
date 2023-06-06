@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShadowLayout">
+        <!-- 1、关于阴影 -->
+        <!--阴影：是否要显示阴影，可能有只想用shape和selector功能，不想要阴影-->
+        <attr name="hl_backgroundColor" format="color" />
+        <attr name="hl_stokeColor" format="color" />
+        <attr name="hl_stokeSize" format="dimension" />
+
+        <attr name="hl_shadowHidden" format="boolean" />
+        <!--阴影：阴影颜色-->
+        <attr name="hl_shadowColor" format="color" />
+        <!--阴影：阴影的扩散范围(也可以理解为扩散程度)-->
+        <attr name="hl_shadowLimit" format="dimension" />
+        <!--阴影：左边是否隐藏阴影-->
+        <attr name="hl_shadowHiddenLeft" format="boolean" />
+        <!--阴影：右边是否隐藏阴影-->
+        <attr name="hl_shadowHiddenRight" format="boolean" />
+        <!--阴影：上边是否隐藏阴影-->
+        <attr name="hl_shadowHiddenTop" format="boolean" />
+        <!--阴影：下面是否隐藏阴影-->
+        <attr name="hl_shadowHiddenBottom" format="boolean" />
+
+
+        <!-- 2、关于圆角 -->
+        <!--圆角：统一大小，其中包括了阴影，shape、背景图、stroke边框圆角-->
+        <attr name="hl_cornerRadius" format="dimension" />
+        <!--圆角：左上圆角。设置后会忽略hl_cornerRadius的值-->
+        <attr name="hl_cornerRadius_leftTop" format="dimension" />
+        <!--圆角：右上圆角。同上-->
+        <attr name="hl_cornerRadius_rightTop" format="dimension" />
+        <!--圆角：左下圆角。同上-->
+        <attr name="hl_cornerRadius_leftBottom" format="dimension" />
+        <!--圆角：右下圆角。同上-->
+        <attr name="hl_cornerRadius_rightBottom" format="dimension" />
+
+        <!-- 4、关于填充的渐变色 -->
+        <!-- 要知道，如果设置了渐变色。那么将以渐变色为主。hl_layoutBackground属性将无效 -->
+        <!-- 渐变的起始颜色 -->
+        <attr name="hl_startColor" format="color" />
+        <!-- 渐变的中间颜色 -->
+        <attr name="hl_centerColor" format="color" />
+        <!-- 渐变的终止颜色 -->
+        <attr name="hl_endColor" format="color" />
+        <!-- 渐变角度，默认值为0-->
+        <attr name="hl_angle" format="integer" />
+
+
+        <!--箭头高度-->
+        <attr name="hl_arrow_height" format="dimension" />
+        <!--箭头宽度-->
+        <attr name="hl_arrow_width" format="dimension" />
+        <!--箭头偏移-->
+        <attr name="hl_arrow_off" format="dimension" />
+<!--        箭头是否在中间-->
+        <attr name="hl_arrow_is_center" format="boolean" />
+
+        <!--箭头方向-->
+        <attr name="hl_arrow_direction" >
+            <flag name="nono" value="0" />
+            <flag name="leftTop" value="1" />
+            <flag name="leftBottom" value="2" />
+            <flag name="rightTop" value="3" />
+            <flag name="rightBottom" value="4" />
+            <flag name="topLeft" value="5" />
+            <flag name="topRight" value="6" />
+            <flag name="bottomLeft" value="7" />
+            <flag name="bottomRight" value="8" />
+        </attr>
+
+    </declare-styleable>
+</resources>

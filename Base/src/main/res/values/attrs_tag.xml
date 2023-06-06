@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TagView">
+        <attr name="tag_padding_item_h" format="dimension"/>
+        <attr name="tag_padding_item_v" format="dimension"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,5 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="qr_permission_hint" tools:ignore="ExtraTranslation">储存权限:用于保存二维码</string>
+    <string name="qr_permission_save_suc_hint" tools:ignore="ExtraTranslation">保存到:$s</string>
+    <string name="qr_permission_save_error_hint" tools:ignore="ExtraTranslation">保存到失败</string>
+</resources>

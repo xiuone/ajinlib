@@ -1,0 +1,51 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="message_un_know_send" tools:ignore="ExtraTranslation">发送了一条未知信息</string>
+    <string name="message_un_know_receive" tools:ignore="ExtraTranslation">收到了一条未知信息</string>
+
+
+    <string name="my_friend" tools:ignore="ExtraTranslation">我的好友</string>
+    <string name="pri_friend" tools:ignore="ExtraTranslation">私聊</string>
+    <string name="del_new_friend_hint" tools:ignore="ExtraTranslation">请确认是否删除\n\"%s\"\n好友请求</string>
+    <string name="new_friend_add_ed" tools:ignore="ExtraTranslation">已添加</string>
+    <string name="new_friend_ing" tools:ignore="ExtraTranslation">已发送</string>
+    <string name="new_friend_refused_other" tools:ignore="ExtraTranslation">已拒绝</string>
+    <string name="new_friend_refused_me" tools:ignore="ExtraTranslation">被拒绝</string>
+    <string name="new_friend_add" tools:ignore="ExtraTranslation">添加</string>
+    <string name="new_friend_ignore" tools:ignore="ExtraTranslation">忽略</string>
+    <string name="new_friend_ignore_add_del" tools:ignore="ExtraTranslation">忽略并删除记录</string>
+
+    <string name="friend_new" tools:ignore="ExtraTranslation">新朋友</string>
+    <string name="friend_remark_set" tools:ignore="ExtraTranslation">为朋友设置备注信息</string>
+    <string name="friend_request_info_list" tools:ignore="ExtraTranslation">好友请求信息</string>
+
+    <string name="message_with_draw" tools:ignore="ExtraTranslation">撤回</string>
+    <string name="message_del" tools:ignore="ExtraTranslation">删除</string>
+    <string name="message_copy" tools:ignore="ExtraTranslation">复制</string>
+    <string name="message_back" tools:ignore="ExtraTranslation">回复</string>
+    <string name="message_add_common" tools:ignore="ExtraTranslation">添加常用语</string>
+    <string name="message_share" tools:ignore="ExtraTranslation">分享</string>
+    <string name="message_more_choice" tools:ignore="ExtraTranslation">多选</string>
+    <string name="message_mic_phone" tools:ignore="ExtraTranslation">麦克风</string>
+    <string name="message_music" tools:ignore="ExtraTranslation">扬声器</string>
+
+    <string name="message_add_common_ed" tools:ignore="ExtraTranslation">已添加</string>
+    <string name="message_add_common_is_not_empty" tools:ignore="ExtraTranslation">常用语不能为null</string>
+
+    <string name="message_recall" tools:ignore="ExtraTranslation">\"%s\"撤回了一条消息</string>
+
+
+    <string name="message_more_camera" tools:ignore="ExtraTranslation">相机</string>
+    <string name="message_more_pic" tools:ignore="ExtraTranslation">图片</string>
+    <string name="message_more_video" tools:ignore="ExtraTranslation">视频</string>
+    <string name="message_more_music" tools:ignore="ExtraTranslation">音乐</string>
+    <string name="message_more_red" tools:ignore="ExtraTranslation">红包</string>
+    <string name="message_more_transfer" tools:ignore="ExtraTranslation">转账</string>
+    <string name="message_more_location" tools:ignore="ExtraTranslation">定位</string>
+    <string name="message_more_finger" tools:ignore="ExtraTranslation">猜拳</string>
+    <string name="message_more_dice" tools:ignore="ExtraTranslation">骰子</string>
+
+    <string name="message_un" tools:ignore="ExtraTranslation">还没有收到好友消息哦～～～</string>
+    <string name="message_find_friend" tools:ignore="ExtraTranslation">发现好友</string>
+
+
+</resources>

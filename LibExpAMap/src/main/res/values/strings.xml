@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="amap_app_key" tools:ignore="ExtraTranslation">1000</string>
+
+    <string name="gd_un_install" tools:ignore="ExtraTranslation">您尚未安装高德地图</string>
+    <string name="baidu_un_install" tools:ignore="ExtraTranslation">您尚未安装百度地图</string>
+    <string name="tencent_un_install" tools:ignore="ExtraTranslation">您尚未安装腾讯地图</string>
+</resources>

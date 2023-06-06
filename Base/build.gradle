@@ -1,0 +1,111 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+}
+
+
+android {
+    compileSdkVersion 32
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 32
+        multiDexEnabled true
+        buildConfigField('int', 'DB_VERSION', '10')
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    api "androidx.constraintlayout:constraintlayout:2.1.3"
+    api "androidx.appcompat:appcompat:1.3.1"
+    api "com.google.android.material:material:1.6.0"
+    api "androidx.core:core-ktx:1.7.0"
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.6.20"
+// kotlin扩展（可选）
+    api 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.2'
+
+
+    //适配
+    api 'me.jessyan:autosize:1.2.1'
+
+
+    api 'com.android.support:multidex:1.0.3'
+    api 'com.android.support:multidex-instrumentation:1.0.3'
+
+    api "com.alibaba:fastjson:1.2.72" // fastJson
+
+
+    api 'com.lzy.net:okgo:3.0.4'//请求框架
+    api  'io.github.scwang90:refresh-layout-kernel:2.0.5'
+    api  'io.github.scwang90:refresh-header-material:2.0.5'
+    api  'io.github.scwang90:refresh-footer-ball:2.0.5'
+
+    api 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.2'
+    api 'com.geyifeng.immersionbar:immersionbar:3.2.2'
+
+
+    api 'com.j256.ormlite:ormlite-android:5.0'//数据库
+
+    api 'com.github.bumptech.glide:glide:4.12.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
+    api "com.github.bumptech.glide:okhttp3-integration:4.12.0"
+    api "com.squareup.okio:okio:2.9.0"
+    //汉子转拼音
+    api 'com.github.SilenceDut:jpinyin:v1.0'
+
+    //选择器
+    api 'com.github.gzu-liyujiang.AndroidPicker:Common:4.1.8'
+    //单项/数字、二三级联动、日期/时间等滚轮选择器：
+    api 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.8'
+    //单项/数字、二三级联动、日期/时间等滚轮选择器：
+    api 'com.github.gzu-liyujiang.AndroidPicker:WheelView:4.1.8'
+    
+    api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    //文件选择器
+    api 'io.github.lucksiege:pictureselector:v3.10.6'
+    // image compress library (Not necessary)
+    api 'io.github.lucksiege:compress:v3.10.6'
+    // uCrop library (Not necessary)
+    api 'io.github.lucksiege:ucrop:v3.10.6'
+    // simple camerax library (Not necessary)
+    api 'io.github.lucksiege:camerax:v3.10.6'
+
+    //    断点下载
+    api "me.laoyuyu.aria:core:3.8.16"
+    kapt "me.laoyuyu.aria:compiler:3.8.16"
+
+    api 'com.github.getActivity:XXPermissions:18.0'
+}
+
+
+task androidSourcesJar(type: Jar) {
+    classifier 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifact androidSourcesJar // optional sources
+            }
+        }
+    }
+}

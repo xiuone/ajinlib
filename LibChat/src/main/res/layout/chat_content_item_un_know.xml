@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <include layout="@layout/chat_content_time"/>
+    <LinearLayout
+        android:id="@+id/receive_layout"
+        android:paddingHorizontal="@dimen/dp_15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/chat_content_head"/>
+        <TextView
+            android:gravity="center"
+            android:text="@string/message_un_know_receive"
+            android:textSize="@dimen/sp_13"
+            android:textColor="@color/gray_9999"
+            android:minHeight="@dimen/dp_40"
+            android:maxWidth="@dimen/dp_190"
+            android:paddingHorizontal="@dimen/dp_8"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/send_layout"
+        android:paddingHorizontal="@dimen/dp_15"
+        android:gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:gravity="center"
+            android:text="@string/message_un_know_send"
+            android:textSize="@dimen/sp_13"
+            android:textColor="@color/gray_9999"
+            android:minHeight="@dimen/dp_40"
+            android:maxWidth="@dimen/dp_190"
+            android:paddingHorizontal="@dimen/dp_8"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"/>
+        <include layout="@layout/chat_content_head"/>
+    </LinearLayout>
+</LinearLayout>

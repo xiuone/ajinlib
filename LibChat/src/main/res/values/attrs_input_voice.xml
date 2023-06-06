@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChatInputVoiceView">
+            <attr name="chat_input_voice_radius" format="dimension"/>
+            <attr name="chat_input_voice_common_str" format="string"/>
+            <attr name="chat_input_voice_common_background" format="color"/>
+            <attr name="chat_input_voice_common_text_color" format="color"/>
+            <attr name="chat_input_voice_common_text_size" format="dimension"/>
+
+            <attr name="chat_input_voice_touch_str" format="string"/>
+            <attr name="chat_input_voice_touch_background" format="color"/>
+            <attr name="chat_input_voice_touch_text_color" format="color"/>
+            <attr name="chat_input_voice_touch_text_size" format="dimension"/>
+
+            <attr name="chat_input_voice_cancel_height" format="string"/>
+            <attr name="chat_input_voice_cancel_bottom_height" format="string"/>
+            <attr name="chat_input_voice_cancel_str" format="string"/>
+            <attr name="chat_input_voice_cancel_textSize" format="dimension"/>
+            <attr name="chat_input_voice_cancel_isBond" format="boolean"/>
+            <attr name="chat_input_voice_cancel_background" format="color"/>
+            <attr name="chat_input_voice_cancel_common_radius" format="dimension"/>
+            <attr name="chat_input_voice_cancel_on_radius" format="dimension"/>
+            <attr name="chat_input_voice_cancel_common_textColor" format="color"/>
+            <attr name="chat_input_voice_cancel_on_textColor" format="color"/>
+            <attr name="chat_input_voice_cancel_common_background" format="color"/>
+            <attr name="chat_input_voice_cancel_on_background" format="color"/>
+    </declare-styleable>
+</resources>

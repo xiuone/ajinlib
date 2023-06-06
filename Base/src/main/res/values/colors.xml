@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <color name="launch_button_color" tools:ignore="MissingDefaultResource">#078AF3</color>
+
+
+    <color name="SwipeBackColor" tools:ignore="MissingDefaultResource">#504E4E</color>
+    <color name="transparent" tools:ignore="MissingDefaultResource">#00FFFFFF</color>
+    <color name="white" tools:ignore="MissingDefaultResource">#FFFFFF</color>
+    <color name="white_aa" tools:ignore="MissingDefaultResource">#AAFFFFFF</color>
+    <color name="white_60" tools:ignore="MissingDefaultResource">#99FFFFFF</color>
+    <color name="white_40" tools:ignore="MissingDefaultResource">#66FFFFFF</color>
+
+
+    <color name="black" tools:ignore="MissingDefaultResource">#000000</color>
+    <color name="black_40" tools:ignore="MissingDefaultResource">#66000000</color>
+    <color name="black_60" tools:ignore="MissingDefaultResource">#99000000</color>
+    <color name="black_0f13" tools:ignore="MissingDefaultResource">#0f1328</color>
+
+    <color name="gray_2222" tools:ignore="MissingDefaultResource">#222222</color>
+    <color name="gray_3333" tools:ignore="MissingDefaultResource">#333333</color>
+    <color name="gray_cccc" tools:ignore="MissingDefaultResource">#cccccc</color>
+    <color name="gray_6666" tools:ignore="MissingDefaultResource">#666666</color>
+    <color name="gray_8888" tools:ignore="MissingDefaultResource">#888888</color>
+    <color name="gray_9999" tools:ignore="MissingDefaultResource">#999999</color>
+    <color name="gray_fafa" tools:ignore="MissingDefaultResource">#FAFAFA</color>
+    <color name="gray_e5e5" tools:ignore="MissingDefaultResource">#E5E5E5</color>
+    <color name="gray_f1f1" tools:ignore="MissingDefaultResource">#F1F1F1</color>
+    <color name="gray_f2f2" tools:ignore="MissingDefaultResource">#F2F2F2</color>
+    <color name="gray_f2f2_60" tools:ignore="MissingDefaultResource">#99F2F2F2</color>
+    <color name="gray_2b2b_10" tools:ignore="MissingDefaultResource">#082b2b2b</color>
+
+    <color name="red_e32c" tools:ignore="MissingDefaultResource">#E32C27</color>
+    <color name="red_fe40" tools:ignore="MissingDefaultResource">#FE4026</color>
+
+    <color name="yellow_f6aa" tools:ignore="MissingDefaultResource">#F6AA13</color>
+
+    <color name="white_4b6a" tools:ignore="MissingDefaultResource">#4B6A87</color>
+    <color name="blue_078a" tools:ignore="MissingDefaultResource">#078AF3</color>
+    <color name="blue_3f51" tools:ignore="MissingDefaultResource">#3F51B5</color>
+    <color name="blue_283f" tools:ignore="MissingDefaultResource">#283FBD</color>
+    <color name="blue_35b4" tools:ignore="MissingDefaultResource">#35B4ED</color>
+    <color name="blue_76cb" tools:ignore="MissingDefaultResource">#76CBF1</color>
+    <color name="blue_1654" tools:ignore="MissingDefaultResource">#1654EF</color>
+
+    <color name="color_green_34c7" tools:ignore="MissingDefaultResource">#34C759</color>
+    <color name="color_green_34c7_80" tools:ignore="MissingDefaultResource">#CC34C759</color>
+    <color name="color_green_56dc" tools:ignore="MissingDefaultResource">#56DC5C</color>
+    <color name="color_green_56dc_30" tools:ignore="MissingDefaultResource">#4D56DC5C</color>
+
+    <color name="circle_defind_head_color" tools:ignore="MissingDefaultResource">#F2F2F2</color>
+    <color name="circle_user_name_title_color" tools:ignore="MissingDefaultResource">#666666</color>
+    <color name="circle_user_name_content_color" tools:ignore="MissingDefaultResource">#222222</color>
+    <color name="circle_user_name_time_color" tools:ignore="MissingDefaultResource">#999999</color>
+    <color name="circle_share_bg" tools:ignore="MissingDefaultResource">#E4E4E4</color>
+
+    <color name="circle_video_play_bg" tools:ignore="MissingDefaultResource">#99999999</color>
+
+    <color name="color_line1" tools:ignore="MissingDefaultResource">#1a1C1C1E</color>
+
+
+
+
+<!--    100% — FF-->
+<!--    99% — FC-->
+<!--    98% — FA-->
+<!--    97% — F7-->
+<!--    96% — F5-->
+<!--    95% — F2-->
+<!--    94% — F0-->
+<!--    93% — ED-->
+<!--    92% — EB-->
+<!--    91% — E8-->
+<!--    90% — E6-->
+<!--    89% — E3-->
+<!--    88% — E0-->
+<!--    87% — DE-->
+<!--    86% — DB-->
+<!--    85% — D9-->
+<!--    84% — D6-->
+<!--    83% — D4-->
+<!--    82% — D1-->
+<!--    81% — CF-->
+<!--    80% — CC-->
+<!--    79% — C9-->
+<!--    78% — C7-->
+<!--    77% — C4-->
+<!--    76% — C2-->
+<!--    75% — BF-->
+<!--    74% — BD-->
+<!--    73% — BA-->
+<!--    72% — B8-->
+<!--    71% — B5-->
+<!--    70% — B3-->
+<!--    69% — B0-->
+<!--    68% — AD-->
+<!--    67% — AB-->
+<!--    66% — A8-->
+<!--    65% — A6-->
+<!--    64% — A3-->
+<!--    63% — A1-->
+<!--    62% — 9E-->
+<!--    61% — 9C-->
+<!--    60% — 99-->
+<!--    59% — 96-->
+<!--    58% — 94-->
+<!--    57% — 91-->
+<!--    56% — 8F-->
+<!--    55% — 8C-->
+<!--    54% — 8A-->
+<!--    53% — 87-->
+<!--    52% — 85-->
+<!--    51% — 82-->
+    <!--    50% — 80-->
+<!--    49% — 7D-->
+<!--    48% — 7A-->
+<!--    47% — 78-->
+<!--    46% — 75-->
+<!--    45% — 73-->
+<!--    44% — 70-->
+<!--    43% — 6E-->
+<!--    42% — 6B-->
+<!--    41% — 69-->
+<!--    40% — 66-->
+<!--    39% — 63-->
+<!--    38% — 61-->
+<!--    37% — 5E-->
+<!--    36% — 5C-->
+<!--    35% — 59-->
+<!--    34% — 57-->
+<!--    33% — 54-->
+<!--    32% — 52-->
+<!--    31% — 4F-->
+<!--    30% — 4D-->
+<!--    29% — 4A-->
+<!--    28% — 47-->
+<!--    27% — 45-->
+<!--    26% — 42-->
+<!--    25% — 40-->
+<!--    24% — 3D-->
+<!--    23% — 3B-->
+<!--    22% — 38-->
+<!--    21% — 36-->
+<!--    20% — 33-->
+<!--    19% — 30-->
+<!--    18% — 2E-->
+<!--    17% — 2B-->
+<!--    16% — 29-->
+<!--    15% — 26-->
+<!--    14% — 24-->
+<!--    13% — 21-->
+<!--    12% — 1F-->
+<!--    11% — 1C-->
+<!--    10% — 1A-->
+<!--    9% — 17-->
+<!--    8% — 14-->
+<!--    7% — 12-->
+<!--    6% — 0F-->
+<!--    5% — 0D-->
+<!--    4% — 0A-->
+<!--    3% — 08-->
+<!--    2% — 05-->
+<!--    1% — 03-->
+<!--    0% — 00-->
+</resources>

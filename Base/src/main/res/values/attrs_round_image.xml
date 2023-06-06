@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <declare-styleable name="RoundBaseImageView">
+                <!--        圆角大小-->
+                <attr name="round_image_radius" format="dimension"/>
+                <!--        左上角圆角-->
+                <attr name="round_image_radius_left_top" format="dimension"/>
+                <!--        左下角圆角-->
+                <attr name="round_image_radius_left_bottom" format="dimension"/>
+                <!--        右上角圆角-->
+                <attr name="round_image_radius_right_top" format="dimension"/>
+                <!--        右下角圆角-->
+                <attr name="round_image_radius_right_bottom" format="dimension"/>
+                <!--        显示左上圆角-->
+                <attr name="round_image_show_left_top" format="boolean"/>
+                <!--        显示左下圆角-->
+                <attr name="round_image_show_left_bottom" format="boolean"/>
+                <!--        显示右上圆角-->
+                <attr name="round_image_show_right_top" format="boolean"/>
+                <!--        显示右下圆角-->
+                <attr name="round_image_show_right_bottom" format="boolean"/>
+                <!--        边框颜色-->
+                <attr name="round_image_frame_color" format="color"/>
+                <!--        边框大小-->
+                <attr name="round_image_frame_size" format="dimension"/>
+                <!--                背景颜色-->
+                <attr name="round_image_background_color" format="color"/>
+                <attr name="round_image_show_shadow" format="boolean"/>
+        </declare-styleable>
+</resources>

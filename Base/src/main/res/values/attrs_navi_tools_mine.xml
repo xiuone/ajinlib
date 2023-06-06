@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ToolMineView">
+        <attr name="tool_mine_space_h_size" format="dimension"/>
+        <attr name="tool_mine_space_v_size" format="dimension"/>
+        <attr name="tool_mine_space_content_margin" format="dimension"/>
+        <attr name="tool_mine_item_size" format="dimension"/>
+        <attr name="tool_mine_icon_size" format="dimension"/>
+        <attr name="tool_mine_show_text" format="boolean"/>
+        <attr name="tool_mine_text_size" format="dimension"/>
+        <attr name="tool_mine_text_color" format="color"/>
+        <attr name="tool_mine_unread_text_size" format="dimension"/>
+        <attr name="tool_mine_unread_mine_width" format="dimension"/>
+        <attr name="tool_mine_unread_mine_height" format="dimension"/>
+    </declare-styleable>
+</resources>

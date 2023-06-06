@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <declare-styleable name="LabelView">
+                <!--        最大数量-->
+                <attr name="label_max_number" format="integer"/>
+                <!--        每行多少个-->
+                <attr name="label_cow_number" format="integer"/>
+                <!--        左右边距-->
+                <attr name="label_item_padding_h" format="dimension"/>
+                <!--        上下边距-->
+                <attr name="label_item_padding_v" format="dimension"/>
+                <!--        左右间距-->
+                <attr name="label_item_space_h" format="dimension"/>
+                <!--        上下间距-->
+                <attr name="label_item_space_v" format="dimension"/>
+        </declare-styleable>
+
+</resources>

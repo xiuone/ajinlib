@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wx_app_id">Chat</string>
+    <string name="wx_app_secret">Chat</string>
+
+    <string name="wx_please_install" tools:ignore="ExtraTranslation">请安装微信</string>
+
+    <string name="wx_login_cancel" tools:ignore="ExtraTranslation">微信取消登录</string>
+
+    <string name="wx_login_error" tools:ignore="ExtraTranslation">微信登录异常</string>
+</resources>

@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="separator">,</string>
+
+
+
+    <integer name="maxNickName">10</integer>
+    <integer name="minNickName">2</integer>
+    <integer name="minBirthDay">18</integer>
+
+
+
+    <string name="im_app_key">1119220810113919#demo</string>
+    <string name="im_client_id">YXA6lUq6QtIJQdek2p-5f65MVQ</string>
+    <string name="im_client_secret">YXA6pH6319AceV-LG2nkfpHCajlxcac</string>
+
+    <!--    广告启动页id-->
+    <string name="ad_launcher_id">1469</string>
+    <!--    激励视频id-->
+    <string name="ad_video_id">1469</string>
+</resources>

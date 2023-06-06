@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CommonWordView">
+            <attr name="chat_common_word_item_background" format="reference"/>
+            <attr name="chat_common_word_item_padding_lr" format="dimension"/>
+            <attr name="chat_common_word_item_padding_tb" format="dimension"/>
+            <attr name="chat_common_word_item_space" format="dimension"/>
+            <attr name="chat_common_word_item_text_size" format="dimension"/>
+            <attr name="chat_common_word_item_text_color" format="color"/>
+    </declare-styleable>
+</resources>

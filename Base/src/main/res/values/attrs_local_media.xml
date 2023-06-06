@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SelectLocalMediaView">
+        <attr name="select_media_max" format="integer"/>
+        <attr name="select_media_row" format="integer"/>
+        <attr name="select_media_item_size" format="dimension"/>
+
+        <attr name="select_media_del_size" format="dimension"/>
+        <attr name="select_media_del_padding" format="dimension"/>
+        <attr name="select_media_del_res" format="reference"/>
+
+        <attr name="select_media_padding_size" format="dimension"/>
+        <attr name="select_media_select_res" format="reference"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChatInputEmoView">
+        <attr name="chat_input_title_height" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="ChatInputEmoCommonView">
+        <attr name="chat_input_common_item_size" format="dimension"/>
+        <attr name="chat_input_common_item_min_padding" format="dimension"/>
+        <attr name="chat_input_common_min_item_space" format="dimension"/>
+        <attr name="chat_input_common_used_recently" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ChatInputEmoCommonHeadView">
+        <attr name="chat_input_common_used_recently_title" format="string"/>
+        <attr name="chat_input_common_head_content_padding" format="string"/>
+        <attr name="chat_input_common_all_title" format="string"/>
+        <attr name="chat_input_common_title_size" format="dimension"/>
+        <attr name="chat_input_common_title_color" format="color"/>
+    </declare-styleable>
+
+</resources>

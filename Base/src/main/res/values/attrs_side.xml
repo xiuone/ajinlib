@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WaveSideBar">
+        <attr name="sidebar_multiple" format="integer"/>
+        <attr name="sidebar_text_size" format="dimension"/>
+        <attr name="sidebar_text_common_color" format="color"/>
+        <attr name="sidebar_text_common_background" format="color"/>
+
+        <attr name="sidebar_text_select_color" format="color"/>
+        <attr name="sidebar_text_select_background" format="color"/>
+
+
+        <attr name="sidebar_select_hint_multiple" format="integer"/>
+        <attr name="sidebar_text_select_hint_radius" format="dimension"/>
+        <attr name="sidebar_text_select_hint_size" format="dimension"/>
+        <attr name="sidebar_text_select_hint_color" format="color"/>
+        <attr name="sidebar_text_select_hint_background" format="color"/>
+    </declare-styleable>
+</resources>

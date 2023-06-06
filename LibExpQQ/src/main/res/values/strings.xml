@@ -1,0 +1,6 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="qq_app_id">tencentQQAPPId</string>
+    <string name="qq_login_error">QQ登录失败</string>
+    <string name="qq_login_cancel">QQ取消登录</string>
+
+</resources>
