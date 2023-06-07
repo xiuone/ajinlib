@@ -94,18 +94,22 @@ dependencies {
 }
 
 
-task androidSourcesJar(type: Jar) {
-    classifier 'sources'
+task generateSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
 }
 
-project.afterEvaluate {
+
+afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
-                artifact androidSourcesJar // optional sources
+                from components.release       //如果这里报错，先注释，构建Gradle结束在解除
+                groupId = 'com.gitee.Myajin'
+                //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
+                artifactId = 'Base'
             }
         }
     }
 }
+

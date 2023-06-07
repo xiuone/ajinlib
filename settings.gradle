@@ -1,1 +1,7 @@
-include ':Base',':LibAdGDT',':LibExpAMap',':LibFace',':LibLoginOne',':LibChat',':LibExpQQ',':LibExpWechat',':LibQr'
+include ':Base'
+include ':LibChat'
+include ':LibExpAMap'
+include ':LibExpQQ'
+include ':LibExpWechat'
+include ':LibQr'
+include ':LibAdGDT'
