@@ -35,12 +35,12 @@ fun Intent?.getToken():String? = this?.getStringExtra(tokenKey)
 
 
 //性别
-fun Intent?.putSex(sex:String?):Intent?{
+fun Intent?.putSex(sex:Int):Intent?{
     this?.putExtra(sexKey,sex)
     return this
 }
 
-fun Intent?.getSex():String? = this?.getStringExtra(sexKey)
+fun Intent?.getSex(def:Int):Int = this?.getIntExtra(sexKey,def)?:def
 
 /**
  * 昵称

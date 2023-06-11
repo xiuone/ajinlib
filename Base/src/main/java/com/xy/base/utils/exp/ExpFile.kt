@@ -43,7 +43,8 @@ fun String?.isServiceFile(): Boolean {
     return this != null && (this.startsWith("http://") || this.startsWith("https://"))
 }
 
-fun String.isFileExist(): Boolean {
+fun String?.isFileExist(): Boolean {
+    if (this == null)return false
     val file = File(this)
     return !file.isDirectory && file.exists()
 }

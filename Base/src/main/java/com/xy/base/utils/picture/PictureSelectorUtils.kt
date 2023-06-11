@@ -47,6 +47,46 @@ object PictureSelectorUtils {
     }
 
     /**
+     * 选择普通图片
+     */
+    fun openCommonIcon(context: Context?,any: Any?,callBack: PictureSelectCallBack) =
+        openCommonIcon(context,any,SelectMimeType.ofImage(),1,callBack)
+
+    /**
+     * 选择普通图片
+     */
+    fun openCommonIcon(context: Context?,any: Any?,max:Int,callBack: PictureSelectCallBack) =
+        openCommonIcon(context,any,SelectMimeType.ofImage(),max,callBack)
+
+    /**
+     * 选择普通图片
+     */
+    fun openCommonIcon(context: Context?,any: Any?,mimeTypeInt: Int,max:Int,callBack: PictureSelectCallBack){
+        getPictureSelector(any)
+            ?.openGallery(mimeTypeInt)
+            ?.setLanguage(getLanguage(context))
+            ?.setSelectorUIStyle(selectorStyle)
+            ?.setImageEngine(glideEngine)
+            ?.setSelectionMode(if (max == 1) SelectModeConfig.SINGLE else SelectModeConfig.MULTIPLE)
+            ?.isDisplayCamera(true)
+            ?.isOpenClickSound(false)
+            ?.isPreviewImage(true)
+            ?.setMaxSelectNum(max)
+            ?.setCropEngine(ImageCropEngineHead())
+            ?.setCompressEngine(ImageFileCompressEngine())
+            ?.isGif(false)
+            ?.forResult(object : OnResultCallbackListener<LocalMedia>{
+                override fun onResult(result: ArrayList<LocalMedia>?) {
+                    if (result == null)return
+                    callBack.onResult(result)
+                }
+
+                override fun onCancel() {}
+            })
+
+    }
+
+    /**
      * 选择背景图片   就是个人中心显示得
      */
     fun openSelectBack(context: Context?,any: Any?,callBack: PictureSelectCallBack){

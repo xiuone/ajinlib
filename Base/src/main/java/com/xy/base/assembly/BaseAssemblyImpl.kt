@@ -96,6 +96,10 @@ abstract class BaseAssemblyImpl(protected val rootView:View,
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     open fun onPause(owner: LifecycleOwner?) {}
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    open fun onResume(owner: LifecycleOwner?) {}
+
+
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     open fun onDestroyed(owner: LifecycleOwner) {}
  }

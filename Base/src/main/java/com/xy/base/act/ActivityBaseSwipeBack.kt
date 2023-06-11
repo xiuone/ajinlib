@@ -14,7 +14,7 @@ import com.xy.base.widget.swipe.listener.SwipeHelperListener
 abstract class ActivityBaseSwipeBack : ActivityBaseStatusBar(),
     OnSwipeBackListener {
 
-    protected var onBackPressedHome = false
+    var onBackPressedHome = false
     private var onBackTime = 0L
     private val onBackDelayTime = 1500L
 

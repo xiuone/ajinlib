@@ -88,8 +88,8 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
                 notifyItemRangeChanged(start, this.data.size)
             }
         }
-
     }
+
 
 
     fun addItem(data: T){

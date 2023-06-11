@@ -7,6 +7,7 @@ import kotlin.collections.HashMap
 
 class EmoManager {
     private val emoEntry = HashMap<String, EmoEntryMode>()
+    private val emoList by lazy { ArrayList<EmoEntryMode>() }
 
     fun getDrawable(context: Context?, text: String?): Drawable?{
         if (text.isNullOrEmpty() || context == null)return null
@@ -15,9 +16,13 @@ class EmoManager {
     }
 
     fun addEmoEntry(tag:String,res:Int):EmoManager{
-        emoEntry[tag] = EmoEntryMode(tag,res)
+        val item = EmoEntryMode(tag,res)
+        emoEntry[tag] = item
+        emoList.add(item)
         return this
     }
+
+    fun getEmoEntry() = emoList
 
     data class EmoEntryMode (val text: String, val res: Int)
 
