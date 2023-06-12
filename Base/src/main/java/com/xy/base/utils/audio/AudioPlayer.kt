@@ -63,11 +63,11 @@ object AudioPlayer{
         return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
-    fun getCurrentVoiceCall() = ContextHolder.getContext()?.getSpInt(
-        audioPlayCallStatus,AudioManager.STREAM_VOICE_CALL)?:AudioManager.STREAM_VOICE_CALL
+    fun getCurrentVoiceCall() =
+        ContextHolder.getContext()?.getSpInt(audioPlayCallStatus,AudioManager.STREAM_VOICE_CALL)?:AudioManager.STREAM_VOICE_CALL
 
-    private fun setCurrentVoiceCall(voiceCall:Int) = ContextHolder.getContext()?.setSpInt(
-        audioPlayCallStatus,voiceCall)
+    private fun setCurrentVoiceCall(voiceCall:Int) =
+        ContextHolder.getContext()?.setSpInt(audioPlayCallStatus,voiceCall)
 
     fun setRelativeCurrentVoiceCall() = if (isMicroPhone()) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
 

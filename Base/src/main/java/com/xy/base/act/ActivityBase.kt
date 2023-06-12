@@ -14,6 +14,8 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleObserver
+import com.xy.base.assembly.BaseAssemblyImpl
 import com.xy.base.assembly.base.BaseAssembly
 import com.xy.base.assembly.base.BaseAssemblyView
 import com.xy.base.listener.OpenPageListener
@@ -53,6 +55,13 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
             lifecycle.addObserver(assembly)
             assembly.onCreateInit()
             assemblyList.add(assembly)
+        }
+    }
+
+    protected fun addLifecycleObserver(vararg lifeList: BaseAssemblyImpl){
+        for (lift in lifeList){
+            lifecycle.addObserver(lift)
+            lift.onCreate()
         }
     }
 
