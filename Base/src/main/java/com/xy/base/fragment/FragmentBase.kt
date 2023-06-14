@@ -13,6 +13,7 @@ import com.xy.base.assembly.base.BaseAssemblyView
 import com.xy.base.utils.config.ConfigController
 import com.xy.base.act.ActivityBaseStatusBar
 import com.xy.base.act.ActivityBase
+import com.xy.base.assembly.BaseAssemblyImpl
 import com.xy.base.listener.OpenPageListener
 import com.xy.base.utils.permission.PermissionDialogDenied
 import com.xy.base.utils.permission.PermissionDialogReason
@@ -71,6 +72,14 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
         lifecycle.addObserver(assembly)
         assembly.onCreateInit()
         assemblyList.add(assembly)
+    }
+
+
+    protected fun addLifecycleObserver(vararg lifeList: BaseAssemblyImpl){
+        for (lift in lifeList){
+            lifecycle.addObserver(lift)
+            lift.onCreate()
+        }
     }
 
     protected fun <T: BaseAssemblyView> addAssembly(assembly: BaseAssembly<T>?,savedInstanceState : Bundle?) {
