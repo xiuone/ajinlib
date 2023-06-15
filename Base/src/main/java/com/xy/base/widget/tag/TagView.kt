@@ -58,7 +58,7 @@ class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=n
             val itemView = contentLayout.getChildAt(index)
             val itemWidth = itemView.width
             val itemHeight = itemView.height
-            var isNewCow = true;
+            var isNewCow = true
             for (entries in animatorHashMap.entries){
                 val cowData = entries.value
                 val cowAllWidth = cowData.width + itemWidth + itemPaddingH

@@ -37,7 +37,7 @@ open class ProgressBarView @JvmOverloads constructor(context: Context, attrs: At
 
     override fun startLeft(): Float  = thumbWidth/2F+thumbShadowRadius*2
     override fun startTop(): Float  = (height-getProgressHeight())/2
-    override fun startBottom(): Float = startTop() + getProgressHeight();
+    override fun startBottom(): Float = startTop() + getProgressHeight()
 
     /**
      * 获取当前进度条的高度
@@ -49,7 +49,7 @@ open class ProgressBarView @JvmOverloads constructor(context: Context, attrs: At
             val left = thumbX - startLeft() + thumbShadowRadius*2
             val right = thumbX + startLeft() - thumbShadowRadius*2
 
-            var currentThumbHeight = if (thumbHeight <= 0 || thumbHeight > height) height else thumbHeight;
+            var currentThumbHeight = if (thumbHeight <= 0 || thumbHeight > height) height else thumbHeight
             currentThumbHeight = (currentThumbHeight*animHelper.animValue).toInt()
             val top = (height - currentThumbHeight) / 2F
             val bottom = top + currentThumbHeight

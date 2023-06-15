@@ -70,7 +70,7 @@ open class ShadowWebView @JvmOverloads constructor(context: Context, attrs: Attr
         while (i < length) {
             val c = userAgent[i]
             if (c <= '\u001f' || c >= '\u007f') {
-                sb.append(String.format("\\u%04x", c.toInt()))
+                sb.append(String.format("\\u%04x", c.code))
             } else {
                 sb.append(c)
             }

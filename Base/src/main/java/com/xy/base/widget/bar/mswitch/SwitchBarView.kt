@@ -32,7 +32,7 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
     private var thumbOffColor = defaultWhiteColor
     private var thumbOpenColor = defaultBlueColor
     //是否绘制文字
-    private var isDrawText = false;
+    private var isDrawText = false
 
     private var thumbOffText = ""
     private var thumbOffTextColor = defaultWhiteColor
@@ -84,7 +84,7 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         valueAnim?.cancel()
-        val event = event?:return true;
+        val event = event?:return true
         center = if (isH()) event.x else event.y
         resetCenter()
         startAnim(event)
@@ -250,7 +250,7 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
      * 动画改变
      */
     override fun onAnimationUpdate(animation: ValueAnimator) {
-        animation?.run {
+        animation.run {
             center = animatedValue as Float
             resetCenter()
             invalidate()

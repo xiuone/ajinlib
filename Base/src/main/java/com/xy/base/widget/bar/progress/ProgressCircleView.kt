@@ -24,10 +24,10 @@ class ProgressCircleView @JvmOverloads constructor(context: Context, attrs: Attr
 
     private fun getProgressPaint(color:Int):Paint{
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.style = Paint.Style.STROKE;    // 只描边，不填充
-        paint.strokeCap = Paint.Cap.ROUND;   // 设置圆角
-        paint.isAntiAlias = true;              // 设置抗锯齿
-        paint.isDither = true;                 // 设置抖动
+        paint.style = Paint.Style.STROKE    // 只描边，不填充
+        paint.strokeCap = Paint.Cap.ROUND   // 设置圆角
+        paint.isAntiAlias = true              // 设置抗锯齿
+        paint.isDither = true                 // 设置抖动
         paint.strokeWidth = progressBuild.stokeWidth
         paint.color = color
         return paint
@@ -42,7 +42,7 @@ class ProgressCircleView @JvmOverloads constructor(context: Context, attrs: Attr
     override fun drawProgress(canvas: Canvas) {
         val paint = getProgressPaint(progressBuild.progressColor)
         val rect = getProgressRectF()
-        canvas.drawArc(rect, 275F, 360 * progressBuild.progress / 100F, false, paint);
+        canvas.drawArc(rect, 275F, 360 * progressBuild.progress / 100F, false, paint)
     }
 
     override fun drawProgressTv(canvas: Canvas) {

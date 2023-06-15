@@ -17,7 +17,7 @@ abstract class ProgressBarBaseView @JvmOverloads constructor(context: Context, a
     private var thumbColor : Int = white
     protected var thumbShadowRadius : Float = 0F
     //监听滑动进度
-    var progressTouchListener: ProgressTouchListener? = null;
+    var progressTouchListener: ProgressTouchListener? = null
     protected val animHelper: ProgressAnimHelper by lazy { ProgressAnimHelper(this) }
 
     init {
@@ -34,7 +34,7 @@ abstract class ProgressBarBaseView @JvmOverloads constructor(context: Context, a
     override fun defaultShowTv(): Boolean = false
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event == null)return true;
+        if (event == null)return true
         onActionTouchProgress(event.x)
         invalidate()
         progressTouchListener?.onProgressTouchCallBack(progressBuild.progress)
@@ -50,9 +50,9 @@ abstract class ProgressBarBaseView @JvmOverloads constructor(context: Context, a
             touchX < startLeft() -> 0
             touchX > startRight() -> 100
             else -> {
-                val width = startRight() - startLeft();
-                val currentX = touchX - startLeft();
-                (currentX*100/width).toInt();
+                val width = startRight() - startLeft()
+                val currentX = touchX - startLeft()
+                (currentX*100/width).toInt()
             }
         }
     }

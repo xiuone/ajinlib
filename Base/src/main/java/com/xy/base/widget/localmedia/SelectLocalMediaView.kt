@@ -28,7 +28,7 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
     private val itemSize:Int
     private var animatorSet: AnimatorSet? = null
 
-    private var rowSize = 0;
+    private var rowSize = 0
 
     fun bindWindow(selectLocalMediaListener: SelectLocalMediaListener,contextListener: ContextListener? = null){
         resetPositionController.contextListener = contextListener

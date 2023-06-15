@@ -134,7 +134,7 @@ open class ToolView @JvmOverloads constructor(context: Context, attrs: Attribute
         addIcon(itemView,item)
         addTitle(itemView, item)
         addUnRead(itemView, item)
-        itemView?.setOnClick{
+        itemView.setOnClick{
             listener?.onToolClicked(item)
         }
     }

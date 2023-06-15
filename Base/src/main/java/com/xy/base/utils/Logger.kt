@@ -44,7 +44,7 @@ object Logger {
     }
 
     fun e(msg: Throwable?) {
-        e(TAG, msg?.message);
+        e(TAG, msg?.message)
     }
 
     fun e(tag: String?, msg: String?) {

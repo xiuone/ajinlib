@@ -12,7 +12,7 @@ fun Context.requestPermission(rationaleDialog: PermissionDialogReason?, deniedDi
     for (permission in permissions){
         val isGranted = XXPermissions.isGranted(this,permission.permission)
         if (!isGranted){
-            isAllGranted = false;
+            isAllGranted = false
             if (stringBuffer.isNotEmpty()){
                 stringBuffer.append("\n")
             }else{

@@ -26,7 +26,7 @@ import com.xy.base.widget.recycler.listener.RecyclerExpListener
 
 class CommonEmoView(context: Context) :FrameLayout(context),RecyclerExpListener<EmoManager.EmoEntryMode>,OnItemClickListener<EmoManager.EmoEntryMode>{
     private val TAG by lazy { "CommonEmoView" }
-    private var cowSize:Int = -1;
+    private var cowSize:Int = -1
     private var recentlyTag:String?= null
     private var mHeadRootView :View?=null
     private var itemRes:Int = R.layout.a_page_load

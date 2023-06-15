@@ -27,8 +27,8 @@ class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private var mTextHintColor = getContext().getResColor(R.color.gray_9999)
 
     private var leftIconRes = R.drawable.bg_transparent
-    private var leftIconSize = 0;
-    private var leftIconPadding = 0;
+    private var leftIconSize = 0
+    private var leftIconPadding = 0
 
     private var delIconRes = R.drawable.bg_transparent
     private var delIconSize = 0

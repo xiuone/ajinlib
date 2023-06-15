@@ -3,6 +3,7 @@ package com.xy.base.utils.exp
 import com.github.stuxuhai.jpinyin.PinyinException
 import com.github.stuxuhai.jpinyin.PinyinFormat
 import com.github.stuxuhai.jpinyin.PinyinHelper
+import java.util.*
 
 
 val latterHead by lazy {  "↑" }
@@ -79,7 +80,8 @@ fun String.subStringStartEnd(checkChase: String): String {
 fun String.getPinYin(de:String? = "#"): String {
     var name = this.trim()
     try {
-        name =  PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE).toUpperCase()
+        name = PinyinHelper.convertToPinyinString(name, "", PinyinFormat.WITHOUT_TONE)
+            .uppercase(Locale.getDefault())
         if (name.isNotEmpty()) return name
     } catch (e: PinyinException) {
         e.printStackTrace()
@@ -97,8 +99,8 @@ fun String.getFirstPinYin(): String {
     if (newName.isEmpty()) return latterUnKnow
     newName = newName.substring(0, 1)
     for (index in letterKey.indices) {
-        if (newName.toUpperCase() == letterKey[index]) {
-            return newName.toUpperCase()
+        if (newName.uppercase(Locale.getDefault()) == letterKey[index]) {
+            return newName.uppercase(Locale.getDefault())
         }
     }
     return latterUnKnow

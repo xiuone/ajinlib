@@ -40,7 +40,7 @@ class ProgressBar2View @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun startLeft(): Float  = thumbMaxSize/2F+thumbShadowRadius*2
     override fun startTop(): Float  = (height-progressHeight)/2F
-    override fun startBottom(): Float = startTop() + progressHeight;
+    override fun startBottom(): Float = startTop() + progressHeight
 
     override fun drawThumb(canvas: Canvas, thumbX: Float, thumbPaint: Paint) {
         var radius = (thumbMinSize + (thumbMaxSize - thumbMinSize)*animHelper.animValue)

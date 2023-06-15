@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class Mp3EncodeThread extends Thread {
     private static final String TAG = Mp3EncodeThread.class.getSimpleName();
-    private List<ChangeBuffer> cacheBufferList = Collections.synchronizedList(new LinkedList<ChangeBuffer>());
-    private File file;
+    private final List<ChangeBuffer> cacheBufferList = Collections.synchronizedList(new LinkedList<ChangeBuffer>());
+    private final File file;
     private FileOutputStream os;
-    private byte[] mp3Buffer;
+    private final byte[] mp3Buffer;
     private EncordFinishListener encordFinishListener;
 
     /**
@@ -136,8 +136,8 @@ public class Mp3EncodeThread extends Thread {
     }
 
     public static class ChangeBuffer {
-        private short[] rawData;
-        private int readSize;
+        private final short[] rawData;
+        private final int readSize;
 
         public ChangeBuffer(short[] rawData, int readSize) {
             this.rawData = rawData.clone();

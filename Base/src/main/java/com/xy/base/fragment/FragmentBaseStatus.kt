@@ -55,7 +55,7 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
     open fun initView(savedInstanceState: Bundle?, rootView: View?) {
         createView(titleLayoutRes(),titleFrameLayout)
         createView(contentLayoutRes(),contentFrameLayout)
-        titleFrameLayout?.visibility = View.GONE
+        titleFrameLayout.visibility = View.GONE
     }
 
     /**

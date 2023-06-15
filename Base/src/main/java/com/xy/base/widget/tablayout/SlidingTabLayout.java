@@ -38,23 +38,23 @@ import java.util.Collections;
 
 /** 滑动TabLayout,对于ViewPager的依赖性强 */
 public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
-    private Context mContext;
+    private final Context mContext;
     private ViewPager mViewPager;
     private ArrayList<String> mTitles;
-    private LinearLayout mTabsContainer;
+    private final LinearLayout mTabsContainer;
     private int mCurrentTab;
     private float mCurrentPositionOffset;
     private int mTabCount;
     /** 用于绘制显示器 */
-    private Rect mIndicatorRect = new Rect();
+    private final Rect mIndicatorRect = new Rect();
     /** 用于实现滚动居中 */
-    private Rect mTabRect = new Rect();
-    private GradientDrawable mIndicatorDrawable = new GradientDrawable();
+    private final Rect mTabRect = new Rect();
+    private final GradientDrawable mIndicatorDrawable = new GradientDrawable();
 
-    private Paint mRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mTrianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Path mTrianglePath = new Path();
+    private final Paint mRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mTrianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Path mTrianglePath = new Path();
     private static final int STYLE_NORMAL = 0;
     private static final int STYLE_TRIANGLE = 1;
     private static final int STYLE_BLOCK = 2;
@@ -899,8 +899,8 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     //setter and getter
 
     // show MsgTipView
-    private Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private SparseArray<Boolean> mInitSetMap = new SparseArray<>();
+    private final Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final SparseArray<Boolean> mInitSetMap = new SparseArray<>();
 
     /**
      * 显示未读消息
@@ -999,7 +999,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
 
     class InnerPagerAdapter extends FragmentPagerAdapter {
         private ArrayList<Fragment> fragments = new ArrayList<>();
-        private String[] titles;
+        private final String[] titles;
 
         public InnerPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, String[] titles) {
             super(fm);

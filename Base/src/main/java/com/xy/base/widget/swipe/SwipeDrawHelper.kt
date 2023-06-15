@@ -30,7 +30,7 @@ class SwipeDrawHelper (val view: View){
     //最小高度
     private val minxHeight by lazy { context.getResDimension(R.dimen.dp_50) }
     //箭头最小 透明度
-    private val arrowMinAlpha = 55;
+    private val arrowMinAlpha = 55
     fun onDraw(canvas: Canvas, percent:Float, currentEdgeType : EdgeType, currentPointF:PointF) {
         if (percent != 0f) {
             canvas.drawPath(getSwipePath(percent, currentEdgeType, currentPointF), getPathPaint(percent))
@@ -72,7 +72,7 @@ class SwipeDrawHelper (val view: View){
      */
     private fun getCurrentArrowWidth(percent :Float):Float{
         if (percent < showArrowPercent)
-            return 0F;
+            return 0F
         return showArrowMaxWidth*percent
     }
 

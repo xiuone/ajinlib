@@ -1,5 +1,5 @@
 package com.xy.wechat.share
 
-enum class WechatShareSceneEnum() {
+enum class WechatShareSceneEnum {
     Friend,Zone,Favorite;
 }

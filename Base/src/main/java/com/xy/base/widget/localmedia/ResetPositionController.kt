@@ -29,8 +29,8 @@ class ResetPositionController(private val view:ViewGroup, var contextListener: C
     /**
      * 检查移动
      */
-    private var touchContent = false;
-    private var touchMove = false;
+    private var touchContent = false
+    private var touchMove = false
     private var downTime = 0L
     private var downX = 0F
     private var downY = 0F
@@ -108,7 +108,7 @@ class ResetPositionController(private val view:ViewGroup, var contextListener: C
             }
 
         }
-        return null;
+        return null
     }
 
     /**

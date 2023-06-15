@@ -84,10 +84,10 @@ abstract class RoundBaseImageView @JvmOverloads constructor(context: Context, at
 
     private fun getProgressPaint(color:Int):Paint{
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.style = Paint.Style.STROKE;    // 只描边，不填充
-        paint.strokeCap = Paint.Cap.ROUND;   // 设置圆角
-        paint.isAntiAlias = true;              // 设置抗锯齿
-        paint.isDither = true;                 // 设置抖动
+        paint.style = Paint.Style.STROKE    // 只描边，不填充
+        paint.strokeCap = Paint.Cap.ROUND   // 设置圆角
+        paint.isAntiAlias = true              // 设置抗锯齿
+        paint.isDither = true                 // 设置抖动
         paint.strokeWidth = progressBuild.stokeWidth
         paint.color = color
         return paint
@@ -101,7 +101,7 @@ abstract class RoundBaseImageView @JvmOverloads constructor(context: Context, at
         canvas?.drawArc(backRect, 0F, 360F, false, backPaint)
         val progressPaint = getProgressPaint(progressBuild.backgroundColor)
         val progressRect = getProgressRectF()
-        canvas?.drawArc(progressRect, 275F, 360 * progressBuild.progress / 100F, false, progressPaint);
+        canvas?.drawArc(progressRect, 275F, 360 * progressBuild.progress / 100F, false, progressPaint)
     }
 
     /**

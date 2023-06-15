@@ -1,4 +1,4 @@
-package com.xy.base.web.agent;
+package com.xy.base.web.agent
 
 import android.content.Context
 import android.webkit.WebSettings
@@ -15,7 +15,7 @@ object UserAgentObject {
         while (i < length) {
             val c = userAgent[i]
             if (c <= '\u001f' || c >= '\u007f') {
-                sb.append(String.format("\\u%04x", c.toInt()))
+                sb.append(String.format("\\u%04x", c.code))
             } else {
                 sb.append(c)
             }

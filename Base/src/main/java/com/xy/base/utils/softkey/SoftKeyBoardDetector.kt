@@ -36,8 +36,9 @@ object SoftKeyBoardDetector {
         return mRootViewVisibleHeight - visibleHeight > 200
     }
 
-    fun register(activity: Activity, listener: OnSoftKeyBoardChangeListener?) {
+    fun register(activity: Activity?, listener: OnSoftKeyBoardChangeListener?) {
         synchronized(this){
+            if (activity == null)return
             val mRootView = activity.window.decorView
             var globalCallBack = hashMap[activity]
             if (globalCallBack == null) {
@@ -50,8 +51,9 @@ object SoftKeyBoardDetector {
         }
     }
 
-    fun unregister(activity: Activity) {
+    fun unregister(activity: Activity?) {
         synchronized(this){
+            if (activity == null)return
             val globalCallBack = hashMap[activity]
             val mRootView = activity.window.decorView
             if (globalCallBack != null) {

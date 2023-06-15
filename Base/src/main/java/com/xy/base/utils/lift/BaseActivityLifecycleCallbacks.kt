@@ -15,7 +15,7 @@ open class BaseActivityLifecycleCallbacks : Application.ActivityLifecycleCallbac
     override fun onActivityStarted(p0: Activity) {}
 
     override fun onActivityResumed(p0: Activity) {
-        currentActivity = p0;
+        currentActivity = p0
     }
 
     override fun onActivityPaused(p0: Activity) {}

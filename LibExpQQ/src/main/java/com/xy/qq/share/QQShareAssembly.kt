@@ -46,16 +46,16 @@ class QQShareAssembly(view: QQShareAssemblyView) :BaseAssembly<QQShareAssembly.Q
 
         if (bean.type == QQShareSceneEnum.Friend) {
             params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT)
-            params.putString(QQShare.SHARE_TO_QQ_TITLE, bean.url ?: activity?.getAppName())
+            params.putString(QQShare.SHARE_TO_QQ_TITLE, bean.url ?: activity.getAppName())
             if (bean.content != null)params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, bean.content)
             if (bean.url != null)params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, bean.url)
             if (temporaryPath != null) params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, temporaryPath)
-            params.putString(QQShare.SHARE_TO_QQ_APP_NAME, activity?.getAppName())
+            params.putString(QQShare.SHARE_TO_QQ_APP_NAME, activity.getAppName())
             QQManger.mTencent.shareToQQ(activity,params,this)
         } else {
             params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, QzoneShare.SHARE_TO_QZONE_TYPE_NO_TYPE)
-            params.putString(QzoneShare.SHARE_TO_QQ_APP_NAME, activity?.getAppName())
-            params.putString(QQShare.SHARE_TO_QQ_TITLE, bean.title ?: activity?.getAppName())
+            params.putString(QzoneShare.SHARE_TO_QQ_APP_NAME, activity.getAppName())
+            params.putString(QQShare.SHARE_TO_QQ_TITLE, bean.title ?: activity.getAppName())
             if (bean.content != null)params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, bean.content)
             if (bean.url != null)params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, bean.url)
             val imageList = bean.imgUrls?: ArrayList()

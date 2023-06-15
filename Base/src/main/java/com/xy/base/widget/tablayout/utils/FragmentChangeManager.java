@@ -8,10 +8,10 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 
 public class FragmentChangeManager {
-    private FragmentManager mFragmentManager;
-    private int mContainerViewId;
+    private final FragmentManager mFragmentManager;
+    private final int mContainerViewId;
     /** Fragment切换数组 */
-    private ArrayList<Fragment> mFragments;
+    private final ArrayList<Fragment> mFragments;
     /** 当前选中的Tab */
     private int mCurrentTab;
 

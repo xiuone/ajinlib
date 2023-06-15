@@ -89,10 +89,10 @@ class SwipeTouchHelper(val view: View) : ValueAnimator.AnimatorUpdateListener {
 
     private fun actionUp(event: MotionEvent): Boolean {
         if (isRun) {
-            animator?.cancel()
+            animator.cancel()
             animator = ObjectAnimator.ofFloat(percent, 0f)
-            animator?.addUpdateListener(this)
-            animator?.start()
+            animator.addUpdateListener(this)
+            animator.start()
             if (percent >= backPercent)
                 swipeBackListener?.onBackPressed()
         }
@@ -100,7 +100,7 @@ class SwipeTouchHelper(val view: View) : ValueAnimator.AnimatorUpdateListener {
     }
 
     override fun onAnimationUpdate(animation: ValueAnimator) {
-        var percent = animation?.animatedValue
+        var percent = animation.animatedValue
         if (percent is Float)
             this.percent = percent
         else

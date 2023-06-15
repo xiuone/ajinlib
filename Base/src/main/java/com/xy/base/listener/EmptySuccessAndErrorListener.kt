@@ -1,4 +1,3 @@
 package com.xy.base.listener
 
-interface EmptySuccessAndErrorListener: EmptySuccessListener, EmptyErrorListener {
-}
+interface EmptySuccessAndErrorListener: EmptySuccessListener, EmptyErrorListener

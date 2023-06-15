@@ -27,7 +27,5 @@ class QrScanAssembly(view: QrScanAssemblyView) :
     }
 
 
-    interface QrScanAssemblyView:BaseAssemblyView{
-
-    }
+    interface QrScanAssemblyView:BaseAssemblyView
 }

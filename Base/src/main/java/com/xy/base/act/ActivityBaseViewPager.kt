@@ -26,7 +26,7 @@ abstract class ActivityBaseViewPager : ActivityBaseSwipeBack() ,ViewPager.OnPage
             }
         })
         group?.setOnCheckedChangeListener { group, _ ->
-            var checkPosition = 0;
+            var checkPosition = 0
             for (index in 0 until group.childCount) {
                 val view = group.getChildAt(index)
                 if (view is RadioButton) {

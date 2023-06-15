@@ -40,7 +40,7 @@ object AudioPlayer{
                     try {
                         synchronized(this@AudioPlayer){
                             for (item in mListenerList){
-                                item?.onPlaying(mPlayer?.currentPosition?.toLong()?:0L)
+                                item.onPlaying(mPlayer?.currentPosition?.toLong()?:0L)
                             }
                         }
                     } catch (e: Throwable) {

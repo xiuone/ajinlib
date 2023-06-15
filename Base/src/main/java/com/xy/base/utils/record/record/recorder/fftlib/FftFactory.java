@@ -8,7 +8,7 @@ import com.xy.base.utils.record.record.recorder.utils.Logger;
  */
 public class FftFactory {
     private static final String TAG = FftFactory.class.getSimpleName();
-    private Level level = Level.Original;
+    private final Level level = Level.Original;
 
     public FftFactory(Level level) {
 //        this.level = level;

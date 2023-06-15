@@ -10,7 +10,7 @@ import com.xy.base.utils.exp.isNetworkConnected
 import com.xy.base.utils.exp.isWifiConnected
 
 class NetStateChangeReceiver : BroadcastReceiver() {
-    private val action = ConnectivityManager.CONNECTIVITY_ACTION;
+    private val action = ConnectivityManager.CONNECTIVITY_ACTION
     private var netType : NetType = NetType.NOTWORK
     private var netState : NetType = NetType.NOTWORK
     private val netStateList by lazy { ArrayList<NetStateChangeListener>() }

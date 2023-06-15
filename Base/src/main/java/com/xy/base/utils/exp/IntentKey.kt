@@ -170,7 +170,12 @@ fun Intent?.putFriendStatus(value: Boolean):Intent?{
     this?.putExtra(friend,value)
     return this
 }
+fun Bundle?.putFriendStatus(value: Boolean):Bundle?{
+    this?.putBoolean(friend,value)
+    return this
+}
 fun Intent?.getFriendStatus():Boolean = this?.getBooleanExtra(friend,true)?:true
+fun Bundle?.getFriendStatus():Boolean = this?.getBoolean(friend,true)?:true
 
 
 /**
@@ -180,9 +185,14 @@ fun Intent?.putVideoStatus(value: Boolean):Intent?{
     this?.putExtra(video,value)
     return this
 }
+fun Bundle?.putVideoStatus(value: Boolean):Bundle?{
+    this?.putBoolean(video,value)
+    return this
+}
 
 
 fun Intent?.getVideoStatus():Boolean = this?.getBooleanExtra(video,true)?:true
+fun Bundle?.getVideoStatus():Boolean = this?.getBoolean(video,true)?:true
 
 
 fun Intent?.putPositionInt(value: Int):Intent?{

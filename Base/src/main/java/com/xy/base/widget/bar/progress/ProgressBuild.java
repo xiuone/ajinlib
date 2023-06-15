@@ -9,8 +9,8 @@ import com.xy.base.R;
 import com.xy.base.utils.exp.ExpContextKt;
 
 public class ProgressBuild {
-    private Context context;
-    private View view;
+    private final Context context;
+    private final View view;
 
     private int progress = 0;
     private int mBackgroundColor = -0x1a1a16;

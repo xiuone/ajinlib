@@ -179,7 +179,7 @@ public class RecordConfig implements Serializable {
          */
         PCM(".pcm");
 
-        private String extension;
+        private final String extension;
 
         public String getExtension() {
             return extension;

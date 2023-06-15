@@ -48,11 +48,11 @@ public class RecordHelper {
     private RecordFftDataListener recordFftDataListener;
     private RecordConfig currentConfig;
     private AudioRecordThread audioRecordThread;
-    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private File resultFile = null;
     private File tmpFile = null;
-    private List<File> files = new ArrayList<>();
+    private final List<File> files = new ArrayList<>();
     private Mp3EncodeThread mp3EncodeThread;
 
     private RecordHelper() {
@@ -197,7 +197,7 @@ public class RecordHelper {
         });
     }
 
-    private FftFactory fftFactory = new FftFactory(FftFactory.Level.Original);
+    private final FftFactory fftFactory = new FftFactory(FftFactory.Level.Original);
 
     private void notifyData(final byte[] data) {
         if (recordDataListener == null && recordSoundSizeListener == null && recordFftDataListener == null) {
@@ -247,8 +247,8 @@ public class RecordHelper {
     }
 
     private class AudioRecordThread extends Thread {
-        private AudioRecord audioRecord;
-        private int bufferSize;
+        private final AudioRecord audioRecord;
+        private final int bufferSize;
 
         @SuppressLint("MissingPermission")
         AudioRecordThread() {

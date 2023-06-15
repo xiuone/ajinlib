@@ -23,7 +23,7 @@ fun EditText?.addAppTextChangedListener(textWatcher:AppTextWatcher?){
 }
 
 fun EditText?.bindInputNumber(textView: TextView?, max:Int){
-    val length = this?.text.toString().length?:0
+    val length = this?.text.toString().length
     textView?.text = "${length}/$max"
     this?.addAppTextChangedListener(object :AppTextWatcher{
         override fun afterTextChanged(editable: Editable?) {

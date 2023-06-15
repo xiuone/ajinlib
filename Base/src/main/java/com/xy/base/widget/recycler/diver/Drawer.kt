@@ -14,13 +14,13 @@ internal class Drawer {
     private val mHeight:Int
     constructor(mDivider: Drawable, mWidth: Int,mHeight: Int){
         this.mDivider = mDivider
-        this.mWidth = mWidth;
+        this.mWidth = mWidth
         this.mHeight = mHeight
     }
 
     constructor(color: Int, mWidth: Int,mHeight: Int){
         this.mDivider = ColorDrawable(color)
-        this.mWidth = mWidth;
+        this.mWidth = mWidth
         this.mHeight = mHeight
     }
 

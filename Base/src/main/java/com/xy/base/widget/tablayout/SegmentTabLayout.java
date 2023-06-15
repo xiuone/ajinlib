@@ -33,18 +33,18 @@ import com.xy.base.widget.tablayout.widget.MsgView;
 import java.util.ArrayList;
 
 public class SegmentTabLayout extends FrameLayout implements ValueAnimator.AnimatorUpdateListener {
-    private Context mContext;
+    private final Context mContext;
     private String[] mTitles;
-    private LinearLayout mTabsContainer;
+    private final LinearLayout mTabsContainer;
     private int mCurrentTab;
     private int mLastTab;
     private int mTabCount;
     /** 用于绘制显示器 */
-    private Rect mIndicatorRect = new Rect();
-    private GradientDrawable mIndicatorDrawable = new GradientDrawable();
-    private GradientDrawable mRectDrawable = new GradientDrawable();
+    private final Rect mIndicatorRect = new Rect();
+    private final GradientDrawable mIndicatorDrawable = new GradientDrawable();
+    private final GradientDrawable mRectDrawable = new GradientDrawable();
 
-    private Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private float mTabPadding;
     private boolean mTabSpaceEqual;
@@ -85,11 +85,11 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
     private int mHeight;
 
     /** anim */
-    private ValueAnimator mValueAnimator;
-    private OvershootInterpolator mInterpolator = new OvershootInterpolator(0.8f);
+    private final ValueAnimator mValueAnimator;
+    private final OvershootInterpolator mInterpolator = new OvershootInterpolator(0.8f);
 
     private FragmentChangeManager mFragmentChangeManager;
-    private float[] mRadiusArr = new float[8];
+    private final float[] mRadiusArr = new float[8];
 
     public SegmentTabLayout(Context context) {
         this(context, null, 0);
@@ -616,8 +616,8 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
 
     //setter and getter
     // show MsgTipView
-    private Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private SparseArray<Boolean> mInitSetMap = new SparseArray<>();
+    private final Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final SparseArray<Boolean> mInitSetMap = new SparseArray<>();
 
     /**
      * 显示未读消息
@@ -736,8 +736,8 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
         public float right;
     }
 
-    private IndicatorPoint mCurrentP = new IndicatorPoint();
-    private IndicatorPoint mLastP = new IndicatorPoint();
+    private final IndicatorPoint mCurrentP = new IndicatorPoint();
+    private final IndicatorPoint mLastP = new IndicatorPoint();
 
     class PointEvaluator implements TypeEvaluator<IndicatorPoint> {
         @Override

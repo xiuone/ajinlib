@@ -45,8 +45,8 @@ fun Context.getVersionName(): String{
 
 fun Context.getAppName():String{
     try {
-        var appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-        return appInfo.name;
+        var appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+        return appInfo.name
     } catch (e: PackageManager.NameNotFoundException) {
     }
     return "_"

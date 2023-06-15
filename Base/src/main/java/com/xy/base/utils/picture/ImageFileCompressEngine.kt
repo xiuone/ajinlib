@@ -21,7 +21,7 @@ class ImageFileCompressEngine : CompressFileEngine {
             }.setCompressListener(object : OnNewCompressListener {
                 override fun onStart() {}
                 override fun onSuccess(source: String?, compressFile: File) {
-                    call?.onCallback(source, compressFile.getAbsolutePath())
+                    call?.onCallback(source, compressFile.absolutePath)
                 }
 
                 override fun onError(source: String, e: Throwable) {

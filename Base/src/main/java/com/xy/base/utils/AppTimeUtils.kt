@@ -96,12 +96,12 @@ object AppTimeUtils {
 
         var dateTimes: String? = null
 
-        var days = mss / (60 * 60 * 24);
+        var days = mss / (60 * 60 * 24)
 
-        var hours = (mss % (60 * 60 * 24)) / (60 * 60);
+        var hours = (mss % (60 * 60 * 24)) / (60 * 60)
 
-        var minutes = (mss % (60 * 60)) / 60;
-        var seconds = mss % 60;
+        var minutes = (mss % (60 * 60)) / 60
+        var seconds = mss % 60
         when {
             days > 0 -> {
                 dateTimes = days.toString() + "天" + hours + "小时" + minutes + "分钟" + seconds + "秒"
@@ -158,17 +158,17 @@ object AppTimeUtils {
         var s: String = ""
 
         if (minutes == 0 && seconds == 0)
-            seconds = 1;
+            seconds = 1
 
         m = if (minutes < 10)
-            "0$minutes";
+            "0$minutes"
         else
-            "" + minutes;
+            "" + minutes
 
         if (seconds < 10)
-            s = "0$seconds";
+            s = "0$seconds"
         else
-            s = "" + seconds;
+            s = "" + seconds
 
         return "$m:$s"
     }
@@ -207,13 +207,13 @@ object AppTimeUtils {
 
      fun getCurrentMinute(timeDistance:Long):Long{
 
-        return  (timeDistance%(24*60*60*1000))%(60*60*1000)/(60*1000);
-    }
+        return  (timeDistance%(24*60*60*1000))%(60*60*1000)/(60*1000)
+     }
 
       fun getCurrentMills(timeDistance:Long):Long{
 
-        return (timeDistance%(24*60*60*1000))%(60*60*1000)%(60*1000)/1000;
-    }
+        return (timeDistance%(24*60*60*1000))%(60*60*1000)%(60*1000)/1000
+      }
 
     // 获得当天近7天时间
     fun getWeekFromNow(): Date {

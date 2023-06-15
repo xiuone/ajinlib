@@ -49,12 +49,16 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         registerLaunch(ACTIVITY_BASE_LAUNCH,this)
     }
 
-    protected open fun <T: BaseAssemblyView> addAssembly(assembly: BaseAssembly<T>?) {
-        if (assembly == null) return
+    protected open fun  addAssembly(vararg assemblyList: BaseAssembly<*>) {
+        if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
-            lifecycle.addObserver(assembly)
-            assembly.onCreateInit()
-            assemblyList.add(assembly)
+            for (assembly in assemblyList){
+                if (assembly != null) {
+                    lifecycle.addObserver(assembly)
+                    assembly.onCreateInit()
+                    this.assemblyList.add(assembly)
+                }
+            }
         }
     }
 
@@ -65,13 +69,18 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         }
     }
 
-    protected open fun <T: BaseAssemblyView> addAssembly(assembly: BaseAssembly<T>?,savedInstanceState : Bundle?) {
-        if (assembly == null) return
+    protected open fun addAssemblyAndBuild(savedInstanceState : Bundle?,vararg assemblyList: BaseAssembly<*>) {
+        if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
-            lifecycle.addObserver(assembly)
-            assembly.onCreateInit(savedInstanceState)
-            assemblyList.add(assembly)
+            for (assembly in assemblyList){
+                if (assembly != null) {
+                    lifecycle.addObserver(assembly)
+                    assembly.onCreateInit(savedInstanceState)
+                    this.assemblyList.add(assembly)
+                }
+            }
         }
+
     }
 
 
@@ -141,13 +150,13 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
                 if (isShouldHideInput(currentFocus, ev)) {
                     onTouchOutKeyBoard()
                 }
-                return super.dispatchTouchEvent(ev);
+                return super.dispatchTouchEvent(ev)
             }
             // 必不可少，否则所有的组件都不会有TouchEvent了
             if (window.superDispatchTouchEvent(ev)) {
                 return true
             }
-            return onTouchEvent(ev);
+            return onTouchEvent(ev)
         }
     }
 
@@ -164,7 +173,7 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
                 return !rectF.contains(event.x, event.y)
             }
         }
-        return false;
+        return false
     }
 
 

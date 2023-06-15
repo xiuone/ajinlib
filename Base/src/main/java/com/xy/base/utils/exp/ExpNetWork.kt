@@ -17,7 +17,7 @@ import androidx.core.app.ActivityCompat
 fun Context.isNetworkConnected(): Boolean {
     val mConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE)
     if (mConnectivityManager !is ConnectivityManager) { // 为空则认为无网络
-        return false;
+        return false
     }
     val mNetworkInfo = mConnectivityManager.activeNetworkInfo
     return mNetworkInfo != null && mNetworkInfo.isAvailable

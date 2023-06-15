@@ -119,7 +119,7 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
 
 
     private fun showEmpty():Boolean{
-        var count = getHeadSize()+getFootSize();
+        var count = getHeadSize()+getFootSize()
         return emptyView != null && (showHaveFootEmpty || showHaveHeadEmpty || count == 0) && onItemContentCount()<=0
     }
 
@@ -161,11 +161,11 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     }
 
     override fun getItemCount(): Int {
-        var count = getHeadSize()+getFootSize();
+        var count = getHeadSize()+getFootSize()
         if (showEmpty()){
             return count + 1
         }
-        return count + onItemContentCount();
+        return count + onItemContentCount()
     }
 
 

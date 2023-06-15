@@ -30,8 +30,8 @@ class LanguageManger {
             }
         }
         for (mode in languageList) {
-            val listLanguage = mode.locales.language.toLowerCase(mode.locales)
-            val localeLanguage = locale.language.toLowerCase(mode.locales)
+            val listLanguage = mode.locales.language.lowercase(mode.locales)
+            val localeLanguage = locale.language.lowercase(mode.locales)
             if (listLanguage == localeLanguage) {
                 return mode
             }

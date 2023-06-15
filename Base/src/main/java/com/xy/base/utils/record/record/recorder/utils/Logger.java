@@ -18,11 +18,11 @@ public class Logger {
     public static boolean IsDebug = true;
 
     private static final String space = "====================================================================================================";
-    private static boolean LOGV = true;
-    private static boolean LOGD = true;
-    private static boolean LOGI = true;
-    private static boolean LOGW = true;
-    private static boolean LOGE = true;
+    private static final boolean LOGV = true;
+    private static final boolean LOGD = true;
+    private static final boolean LOGI = true;
+    private static final boolean LOGW = true;
+    private static final boolean LOGE = true;
 
     public enum LogLevel {
         V, D, I, W, E

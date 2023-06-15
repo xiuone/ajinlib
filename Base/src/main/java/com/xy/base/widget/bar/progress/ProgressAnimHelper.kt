@@ -25,7 +25,7 @@ class ProgressAnimHelper(private val view:View) :ValueAnimator.AnimatorUpdateLis
         }else  if(openAnim?.isRunning != true && animValue != 1F){
             openAnim = ObjectAnimator.ofFloat(animValue, 1f)
             openAnim?.addUpdateListener (this)
-            openAnim?.duration = 200;
+            openAnim?.duration = 200
             openAnim?.start()
         }
     }

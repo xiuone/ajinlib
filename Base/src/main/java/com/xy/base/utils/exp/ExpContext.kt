@@ -90,7 +90,7 @@ fun Context.installAPK(path:String?){
 fun Context.isInstall(packageName: String): Boolean {
     val packageManager = packageManager
     //获取所有已安装程序的包信息
-    val packageInfos = packageManager.getInstalledPackages(0)?:return false
+    val packageInfos = packageManager.getInstalledPackages(0)
     //用于存储所有已安装程序的包名
     val packageNames: MutableList<String> = ArrayList()
     //从pinfo中将包名字逐一取出，压入pName list中
@@ -227,10 +227,10 @@ fun Context.getScreenAndStatusHeight(): Int {
 fun Context.getSpace(): View = getSpace(dp2px(20F))
 
 fun Context.getSpace(@DimenRes heightRes: Int): View {
-    val space = Space(this);
+    val space = Space(this)
     val params: ViewGroup.LayoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResDimension(heightRes))
     space.layoutParams = params
-    return space;
+    return space
 }
 
 

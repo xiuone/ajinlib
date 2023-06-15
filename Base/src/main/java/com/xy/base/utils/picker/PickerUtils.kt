@@ -33,26 +33,26 @@ fun Activity.showBirthDayPicker(oldDatePicker:DatePicker?, pickerListener: OnDat
 
 
     val picker = DatePicker(this)
-    val wheelLayout = picker.wheelLayout;
+    val wheelLayout = picker.wheelLayout
     wheelLayout.setDateMode(DateMode.YEAR_MONTH_DAY)
-    wheelLayout.setDateLabel(yearStr, monthStr, dayStr);
+    wheelLayout.setDateLabel(yearStr, monthStr, dayStr)
 //        wheelLayout.setDateFormatter(UnitDateFormatter());
     val defaultEntity = DateEntity.target(dayMode?.year?:currentYear, dayMode?.month?:currentMonth, dayMode?.day?:currentDay)
     val endDateEntity = DateEntity.target(currentYear, currentMonth, currentDay)
     val startDateEntity = DateEntity.target(currentYear-150, 1, 1)
-    wheelLayout.setRange(startDateEntity, endDateEntity, DateEntity.today());
+    wheelLayout.setRange(startDateEntity, endDateEntity, DateEntity.today())
     wheelLayout.setDefaultValue(defaultEntity)
 
     wheelLayout.setCurtainEnabled(false)
 //        wheelLayout.setCurtainColor(0xFFCC0000)
-    wheelLayout.setIndicatorEnabled(false);
+    wheelLayout.setIndicatorEnabled(false)
 //        wheelLayout.setIndicatorColor(0xFFFF0000);
 //        wheelLayout.setIndicatorSize(view.getResources().getDisplayMetrics().density * 2);
-    wheelLayout.setTextColor(textColor);
-    wheelLayout.setSelectedTextColor(selectTextColor);
-    wheelLayout.yearLabelView.setTextColor(labelColor);
-    wheelLayout.monthLabelView.setTextColor(labelColor);
-    wheelLayout.dayLabelView.setTextColor(labelColor);
+    wheelLayout.setTextColor(textColor)
+    wheelLayout.setSelectedTextColor(selectTextColor)
+    wheelLayout.yearLabelView.setTextColor(labelColor)
+    wheelLayout.monthLabelView.setTextColor(labelColor)
+    wheelLayout.dayLabelView.setTextColor(labelColor)
     wheelLayout.setResetWhenLinkage(false)
     picker.setOnDatePickedListener(pickerListener)
     picker.show()

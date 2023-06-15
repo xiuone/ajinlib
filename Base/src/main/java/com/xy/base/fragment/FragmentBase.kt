@@ -22,7 +22,7 @@ import com.xy.base.utils.permission.PermissionUiListener
 abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>,OpenPageListener,
     PermissionDialogReason.ReasonUiListener,PermissionDialogDenied.DeniedUiListener,PermissionUiListener {
     protected val TAG by lazy { this::class.java.name }
-    private val FRAGMENT_BASE_LAUNCH:String = "FRAGMENT:BASE:LAUNCH:";
+    private val FRAGMENT_BASE_LAUNCH:String = "FRAGMENT:BASE:LAUNCH:"
     private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     private val configController by lazy { ConfigController(::needReCreate) }
     protected val permissionDialogReason by lazy { context.run {
@@ -47,13 +47,13 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
 
     fun getActivityBase(): ActivityBase? {
         if (activity is ActivityBase)
-            return activity as ActivityBase;
+            return activity as ActivityBase
         return null
     }
 
     fun getActivityBarBase(): ActivityBaseStatusBar? {
         if (activity is ActivityBaseStatusBar)
-            return activity as ActivityBaseStatusBar;
+            return activity as ActivityBaseStatusBar
         return null
     }
 
@@ -67,11 +67,15 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
     protected open fun needReCreate(){}
 
 
-    protected fun <T: BaseAssemblyView> addAssembly(assembly: BaseAssembly<T>?) {
-        if (assembly == null) return
-        lifecycle.addObserver(assembly)
-        assembly.onCreateInit()
-        assemblyList.add(assembly)
+    protected open fun addAssembly(vararg assemblyList: BaseAssembly<*>) {
+        if (assemblyList.isNullOrEmpty()) return
+        synchronized(this){
+            for (assembly in assemblyList){
+                lifecycle.addObserver(assembly)
+                assembly.onCreateInit()
+                this.assemblyList.add(assembly)
+            }
+        }
     }
 
 
@@ -82,11 +86,15 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
         }
     }
 
-    protected fun <T: BaseAssemblyView> addAssembly(assembly: BaseAssembly<T>?,savedInstanceState : Bundle?) {
-        if (assembly == null) return
-        lifecycle.addObserver(assembly)
-        assembly.onCreateInit(savedInstanceState)
-        assemblyList.add(assembly)
+    protected open fun <T: BaseAssemblyView> addAssembly(savedInstanceState : Bundle?,vararg assemblyList: BaseAssembly<*>) {
+        if (assemblyList.isNullOrEmpty()) return
+        synchronized(this){
+            for (assembly in assemblyList){
+                lifecycle.addObserver(assembly)
+                assembly.onCreateInit(savedInstanceState)
+                this.assemblyList.add(assembly)
+            }
+        }
     }
 
 

@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
@@ -58,7 +59,7 @@ public class AES {
      * @throws Exception
      */
     public static String encrypt(String sourceStr, String key) throws Exception {
-        byte[] data = sourceStr.getBytes("UTF-8");
+        byte[] data = sourceStr.getBytes(StandardCharsets.UTF_8);
 
         Key k = toKey(BASE64.decode(key));
         byte[] raw = k.getEncoded();

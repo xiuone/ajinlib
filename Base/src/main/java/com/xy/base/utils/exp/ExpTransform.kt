@@ -64,7 +64,7 @@ fun Editable?.replaceContentColorRule(color: Int, pattern: String?){
  * 给字符串某些关键字上色
  */
 fun Editable.replaceContentColor(start: Int,end:Int, color: Int): Editable? {
-    this?.setSpan(ForegroundColorSpan(color), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    this.setSpan(ForegroundColorSpan(color), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     return this
 }
 
@@ -197,7 +197,7 @@ fun SpannableString.setContentClicked( start: Int,end:Int,l: () -> Unit):Spannab
             l.invoke()
         }
         override fun updateDrawState(ds: TextPaint) {
-            ds.isUnderlineText = false; // set to false to remove underline
+            ds.isUnderlineText = false // set to false to remove underline
         }
     }, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     return this
@@ -210,8 +210,8 @@ fun SpannableString.findSpanPosition(key:String?,method:(start:Int,end:Int)->Uni
 
 private fun findSpanPosition(string: String,key:String?,method:(start:Int,end:Int)->Unit){
     if (key != null) {
-        val string = string.toLowerCase()
-        val key = key.toLowerCase()
+        val string = string.lowercase(Locale.getDefault())
+        val key = key.lowercase(Locale.getDefault())
         val pattern = Pattern.compile(key)
         val matcher = pattern.matcher(string)
         while (matcher.find()) {

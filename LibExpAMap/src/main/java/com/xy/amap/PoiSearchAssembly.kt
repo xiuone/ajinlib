@@ -37,9 +37,9 @@ class PoiSearchAssembly(view: PoiSearchAssemblyView): MapBaseAssembly<PoiSearchA
 
         poiSearch?.setOnPoiSearchListener(null)
         query?.location = LatLonPoint(latLng.latitude,latLng.longitude)
-        poiSearch = PoiSearch(getContext(), query);
-        poiSearch?.setOnPoiSearchListener(this);//设置数据返回的监听器 (5)
-        poiSearch?.searchPOIAsyn();//开始搜索
+        poiSearch = PoiSearch(getContext(), query)
+        poiSearch?.setOnPoiSearchListener(this)//设置数据返回的监听器 (5)
+        poiSearch?.searchPOIAsyn()//开始搜索
     }
 
     override fun onPoiSearched(result: PoiResult?, resultCode: Int) {

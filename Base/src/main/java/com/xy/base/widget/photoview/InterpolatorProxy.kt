@@ -7,6 +7,6 @@ class InterpolatorProxy : Interpolator {
     var mTarget: Interpolator = DecelerateInterpolator()
 
     override fun getInterpolation(input: Float): Float {
-        return mTarget?.getInterpolation(input)?: input
+        return mTarget.getInterpolation(input)
     }
 }

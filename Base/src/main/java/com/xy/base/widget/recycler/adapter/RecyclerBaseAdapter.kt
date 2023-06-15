@@ -36,7 +36,7 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
     fun addChildClicked(viewIds: Int?,listener: OnChildItemClickListener<T>?): RecyclerBaseAdapter<T> {
         synchronized(this){
             if (listener == null || viewIds == null)return this
-            childClickMap[viewIds] = listener;
+            childClickMap[viewIds] = listener
             return this
         }
     }
@@ -54,7 +54,7 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
     fun addChildLongClicked(viewIds: Int?,listener: OnChildItemLongClickListener<T>?): RecyclerBaseAdapter<T> {
         synchronized(this){
             if (listener == null || viewIds == null)return this
-            childLongClickMap[viewIds] = listener;
+            childLongClickMap[viewIds] = listener
             return this
         }
     }
@@ -62,8 +62,8 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
     fun addChildTouch(viewIds: Int,listener: OnItemTouchListener<T>?): RecyclerBaseAdapter<T> {
         synchronized(this){
             if (listener == null)return this
-            childTouchMap[viewIds] = listener;
-            return this;
+            childTouchMap[viewIds] = listener
+            return this
         }
     }
 

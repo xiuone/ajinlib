@@ -26,7 +26,7 @@ fun RadioGroup?.bindViewPager(viewPager: ViewPager?){
 fun RadioGroup.getRadioButton(selectIndex:Int):RadioButton?{
     var currentRadioIndex = -1
     for (index in 0 until childCount){
-        val childView = getChildAt(index);
+        val childView = getChildAt(index)
         if (childView is RadioButton){
             currentRadioIndex ++
             if (selectIndex == currentRadioIndex){
@@ -40,10 +40,10 @@ fun RadioGroup.getRadioButton(selectIndex:Int):RadioButton?{
 fun RadioGroup.getRadioButtonSelectIndex():Int?{
     var currentRadioIndex = -1
     for (index in 0 until childCount){
-        val childView = getChildAt(index);
+        val childView = getChildAt(index)
         if (childView is RadioButton && childView.isChecked){
             currentRadioIndex ++
-            return currentRadioIndex;
+            return currentRadioIndex
         }
     }
     return null

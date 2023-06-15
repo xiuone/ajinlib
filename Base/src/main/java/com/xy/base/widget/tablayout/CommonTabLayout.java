@@ -38,20 +38,20 @@ import java.util.ArrayList;
 
 /** 没有继承HorizontalScrollView不能滑动,对于ViewPager无依赖 */
 public class CommonTabLayout extends FrameLayout implements ValueAnimator.AnimatorUpdateListener {
-    private Context mContext;
-    private ArrayList<CustomTabEntity> mTabEntitys = new ArrayList<>();
-    private LinearLayout mTabsContainer;
+    private final Context mContext;
+    private final ArrayList<CustomTabEntity> mTabEntitys = new ArrayList<>();
+    private final LinearLayout mTabsContainer;
     private int mCurrentTab;
     private int mLastTab;
     private int mTabCount;
     /** 用于绘制显示器 */
-    private Rect mIndicatorRect = new Rect();
-    private GradientDrawable mIndicatorDrawable = new GradientDrawable();
+    private final Rect mIndicatorRect = new Rect();
+    private final GradientDrawable mIndicatorDrawable = new GradientDrawable();
 
-    private Paint mRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mTrianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Path mTrianglePath = new Path();
+    private final Paint mRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mTrianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Path mTrianglePath = new Path();
     private static final int STYLE_NORMAL = 0;
     private static final int STYLE_TRIANGLE = 1;
     private static final int STYLE_BLOCK = 2;
@@ -112,8 +112,8 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     private int mHeight;
 
     /** anim */
-    private ValueAnimator mValueAnimator;
-    private OvershootInterpolator mInterpolator = new OvershootInterpolator(1.5f);
+    private final ValueAnimator mValueAnimator;
+    private final OvershootInterpolator mInterpolator = new OvershootInterpolator(1.5f);
 
     private FragmentChangeManager mFragmentChangeManager;
 
@@ -814,8 +814,8 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     //setter and getter
 
     // show MsgTipView
-    private Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private SparseArray<Boolean> mInitSetMap = new SparseArray<>();
+    private final Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final SparseArray<Boolean> mInitSetMap = new SparseArray<>();
 
     /**
      * 显示未读消息
@@ -954,8 +954,8 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
         public float right;
     }
 
-    private IndicatorPoint mCurrentP = new IndicatorPoint();
-    private IndicatorPoint mLastP = new IndicatorPoint();
+    private final IndicatorPoint mCurrentP = new IndicatorPoint();
+    private final IndicatorPoint mLastP = new IndicatorPoint();
 
     class PointEvaluator implements TypeEvaluator<IndicatorPoint> {
         @Override

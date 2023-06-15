@@ -36,13 +36,13 @@ public class HeadZoomLayout extends ViewGroup implements NestedScrollingParent, 
   private float headViewHeight;
   private float headViewWidth;
   private float mInitialDownY;
-  private int mTouchSlop;
+  private final int mTouchSlop;
   private float mTotalDragDistance;
   private float maxZoomRatio;
   private int mActivePointerId = INVALID_POINTER;
   private ValueAnimator recoverAnimator;
-  private NestedScrollingChildHelper mNestedScrollingChildHelper;
-  private NestedScrollingParentHelper mNestedScrollingParentHelper;
+  private final NestedScrollingChildHelper mNestedScrollingChildHelper;
+  private final NestedScrollingParentHelper mNestedScrollingParentHelper;
   private boolean mReturningToStart;
   private float mTotalUnconsumed;
   private boolean mNestedScrollInProgress;

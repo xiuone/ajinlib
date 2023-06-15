@@ -25,7 +25,7 @@ class MinDialogSelectAdapter(private val listener:DialogSelectListener) :
 
 
     fun getSelectData(method:(DialogSelectMode?)->Unit){
-        val data = ArrayList(data);
+        val data = ArrayList(data)
         for (item in data){
             if (item.type == selectType){
                 method(item)

@@ -1,5 +1,5 @@
 package com.xy.base.widget.swipe.listener
 
-public interface OnSwipeBackListener {
+interface OnSwipeBackListener {
     fun onBackPressed()
 }

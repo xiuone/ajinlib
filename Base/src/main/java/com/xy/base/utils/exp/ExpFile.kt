@@ -78,7 +78,7 @@ fun Long.getFormatSize(): String {
  * 获取文件
  */
 fun String.getFileSize(): Long {
-    val file = File(this);
+    val file = File(this)
     if (!file.exists()) return 0
     if (file.isFile){
         return file.length()
@@ -93,7 +93,7 @@ fun String.getFileSize(): Long {
                 size += childFile.toString().getFileSize()
             }
         }
-        return size;
+        return size
     }
 }
 
@@ -114,9 +114,9 @@ fun String.deleteFile(): Boolean {
             else
                 childFile.toString().deleteFile()
         }
-        return dir.delete();
+        return dir.delete()
     }else{
-        return dir.delete();
+        return dir.delete()
     }
 }
 
@@ -153,8 +153,8 @@ fun InputStream.copyFile(toPathName: String?): Boolean {
 
 fun String.reFileName(newPathName: String?): Boolean {
     newPathName?:return false
-    newPathName?.createDirs()
-    newPathName?.deleteFile()
+    newPathName.createDirs()
+    newPathName.deleteFile()
     val file = File(this)
     file.renameTo(File(newPathName))
     return true
