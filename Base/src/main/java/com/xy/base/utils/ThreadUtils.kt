@@ -9,6 +9,7 @@ private val backHandler by lazy { createAppBackHandler("background") }
 
 private fun createAppBackHandler(name: String): Handler {
     val backThread = HandlerThread(name)
+    backThread.start()
     return Handler(backThread.looper)
 }
 

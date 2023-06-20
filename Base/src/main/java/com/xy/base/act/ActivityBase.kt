@@ -53,11 +53,9 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
             for (assembly in assemblyList){
-                if (assembly != null) {
-                    lifecycle.addObserver(assembly)
-                    assembly.onCreateInit()
-                    this.assemblyList.add(assembly)
-                }
+                lifecycle.addObserver(assembly)
+                assembly.onCreateInit()
+                this.assemblyList.add(assembly)
             }
         }
     }

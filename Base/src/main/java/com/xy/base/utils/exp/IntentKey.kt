@@ -22,6 +22,8 @@ private const val latitude = "latitude"//经纬度
 private const val longitude = "longitude"//经纬度
 private const val title = "title"//经纬度
 private const val tag = "tag"//经纬度
+private const val url = "url"//链接
+private const val html = "html"//文本
 
 /**
  * token
@@ -129,7 +131,7 @@ fun Intent?.getTypeLong(def:Long = 0):Long = this?.getLongExtra(typeStr,def)?:de
 fun Bundle?.getTypeInt(def:Int = 0):Int = this?.getInt(typeStr)?:def
 fun Bundle?.getTypeLong(def:Long = 0):Long = this?.getLong(typeStr)?:def
 
-fun Intent?.puTitle(value: String):Intent?{
+fun Intent?.putTitle(value: String?):Intent?{
     this?.putExtra(title,value)
     return this
 }
@@ -255,9 +257,16 @@ fun Intent?.getStatusBoolean(def:Boolean = false):Boolean = this?.getBooleanExtr
 fun Bundle?.getStatusBoolean(def:Boolean = false):Boolean = this?.getBoolean(position,def)?:def
 
 
-
-
-
+fun Intent?.putUrl(value: String?):Intent?{
+    this?.putExtra(url,value)
+    return this
+}
+fun Intent?.putHtml(value: String?):Intent?{
+    this?.putExtra(html,value)
+    return this
+}
+fun Intent?.getUrl(def:String?=null):String? = this?.getStringExtra(url)?:def
+fun Intent?.getHtml(def:String?=null):String? = this?.getStringExtra(html)?:def
 
 
 

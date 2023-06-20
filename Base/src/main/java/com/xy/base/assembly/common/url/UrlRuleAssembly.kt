@@ -1,8 +1,11 @@
 package com.xy.base.assembly.common.url
 
 import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.utils.Logger
 import com.xy.base.utils.exp.replaceContentColor
 import com.xy.base.utils.exp.setContentClicked
 import com.xy.base.utils.exp.setOnClick
@@ -13,15 +16,12 @@ class UrlRuleAssembly(view: UrlAssemblyView) : BaseAssembly<UrlAssemblyView>(vie
     private val ruleTextView by lazy { this.view?.onCreateRuleTextView() }
     private val ruleHashMap by lazy { this.view?.onCreateRulKey()?:HashMap() }
 
-    override fun onCreate(owner: LifecycleOwner?) {
-        super.onCreate(owner)
+    override fun onCreateInit() {
+        super.onCreateInit()
+        Logger.d("=========UrlRuleAssembly")
         aboutView?.setOnClick{
             selectView?.isSelected = selectView?.isSelected != true
         }
-        loadRulContent()
-    }
-
-    private fun loadRulContent(){
         val content = ruleTextView?.text?.toString()?:return
         val spannableString = SpannableString(content)
         for (entry in ruleHashMap.entries){
@@ -29,6 +29,8 @@ class UrlRuleAssembly(view: UrlAssemblyView) : BaseAssembly<UrlAssemblyView>(vie
                 this.view?.onCreateWebActivityOpenListener()?.openUrlAct(getContext(),entry.value.url,entry.value.title)
             }
         }
+        ruleTextView?.movementMethod = LinkMovementMethod.getInstance()
+        ruleTextView?.text = spannableString
     }
 
     fun isSelect() = selectView?.isSelected == true
