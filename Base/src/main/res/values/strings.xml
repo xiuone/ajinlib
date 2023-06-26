@@ -13,6 +13,7 @@
     <string name="year" tools:ignore="ExtraTranslation">年</string>
     <string name="month" tools:ignore="ExtraTranslation">月</string>
     <string name="day" tools:ignore="ExtraTranslation">日</string>
+    <string name="processing" tools:ignore="ExtraTranslation">处理中</string>
 
     <string name="permission_un_all" tools:ignore="ExtraTranslation">获取部分权限成功，但部分权限未正常授予</string>
     <string name="permission_refuse" tools:ignore="ExtraTranslation">被永久拒绝授权，请手动授予权限</string>
@@ -77,6 +78,7 @@
     <string name="login_forget" tools:ignore="ExtraTranslation">忘记密码?</string>
     <string name="login_code" tools:ignore="ExtraTranslation">验证码登录</string>
 
+
     <string name="bind_phone" tools:ignore="ExtraTranslation">绑定手机号</string>
     <string name="bind_email" tools:ignore="ExtraTranslation">绑定邮箱</string>
     <string name="bind_ing" tools:ignore="ExtraTranslation">绑定中...</string>
@@ -140,9 +142,6 @@
 
 
 
-    <string name="birth_day" tools:ignore="ExtraTranslation">出生日期</string>
-    <string name="birth_day_setting_ing" tools:ignore="ExtraTranslation">正在更新生日...</string>
-    <string name="birth_day_please_select" tools:ignore="ExtraTranslation">请选择生日</string>
 
     <string name="introduction" tools:ignore="ExtraTranslation">个人简介</string>
     <string name="introduction_hint" tools:ignore="ExtraTranslation">添加简介，让大家更快认识你吧</string>
@@ -180,7 +179,7 @@
 
     <string name="get_send" tools:ignore="ExtraTranslation">获取验证码</string>
     <string name="re_send" tools:ignore="ExtraTranslation">重新获取验证码</string>
-    <string name="get_send_run" tools:ignore="ExtraTranslation">后重新获取</string>
+    <string name="get_send_run" tools:ignore="ExtraTranslation">%s后重新获取</string>
     <string name="re_send_count_down" tools:ignore="ExtraTranslation">%s后可重新获取</string>
 
 
@@ -207,6 +206,8 @@
     <string name="black_tips" tools:ignore="ExtraTranslation">拉入黑名单的人员无法向你发送消息 \n且你们相互无法查看对方动态</string>
     <string name="remove_hint" tools:ignore="ExtraTranslation">"%s"将被移除黑名单</string>
     <string name="reminder" tools:ignore="ExtraTranslation">温馨提示</string>
+    <string name="reminder_permission_denied_hint" tools:ignore="ExtraTranslation">权限被拒绝，请前往设置打开</string>
+    <string name="reminder_permission_reason" tools:ignore="ExtraTranslation">权限用途提示</string>
 
     <string name="sure" tools:ignore="ExtraTranslation">确定</string>
 

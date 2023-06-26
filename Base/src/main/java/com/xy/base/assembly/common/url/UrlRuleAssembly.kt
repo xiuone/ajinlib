@@ -10,7 +10,7 @@ import com.xy.base.utils.exp.replaceContentColor
 import com.xy.base.utils.exp.setContentClicked
 import com.xy.base.utils.exp.setOnClick
 
-class UrlRuleAssembly(view: UrlAssemblyView) : BaseAssembly<UrlAssemblyView>(view){
+class UrlRuleAssembly(view: UrlAssemblyView,private val select:()->Unit = {}) : BaseAssembly<UrlAssemblyView>(view){
     private val aboutView by lazy { this.view?.onCreateButtonView() }
     private val selectView by lazy { this.view?.onCreateSelectView() }
     private val ruleTextView by lazy { this.view?.onCreateRuleTextView() }
@@ -20,7 +20,10 @@ class UrlRuleAssembly(view: UrlAssemblyView) : BaseAssembly<UrlAssemblyView>(vie
         super.onCreateInit()
         Logger.d("=========UrlRuleAssembly")
         aboutView?.setOnClick{
-            selectView?.isSelected = selectView?.isSelected != true
+            setStatus(selectView?.isSelected != true)
+        }
+        ruleTextView?.setOnClick{
+            setStatus(selectView?.isSelected != true)
         }
         val content = ruleTextView?.text?.toString()?:return
         val spannableString = SpannableString(content)
@@ -31,6 +34,11 @@ class UrlRuleAssembly(view: UrlAssemblyView) : BaseAssembly<UrlAssemblyView>(vie
         }
         ruleTextView?.movementMethod = LinkMovementMethod.getInstance()
         ruleTextView?.text = spannableString
+    }
+
+    private fun setStatus(status:Boolean){
+        selectView?.isSelected = status
+        select()
     }
 
     fun isSelect() = selectView?.isSelected == true

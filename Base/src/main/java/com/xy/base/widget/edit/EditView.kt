@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.xy.base.R
 import com.xy.base.utils.exp.getResColor
 import com.xy.base.utils.exp.getResDimension
+import com.xy.base.utils.exp.setOnClick
 
 class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : RelativeLayout(context, attrs, defStyleAttr), View.OnFocusChangeListener,TextWatcher, TextView.OnEditorActionListener{
@@ -42,7 +44,7 @@ class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.EditSearchView)
         mDefaultBackgroundColor = typedArray.getResourceId(R.styleable.EditSearchView_edit_search_default_background, mDefaultBackgroundColor)
-        mFocusBackgroundColor = typedArray.getResourceId(R.styleable.EditSearchView_edit_search_default_background, mFocusBackgroundColor)
+        mFocusBackgroundColor = typedArray.getResourceId(R.styleable.EditSearchView_edit_search_focus_background, mDefaultBackgroundColor)
         hintText = typedArray.getString(R.styleable.EditSearchView_edit_search_text_hint)
         mTextSize = typedArray.getDimensionPixelSize(R.styleable.EditSearchView_edit_search_text_size,mTextSize)
         mTextColor = typedArray.getColor(R.styleable.EditSearchView_edit_search_text_color,mTextColor)
@@ -56,6 +58,7 @@ class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         delIconRes = typedArray.getResourceId(R.styleable.EditSearchView_edit_search_del_icon_res,delIconRes)
         delIconSize = typedArray.getDimensionPixelSize(R.styleable.EditSearchView_edit_search_del_icon_size,delIconSize)
         delIconPadding = typedArray.getDimensionPixelSize(R.styleable.EditSearchView_edit_search_del_icon_padding,delIconPadding)
+        typedArray.recycle()
         addChildView()
 
     }
@@ -67,9 +70,10 @@ class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         editView.layoutParams = editLayoutParams
         editView.setBackgroundColor(Color.TRANSPARENT)
         editView.hint = hintText
+        editView.setTextSize(TypedValue.COMPLEX_UNIT_PX,mTextSize.toFloat())
         editView.setTextColor(mTextColor)
         editView.setHintTextColor(mTextHintColor)
-        editView.setPadding(leftIconSize,0,delIconRes,0)
+        editView.setPadding(leftIconSize,0,delIconSize,0)
         editView.addTextChangedListener(this)
         editView.setOnEditorActionListener(this)
         editView.isSingleLine = true
@@ -80,14 +84,19 @@ class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         leftLayoutParams.addRule(CENTER_VERTICAL)
         leftView.layoutParams = leftLayoutParams
         leftView.setImageResource(leftIconRes)
+        leftView?.setPadding(leftIconPadding,leftIconPadding,leftIconPadding,leftIconPadding)
         this.addView(leftView)
 
         val rightLayoutParams = LayoutParams(leftIconSize,leftIconSize)
         rightLayoutParams.addRule(CENTER_VERTICAL)
         rightLayoutParams.addRule(ALIGN_PARENT_RIGHT)
+        delView.setPadding(delIconPadding,delIconPadding,delIconPadding,delIconPadding)
         delView.setImageResource(delIconRes)
         delView.layoutParams = rightLayoutParams
         this.addView(delView)
+        delView.setOnClick{
+            editView.setText("")
+        }
 
         editView.onFocusChangeListener = this
         setBackgroundResource(mDefaultBackgroundColor)

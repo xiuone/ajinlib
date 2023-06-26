@@ -25,21 +25,27 @@ class PileLayoutView<T> @JvmOverloads constructor(context: Context, attrs: Attri
         this.removeAllViews()
         val newData = data?:ArrayList()
         for ((index,item) in newData.withIndex()){
-            if (listener.canAdd(index)){
+            if (listener.canAdd(context,index, item)){
                 val layoutParams = LayoutParams(childWidth,childWidth)
                 layoutParams.leftMargin = (childWidth - pileWidth) * index
                 val itemView = listener.onCreateItemView(context,index,item)
                 this.addView(itemView)
                 itemView.layoutParams = layoutParams
             }else{
+                val layoutParams = LayoutParams(childWidth,childWidth)
+                layoutParams.leftMargin = (childWidth - pileWidth) * index
+                val itemView = listener.onCreateEndItemView(context,index,item,newData.size)
+                this.addView(itemView)
+                itemView.layoutParams = layoutParams
                 return
             }
         }
     }
 
     interface PileListener<T>{
-        fun canAdd(index:Int):Boolean
+        fun canAdd(context: Context,index: Int,item:T):Boolean
         fun onCreateItemView(context: Context,index: Int,item:T):View
+        fun onCreateEndItemView(context: Context,index: Int,item:T,all:Int):View
     }
 
 }

@@ -9,14 +9,19 @@ abstract class RecyclerSingleSelectAdapter<T>(layoutId:Int) : RecyclerSingleAdap
         if (position == selectPosition)return
         val oldSelectPosition = this.selectPosition
         this.selectPosition = position
-        setNotifyItemChanged(oldSelectPosition)
+        if (oldSelectPosition >=0 ) {
+            setNotifyItemChanged(oldSelectPosition + getHeadSize())
+        }
+        if (position >= 0 ) {
+            setNotifyItemChanged(position + getHeadSize())
+        }
     }
 
     open fun setNotifyItemChanged(oldSelectPosition:Int){
         if (oldSelectPosition >= getHeadSize()){
             notifyItemChanged(oldSelectPosition)
         }
-        notifyItemChanged(selectPosition-getHeadSize())
+        notifyItemChanged(oldSelectPosition)
     }
 
     fun getCurrentSelectPosition():T?{

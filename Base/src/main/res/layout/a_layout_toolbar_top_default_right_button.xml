@@ -11,7 +11,7 @@
         android:id="@+id/toolbar_right_button"
         style="@style/toolbarTvRight"
         android:enabled="false"
-        android:text="确定" />
+        android:text="@string/sure" />
     <View
         android:id="@+id/title_line"
         android:visibility="gone"

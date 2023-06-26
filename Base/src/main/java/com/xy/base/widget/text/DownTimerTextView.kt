@@ -23,10 +23,12 @@ class DownTimerTextView @JvmOverloads constructor(context: Context, attrs: Attri
             text = String.format(runString,"${(millisUntilFinished / 1000)}s")
             isClickable = false //设置不可点击
             isSelected = false
+            isEnabled = false
         }else{
             text = finishString
             isClickable = true //重新获得点击
             isSelected = false
+            isEnabled = false
         }
     }
 }

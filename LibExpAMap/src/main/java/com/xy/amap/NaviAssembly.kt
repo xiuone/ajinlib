@@ -132,7 +132,7 @@ class NaviAssembly(view: NaviAssemblyView) :BaseAssembly<NaviAssembly.NaviAssemb
             val intent = Intent(Intent.ACTION_VIEW, uri)
             intent.action = Intent.ACTION_VIEW
             intent.addCategory(Intent.CATEGORY_DEFAULT)
-            getContext()?.startActivity(intent)
+            getContext()?.startAppActivity(intent)
         } else {
             getContext()?.showToast(getContext()?.getResString(R.string.tencent_un_install))
             getContext()?.startMark("com.tencent.map")

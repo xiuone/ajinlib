@@ -19,7 +19,7 @@ class BackgroundCircleImageView @JvmOverloads constructor(context: Context, attr
     override fun onDraw(canvas: Canvas?) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = builder.backgroundColor
-        val radius = builder.getViewMinSize()/2F
+        val radius = builder.getViewMinAllSize()/2F
         canvas?.drawCircle(width.toFloat()/2,height.toFloat()/2,radius,paint)
         super.onDraw(canvas)
     }

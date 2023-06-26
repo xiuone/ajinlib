@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="wx_app_id">Chat</string>
     <string name="wx_app_secret">Chat</string>
+    <string name="wx_app_applet">Chat</string>
 
     <string name="wx_please_install" tools:ignore="ExtraTranslation">请安装微信</string>
 

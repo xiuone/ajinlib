@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.xy.base">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -37,7 +38,15 @@
         <meta-data
             android:name="design_height_in_dp"
             android:value="640"/>
-        <activity android:name="PermissionDetailActivity"
-            android:screenOrientation="portrait"/>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.jianbian.key.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"
+                tools:replace="android:resource" />
+        </provider>
     </application>
 </manifest>

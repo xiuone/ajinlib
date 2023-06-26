@@ -252,29 +252,4 @@ object AppTimeUtils {
 //   记录上次启动app时间，只要小于第二天的开始时间就需要提醒
 
 
-//    判断是否大于18岁
-    fun checkAdult(date: Date?): Boolean {
-        val current: Calendar = Calendar.getInstance()
-        val birthDay: Calendar = Calendar.getInstance()
-          birthDay.time = date
-        val year: Int = current.get(Calendar.YEAR) - birthDay.get(Calendar.YEAR)
-        if (year > 18) {
-            return true
-        } else if (year < 18) {
-            return false
-        }
-        // 如果年相等，就比较月份
-        val month: Int = current.get(Calendar.MONTH) - birthDay.get(Calendar.MONTH)
-        if (month > 0) {
-            return true
-        } else if (month < 0) {
-            return false
-        }
-        // 如果月也相等，就比较天
-        val day: Int = current.get(Calendar.DAY_OF_MONTH) - birthDay.get(Calendar.DAY_OF_MONTH)
-        return day >= 0
-    }
-
-
-
 }

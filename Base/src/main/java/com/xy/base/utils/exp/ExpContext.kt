@@ -57,6 +57,7 @@ fun Context?.startAppActivity(intent: Intent?){
 }
 
 
+
 fun Context?.startSetting(){
     val intent = Intent("android.settings.APPLICATION_DETAILS_SETTINGS")
     intent.data = Uri.parse("package:${this?.packageName}")

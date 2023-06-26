@@ -1,23 +1,27 @@
 package com.xy.base.widget.localmedia
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.content.Context
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import android.widget.*
 import com.luck.picture.lib.entity.LocalMedia
 import com.xy.base.R
 import com.xy.base.listener.ContextListener
+import com.xy.base.utils.anim.AppAnimatorListener
 import com.xy.base.utils.anim.ViewAnimHelper
 import com.xy.base.utils.exp.loadImageWithCenter
 import com.xy.base.utils.exp.setOnClick
 import com.xy.base.utils.picture.PictureSelectCallBack
 
 
-class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : FrameLayout(context,attributeSet),
+class SelectLocalMediaView @JvmOverloads  constructor(context: Context, attrs: AttributeSet? = null) : FrameLayout(context,attrs),
     PictureSelectCallBack,ResetPositionListener{
     private var selectLocalMediaListener: SelectLocalMediaListener?=null
-    private val resetPositionController by lazy { ResetPositionController(this,null,this) }
+    private val resetPositionController by lazy { ResetPositionController(this,this) }
     private val maxNUmber:Int
     private val rowNumber :Int    //横像
     private val delSize :Int
@@ -26,28 +30,30 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
     private val selectRes:Int
     private val mediaPadding:Int
     private val itemSize:Int
-    private var animatorSet: AnimatorSet? = null
+    private val animatorSetList by lazy { ArrayList<AnimatorSet>() }
 
     private var rowSize = 0
 
-    fun bindWindow(selectLocalMediaListener: SelectLocalMediaListener,contextListener: ContextListener? = null){
-        resetPositionController.contextListener = contextListener
-        this.selectLocalMediaListener = selectLocalMediaListener
-    }
 
     init {
-        val array = context.obtainStyledAttributes(attributeSet, R.styleable.SelectLocalMediaView)
+        val array = context.obtainStyledAttributes(attrs, R.styleable.SelectLocalMediaView)
         maxNUmber = array.getInteger(R.styleable.SelectLocalMediaView_select_media_max,0)
         rowNumber = array.getInteger(R.styleable.SelectLocalMediaView_select_media_row,3)
-        delSize = array.getInteger(R.styleable.SelectLocalMediaView_select_media_del_size,0)
-        delPadding = array.getInteger(R.styleable.SelectLocalMediaView_select_media_del_padding,0)
+        delSize = array.getDimensionPixelSize(R.styleable.SelectLocalMediaView_select_media_del_size,0)
+        delPadding = array.getDimensionPixelSize(R.styleable.SelectLocalMediaView_select_media_del_padding,0)
         delRes = array.getResourceId(R.styleable.SelectLocalMediaView_select_media_del_res,R.drawable.bg_transparent)
-        mediaPadding = array.getResourceId(R.styleable.SelectLocalMediaView_select_media_padding_size,R.drawable.bg_transparent)
-        itemSize = array.getResourceId(R.styleable.SelectLocalMediaView_select_media_item_size,R.drawable.bg_transparent)
+        mediaPadding = array.getDimensionPixelSize(R.styleable.SelectLocalMediaView_select_media_padding_size,0)
+        itemSize = array.getDimensionPixelSize(R.styleable.SelectLocalMediaView_select_media_item_size,0)
         selectRes = array.getResourceId(R.styleable.SelectLocalMediaView_select_media_select_res,R.drawable.bg_transparent)
+        array.recycle()
+    }
+
+    fun bindWindow(selectLocalMediaListener: SelectLocalMediaListener){
+        this.selectLocalMediaListener = selectLocalMediaListener
         addMoreView()
     }
 
+    fun getMaxNumber() = maxNUmber
 
     override fun onResult(result: ArrayList<LocalMedia>) {
         val showSize = width - paddingLeft - paddingRight
@@ -57,10 +63,11 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
         for ((index,item) in result.withIndex()){
             if (index >= maxNUmber)return
             val frameLayout = FrameLayout(context)
-            val frameParams = LayoutParams(allItemSize,allItemSize)
+            val frameParams = LayoutParams(0,0)
             val positionArray = onPosition(index)
             frameParams.leftMargin = positionArray[0]
             frameParams.topMargin = positionArray[1]
+            frameLayout.layoutParams = frameParams
             this.addView(frameLayout)
             frameLayout.tag = item
 
@@ -80,8 +87,17 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
             imageView?.loadImageWithCenter(item.availablePath)
             delView.tag = resetPositionController.delTag
             frameLayout.addView(delView)
+            delView.setOnClick{
+                this.removeView(frameLayout)
+                addMoreView()
+                resetPositionController.startMoveAnim()
+            }
+            imageView?.setOnClick{
+                selectLocalMediaListener?.onMediaClicked(getData(),index)
+            }
+            showAddAnimator(frameLayout,allItemSize)
         }
-        ViewAnimHelper.getAnimation()
+        resetPositionController.startMoveAnim()
         addMoreView()
     }
 
@@ -100,28 +116,56 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
 
 
     private fun addMoreView(){
+        if (childCount >0){
+            val lastView = getChildAt(childCount-1)
+            if (lastView.tag == null){
+                return
+            }
+        }
         if (childCount >= maxNUmber)return
         val showSize = width - paddingLeft - paddingRight
         val allItemSize = this.itemSize + this.delSize/2
         val rowSize = (showSize - allItemSize*rowNumber) /(rowNumber - 1)
 
+        val imageView = selectLocalMediaListener?.onCreateMoreIconView()?:return
+
 
         val frameLayout = FrameLayout(context)
-        val frameParams = LayoutParams(allItemSize,allItemSize)
+        val frameParams = LayoutParams(0,0)
         frameParams.leftMargin = (childCount % rowNumber) * (allItemSize + rowSize)
-        frameParams.topMargin = (childCount / rowNumber) * (mediaPadding + rowSize)
+        frameParams.topMargin = (childCount / rowNumber) * (allItemSize + mediaPadding)
+        frameLayout.layoutParams = frameParams
         this.addView(frameLayout)
 
-        val imageView = selectLocalMediaListener?.onCreateIconView()
         val imgParams = LayoutParams(this.itemSize,this.itemSize)
         imgParams.topMargin = this.delSize / 2
-        imageView?.layoutParams = imgParams
+        imageView.layoutParams = imgParams
         frameLayout.addView(imageView)
 
-        imageView?.setImageResource(selectRes)
-        imageView?.setOnClick{
-            this.selectLocalMediaListener?.onCreateIconView()
+        imageView.setImageResource(selectRes)
+        imageView.setOnClick{
+            this.selectLocalMediaListener?.onStartSelectMedia()
         }
+        showAddAnimator(frameLayout,allItemSize)
+    }
+
+    private fun showAddAnimator(view:View,allItemSize:Int){
+        val animatorSet = ViewAnimHelper.getAnimation()
+        val builder = ViewAnimHelper.getBuilder(animatorSet)
+        view.alpha = 0F
+        ViewAnimHelper.setWidth(builder,allItemSize,view)
+        ViewAnimHelper.setHeight(builder,allItemSize,view)
+        ViewAnimHelper.setAlpha(builder,1F,view)
+        animatorSet.start()
+        animatorSetList.add(animatorSet)
+        animatorSet.addListener(object :AppAnimatorListener(){
+            override fun onAnimationEnd(p0: Animator) {
+                super.onAnimationEnd(p0)
+                synchronized(animatorSetList){
+                    animatorSetList.remove(animatorSet)
+                }
+            }
+        })
     }
 
     /**
@@ -152,7 +196,11 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
      */
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        ViewAnimHelper.cancel(animatorSet)
+        synchronized(animatorSetList){
+            for (item in animatorSetList){
+                ViewAnimHelper.cancel(item)
+            }
+        }
         resetPositionController.onDestroy()
     }
 
@@ -162,8 +210,16 @@ class SelectLocalMediaView(context: Context, attributeSet: AttributeSet) : Frame
     override fun onPosition(index: Int): IntArray {
         val allItemSize = this.itemSize + this.delSize/2
         val leftMargin = (index % rowNumber) * (allItemSize + rowSize)
-        val topMargin = (index / rowNumber) * (mediaPadding + rowSize)
+        val topMargin = (index / rowNumber) * (allItemSize + mediaPadding)
         return intArrayOf(leftMargin,topMargin)
+    }
+
+
+    override fun onPositionRecF(index: Int): RectF {
+        val allItemSize = this.itemSize + this.delSize/2
+        val leftMargin = (index % rowNumber) * (allItemSize + rowSize).toFloat()
+        val topMargin = (index / rowNumber) * (allItemSize + mediaPadding).toFloat()
+        return RectF(leftMargin,topMargin,leftMargin+allItemSize,topMargin+allItemSize)
     }
 
     /**

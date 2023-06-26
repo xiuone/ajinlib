@@ -2,9 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/toolbar"
     style="@style/ToolbarLayout">
+
     <ImageView
         android:id="@+id/back_iv_button"
-        style="@style/ToolbarBackIv"/>
+        style="@style/ToolbarBackIv" />
+    <TextView
+        android:id="@+id/back_title"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="true"
+        android:textSize="@dimen/sp_13"
+        android:layout_toRightOf="@id/back_iv_button"
+        android:layout_marginHorizontal="@dimen/dp_0"
+        style="@style/ToolbarTitleTv"/>
     <TextView
         android:id="@+id/middle_title"
         style="@style/ToolbarTitleTv"/>

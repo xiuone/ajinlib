@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import com.xy.base.R
 import com.xy.base.listener.ContextListener
+import com.xy.base.utils.exp.setBar
 import com.xy.base.utils.exp.setOnClick
 import com.xy.base.utils.softkey.MoveKeyBoardController
 import com.xy.base.utils.softkey.SoftKeyBoardDetector
@@ -36,6 +37,14 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
         MoveKeyBoardController(this)
     }
 
+    protected fun getBackImg():ImageView?{
+        val imageView = backButton
+        if (imageView is ImageView){
+            return imageView
+        }
+        return null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView(savedInstanceState, view)
@@ -53,6 +62,7 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
 
 
     open fun initView(savedInstanceState: Bundle?, rootView: View?) {
+        titleFrameLayout?.setBar()
         createView(titleLayoutRes(),titleFrameLayout)
         createView(contentLayoutRes(),contentFrameLayout)
         titleFrameLayout.visibility = View.GONE
@@ -62,7 +72,7 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
      * 请求加载
      */
     private fun createView(@LayoutRes layoutRes: Int,viewGroup:ViewGroup?):View{
-        var loadView: View = LayoutInflater.from(context).inflate(layoutRes, null)
+        var loadView: View = LayoutInflater.from(context).inflate(layoutRes, viewGroup,false)
         viewGroup?.isClickable = true
         viewGroup?.removeAllViews()
         viewGroup?.addView(loadView)

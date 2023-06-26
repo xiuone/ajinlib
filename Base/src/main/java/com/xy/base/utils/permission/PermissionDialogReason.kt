@@ -2,6 +2,7 @@ package com.xy.base.utils.permission
 
 import android.content.Context
 import android.widget.TextView
+import com.xy.base.dialog.base.BaseBottomDialog
 import com.xy.base.dialog.base.BaseCenterDialog
 import com.xy.base.dialog.base.BaseDialog
 import com.xy.base.dialog.listener.DialogCancelSureView
@@ -13,7 +14,7 @@ import com.xy.base.utils.exp.setOnClick
  * @author guolin
  * @since 2020/8/27
  */
-class PermissionDialogReason(context: Context,private val uiListener: ReasonUiListener) : BaseCenterDialog(context) {
+class PermissionDialogReason(context: Context,private val uiListener: ReasonUiListener) : BaseBottomDialog(context) {
     private val messageTv by lazy { uiListener.onCreateReasonMessageTextView(this) }
     private val cancelButton by lazy { uiListener.onCreateDialogCancelView(this) }
     private val sureButton by lazy { uiListener.onCreateDialogSureView(this) }

@@ -1,6 +1,7 @@
 package com.xy.chat
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -24,10 +25,9 @@ import com.xy.base.widget.recycler.holder.BaseViewHolder
 import com.xy.base.widget.recycler.listener.OnItemClickListener
 import com.xy.base.widget.recycler.listener.RecyclerExpListener
 
-class CommonEmoView(context: Context) :FrameLayout(context),RecyclerExpListener<EmoManager.EmoEntryMode>,OnItemClickListener<EmoManager.EmoEntryMode>{
+class CommonEmoView@JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :FrameLayout(context,attrs),RecyclerExpListener<EmoManager.EmoEntryMode>,OnItemClickListener<EmoManager.EmoEntryMode>{
     private val TAG by lazy { "CommonEmoView" }
     private var cowSize:Int = -1
-    private var recentlyTag:String?= null
     private var mHeadRootView :View?=null
     private var itemRes:Int = R.layout.a_page_load
 
@@ -39,9 +39,8 @@ class CommonEmoView(context: Context) :FrameLayout(context),RecyclerExpListener<
     private var adapter:RecyclerSingleAdapter<EmoManager.EmoEntryMode> ?= null
     var listener: CommonEmoListener?=null
 
-    fun init(tag:String?,cow:Int,res:Int): CommonEmoView {
+    fun init(cow:Int,res:Int): CommonEmoView {
         this.itemRes = res
-        recentlyTag = "CommonEmoView--$tag"
         this.cowSize = cow
         return this
     }
@@ -120,9 +119,9 @@ class CommonEmoView(context: Context) :FrameLayout(context),RecyclerExpListener<
      * 获取最近记录
      */
     private fun getRecentlyData():MutableList<EmoManager.EmoEntryMode>{
-        if (recentlyTag.isNullOrEmpty())return ArrayList()
+        if (TAG.isNullOrEmpty())return ArrayList()
         try {
-            val dataStr = context.getSpString(recentlyTag,"[]")
+            val dataStr = context.getSpString(TAG,"[]")
             val data = JSON.parseArray(dataStr, EmoManager.EmoEntryMode::class.java)
             return data
         }catch (e:Exception){
@@ -135,7 +134,7 @@ class CommonEmoView(context: Context) :FrameLayout(context),RecyclerExpListener<
      * 添加最近记录
      */
     private fun setRecentlyItem(item: EmoManager.EmoEntryMode){
-        if (cowSize<=0 || recentlyTag.isNullOrEmpty())return
+        if (cowSize<=0 || TAG.isNullOrEmpty())return
         val oldData = getRecentlyData()
         for (oldItem in oldData){
             if (oldItem.text == item.text){
@@ -151,7 +150,7 @@ class CommonEmoView(context: Context) :FrameLayout(context),RecyclerExpListener<
         if (oldData.size > cowSize){
             oldData.removeAt(cowSize)
         }
-        context.setSpString(recentlyTag,JSON.toJSONString(oldData))
+        context.setSpString(TAG,JSON.toJSONString(oldData))
         bindResetData(recentlyListener?.onCommonContentView(mHeadRootView),oldData)
     }
 

@@ -95,7 +95,7 @@ abstract class RoundBaseImageView @JvmOverloads constructor(context: Context, at
 
 
     private fun onDrawLoadProgress(canvas: Canvas?){
-        if (progressBuild.progress <= 0)return
+        if (progressBuild.progress <= 0 || progressBuild.progress >= 100)return
         val backPaint = getProgressPaint(progressBuild.backgroundColor)
         val backRect = getProgressRectF()
         canvas?.drawArc(backRect, 0F, 360F, false, backPaint)

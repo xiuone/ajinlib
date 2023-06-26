@@ -15,11 +15,6 @@ interface CommonLaunchAssemblyView : BaseAssemblyView {
     fun refuseButtonView():View?
 
     /**
-     * 政策的view 提示信心的view
-     */
-    fun agreementTextView(): TextView?
-
-    /**
      * 隐私政策所有的显示或者隐藏
      */
     fun privacyContentView():View?

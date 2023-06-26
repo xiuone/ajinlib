@@ -19,11 +19,14 @@ import com.xy.base.assembly.BaseAssemblyImpl
 import com.xy.base.assembly.base.BaseAssembly
 import com.xy.base.assembly.base.BaseAssemblyView
 import com.xy.base.listener.OpenPageListener
+import com.xy.base.utils.Logger
 import com.xy.base.utils.config.ConfigController
 import com.xy.base.utils.exp.getViewPosRect
+import com.xy.base.utils.exp.startAppActivity
 import com.xy.base.utils.permission.PermissionDialogDenied
 import com.xy.base.utils.permission.PermissionDialogReason
 import com.xy.base.utils.permission.PermissionUiListener
+import com.xy.base.utils.runMain
 import com.xy.base.utils.softkey.SoftKeyBoardDetector
 import kotlin.collections.HashMap
 
@@ -60,7 +63,7 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         }
     }
 
-    protected fun addLifecycleObserver(vararg lifeList: BaseAssemblyImpl){
+    protected open fun addLifecycleObserver(vararg lifeList: BaseAssemblyImpl){
         for (lift in lifeList){
             lifecycle.addObserver(lift)
             lift.onCreate()
@@ -119,7 +122,13 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
      * 进入历史界面
      */
     override fun startActivityForResult(tag:String,intent: Intent) {
-        activityResultLauncherList[tag]?.launch(intent)
+        runMain({
+            try {
+                activityResultLauncherList[tag]?.launch(intent)
+            }catch (e: Exception){
+                Logger.e("======${e.message}")
+            }
+        })
     }
 
     fun switchFullScreen(toFull: Boolean) {

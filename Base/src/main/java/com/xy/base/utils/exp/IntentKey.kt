@@ -125,11 +125,17 @@ fun Bundle?.putTypeInt(value: Int):Bundle?{
     this?.putInt(typeStr,value)
     return this
 }
+fun Bundle?.putTypeLong(value: Long):Bundle?{
+    this?.putLong(typeStr,value)
+    return this
+}
 fun Intent?.getTypeStr():String? = this?.getStringExtra(typeStr)
 fun Intent?.getTypeInt(def:Int = 0):Int = this?.getIntExtra(typeStr,def)?:def
 fun Intent?.getTypeLong(def:Long = 0):Long = this?.getLongExtra(typeStr,def)?:def
 fun Bundle?.getTypeInt(def:Int = 0):Int = this?.getInt(typeStr)?:def
-fun Bundle?.getTypeLong(def:Long = 0):Long = this?.getLong(typeStr)?:def
+fun Bundle?.getTypeLong(def:Long = 0):Long {
+    return this?.getLong(typeStr)?:def
+}
 
 fun Intent?.putTitle(value: String?):Intent?{
     this?.putExtra(title,value)

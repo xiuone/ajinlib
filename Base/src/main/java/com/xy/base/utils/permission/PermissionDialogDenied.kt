@@ -2,12 +2,14 @@ package com.xy.base.utils.permission
 
 import android.content.Context
 import android.widget.TextView
+import com.xy.base.dialog.base.BaseBottomDialog
 import com.xy.base.dialog.base.BaseCenterDialog
 import com.xy.base.dialog.base.BaseDialog
 import com.xy.base.dialog.listener.DialogCancelSureView
 import com.xy.base.utils.exp.setOnClick
 
-class PermissionDialogDenied(context: Context,private val uiListener:DeniedUiListener):BaseCenterDialog(context) {
+class PermissionDialogDenied(context: Context,private val uiListener:DeniedUiListener):
+    BaseBottomDialog(context) {
     private val messageTv by lazy { uiListener.onCreateDeniedMessageTextView(this) }
     private val cancelButton by lazy { uiListener.onCreateDialogCancelView(this) }
     private val sureButton by lazy { uiListener.onCreateDialogSureView(this) }

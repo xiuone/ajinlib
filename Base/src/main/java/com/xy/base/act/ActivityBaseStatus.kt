@@ -26,6 +26,7 @@ abstract class ActivityBaseStatus : ActivityBase(), ContextListener {
 
     protected val titleView by lazy { findViewById<TextView>(R.id.middle_title) }
     protected val backButton by lazy { findViewById<View>(R.id.back_iv_button) }
+    protected val backTitle by lazy { findViewById<TextView>(R.id.back_title) }
     protected val rightLButton by lazy { findViewById<View>(R.id.right_l_button) }
     protected val rightButtonView by lazy { findViewById<TextView>(R.id.toolbar_right_button) }
     protected val moreButton by lazy { findViewById<ImageView>(R.id.more_button) }

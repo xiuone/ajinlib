@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.xy.qq">
     <application>
         <activity
@@ -14,12 +15,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tencent101911661" />
+                <data android:scheme="@string/qq_app_id_tencent"
+                    tools:ignore="AppLinkUrlError" />
             </intent-filter>
         </activity>
 
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
             android:screenOrientation="portrait" />
+
     </application>
 </manifest>

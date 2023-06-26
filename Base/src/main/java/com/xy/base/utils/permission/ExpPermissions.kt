@@ -1,5 +1,6 @@
 package com.xy.base.utils.permission
 
+import android.app.Activity
 import android.content.Context
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
@@ -8,9 +9,13 @@ fun Context.requestPermission(rationaleDialog: PermissionDialogReason?, deniedDi
                               listener:PermissionCallBack?, vararg permissions:PermissionRequestMode){
     val xxPermissions = XXPermissions.with(this)
     val stringBuffer = StringBuffer()
-    var isAllGranted = false
+    var isAllGranted = true
+    var isAllDenied = false
     for (permission in permissions){
         val isGranted = XXPermissions.isGranted(this,permission.permission)
+        if (this is Activity) {
+            isAllDenied = isAllDenied || XXPermissions.isPermanentDenied(this, permission.permission)
+        }
         if (!isGranted){
             isAllGranted = false
             if (stringBuffer.isNotEmpty()){
@@ -20,6 +25,10 @@ fun Context.requestPermission(rationaleDialog: PermissionDialogReason?, deniedDi
             }
             xxPermissions.permission(permission.permission)
         }
+    }
+    if (isAllDenied){
+        onDenied(deniedDialog,listener,*permissions)
+        return
     }
     if (isAllGranted){
         listener?.onGranted()
@@ -55,40 +64,38 @@ private fun Context.startRequestPermission(xxPermissions:XXPermissions,
 
         override fun onDenied(permissions: MutableList<String>, doNotAskAgain: Boolean) {
             if (doNotAskAgain) {
-                val stringBuffer = StringBuffer()
-                for (permission in permissions){
-                    val isGranted = XXPermissions.isGranted(this@startRequestPermission,permission)
-                    if (!isGranted) {
-                        for (permissionRequestMode in permissionRequestModes) {
-                            for (item in permissionRequestMode.permission) {
-                                if (item == permission){
-                                    if (stringBuffer.isNotEmpty()){
-                                        stringBuffer.append("\n")
-                                    }else{
-                                        stringBuffer.append(" · ${permissionRequestMode.permissionInfo}")
-                                    }
-                                    break
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                deniedDialog?.bindActionListener(object :PermissionActionListener{
-                    override fun onPermissionCancelAction(){
-                        listener?.onDenied()
-                    }
-                    override fun onPermissionSureNextAction() = XXPermissions.startPermissionActivity(this@startRequestPermission, permissions)
-                })
-                if (deniedDialog != null && !stringBuffer.toString().isNullOrEmpty()) {
-                    deniedDialog.showDialog(stringBuffer.toString())
-                }else{
-                    XXPermissions.startPermissionActivity(this@startRequestPermission, permissions)
-                }
+                onDenied(deniedDialog, listener, *permissionRequestModes)
             } else {
                 listener?.onDenied()
             }
         }
     })
+}
+
+private fun Context.onDenied(deniedDialog: PermissionDialogDenied?,listener:PermissionCallBack?
+                             ,vararg permissionRequestModes:PermissionRequestMode){
+    val stringBuffer = StringBuffer()
+    val permissionsList = ArrayList<String>()
+    for (permission in permissionRequestModes){
+        val isGranted = XXPermissions.isGranted(this,permission.permission)
+        if (!isGranted) {
+            permissionsList.addAll(permission.permission)
+            if (stringBuffer.isNotEmpty()){
+                stringBuffer.append("\n")
+            }else{
+                stringBuffer.append(" · ${permission.permissionInfo}")
+            }
+        }
+    }
+    deniedDialog?.bindActionListener(object :PermissionActionListener{
+        override fun onPermissionCancelAction(){
+            listener?.onDenied()
+        }
+        override fun onPermissionSureNextAction() = XXPermissions.startPermissionActivity(this@onDenied, permissionsList)
+    })
+    if (deniedDialog != null && !stringBuffer.toString().isNullOrEmpty()) {
+        deniedDialog.showDialog(stringBuffer.toString())
+    }else{
+        XXPermissions.startPermissionActivity(this, permissionsList)
+    }
 }

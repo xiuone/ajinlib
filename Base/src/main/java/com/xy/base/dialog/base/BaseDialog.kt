@@ -98,8 +98,10 @@ abstract class BaseDialog(context: Context) : Dialog(context) ,
     override fun showDialogBindActivity(activity: Activity?, idRes: Int?, content: String?, any: Any?) = showDialogBindActivity(activity,any)
 
     override fun show() {
+        val isShow = isShowing
         super.show()
-        showAnimation(rootView)
+        if (!isShow)
+            showAnimation(rootView)
     }
 
     override fun dialogIsShow(): Boolean = isShowing

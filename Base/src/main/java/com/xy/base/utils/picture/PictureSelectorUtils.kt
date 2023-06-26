@@ -13,7 +13,6 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.luck.picture.lib.language.LanguageConfig
 import com.xy.base.utils.config.language.AppLanguageConfig
 import com.xy.base.utils.config.language.LanguageManger
-import java.util.ArrayList
 
 
 object PictureSelectorUtils {
@@ -61,7 +60,14 @@ object PictureSelectorUtils {
     /**
      * 选择普通图片
      */
-    fun openCommonIcon(context: Context?,any: Any?,mimeTypeInt: Int,max:Int,callBack: PictureSelectCallBack){
+    fun openCommonIcon(context: Context?,any: Any?,mimeTypeInt: Int,max:Int,callBack: PictureSelectCallBack) =
+        openCommonIcon(context, any, mimeTypeInt,max,null, callBack)
+
+
+    /**
+     * 选择普通图片
+     */
+    fun openCommonIcon(context: Context?,any: Any?,mimeTypeInt: Int,max:Int,selectedList:MutableList<LocalMedia>?,callBack: PictureSelectCallBack){
         getPictureSelector(any)
             ?.openGallery(mimeTypeInt)
             ?.setLanguage(getLanguage(context))
@@ -72,7 +78,8 @@ object PictureSelectorUtils {
             ?.isOpenClickSound(false)
             ?.isPreviewImage(true)
             ?.setMaxSelectNum(max)
-            ?.setCropEngine(ImageCropEngineHead())
+            ?.setSelectedData(selectedList?:ArrayList())
+            ?.setCropEngine(ImageCropEngineBack())
             ?.setCompressEngine(ImageFileCompressEngine())
             ?.isGif(false)
             ?.forResult(object : OnResultCallbackListener<LocalMedia>{

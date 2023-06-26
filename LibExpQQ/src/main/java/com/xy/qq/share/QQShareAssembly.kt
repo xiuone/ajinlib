@@ -25,8 +25,8 @@ class QQShareAssembly(view: QQShareAssemblyView) :BaseAssembly<QQShareAssembly.Q
     fun share(bean:QQShareContent) {
         val activity = this.view?.getCurrentAct()?:return
         temporaryPath?.deleteFile()
-        val params = Bundle()
         val file = File("${activity.filesDir}/$qqShareFileDirName")
+        file.mkdirs()
         if (file.exists() && file.isDirectory){
             val fileList = file.listFiles()
             for (childFile in fileList){
@@ -44,9 +44,10 @@ class QQShareAssembly(view: QQShareAssemblyView) :BaseAssembly<QQShareAssembly.Q
             bean.bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
 
+        val params = Bundle()
         if (bean.type == QQShareSceneEnum.Friend) {
             params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT)
-            params.putString(QQShare.SHARE_TO_QQ_TITLE, bean.url ?: activity.getAppName())
+            params.putString(QQShare.SHARE_TO_QQ_TITLE, bean.title ?: activity.getAppName())
             if (bean.content != null)params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, bean.content)
             if (bean.url != null)params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, bean.url)
             if (temporaryPath != null) params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, temporaryPath)

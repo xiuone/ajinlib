@@ -18,7 +18,7 @@ class BackgroundRoundImageView @JvmOverloads constructor(context: Context, attrs
     override fun onDraw(canvas: Canvas?) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = builder.backgroundColor
-        canvas?.drawPath(builder.getPath(0f),paint)
+        canvas?.drawPath(builder.getAllPath(0f),paint)
         super.onDraw(canvas)
     }
 }

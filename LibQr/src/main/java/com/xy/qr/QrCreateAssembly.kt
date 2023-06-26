@@ -26,6 +26,7 @@ class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssembly<QrCreateAssemb
 
     override fun onCreateInit() {
         super.onCreateInit()
+
         saveButton?.setOnClick{
             getContext()?.requestPermission(reasonDialog,deniedDialog,this, PermissionRequestMode(
                 arrayOf(Permission.WRITE_EXTERNAL_STORAGE),getContext()?.getResString(R.string.qr_permission_hint)))
@@ -61,7 +62,7 @@ class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssembly<QrCreateAssemb
     override fun onGranted() {
         getContext()?.run {
             val filePath = getSdImagePath(getAppName(),"${System.currentTimeMillis()}.png")
-            val sucHint = getResString(R.string.qr_permission_save_suc_hint)
+            val sucHint = String.format(getResString(R.string.qr_permission_save_suc_hint),filePath)
             val errorHint = getResString(R.string.qr_permission_save_error_hint)
             saveView?.saveImageToGallery(filePath,sucHint,errorHint)
         }

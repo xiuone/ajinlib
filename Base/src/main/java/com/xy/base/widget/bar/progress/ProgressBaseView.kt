@@ -32,11 +32,22 @@ abstract class ProgressBaseView @JvmOverloads constructor(context: Context, attr
      * 更新进度后自动刷新
      */
     open fun updateRealProgress(progress: Int) {
-        var progress = progress
-        if (progress < 0) progress = 0
-        if (progress > 100) progress = 100
-        progressBuild.progress = progress
+        var newProgress = progress
+        if (newProgress < 0) newProgress = 0
+        if (newProgress > 100) newProgress = 100
+        startUpdateRealProgress(newProgress)
+    }
+    private fun startUpdateRealProgress(newProgress: Int){
         runHandler.removeCallbacksAndMessages(null)
+        runHandler.postDelayed({
+            if (progressBuild.progress > newProgress){
+                progressBuild.progress = newProgress
+                runHandler.removeCallbacksAndMessages(null)
+            }else if (progressBuild.progress < newProgress){
+                progressBuild.progress = progressBuild.progress + 1
+                updateRealProgress(newProgress)
+            }
+        },10)
     }
 
     /**

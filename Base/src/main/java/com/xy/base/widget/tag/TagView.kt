@@ -1,6 +1,5 @@
 package com.xy.base.widget.tag
 
-import android.animation.Animator
 import android.animation.AnimatorSet
 import android.content.Context
 import android.os.Handler
@@ -8,244 +7,155 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import com.xy.base.R
-import com.xy.base.utils.anim.AppAnimatorListener
+import com.xy.base.utils.Logger
 import com.xy.base.utils.anim.ViewAnimHelper
 import kotlin.math.max
 
-class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
-    LinearLayout(context, attrs, defStyleAttr),Runnable{
+class TagView<T> @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr:Int = 0) :
+    FrameLayout(context, attrs, defStyleAttr){
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     private var itemPaddingH = 0
     private var itemPaddingV = 0
-    private var adapter:TagAdapter ? = null
-    private val checkPositionHandler by lazy { Handler(Looper.getMainLooper()) }
-    private val headLayout by lazy { LinearLayout(context) }
-    private val footLayout by lazy { LinearLayout(context) }
-    private val contentLayout by lazy { FrameLayout(context) }
-    private val holderHashMap by lazy { HashMap<Int,TagViewHolder>() }
-    private val animationList by lazy { ArrayList<AnimatorSet>() }
-    private val notifyPositionList by lazy { ArrayList<Int>() }
+    var bindTagListener :TagCreateListener<T> ?= null
+
+    private var animatorSet:AnimatorSet?=null
 
     init {
-        attrs?.run {
-            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TagView)
-            itemPaddingH = typedArray.getDimensionPixelSize(R.styleable.TagView_tag_padding_item_h,itemPaddingH)
-            itemPaddingV = typedArray.getDimensionPixelSize(R.styleable.TagView_tag_padding_item_v,itemPaddingV)
-            typedArray.recycle()
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TagView)
+        itemPaddingH = typedArray.getDimensionPixelSize(R.styleable.TagView_tag_padding_item_h,itemPaddingH)
+        itemPaddingV = typedArray.getDimensionPixelSize(R.styleable.TagView_tag_padding_item_v,itemPaddingV)
+        typedArray.recycle()
+    }
+
+    fun setNewData(data:MutableList<T>){
+        removeAllViews()
+        for (item in data){
+            val view = bindTagListener?.onCreateTag(this,item)
+            if (view != null){
+                view.layoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+                view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+                    override fun onGlobalLayout() {
+                        startMoveAnimWithDelay(200)
+                        view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    }
+
+                })
+                this.addView(view)
+                view.tag = item
+            }
         }
-        this.orientation = VERTICAL
-        headLayout.orientation = VERTICAL
-        footLayout.orientation = VERTICAL
-        this.addView(headLayout)
-        this.addView(contentLayout)
-        this.addView(footLayout)
+        startMoveAnimWithDelay()
     }
 
-    fun setAdapter(adapter: TagAdapter){
-        this.adapter = adapter
-        adapter.tagView = this
+    fun removeItem(item:T?){
+        for (index in 0 until childCount){
+            val itemView = getChildAt(index)
+            if (itemView.tag == item){
+                removeView(itemView)
+                startMoveAnimWithDelay()
+                return
+            }
+        }
     }
 
-    override fun run() {
-        val contentWith = width - paddingLeft - paddingRight
-        if (contentWith <= 0)return
-        val animatorHashMap = HashMap<Int,CowData>()
+    fun addItem(item: T?){
+        if (item == null)return
+        val view = bindTagListener?.onCreateTag(this,item)
+        if (view != null){
+            view.layoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+            this.addView(view)
+            view.tag = item
+        }
+        startMoveAnimWithDelay()
+    }
+    private fun startMoveAnimWithDelay(delay:Long = 100){
+        mainHandler.removeCallbacksAndMessages(null)
+        if (delay <=0){
+            startMoveAnim()
+        }else{
+            mainHandler.postDelayed({startMoveAnim()},delay)
+        }
+    }
 
 
-        for (index in 0 until  contentLayout.childCount){
-            val itemView = contentLayout.getChildAt(index)
-            val itemWidth = itemView.width
-            val itemHeight = itemView.height
-            var isNewCow = true
-            for (entries in animatorHashMap.entries){
-                val cowData = entries.value
-                val cowAllWidth = cowData.width + itemWidth + itemPaddingH
-                if (cowAllWidth <= contentWith){
-                    cowData.views.add(itemView)
-                    cowData.width = cowAllWidth
-                    cowData.height = max(itemHeight,cowData.height)
-                    isNewCow = false
+    private fun startMoveAnim(){
+
+        synchronized(this){
+            ViewAnimHelper.cancel(animatorSet)
+            animatorSet = ViewAnimHelper.getAnimation()
+            val builder = ViewAnimHelper.getBuilder(animatorSet)
+            val userLineList = startCow(builder)
+            startRow(builder,userLineList)
+            animatorSet?.start()
+        }
+    }
+
+    private fun startCow(builder:AnimatorSet.Builder?):MutableList<CowData>{
+        val userLineList = ArrayList<CowData>()
+        val allWidth = width-paddingLeft-paddingRight
+        for (index in 0 until  childCount){
+            val itemView = getChildAt(index)
+            val currentWidth = itemView.width
+            val currentHeight = itemView.height
+            var isMove = false
+            for (itemCow in userLineList){
+                val lineUseWidth = itemCow.width
+                if ((lineUseWidth + currentWidth + itemPaddingH) <= allWidth){
+                    itemCow.width = itemCow.width + itemPaddingH
+                    ViewAnimHelper.setMarginLeft(builder,itemCow.width,itemView)
+                    itemCow.height = max(itemCow.height,currentHeight)
+                    itemCow.width = itemCow.width + currentWidth
+                    itemCow.views.add(itemView)
+                    isMove = true
                     break
                 }
             }
-            if (isNewCow){
-                val viewList = ArrayList<View>()
-                animatorHashMap[animatorHashMap.size] = CowData(viewList,itemWidth,itemHeight)
+            if (!isMove) {
+                val itemViewList = ArrayList<View>()
+                itemViewList.add(itemView)
+                userLineList.add(CowData(itemViewList, currentWidth, currentHeight))
+                ViewAnimHelper.setMarginLeft(builder, 0, itemView)
             }
         }
-
-        val animatorSet = ViewAnimHelper.getAnimation()
-        val builder = ViewAnimHelper.getBuilder(animatorSet)
-
-        for (entries in animatorHashMap.entries){
-            val cowData = entries.value
-            var useWidth = 0
-            val currentCow = entries.key
-
-            var userHeight = itemPaddingV*currentCow
-
-            for (index in 0 until currentCow){
-                userHeight += (animatorHashMap[index]?.height ?: 0)
-            }
-
-            for ((index,itemView) in cowData.views.withIndex()){
-                val itemWidth = itemView.width
-                val itemHeight = itemView.height
-                ViewAnimHelper.setMarginLeft(builder,useWidth+itemPaddingH,itemView)
-                ViewAnimHelper.setMarginTop(builder,userHeight+ (cowData.height - itemHeight)/2,itemView)
-                useWidth += itemWidth + itemPaddingH
-            }
-        }
-        animatorSet.addListener(object :AppAnimatorListener(){
-            override fun onAnimationEnd(p0: Animator) {
-                super.onAnimationEnd(p0)
-                animationList.remove(animatorSet)
-                checkPositionHandler.removeCallbacksAndMessages(null)
-                checkPositionHandler.postDelayed(this@TagView,200)
-            }
-        })
-        animationList.add(animatorSet)
+        return userLineList
     }
 
-
-    private fun notifyItemSetChanged(index:Int):Boolean{
-        if (index < contentLayout.childCount){
-            val itemView = contentLayout.getChildAt(index)
-            for (notifyPosition in notifyPositionList){
-                if (notifyPosition == index){
-                    notifyPositionList.remove(notifyPosition)
-                    contentLayout.removeView(itemView)
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    private fun notifyDataSetChanged(){
-        val adapter = this.adapter?:return
-        synchronized(this){
-            for (index in 0 until adapter.getItemCount()){
-                val type = adapter.getItemViewType(index)
-                var holder = holderHashMap[index]?:adapter.onCreateViewHolder(this,type)
-                if (index < contentLayout.childCount){
-                    var isNew = notifyItemSetChanged(index)
-                    if (isNew) holder = adapter.onCreateViewHolder(this,type)
-                    adapter.onBindViewHolder(holder,index)
-                    if (isNew) addView(holder.itemView)
+    private fun startRow(builder:AnimatorSet.Builder?,cowList:MutableList<CowData>){
+        var userHeight = 0
+        for ((index,item) in cowList.withIndex()){
+            val lineHeight = item.height
+            for (view in item.views){
+                val itemHeight = view.height
+                if (itemHeight < lineHeight){
+                    ViewAnimHelper.setMarginTop(builder,userHeight + (lineHeight - itemHeight)/2,view)
                 }else{
-                    adapter.onBindViewHolder(holder,index)
-                    addView(holder.itemView)
+                    ViewAnimHelper.setMarginTop(builder,userHeight,view)
                 }
-                holderHashMap[index] = holder
             }
-            for (index in adapter.getItemCount() until contentLayout.childCount){
-                val itemView = contentLayout.getChildAt(index)
-                startRemoveAnim(itemView)
-            }
-            notifyPositionList.clear()
-            checkPositionHandler.removeCallbacksAndMessages(null)
-            checkPositionHandler.postDelayed(this,10)
+            userHeight += itemPaddingV+lineHeight
         }
     }
 
 
-    private fun addNotifyPosition(startPosition:Int,endPosition:Int){
-        synchronized(this){
-            notifyPositionList.clear()
-            for (index in startPosition.. endPosition){
-                notifyPositionList.add(index)
-            }
-        }
-        notifyDataSetChanged()
-    }
 
-    private fun notifyItemRemove(startPosition:Int,endPosition: Int){
-        val adapter = this.adapter?:return
-        synchronized(this){
-            for (index in startPosition.. endPosition){
-                if (index < contentLayout.childCount) {
-                    val itemView = contentLayout.getChildAt(index)
-                    startRemoveAnim(itemView)
-                }
-            }
-            val range = endPosition - startPosition
-            for (index in (adapter.getItemCount() + range - 1) until contentLayout.childCount){
-                val itemView = contentLayout.getChildAt(index)
-                startRemoveAnim(itemView)
-            }
-            notifyPositionList.clear()
-            checkPositionHandler.removeCallbacksAndMessages(null)
-            checkPositionHandler.postDelayed(this,100)
-        }
-    }
-
-    fun addHeadView(view:View) = headLayout.addView(view)
-
-    fun addFootView(view: View) = footLayout.addView(view)
-
-    fun removeHeadView(view: View) = startRemoveAnim(view)
-
-    fun removeFootView(view: View) = startRemoveAnim(view)
-
-    private fun startRemoveAnim(view: View){
-        if (view.parent is ViewGroup)return
-        val animation = ViewAnimHelper.getAnimation()
-        val builder = ViewAnimHelper.getBuilder(animation)
-        ViewAnimHelper.setHeight(builder,0,view)
-        ViewAnimHelper.setWidth(builder,0,view)
-        ViewAnimHelper.setMarginBottom(builder,0,view)
-        ViewAnimHelper.setMarginRight(builder,0,view)
-        ViewAnimHelper.setMarginLeft(builder,0,view)
-        ViewAnimHelper.setMarginTop(builder,0,view)
-        animation.addListener(object :AppAnimatorListener(){
-            override fun onAnimationEnd(p0: Animator) {
-                super.onAnimationEnd(p0)
-                val parent = view.parent
-                if (parent is ViewGroup){
-                    parent.removeView(view)
-                }
-                animationList.remove(animation)
-            }
-        })
-        animationList.add(animation)
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (w != oldw)startMoveAnimWithDelay()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        checkPositionHandler.removeCallbacksAndMessages(null)
-        for (animationSet in animationList)
-            ViewAnimHelper.cancel(animationSet)
-    }
-
-
-    abstract class TagAdapter {
-        var tagView:TagView?=null
-
-        abstract fun onCreateViewHolder(arent: ViewGroup, viewType: Int): TagViewHolder
-
-        abstract fun onBindViewHolder(holder: TagViewHolder, position: Int)
-
-        abstract fun getItemViewType(position: Int): Int
-
-        abstract fun getItemCount(): Int
-
-        fun notifyDataSetChanged() = tagView?.notifyDataSetChanged()
-
-        fun notifyDataSetChanged(startPosition:Int,endPosition:Int) = tagView?.addNotifyPosition(startPosition, endPosition)
-
-        fun notifyDataSetChangedRange(startPosition:Int,itemCount:Int) = notifyDataSetChanged(startPosition, startPosition+itemCount)
-
-        fun notifyDataSetChanged(startPosition:Int) = notifyDataSetChangedRange(startPosition, 1)
-
-        fun notifyItemRemove(startPosition:Int,endPosition:Int) = tagView?.notifyItemRemove(startPosition, endPosition)
-
-        fun notifyItemRemoveRange(startPosition:Int,itemCount:Int) = tagView?.notifyItemRemove(startPosition, itemCount+startPosition)
+        mainHandler.removeCallbacksAndMessages(null)
+        ViewAnimHelper.cancel(animatorSet)
     }
 
 
     data class CowData(val views:ArrayList<View>, var width:Int, var height:Int)
 
+    interface TagCreateListener<T>{
+        fun onCreateTag(view: TagView<T>,item:T):View
+    }
 }

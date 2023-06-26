@@ -69,7 +69,8 @@ class RoundBuild(private val view:View,private val attrs: AttributeSet? = null) 
     fun rightBottomRadius() = if (showRightBottomRound) rightBottomRadius.toFloat() else 0F
 
 
-    fun getViewMinSize() = min(view.width, view.height)
+    fun getViewMinSize() = min(view.width - view.paddingLeft - view.paddingRight, view.height - view.paddingTop - view.paddingBottom)
+    fun getViewMinAllSize() = min(view.width , view.height)
 
     /**
      * 获取圆角
@@ -87,11 +88,23 @@ class RoundBuild(private val view:View,private val attrs: AttributeSet? = null) 
      */
     fun getPath(stokeWidth:Float): Path {
         val path = Path()
+        val left = view.paddingLeft+stokeWidth/2
+        val top = view.paddingTop+stokeWidth/2
+
+        val right = view.width - (stokeWidth/2) - view.paddingRight
+        val bottom = view.height - (stokeWidth/2) - view.paddingBottom
+        val rectF = RectF(left,top, right, bottom)
+        path.addRoundRect(rectF,getCornerValue(), Path.Direction.CW)
+        return path
+    }
+
+    fun getAllPath(stokeWidth:Float): Path {
+        val path = Path()
         val left = stokeWidth/2
         val top = stokeWidth/2
 
-        val right = view.width - left
-        val bottom = view.height - top
+        val right = view.width - (stokeWidth/2)
+        val bottom = view.height - (stokeWidth/2)
         val rectF = RectF(left,top, right, bottom)
         path.addRoundRect(rectF,getCornerValue(), Path.Direction.CW)
         return path

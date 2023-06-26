@@ -16,6 +16,7 @@ import com.xy.base.R
 import com.xy.base.widget.viewpager.AppViewPagerChangeListener
 import com.xy.base.widget.viewpager.ViewPagerListenerImpl
 import kotlin.math.abs
+import kotlin.math.min
 
 /**
  * 指示器
@@ -106,7 +107,7 @@ class IndicatorView @JvmOverloads constructor(context: Context, attrs: Attribute
         this.suffixCount = suffixCount
         this.pageCount = pageCount
         val params = layoutParams ?: return
-        params.height = size
+        params.height = selectWidth
         params.width = space * (pageCount - 1) + selectWidth * 2
         layoutParams = params
         visibility = if (pageCount > 1) VISIBLE else GONE
@@ -148,21 +149,27 @@ class IndicatorView @JvmOverloads constructor(context: Context, attrs: Attribute
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val unSelectPoint = Paint(Paint.ANTI_ALIAS_FLAG)
-        unSelectPoint.color = unSelectColor
+        val minRadius = min(height/2,size/2).toFloat()
+        val maxRadius = min(height/2,selectWidth/2).toFloat()
         for (index in 0 until pageCount) {
             val allWidth = selectWidth + (size + space) * (pageCount -1)
             val startX =  width/2-allWidth/2
 
             val centerX = index * (space + size/2) + selectWidth/2+startX
             val centerY =  currentPoint.y.toFloat()
-            canvas.drawCircle(centerX.toFloat(), centerY, (size / 2).toFloat(), unSelectPoint)
+            unSelectPoint.color = if (index == selectPosition) selectColor else unSelectColor
+            val radius = if (index == selectPosition) maxRadius else minRadius
+            canvas.drawCircle(centerX.toFloat(), centerY, radius, unSelectPoint)
         }
+
+
         if (currentPoint.x > 0) {
             val selectPoint = Paint(Paint.ANTI_ALIAS_FLAG)
             selectPoint.color = selectColor
             val centerX = currentPoint.x.toFloat()
             val centerY = currentPoint.y.toFloat()
-            canvas.drawCircle(centerX, centerY, (selectWidth / 2).toFloat(), unSelectPoint)
+            unSelectPoint.color = selectColor
+            canvas.drawCircle(centerX, centerY, maxRadius, unSelectPoint)
         }
     }
 

@@ -7,4 +7,5 @@ interface SelectLocalMediaListener {
     fun onStartSelectMedia()
     fun onMediaClicked(mediaList:MutableList<LocalMedia>,clickedPosition:Int)
     fun onCreateIconView():ImageView?
+    fun onCreateMoreIconView():ImageView?
 }
