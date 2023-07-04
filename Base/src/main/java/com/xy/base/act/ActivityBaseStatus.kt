@@ -2,6 +2,7 @@ package com.xy.base.act
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.widget.ImageViewCompat
 import com.xy.base.R
 import com.xy.base.listener.ContextListener
+import com.xy.base.utils.exp.getResColor
 import com.xy.base.utils.exp.setOnClick
 
 /**
@@ -41,6 +44,8 @@ abstract class ActivityBaseStatus : ActivityBase(), ContextListener {
         }
     }
 
+    protected fun setBackImageTintList(colorList:ColorStateList) = setImageTintList(getBackImg(),colorList)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(rootView)
@@ -51,6 +56,7 @@ abstract class ActivityBaseStatus : ActivityBase(), ContextListener {
     open fun initView(savedInstanceState: Bundle?) {
         createView(titleLayoutRes(),titleFrameLayout)
         createView(contentLayoutRes(),contentFrameLayout)
+        startInitView(savedInstanceState)
     }
 
     /**
@@ -69,6 +75,8 @@ abstract class ActivityBaseStatus : ActivityBase(), ContextListener {
             onBackPressed()
         }
     }
+
+    open fun startInitView(savedInstanceState: Bundle?){}
 
     protected open fun onCreateRootRes():Int = R.layout.layout_xiu_layer_view
 

@@ -22,6 +22,7 @@ class LabelMoreView<T>@JvmOverloads  constructor(context: Context, attrs: Attrib
     private val dataList by lazy { ArrayList<T>() }
 
     init {
+        orientation = VERTICAL
         builder.init()
     }
 
@@ -40,7 +41,7 @@ class LabelMoreView<T>@JvmOverloads  constructor(context: Context, attrs: Attrib
                     childView?.layoutParams = layoutParams
                     childView?.setPadding(builder.paddingH,builder.paddingV,builder.paddingH,builder.paddingV)
                     if (clickedListener != null){
-                        childView?.setOnClick{
+                        childView?.setOnClickListener{
                             clickedListener?.onLabelClicked(childView,item)
                         }
                     }
@@ -56,12 +57,12 @@ class LabelMoreView<T>@JvmOverloads  constructor(context: Context, attrs: Attrib
             if (childCount > 0 ){
                 val lastLayout = getChildAt(childCount-1)
                 if (lastLayout is LinearLayout && lastLayout.childCount < builder.cowNumber){
-                    for (index in lastLayout.childCount .. builder.cowNumber){
+                    for (index in lastLayout.childCount until  builder.cowNumber){
                         val space = Space(context)
                         val layoutParams = LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,1F)
                         if (lastLayout.childCount>0) layoutParams.leftMargin = builder.spaceH
                         space.layoutParams = layoutParams
-                        addView(space)
+                        lastLayout.addView(space)
                     }
                 }
             }
@@ -78,7 +79,7 @@ class LabelMoreView<T>@JvmOverloads  constructor(context: Context, attrs: Attrib
         }
         val childView = LinearLayout(context)
         val params =  LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        if (this.childCount <= 0)
+        if (this.childCount > 0)
             params.topMargin = builder.spaceV
         childView.layoutParams = params
         this.addView(childView)

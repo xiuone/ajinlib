@@ -82,8 +82,7 @@ class CommonEmoView@JvmOverloads constructor(context: Context, attrs: AttributeS
      */
     fun bindRecentlyView(listener: CommonEmoRecentlyListener){
         recentlyListener = listener
-        mHeadRootView = LayoutInflater.from(context).inflate(listener.onCommonEmoRecentlyRes(),null)
-        adapter?.addHeadView(mHeadRootView)
+        adapter?.addHeadView(listener.onCommonEmoRecentlyRes())
         bindResetData(listener.onCommonContentView(mHeadRootView),getRecentlyData())
     }
 

@@ -66,7 +66,12 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
         createView(titleLayoutRes(),titleFrameLayout)
         createView(contentLayoutRes(),contentFrameLayout)
         titleFrameLayout.visibility = View.GONE
+        startInitView(savedInstanceState, rootView)
     }
+
+
+
+
 
     /**
      * 请求加载
@@ -98,6 +103,7 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
     override fun getPageContext(): Context? = context
     override fun getCurrentAct(): Activity? = activity
 
+    open fun startInitView(savedInstanceState: Bundle?, rootView: View?){}
     open fun registerKeyBoard():Boolean = false
     open fun setListener() {}
     @LayoutRes

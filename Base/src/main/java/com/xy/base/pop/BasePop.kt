@@ -22,6 +22,7 @@ abstract class BasePop(context: Context) : PopupWindow(context),PopupWindow.OnDi
         isOutsideTouchable = true
         this.width = ViewGroup.LayoutParams.WRAP_CONTENT
         this.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        contentView = rootView
         initView(context)
     }
 
@@ -35,7 +36,7 @@ abstract class BasePop(context: Context) : PopupWindow(context),PopupWindow.OnDi
             val itemHeight: Int = context.getResDimension(R.dimen.dp_88)
             val translateAnimation = TranslateAnimation(0F, 0F, (-itemHeight).toFloat(), 0F)
             translateAnimation.duration = 300
-            contentView.startAnimation(translateAnimation)
+            contentView?.startAnimation(translateAnimation)
         }
     }
 

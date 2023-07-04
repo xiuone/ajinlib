@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.view.View
 import com.xy.base.widget.recycler.holder.BaseViewHolder
 import com.xy.base.widget.recycler.listener.*
+import kotlin.math.max
 import kotlin.math.min
 
 abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>(){
     protected val VIEW_TYPE_SPACE = 1
     protected val VIEW_TYPE_CONTENT = 2
-
+    private val implList by lazy { ArrayList<ItemHeadFootListener>() }
 
     val data :ArrayList<T> by lazy { ArrayList() }
 
@@ -70,11 +71,13 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
 
     open fun setNewData(data: MutableList<T>?){
         synchronized(this){
+            val oldAll = this.data.size
             this.data.clear()
             data?.run {
                 this@RecyclerBaseAdapter.data.addAll(this)
             }
-            notifyDataSetChanged()
+
+            notifyItemRangeChanged(getHeadSize(), max(oldAll,this.data.size))
         }
     }
 
@@ -83,9 +86,9 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
             if (this.data.size<=0) {
                 setNewData(data)
             }else if (data != null){
-                val start: Int = this.data.size
+                val start: Int = this.data.size+getHeadSize()
                 this@RecyclerBaseAdapter.data.addAll(data)
-                notifyItemRangeChanged(start, this.data.size)
+                notifyItemRangeChanged(start, this.data.size+getHeadSize())
             }
         }
     }
@@ -93,17 +96,9 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
 
 
     fun addItem(data: T){
-        synchronized(this){
-            if (this.data.size<=0) {
-                val list = ArrayList<T>()
-                list.add(data)
-                setNewData(list)
-            }else if (data != null){
-                val start: Int = this.data.size
-                this@RecyclerBaseAdapter.data.add(data)
-                notifyItemRangeChanged(start, this.data.size)
-            }
-        }
+        val list = ArrayList<T>()
+        list.add(data)
+        addData(list)
     }
 
     fun addItem(data: T,position: Int){
@@ -112,7 +107,7 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
                 addItem(data)
             }else{
                 this@RecyclerBaseAdapter.data.add(position,data)
-                notifyItemRangeChanged(heardMap.size+position, heardMap.size+this.data.size)
+                notifyItemRangeChanged(getHeadSize()+position, getHeadSize()+this.data.size)
             }
         }
 
@@ -124,8 +119,8 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
             var item: T? = null
             if (position < this.data.size) {
                 item = data.removeAt(position)
-                notifyItemRemoved(position+heardMap.size)
-                notifyItemRangeChanged(heardMap.size+position, heardMap.size+this.data.size - position)
+                notifyItemRemoved(position+getHeadSize())
+                notifyItemRangeChanged(getHeadSize()+position, getHeadSize()+this.data.size - position)
             }
             if (this.data.size<0){
                 notifyDataSetChanged()
@@ -141,8 +136,8 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
                 for (i in last downTo index) {
                     data.removeAt(i)
                 }
-                notifyItemRangeRemoved(heardMap.size+index, count)
-                notifyItemRangeChanged(heardMap.size+index, heardMap.size+data.size - index)
+                notifyItemRangeRemoved(getHeadSize() + index, count)
+                notifyItemRangeChanged(getHeadSize() + index, getHeadSize() + data.size - index)
                 if (this.data.size<0){
                     notifyDataSetChanged()
                 }
@@ -155,8 +150,9 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onItemBindViewHolder(holder: BaseViewHolder, position: Int) {
-        if (position< data.size) {
-            val data = data[position]
+        val newPosition = position - getHeadSize()
+        if (newPosition< data.size) {
+            val data = data[newPosition]
             if (itemClickListener != null) {
                 holder.itemView.setOnClickListener {
                     itemClickListener?.onItemClick(it,data, holder)
@@ -199,4 +195,38 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
 
     abstract fun onBindViewHolder(holder: BaseViewHolder, data:T, position: Int)
 
+
+
+
+    fun bindHeadFootImpl(listener:ItemHeadFootListener){
+        synchronized(this){
+            implList.add(listener)
+            listener.addHeadOrFoot(this)
+        }
+    }
+
+    override fun onItemBindHeadViewHolder(holder: BaseViewHolder, res: Int, position: Int) {
+        super.onItemBindHeadViewHolder(holder, res, position)
+        synchronized(this){
+            for (listener in implList){
+                if (listener.onItemBindHeadViewHolder(holder,res, position))
+                    return@synchronized
+            }
+        }
+    }
+
+    override fun onItemBindFootViewHolder(holder: BaseViewHolder, res: Int, position: Int) {
+        super.onItemBindFootViewHolder(holder, res, position)
+        synchronized(this){
+            for (listener in implList){
+                if (listener.onItemBindHeadViewHolder(holder,res, position))
+                    return@synchronized
+            }
+        }
+    }
+
+    interface ItemHeadFootListener{
+        fun onItemBindHeadViewHolder(holder: BaseViewHolder, res: Int, position: Int):Boolean
+        fun addHeadOrFoot(adapter:RecyclerBaseAdapter<*>)
+    }
 }

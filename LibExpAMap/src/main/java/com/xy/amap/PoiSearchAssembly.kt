@@ -58,7 +58,7 @@ class PoiSearchAssembly(view: PoiSearchAssemblyView): MapBaseAssembly<PoiSearchA
 
     fun checkEmpty(){
         if (adapter?.data.isNullOrEmpty()){
-            adapter?.emptyView = this.view?.onCreateEmptyView()
+            adapter?.emptyRes = this.view?.onCreateEmptyRes()
         }
     }
 
@@ -67,7 +67,7 @@ class PoiSearchAssembly(view: PoiSearchAssemblyView): MapBaseAssembly<PoiSearchA
     interface PoiSearchAssemblyView :MapBaseAssemblyView {
         fun onCreateRecyclerView(): RecyclerView?
         fun onCreateAdapter(): RecyclerBaseAdapter<PoiItem>?
-        fun onCreateEmptyView():View?
+        fun onCreateEmptyRes():Int?
         fun onPoiSearched(page:Int,size:Int)
     }
 }

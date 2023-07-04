@@ -1,5 +1,6 @@
 package com.xy.base.widget.recycler.adapter
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
@@ -7,42 +8,23 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.xy.base.utils.Logger
 import com.xy.base.utils.exp.getSpace
+import com.xy.base.utils.exp.removeParent
 import com.xy.base.widget.recycler.holder.BaseViewHolder
 import kotlin.math.abs
 
 abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>() {
-    //最大的头部数量
-    private val maxHeadSize = 10000
     //空数据的时候
-    private val emptyType = -100001
-    //最大的底部数量
-    private val maxFootSize = 10001
+    private val emptyType = -Int.MAX_VALUE
     //头头
-    internal val heardMap :HashMap<Int,View> by lazy {  HashMap() }
+    val heardData by lazy { ArrayList<Int>() }
     //脚脚
-    private val footMap :HashMap<Int,View> by lazy { HashMap() }
+    val footData by lazy { ArrayList<Int>() }
     
-    fun getHeadSize() = heardMap.size
+    fun getHeadSize() = heardData.size
     
-    fun getFootSize() = footMap.size
+    fun getFootSize() = footData.size
 
-    var showHaveHeadEmpty:Boolean = true
-        set(value) {
-            field = value
-            if (onItemContentCount() == 0) {
-                notifyDataSetChanged()
-            }
-        }
-
-    var showHaveFootEmpty:Boolean = true
-        set(value) {
-            field = value
-            if (onItemContentCount() == 0) {
-                notifyDataSetChanged()
-            }
-        }
-
-    var emptyView :View?=null
+    var emptyRes :Int?=null
         set(value) {
             if (field == value)return
             field = value
@@ -55,28 +37,16 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     /**
      * 添加头部
      */
-    fun addHeadView(view: View?){
-        if (view == null){
-            Logger.e("headView not null")
-            return
-        }
-        if (getHeadSize() >= maxHeadSize){
-            Logger.e("headView is Max")
-            return
-        }
-        heardMap[-getHeadSize()] = view
+    fun addHeadView(resId: Int){
+        heardData.add(resId)
         notifyItemInserted(getHeadSize())
     }
 
-    fun removeHeadView(view: View?){
-        if (view == null){
-            Logger.e("headView not null")
-            return
-        }
-        for ((key, value) in heardMap) {
-            if (value == view){
-                heardMap.remove(key)
-                notifyItemRemoved(abs(key))
+    fun removeHeadView(resId: Int){
+        for ((index, value) in heardData.withIndex()) {
+            if (value == resId){
+                heardData.remove(resId)
+                notifyItemRemoved(index)
                 return
             }
         }
@@ -86,30 +56,20 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     /**
      * 添加脚脚
      */
-    fun addFootView(view :View?){
-        if (view == null){
-            Logger.e("footView not null")
-            return
-        }
-        if (getFootSize() >= maxFootSize){
-            Logger.e("footView is Max")
-            return
-        }
-        footMap[-getFootSize() + emptyType -1] = view
+    fun addFootView(resId: Int){
+        footData.add(resId)
         notifyItemChanged(itemCount)
     }
 
 
-    fun removeFootView(view: View?){
-        if (view == null){ 
-            Logger.e("footView not null")
-            return
-        }
-        for ((key, value) in footMap) {
-            if (value == view){
-                footMap.remove(key)
-                notifyItemRemoved(abs(key - emptyType +1) + getHeadSize() + (if (showEmpty()) 1 else onItemContentCount()))
-                return
+    fun removeFootView(resId: Int){
+        synchronized(this){
+            for ((index, value) in footData.withIndex()) {
+                if (value == resId){
+                    heardData.remove(resId)
+                    notifyItemRemoved(index+getHeadSize()+onItemContentCount())
+                    return
+                }
             }
         }
         Logger.e("footView not find")
@@ -119,54 +79,59 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
 
 
     private fun showEmpty():Boolean{
-        var count = getHeadSize()+getFootSize()
-        return emptyView != null && (showHaveFootEmpty || showHaveHeadEmpty || count == 0) && onItemContentCount()<=0
+        return emptyRes != null && onItemContentCount()<=0
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        var view:View?=null
-        if (viewType <= 0){
-            if (viewType == emptyType && emptyView != null)
-                view = emptyView
-            if (view == null && getHeadSize() >0){
-                view = heardMap[viewType]
+        val context = parent.context
+        if (viewType < 0){
+            if (viewType == emptyType){
+                val emptyRes = emptyRes ?: return BaseViewHolder(context.getSpace())
+                return BaseViewHolder(LayoutInflater.from(context).inflate(emptyRes,parent,false))
             }
-            if (view == null && getFootSize() > 0 ){
-                view = footMap[viewType]
+            var position = abs(viewType) - 1
+            if (position in  0 until getHeadSize()){
+                return BaseViewHolder(LayoutInflater.from(context).inflate(heardData[position],parent,false))
             }
-            if (view == null)
-                view = parent.context.getSpace()
-            return BaseViewHolder(view)
+            val footPosition = position - getHeadSize()
+            if (footPosition in  0 until getFootSize()){
+                return BaseViewHolder(LayoutInflater.from(context).inflate(footData[footPosition],parent,false))
+            }
+            return BaseViewHolder(context.getSpace())
         }
         return onItemCreateViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        if (position >= getHeadSize() && !showEmpty() && position < (getHeadSize() + onItemContentCount())){
-            onItemBindViewHolder(holder,position - getHeadSize())
+        if (position < getHeadSize()){
+            onItemBindHeadViewHolder(holder,heardData[position],position)
+        }else if (position == getHeadSize() && showEmpty()){
+            onItemBindEmptyViewHolder(holder,position)
+        }else if (position >= getHeadSize() && !showEmpty() && position < (getHeadSize() + onItemContentCount())){
+            onItemBindViewHolder(holder,position)
+        }else {
+            val footPosition = position - getHeadSize() - onItemShowContentCount()
+            if (footPosition < footData.size){
+                onItemBindFootViewHolder(holder,footData[footPosition],position)
+            }
         }
     }
 
 
     override fun getItemViewType(position: Int): Int {
         if (position < getHeadSize()){
-            return -position
+            return -position-1
         }else if (showEmpty() && position == getHeadSize()){
             return emptyType
         }else if (position < (getHeadSize() + onItemContentCount())){
             return  onItemViewType(position-getHeadSize())
         }
-        return emptyType -1 - (position - getHeadSize() - (if (showEmpty()) 1 else onItemContentCount()))
+        val contentCount = if (showEmpty()) 1 else onItemContentCount()
+        return contentCount - position -1
     }
 
-    override fun getItemCount(): Int {
-        var count = getHeadSize()+getFootSize()
-        if (showEmpty()){
-            return count + 1
-        }
-        return count + onItemContentCount()
-    }
+    override fun getItemCount(): Int = getHeadSize()+getFootSize() + onItemShowContentCount()
 
 
     /**
@@ -195,8 +160,12 @@ abstract class RecyclerAdapterWrapper<T> : RecyclerView.Adapter<BaseViewHolder>(
     }
     
     
+    private fun onItemShowContentCount():Int = if (showEmpty()) 1 else onItemContentCount()
     abstract fun onItemContentCount():Int
     abstract fun onItemBindViewHolder(holder: BaseViewHolder, position: Int)
+    open fun onItemBindHeadViewHolder(holder: BaseViewHolder, res: Int,position:Int){}
+    open fun onItemBindEmptyViewHolder(holder: BaseViewHolder,position:Int){}
+    open fun onItemBindFootViewHolder(holder: BaseViewHolder, res: Int,position:Int){}
     abstract fun onItemViewType(position: Int):Int
     abstract fun onItemCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder
 }

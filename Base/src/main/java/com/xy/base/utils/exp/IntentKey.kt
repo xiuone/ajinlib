@@ -164,11 +164,16 @@ fun Bundle?.putIdLong(string: Long):Bundle?{
     this?.putLong(id,string)
     return this
 }
+fun Bundle?.putId2Str(value: String?):Bundle?{
+    this?.putString(id2,value)
+    return this
+}
 
 fun Intent?.getIdStr():String? = this?.getStringExtra(id)
 fun Intent?.getId2Str():String? = this?.getStringExtra(id2)
 fun Intent?.getIdLong(def:Long = 0):Long = this?.getLongExtra(id,def)?:def
 fun Bundle?.getIdLong(def: Long = 0):Long = this?.getLong(id,def)?:def
+fun Bundle?.getId2Str(def: String? = null):String? = this?.getString(id2,def)?:def
 
 
 /**
@@ -256,11 +261,11 @@ fun Intent?.putStatusBoolean(value: Boolean):Intent?{
     return this
 }
 fun Bundle?.putStatusBoolean(value: Boolean):Bundle?{
-    this?.putBoolean(tag,value)
+    this?.putBoolean(status,value)
     return this
 }
-fun Intent?.getStatusBoolean(def:Boolean = false):Boolean = this?.getBooleanExtra(position,def)?:def
-fun Bundle?.getStatusBoolean(def:Boolean = false):Boolean = this?.getBoolean(position,def)?:def
+fun Intent?.getStatusBoolean(def:Boolean = false):Boolean = this?.getBooleanExtra(status,def)?:def
+fun Bundle?.getStatusBoolean(def:Boolean = false):Boolean = this?.getBoolean(status,def)?:def
 
 
 fun Intent?.putUrl(value: String?):Intent?{

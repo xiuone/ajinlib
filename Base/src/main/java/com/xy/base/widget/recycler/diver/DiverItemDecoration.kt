@@ -59,7 +59,7 @@ open class DiverItemDecoration(verticalColor: Int = 0X00FFFFFF,val verticalHeigh
     }
 
     private fun getCurrentPosition(index:Int,adapter:RecyclerView.Adapter<*>):Int{
-        val headSize = if (adapter is RecyclerAdapterWrapper<*>) adapter.heardMap.size else 0
+        val headSize = if (adapter is RecyclerAdapterWrapper<*>) adapter.getHeadSize() else 0
         return index - headSize
     }
 }

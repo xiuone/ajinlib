@@ -7,60 +7,61 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.xy.base.R
-import java.lang.Exception
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+
 class MoneyEditView (context: Context, attrs: AttributeSet): AppCompatEditText(context,attrs) , InputFilter {
-    private var decimalLength:Int = 2
-    private var maxNumber = Double.MAX_VALUE
+    private var POINTER_LENGTH:Int = 2
+    private var MAX_VALUE = Double.MAX_VALUE
+    private val POINTER by lazy { "." }
+    private val ZERO by lazy { "0" }
     private val pattern: Pattern by lazy { Pattern.compile("([0-9]|\\.)*") }
+
     init {
         val array = context.obtainStyledAttributes(attrs, R.styleable.MoneyEditView)
-        decimalLength = array.getInt(R.styleable.MoneyEditView_decimal_length,2)
+        POINTER_LENGTH = array.getInt(R.styleable.MoneyEditView_decimal_length,2)
         array.recycle()
+        filters = arrayOf(this)
     }
 
 
     override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence {
-        if (source == null)return ""
-        val oldest = dest.toString()
-        if ("" == source.toString()) {
-            return ""
+        val sourceText = source?.toString()?:""
+        val destText = dest?.toString()?:""
+
+        if (TextUtils.isEmpty(sourceText)) {
+            return "";
         }
-        val m: Matcher = pattern.matcher(source)
-        if (oldest.contains(".")) {
-            if (!m.matches()) {//已经存在小数点的情况下，只能输入数字
-                return ""
+        val matcher: Matcher = pattern.matcher(source)
+        if(destText.contains(POINTER)) {//已经输入小数点的情况下，只能输入数字
+            if (!matcher.matches() || POINTER == source.toString()) {
+                return "";
             }
-        } else {
-            if (!m.matches()) {//已经存在小数点的情况下，只能输入数字
-                return ""
-            } else {
-                if ("0" == source && "0" == oldest) {
-                    return ""
-                }
+            //验证小数点精度，保证小数点后只能输入两位
+            val index = destText.indexOf(POINTER);
+            val length = dend - index;
+            if (length > POINTER_LENGTH) {
+                return dest?.subSequence(dstart, dend)?:""
             }
-            if ("." == source && TextUtils.isEmpty(oldest)) {
-                return ""
+        }else {
+            val isStartPointer = (POINTER == source.toString()) && TextUtils.isEmpty(destText)
+            val isStartPointer2 = POINTER != source.toString() && ZERO == destText
+            if (!matcher.matches() || isStartPointer || isStartPointer2) {
+                return "";
             }
+        }
+        val sumText = "$destText$sourceText".toDouble()
+        if (sumText > MAX_VALUE) {
+            return dest?.subSequence(dstart, dend)?:""
         }
 
-        //验证小数位精度是否正确
-        if (oldest.contains(".")) {
-            val index = oldest.indexOf(".")
-            val len = dend - index
-            //小数位只能2位
-            if (len > decimalLength) {
-                return dest!!.subSequence(dstart, dend)
-            }
-        }
-        return "${dest?.subSequence(dstart, dend)}$source.toString()"
+        return "${dest?.subSequence(dstart, dend)}$sourceText";
     }
 
 
     fun setMaxNumber(maxNumber:Double){
-        this.maxNumber = maxNumber
+        this.MAX_VALUE = maxNumber
         var currentNumber = text.toString()
         if (!TextUtils.isEmpty(currentNumber)){
             try {

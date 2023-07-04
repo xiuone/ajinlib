@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.xy.base.R
 import com.xy.base.utils.Logger
 import com.xy.base.utils.runMain
 import java.io.File
@@ -225,7 +226,7 @@ fun Context.getScreenAndStatusHeight(): Int {
 /**
  * 获取站位图
  */
-fun Context.getSpace(): View = getSpace(dp2px(20F))
+fun Context.getSpace(): View = getSpace(R.dimen.dp_20)
 
 fun Context.getSpace(@DimenRes heightRes: Int): View {
     val space = Space(this)

@@ -35,6 +35,10 @@ fun Float.keepTwoDecimals(): String {
 fun Double.keepTwoDecimals(): String {
     return String.format("%.2f", this)
 }
+fun String.keepTwoDecimals(): String {
+    if (this.isNullOrEmpty())return this
+    return String.format("%.2f", this.toDouble())
+}
 
 /**
  * 将时间戳转换为时间

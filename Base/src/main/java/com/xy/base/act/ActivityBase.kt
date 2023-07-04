@@ -3,24 +3,29 @@ package com.xy.base.act
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.RectF
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleObserver
+import com.xy.base.R
 import com.xy.base.assembly.BaseAssemblyImpl
 import com.xy.base.assembly.base.BaseAssembly
 import com.xy.base.assembly.base.BaseAssemblyView
 import com.xy.base.listener.OpenPageListener
 import com.xy.base.utils.Logger
 import com.xy.base.utils.config.ConfigController
+import com.xy.base.utils.exp.getResColor
 import com.xy.base.utils.exp.getViewPosRect
 import com.xy.base.utils.exp.startAppActivity
 import com.xy.base.utils.permission.PermissionDialogDenied
@@ -50,6 +55,13 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         super.onCreate(savedInstanceState)
         configController.checkChangeConfig(this)
         registerLaunch(ACTIVITY_BASE_LAUNCH,this)
+    }
+
+
+    protected fun setImageTintList(imageView: ImageView?,colorList: ColorStateList){
+        imageView?.run {
+            ImageViewCompat.setImageTintList(this, colorList)
+        }
     }
 
     protected open fun  addAssembly(vararg assemblyList: BaseAssembly<*>) {
