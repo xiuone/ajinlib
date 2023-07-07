@@ -54,6 +54,8 @@ class RandomLayout @JvmOverloads constructor(context: Context, attrs: AttributeS
             if (!intersects){
                 changeViewPosition(changeView,createX,createY)
                 return
+            }else{
+                changeView.visibility = View.INVISIBLE
             }
         }
         Logger.d(TAG,"寻找10次还没找到要添加的位置，等一下了再添加")
@@ -63,6 +65,7 @@ class RandomLayout @JvmOverloads constructor(context: Context, attrs: AttributeS
     private fun changeViewPosition(childView:View,createX:Int,createY:Int){
         runMain({
             Logger.d(TAG,"修改位置")
+            childView.visibility = View.VISIBLE
             childView.x = createX.toFloat()
             childView.y = createY.toFloat()
         })

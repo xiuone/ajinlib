@@ -2,6 +2,7 @@ package com.xy.base.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.widget.ImageViewCompat
 import com.xy.base.R
 import com.xy.base.listener.ContextListener
 import com.xy.base.utils.exp.setBar
@@ -87,6 +89,15 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
     fun setBack(view: View?){
         view?.setOnClick {
             activity?.onBackPressed()
+        }
+    }
+
+
+    protected fun setBackImageTintList(colorList: ColorStateList) = setImageTintList(getBackImg(),colorList)
+
+    protected fun setImageTintList(imageView: ImageView?,colorList: ColorStateList){
+        imageView?.run {
+            ImageViewCompat.setImageTintList(this, colorList)
         }
     }
 

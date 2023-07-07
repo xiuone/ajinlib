@@ -31,7 +31,7 @@ open class NaviView<T: NaviListener> @JvmOverloads constructor(context: Context,
         textView?.text = item.titleStr()
         this.addView(view)
         view.setOnClick{
-            if (clickListener?.onClickedNavi(index,item) == true){
+            if (clickListener?.onClickedNavi(it,index,item) == true){
                 resetSelectStatus(index)
             }
         }

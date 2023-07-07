@@ -71,9 +71,11 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
         if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
             for (assembly in assemblyList){
-                lifecycle.addObserver(assembly)
-                assembly.onCreateInit()
-                this.assemblyList.add(assembly)
+                if (!this.assemblyList.contains(assembly)) {
+                    lifecycle.addObserver(assembly)
+                    assembly.onCreateInit()
+                    this.assemblyList.add(assembly)
+                }
             }
         }
     }

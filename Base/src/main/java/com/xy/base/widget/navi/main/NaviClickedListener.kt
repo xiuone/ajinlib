@@ -1,5 +1,7 @@
 package com.xy.base.widget.navi.main
 
+import android.view.View
+
 interface NaviClickedListener<T> {
-    fun onClickedNavi(position:Int,item:T):Boolean
+    fun onClickedNavi(view:View,position:Int,item:T):Boolean
 }
