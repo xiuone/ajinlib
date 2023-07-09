@@ -1,11 +1,11 @@
 package com.xy.base.assembly.common.lauch
 
 import android.view.View
-import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.assembly.base.BaseAssemblyWithContext
 import com.xy.base.utils.exp.*
 import com.xy.base.utils.lift.ActivityController
 
-class CommonLaunchAssembly(view: CommonLaunchAssemblyView) : BaseAssembly<CommonLaunchAssemblyView>(view) {
+class CommonLaunchAssembly(view: CommonLaunchAssemblyView) : BaseAssemblyWithContext<CommonLaunchAssemblyView>(view) {
     private val launchPrivacyKey = "LaunchPrivacyKey"
 
     private val agreeButtonView by lazy { this.view?.agreeButtonView() }

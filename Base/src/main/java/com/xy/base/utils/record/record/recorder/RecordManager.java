@@ -4,12 +4,12 @@ package com.xy.base.utils.record.record.recorder;
 import android.annotation.SuppressLint;
 import android.app.Application;
 
+import com.xy.base.utils.Logger;
 import com.xy.base.utils.record.record.recorder.listener.RecordDataListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordFftDataListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordResultListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordSoundSizeListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordStateListener;
-import com.xy.base.utils.record.record.recorder.utils.Logger;
 
 
 /**
@@ -43,15 +43,14 @@ public class RecordManager {
      */
     public void init(Application application, boolean showLog) {
         this.context = application;
-        Logger.IsDebug = showLog;
     }
 
     public void start() {
         if (context == null) {
-            Logger.e(TAG, "未进行初始化");
+            Logger.INSTANCE.e(TAG, "未进行初始化");
             return;
         }
-        Logger.i(TAG, "start...");
+        Logger.INSTANCE.i(TAG, "start...");
         RecordService.startRecording(context);
     }
 

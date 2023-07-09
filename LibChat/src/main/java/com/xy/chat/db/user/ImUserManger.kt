@@ -50,7 +50,7 @@ class ImUserManger : ImUserNotify(){
     /**
      * 更新备注
      */
-    fun updateAlias(form:String?,to:String?,name:String){
+    fun updateAlias(form:String?,to:String?,name:String?){
         if (form.isNullOrEmpty() || to.isNullOrEmpty() || name.isNullOrEmpty())return
         val userAlias = getImUserAlias(form, to)
         val newImUserAlias = ImUserAlias()

@@ -2,9 +2,9 @@ package com.xy.base.utils.record.record.recorder.mp3;
 
 
 
+import com.xy.base.utils.Logger;
 import com.xy.base.utils.record.record.recorder.RecordConfig;
 import com.xy.base.utils.record.record.recorder.RecordService;
-import com.xy.base.utils.record.record.recorder.utils.Logger;
 import com.xy.base.utils.record.Mp3Encoder;
 
 import java.io.File;
@@ -42,8 +42,8 @@ public class Mp3EncodeThread extends Thread {
         RecordConfig currentConfig = RecordService.getCurrentConfig();
         int sampleRate = currentConfig.getSampleRate();
 
-        Logger.w(TAG, "in_sampleRate:%s，getChannelCount:%s ，out_sampleRate：%s 位宽： %s,",
-                sampleRate, currentConfig.getChannelCount(), sampleRate, currentConfig.getRealEncoding());
+        Logger.INSTANCE.w(TAG, String.format("in_sampleRate:%s，getChannelCount:%s ，out_sampleRate：%s 位宽： %s,"
+                , sampleRate, currentConfig.getChannelCount(), sampleRate, currentConfig.getRealEncoding()));
         Mp3Encoder.init(sampleRate, currentConfig.getChannelCount(), sampleRate, currentConfig.getRealEncoding());
     }
 
@@ -52,13 +52,13 @@ public class Mp3EncodeThread extends Thread {
         try {
             this.os = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
-            Logger.e(e, TAG, e.getMessage());
+            Logger.INSTANCE.e( TAG, e.getMessage());
             return;
         }
 
         while (start) {
             ChangeBuffer next = next();
-            Logger.v(TAG, "处理数据：%s", next == null ? "null" : next.getReadSize());
+            Logger.INSTANCE.v(TAG, "处理数据：%s"+( next == null ? "null" : next.getReadSize()));
             lameData(next);
         }
     }
@@ -91,7 +91,7 @@ public class Mp3EncodeThread extends Thread {
                         wait();
                     }
                 } catch (Exception e) {
-                    Logger.e(e, TAG, e.getMessage());
+                    Logger.INSTANCE.e( TAG, e.getMessage());
                 }
             } else {
                 return cacheBufferList.remove(0);
@@ -108,12 +108,12 @@ public class Mp3EncodeThread extends Thread {
         if (readSize > 0) {
             int encodedSize = Mp3Encoder.encode(buffer, buffer, readSize, mp3Buffer);
             if (encodedSize < 0) {
-                Logger.e(TAG, "Lame encoded size: " + encodedSize);
+                Logger.INSTANCE.e(TAG, "Lame encoded size: " + encodedSize);
             }
             try {
                 os.write(mp3Buffer, 0, encodedSize);
             } catch (IOException e) {
-                Logger.e(e, TAG, "Unable to write to file");
+                Logger.INSTANCE.e( TAG, "Unable to write to file");
             }
         }
     }
@@ -126,10 +126,10 @@ public class Mp3EncodeThread extends Thread {
                 os.write(mp3Buffer, 0, flushResult);
                 os.close();
             } catch (final IOException e) {
-                Logger.e(TAG, e.getMessage());
+                Logger.INSTANCE.e(TAG, e.getMessage());
             }
         }
-        Logger.d(TAG, "转换结束 :%s", file.length());
+        Logger.INSTANCE.d(TAG, "转换结束 "+ file.length());
         if (encordFinishListener != null) {
             encordFinishListener.onFinish();
         }

@@ -2,12 +2,12 @@ package com.xy.base.assembly.readly
 
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.listener.LoadViewListener
 import com.xy.base.utils.exp.setOnClick
 
-abstract class BaseAssemblyLoadReadly<T: BaseAssemblyView>(view: T, private var loadViewListener: LoadViewListener?): BaseAssembly<T>(view){
+abstract class BaseAssemblyLoadReadly<T: BaseAssemblyViewWithContext>(view: T, private var loadViewListener: LoadViewListener?): BaseAssemblyWithContext<T>(view){
 
     override fun onCreateInit() {
         super.onCreateInit()

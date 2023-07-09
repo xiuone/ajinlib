@@ -8,35 +8,21 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.utils.config.ConfigController
 import com.xy.base.act.ActivityBaseStatusBar
 import com.xy.base.act.ActivityBase
 import com.xy.base.assembly.BaseAssemblyImpl
 import com.xy.base.listener.OpenPageListener
-import com.xy.base.utils.permission.PermissionDialogDenied
-import com.xy.base.utils.permission.PermissionDialogReason
-import com.xy.base.utils.permission.PermissionUiListener
 
-abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>,OpenPageListener,
-    PermissionDialogReason.ReasonUiListener,PermissionDialogDenied.DeniedUiListener,PermissionUiListener {
+abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>,OpenPageListener{
     protected val TAG by lazy { this::class.java.name }
     private val FRAGMENT_BASE_LAUNCH:String = "FRAGMENT:BASE:LAUNCH:"
     private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     private val configController by lazy { ConfigController(::needReCreate) }
-    protected val permissionDialogReason by lazy { context.run {
-        if (this == null) null else PermissionDialogReason(this,this@FragmentBase)
-    } }
-    protected val permissionDialogDenied by lazy {
-        context.run { if (this == null) null else PermissionDialogDenied(this,this@FragmentBase)
-        } }
-    private val assemblyList by lazy { ArrayList<BaseAssembly<*>>() }
 
-
-    override fun onCreatePermissionDenied(): PermissionDialogDenied? = permissionDialogDenied
-
-    override fun onCreatePermissionReason(): PermissionDialogReason?  = permissionDialogReason
+    private val assemblyList by lazy { ArrayList<BaseAssemblyWithContext<*>>() }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,11 +53,11 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
     protected open fun needReCreate(){}
 
 
-    protected open fun addAssembly(vararg assemblyList: BaseAssembly<*>) {
+    protected open fun addAssembly(vararg assemblyList: BaseAssemblyWithContext<*>?) {
         if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
             for (assembly in assemblyList){
-                if (!this.assemblyList.contains(assembly)) {
+                if (assembly != null && !this.assemblyList.contains(assembly)) {
                     lifecycle.addObserver(assembly)
                     assembly.onCreateInit()
                     this.assemblyList.add(assembly)
@@ -88,7 +74,7 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
         }
     }
 
-    protected open fun <T: BaseAssemblyView> addAssembly(savedInstanceState : Bundle?,vararg assemblyList: BaseAssembly<*>) {
+    protected open fun <T: BaseAssemblyViewWithContext> addAssembly(savedInstanceState : Bundle?, vararg assemblyList: BaseAssemblyWithContext<*>) {
         if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
             for (assembly in assemblyList){

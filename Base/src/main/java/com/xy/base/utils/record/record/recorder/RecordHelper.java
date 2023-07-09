@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 
+import com.xy.base.utils.Logger;
 import com.xy.base.utils.record.record.recorder.fftlib.FftFactory;
 import com.xy.base.utils.record.record.recorder.listener.RecordDataListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordFftDataListener;
@@ -15,7 +16,6 @@ import com.xy.base.utils.record.record.recorder.listener.RecordResultListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordSoundSizeListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordStateListener;
 import com.xy.base.utils.record.record.recorder.mp3.Mp3EncodeThread;
-import com.xy.base.utils.record.record.recorder.utils.Logger;
 import com.xy.base.utils.record.record.recorder.wav.WavUtils;
 import com.xy.base.utils.record.record.utils.ByteUtils;
 import com.xy.base.utils.record.record.utils.FileUtils;
@@ -96,16 +96,16 @@ public class RecordHelper {
     public void start(String filePath, RecordConfig config) {
         this.currentConfig = config;
         if (state != RecordState.IDLE && state != RecordState.STOP) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Logger.INSTANCE.e(TAG, "状态异常当前状态： ${state.name()}");
             return;
         }
         resultFile = new File(filePath);
         String tempFilePath = getTempFilePath();
 
-        Logger.d(TAG, "----------------开始录制 %s------------------------", currentConfig.getFormat().name());
-        Logger.d(TAG, "参数： %s", currentConfig.toString());
-        Logger.i(TAG, "pcm缓存 tmpFile: %s", tempFilePath);
-        Logger.i(TAG, "录音文件 resultFile: %s", filePath);
+        Logger.INSTANCE.d(TAG, "----------------开始录制 %s------------------------"+ currentConfig.getFormat().name());
+        Logger.INSTANCE.d(TAG, "参数： "+ currentConfig.toString());
+        Logger.INSTANCE.i(TAG, "pcm缓存 tmpFile: "+ tempFilePath);
+        Logger.INSTANCE.i(TAG, "录音文件 resultFile: "+ filePath);
 
 
         tmpFile = new File(tempFilePath);
@@ -115,7 +115,7 @@ public class RecordHelper {
 
     public void stop() {
         if (state == RecordState.IDLE) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Logger.INSTANCE.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
 
@@ -132,7 +132,7 @@ public class RecordHelper {
 
     void pause() {
         if (state != RecordState.RECORDING) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Logger.INSTANCE.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
         state = RecordState.PAUSE;
@@ -141,11 +141,11 @@ public class RecordHelper {
 
     void resume() {
         if (state != RecordState.PAUSE) {
-            Logger.e(TAG, "状态异常当前状态： %s", state.name());
+            Logger.INSTANCE.e(TAG, "状态异常当前状态： "+ state.name());
             return;
         }
         String tempFilePath = getTempFilePath();
-        Logger.i(TAG, "tmpPCM File: %s", tempFilePath);
+        Logger.INSTANCE.i(TAG, "tmpPCM File: "+tempFilePath);
         tmpFile = new File(tempFilePath);
         audioRecordThread = new AudioRecordThread();
         audioRecordThread.start();
@@ -170,7 +170,7 @@ public class RecordHelper {
     }
 
     private void notifyFinish() {
-        Logger.d(TAG, "录音结束 file: %s", resultFile.getAbsolutePath());
+        Logger.INSTANCE.d(TAG, "录音结束 file: "+resultFile.getAbsolutePath());
 
         mainHandler.post(new Runnable() {
             @Override
@@ -242,7 +242,7 @@ public class RecordHelper {
             mp3EncodeThread = new Mp3EncodeThread(resultFile, bufferSize);
             mp3EncodeThread.start();
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Logger.INSTANCE.e(TAG, e.getMessage());
         }
     }
 
@@ -254,14 +254,14 @@ public class RecordHelper {
         AudioRecordThread() {
             bufferSize = AudioRecord.getMinBufferSize(currentConfig.getSampleRate(),
                     currentConfig.getChannelConfig(), currentConfig.getEncodingConfig()) * RECORD_AUDIO_BUFFER_TIMES;
-            Logger.d(TAG, "record buffer size = %s", bufferSize);
+            Logger.INSTANCE.d(TAG, "record buffer size = "+ bufferSize);
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, currentConfig.getSampleRate(),
                     currentConfig.getChannelConfig(), currentConfig.getEncodingConfig(), bufferSize);
             if (currentConfig.getFormat() == RecordConfig.RecordFormat.MP3) {
                 if (mp3EncodeThread == null) {
                     initMp3EncoderThread(bufferSize);
                 } else {
-                    Logger.e(TAG, "mp3EncodeThread != null, 请检查代码");
+                    Logger.INSTANCE.e(TAG, "mp3EncodeThread != null, 请检查代码");
                 }
             }
         }
@@ -283,7 +283,7 @@ public class RecordHelper {
         private void startPcmRecorder() {
             state = RecordState.RECORDING;
             notifyState();
-            Logger.d(TAG, "开始录制 Pcm");
+            Logger.INSTANCE.d(TAG, "开始录制 Pcm");
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(tmpFile);
@@ -301,10 +301,10 @@ public class RecordHelper {
                 if (state == RecordState.STOP) {
                     makeFile();
                 } else {
-                    Logger.i(TAG, "暂停！");
+                    Logger.INSTANCE.i(TAG, "暂停！");
                 }
             } catch (Exception e) {
-                Logger.e(e, TAG, e.getMessage());
+                Logger.INSTANCE.e(TAG, e.getMessage());
                 notifyError("录音失败");
             } finally {
                 try {
@@ -318,7 +318,7 @@ public class RecordHelper {
             if (state != RecordState.PAUSE) {
                 state = RecordState.IDLE;
                 notifyState();
-                Logger.d(TAG, "录音结束");
+                Logger.INSTANCE.d(TAG, "录音结束");
             }
         }
 
@@ -339,7 +339,7 @@ public class RecordHelper {
                 }
                 audioRecord.stop();
             } catch (Exception e) {
-                Logger.e(e, TAG, e.getMessage());
+                Logger.INSTANCE.e(TAG, e.getMessage());
                 notifyError("录音失败");
             }
             if (state != RecordState.PAUSE) {
@@ -347,7 +347,7 @@ public class RecordHelper {
                 notifyState();
                 stopMp3Encoded();
             } else {
-                Logger.d(TAG, "暂停");
+                Logger.INSTANCE.d(TAG, "暂停");
             }
         }
     }
@@ -362,7 +362,7 @@ public class RecordHelper {
                 }
             });
         } else {
-            Logger.e(TAG, "mp3EncodeThread is null, 代码业务流程有误，请检查！！ ");
+            Logger.INSTANCE.e(TAG, "mp3EncodeThread is null, 代码业务流程有误，请检查！！ ");
         }
     }
 
@@ -381,7 +381,7 @@ public class RecordHelper {
                 break;
         }
         notifyFinish();
-        Logger.i(TAG, "录音完成！ path: %s ； 大小：%s", resultFile.getAbsoluteFile(), resultFile.length());
+        Logger.INSTANCE.i(TAG, String.format("录音完成！ path: %s ； 大小：%s", resultFile.getAbsoluteFile(), resultFile.length() ));
     }
 
     /**
@@ -433,7 +433,7 @@ public class RecordHelper {
                 inputStream.close();
             }
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Logger.INSTANCE.e( TAG, e.getMessage());
             return false;
         } finally {
             try {
@@ -461,7 +461,7 @@ public class RecordHelper {
     private String getTempFilePath() {
         String fileDir = String.format(Locale.getDefault(), "%s/Record/", Environment.getExternalStorageDirectory().getAbsolutePath());
         if (!FileUtils.createOrExistsDir(fileDir)) {
-            Logger.e(TAG, "文件夹创建失败：%s", fileDir);
+            Logger.INSTANCE.e(TAG, "文件夹创建失败："+ fileDir);
         }
         String fileName = String.format(Locale.getDefault(), "record_tmp_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
         return String.format(Locale.getDefault(), "%s%s.pcm", fileDir, fileName);

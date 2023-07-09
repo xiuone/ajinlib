@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import com.xy.base.R
 import com.xy.base.listener.LoadViewListener
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.assembly.load.BaseAssemblyViewLoadDialog
 import com.xy.base.assembly.load.LoadDialogView
 import com.xy.base.dialog.LoadProgressDialog
@@ -17,7 +17,7 @@ import com.xy.base.dialog.listener.DialogImplListener
 /**
  * 加载状态
  */
-abstract class ActivityBaseStatusAssembly : ActivityBaseStatus() , BaseAssemblyView,
+abstract class ActivityBaseStatusAssembly : ActivityBaseStatus() , BaseAssemblyViewWithContext,
     BaseAssemblyViewLoadDialog, DialogImplListener,DialogCancelSureView, LoadViewListener, LoadDialogView {
 
     protected var actContentView:View?=null

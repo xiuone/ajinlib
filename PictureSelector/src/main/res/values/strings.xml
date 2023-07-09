@@ -1,0 +1,78 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="ps_camera_roll" tools:ignore="MissingTranslation">相机胶卷</string>
+    <string name="ps_camera_roll_num" tools:ignore="MissingTranslation">%1$s (%2$d)</string>
+    <string name="ps_cancel" tools:ignore="MissingTranslation">取消</string>
+    <string name="ps_take_picture" tools:ignore="MissingTranslation">拍摄</string>
+    <string name="ps_rule" tools:ignore="MissingTranslation">不能同时选择图片或视频</string>
+    <string name="ps_message_max_num" tools:ignore="MissingTranslation">你最多只能选择%1$s张照片</string>
+    <string name="ps_min_video_num" tools:ignore="MissingTranslation">视频最低选择不能少于%1$s个</string>
+    <string name="ps_message_video_max_num" tools:ignore="MissingTranslation">你最多只能选择%1$s个视频</string>
+    <string name="ps_message_audio_max_num" tools:ignore="MissingTranslation">你最多只能选择%1$s个音频</string>
+    <string name="ps_preview" tools:ignore="MissingTranslation">预览</string>
+    <string name="ps_please" tools:ignore="MissingTranslation">请稍候…</string>
+    <string name="ps_done_front_num" tools:ignore="MissingTranslation">%1$d/%2$d 完成</string>
+    <string name="ps_completed" tools:ignore="MissingTranslation">已完成</string>
+    <string name="ps_done" tools:ignore="MissingTranslation">完 成</string>
+    <string name="ps_please_select" tools:ignore="MissingTranslation">请选择</string>
+    <string name="ps_empty_title" tools:ignore="MissingTranslation">无视频或照片\n</string>
+    <string name="ps_empty_audio_title" tools:ignore="MissingTranslation">无音频文件\n</string>
+    <string name="ps_empty" tools:ignore="MissingTranslation">你可以使用相机拍摄照片或视频</string>
+    <string name="ps_audio_empty" tools:ignore="MissingTranslation">你可以使用系统录音录制音频</string>
+    <string name="ps_min_img_num" tools:ignore="MissingTranslation">图片最低选择不能少于%1$s张</string>
+    <string name="ps_min_audio_num" tools:ignore="MissingTranslation">音频最低选择不能少于%1$s个</string>
+    <string name="ps_gif_tag" tools:ignore="MissingTranslation">动图</string>
+    <string name="ps_jurisdiction" tools:ignore="MissingTranslation">读取内存卡权限被拒绝</string>
+    <string name="ps_camera" tools:ignore="MissingTranslation">获取系统相机权限被拒绝</string>
+    <string name="ps_audio" tools:ignore="MissingTranslation">获取系统录音权限被拒绝</string>
+    <string name="ps_video_toast" tools:ignore="MissingTranslation">视频不可预览</string>
+    <string name="ps_record_video" tools:ignore="MissingTranslation">录视频</string>
+    <string name="ps_photograph" tools:ignore="MissingTranslation">拍照</string>
+    <string name="ps_long_chart" tools:ignore="MissingTranslation">长图</string>
+    <string name="ps_warning" tools:ignore="MissingTranslation">暂无媒体文件！</string>
+    <string name="ps_prompt" tools:ignore="MissingTranslation">提示</string>
+    <string name="ps_prompt_image_content" tools:ignore="MissingTranslation">是否保存图片至手机？</string>
+    <string name="ps_prompt_video_content" tools:ignore="MissingTranslation">是否保存视频至手机？</string>
+    <string name="ps_prompt_audio_content" tools:ignore="MissingTranslation">是否保存音频至手机？</string>
+    <string name="ps_save_image_error" tools:ignore="MissingTranslation">图片保存失败</string>
+    <string name="ps_save_video_error" tools:ignore="MissingTranslation">视频保存失败</string>
+    <string name="ps_save_audio_error" tools:ignore="MissingTranslation">音频保存失败</string>
+    <string name="ps_save_success" tools:ignore="MissingTranslation">文件保存成功至</string>
+    <string name="ps_all_audio" tools:ignore="MissingTranslation">所有音频</string>
+    <string name="ps_tape" tools:ignore="MissingTranslation">录音</string>
+    <string name="ps_play_audio" tools:ignore="MissingTranslation">播放</string>
+    <string name="ps_stop_audio" tools:ignore="MissingTranslation">停止</string>
+    <string name="ps_quit_audio" tools:ignore="MissingTranslation">退出</string>
+    <string name="ps_pause_audio" tools:ignore="MissingTranslation">暂停</string>
+    <string name="ps_error" tools:ignore="MissingTranslation">图片已损坏</string>
+    <string name="ps_video_error" tools:ignore="MissingTranslation">视频已损坏</string>
+    <string name="ps_audio_error" tools:ignore="MissingTranslation">音频已损坏</string>
+    <string name="ps_confirm" tools:ignore="MissingTranslation">确定</string>
+    <string name="ps_preview_image_num" tools:ignore="MissingTranslation">%1$d/%2$d</string>
+    <string name="ps_not_crop_data" tools:ignore="MissingTranslation">无可用裁剪数据</string>
+    <string name="ps_original_image" tools:ignore="MissingTranslation">原图 (%1$s)</string>
+    <string name="ps_default_original_image" tools:ignore="MissingTranslation">原图</string>
+    <string name="ps_send" tools:ignore="MissingTranslation">完成</string>
+    <string name="ps_send_num" tools:ignore="MissingTranslation">完成(%1$d/%2$d)</string>
+    <string name="ps_preview_num" tools:ignore="MissingTranslation">预览(%1$d)</string>
+    <string name="ps_select" tools:ignore="MissingTranslation">选择</string>
+    <string name="ps_data_exception" tools:ignore="MissingTranslation">获取相册数据异常…</string>
+    <string name="ps_choose_max_seconds" tools:ignore="MissingTranslation">最大只能选择 %1$ds 以内的视频</string>
+    <string name="ps_choose_min_seconds" tools:ignore="MissingTranslation">不能选择低于 %1$ds 内的视频</string>
+    <string name="ps_choose_limit_seconds" tools:ignore="MissingTranslation">只能选择 %1$ds 至 %2$ds内的视频</string>
+    <string name="ps_go_setting" tools:ignore="MissingTranslation">去设置</string>
+    <string name="ps_know" tools:ignore="MissingTranslation">我知道了</string>
+    <string name="ps_data_null" tools:ignore="MissingTranslation">这里空空如也…</string>
+    <string name="ps_editor" tools:ignore="MissingTranslation">编辑</string>
+    <string name="ps_webp_tag" tools:ignore="MissingTranslation">webp</string>
+    <string name="ps_use_camera" tools:ignore="MissingTranslation">正在使用相机</string>
+    <string name="ps_use_sound" tools:ignore="MissingTranslation">正在使用录音功能</string>
+    <string name="ps_current_week" tools:ignore="MissingTranslation">本周</string>
+    <string name="ps_current_month" tools:ignore="MissingTranslation">这个月</string>
+    <string name="ps_select_max_size" tools:ignore="MissingTranslation">选择文件大于%1$s</string>
+    <string name="ps_select_min_size" tools:ignore="MissingTranslation">选择文件小于%1$s</string>
+    <string name="ps_select_video_max_second" tools:ignore="MissingTranslation">选择视频大于%1$d秒</string>
+    <string name="ps_select_video_min_second" tools:ignore="MissingTranslation">选择视频小于%1$d秒</string>
+    <string name="ps_select_audio_max_second" tools:ignore="MissingTranslation">选择音频大于%1$d秒</string>
+    <string name="ps_select_audio_min_second" tools:ignore="MissingTranslation">选择音频小于%1$d秒</string>
+    <string name="ps_select_no_support" tools:ignore="MissingTranslation">不支持的选择类型</string>
+</resources>

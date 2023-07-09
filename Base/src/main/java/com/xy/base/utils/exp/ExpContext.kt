@@ -158,6 +158,10 @@ fun Context?.getBitmapFromRes(@DrawableRes res: Int, newWidth: Int, newHeight: I
     var bitMap = BitmapFactory.decodeResource(resources, res)
     val width = bitMap.width
     val height = bitMap.height
+
+    if (newWidth > width && newHeight > height){
+        return bitMap
+    }
     val scaleWidth = newWidth.toFloat() / width
     val scaleHeight = newHeight.toFloat() / height
     val matrix = Matrix()

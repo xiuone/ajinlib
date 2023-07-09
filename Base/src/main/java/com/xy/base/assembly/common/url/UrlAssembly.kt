@@ -1,10 +1,10 @@
 package com.xy.base.assembly.common.url
 
 import androidx.lifecycle.LifecycleOwner
-import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.assembly.base.BaseAssemblyWithContext
 import com.xy.base.utils.exp.setOnClick
 
-class UrlAssembly(view: UrlAssemblyView) : BaseAssembly<UrlAssemblyView>(view){
+class UrlAssembly(view: UrlAssemblyView) : BaseAssemblyWithContext<UrlAssemblyView>(view){
     private val aboutView by lazy { this.view?.onCreateButtonView() }
     private val urlMode by lazy { this.view?.onCreateUrlMode() }
 

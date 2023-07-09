@@ -262,18 +262,7 @@
     <string name="community_service" tools:ignore="ExtraTranslation">专属客服</string>
     <string name="community_share" tools:ignore="ExtraTranslation">邀请客服</string>
 
-    <string name="permission_location" tools:ignore="ExtraTranslation">定位权限</string>
-    <string name="permission_location_detail" tools:ignore="ExtraTranslation">定位权限详情</string>
-    <string name="permission_write" tools:ignore="ExtraTranslation">读写权限</string>
-    <string name="permission_write_detail" tools:ignore="ExtraTranslation">读写权限详情</string>
-    <string name="permission_camera" tools:ignore="ExtraTranslation">相机权限</string>
-    <string name="permission_camera_detail" tools:ignore="ExtraTranslation">相机权限详情</string>
-    <string name="permission_install" tools:ignore="ExtraTranslation">安装其他app权限</string>
-    <string name="permission_install_detail" tools:ignore="ExtraTranslation">安装其他app权限详情</string>
-    <string name="permission_microphone" tools:ignore="ExtraTranslation">麦克风权限</string>
-    <string name="permission_microphone_detail" tools:ignore="ExtraTranslation">麦克风权限详情</string>
-    <string name="permission_mailList" tools:ignore="ExtraTranslation">通讯录权限</string>
-    <string name="permission_mailList_detail" tools:ignore="ExtraTranslation">通讯录权限详情</string>
+
 
 
     <string name="number" tools:ignore="ExtraTranslation">(%s)</string>

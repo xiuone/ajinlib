@@ -4,8 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import com.amap.api.maps2d.model.LatLng
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.dialog.base.BaseDialog
 import com.xy.base.dialog.listener.DialogCancelSureView
 import com.xy.base.dialog.listener.DialogImplListener
@@ -20,7 +20,7 @@ import kotlin.math.sqrt
 /**
  * 去导航的界面
  */
-class NaviAssembly(view: NaviAssemblyView) :BaseAssembly<NaviAssembly.NaviAssemblyView>(view) ,DialogImplListener{
+class NaviAssembly(view: NaviAssemblyView) :BaseAssemblyWithContext<NaviAssembly.NaviAssemblyView>(view) ,DialogImplListener{
     private val x_pi = 3.14159265358979324 * 3000.0 / 180.0
     private var gdButton :View? = null
     private var baiduButton:View?= null
@@ -139,7 +139,7 @@ class NaviAssembly(view: NaviAssemblyView) :BaseAssembly<NaviAssembly.NaviAssemb
         }
     }
 
-    interface NaviAssemblyView : BaseAssemblyView, DialogImplListener, DialogCancelSureView {
+    interface NaviAssemblyView : BaseAssemblyViewWithContext, DialogImplListener, DialogCancelSureView {
         fun onGDView(dialog: BaseDialog):View?
         fun onTencentView(dialog: BaseDialog):View?
         fun onBaiduView(dialog: BaseDialog):View

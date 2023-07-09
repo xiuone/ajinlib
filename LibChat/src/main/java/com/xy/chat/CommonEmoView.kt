@@ -14,11 +14,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.fastjson.JSON
 import com.xy.base.R
+import com.xy.base.utils.Logger
 import com.xy.base.utils.emo.EmoManager
 import com.xy.base.utils.exp.addNewParent
 import com.xy.base.utils.exp.getSpString
 import com.xy.base.utils.exp.setSpString
-import com.xy.base.utils.record.record.utils.Logger
 import com.xy.base.widget.recycler.adapter.RecyclerSingleAdapter
 import com.xy.base.widget.recycler.adapter.RecyclerSingleExpAdapter
 import com.xy.base.widget.recycler.holder.BaseViewHolder

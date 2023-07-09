@@ -10,7 +10,7 @@ import com.amap.api.maps2d.LocationSource.OnLocationChangedListener
 import com.amap.api.maps2d.model.*
 import com.amap.api.maps2d.model.MyLocationStyle.LOCATION_TYPE_LOCATE
 import com.xy.amap.location.LocationNotify
-import com.xy.base.utils.permission.PermissionUiListener
+import com.xy.base.permission.IPermissionInterceptor
 
 
 class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemblyView>(view),
@@ -26,7 +26,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
 
     override fun onCreateInit(savedInstanceState: Bundle?) {
         super.onCreateInit(savedInstanceState)
-        LocationNotify.instance.addNotify(liftTag,this)
+        LocationNotify.instance.addNotify(TAG,this)
         mapView?.onCreate(savedInstanceState)
         aMap?.moveCamera(CameraUpdateFactory.zoomTo(zoomNumber))
         aMap?.setLocationSource(this)
@@ -56,7 +56,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
      */
     override fun activate(onLocationChangedListener: OnLocationChangedListener?) {
         mListener = onLocationChangedListener
-        LocationNotify.instance.addNotify(liftTag,this)
+        LocationNotify.instance.addNotify(TAG,this)
         locationAssembly?.startLocation()
     }
 
@@ -65,7 +65,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
      */
     override fun deactivate() {
         mListener = null
-        LocationNotify.instance.removeNotify(liftTag)
+        LocationNotify.instance.removeNotify(TAG)
     }
 
     /**
@@ -119,10 +119,10 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
     override fun onDestroyed(owner: LifecycleOwner) {
         super.onDestroyed(owner)
         mapView?.onDestroy()
-        LocationNotify.instance.removeNotify(liftTag)
+        LocationNotify.instance.removeNotify(TAG)
     }
 
-    interface MapAssemblyView : MapBaseAssemblyView, PermissionUiListener {
+    interface MapAssemblyView : MapBaseAssemblyView, IPermissionInterceptor {
         fun onCreateLocationAssembly(): LocationAssembly?
     }
 

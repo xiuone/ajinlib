@@ -21,6 +21,34 @@ object Logger {
      */
     private var sLineNumber = 0
 
+    fun i(tag: String?, msg: String) {
+        if (debug) {
+            getMethodNames(Throwable().stackTrace)
+            Log.i(tag, createLog(msg))
+        }
+    }
+
+    fun v(tag: String?, msg: String) {
+        if (debug) {
+            getMethodNames(Throwable().stackTrace)
+            Log.v(tag, createLog(msg))
+        }
+    }
+
+    fun w(tag: String?, msg: String) {
+        if (debug) {
+            getMethodNames(Throwable().stackTrace)
+            Log.w(tag, createLog(msg))
+        }
+    }
+
+    fun w(tag: String?, msg: String, e: Exception?) {
+        if (debug) {
+            getMethodNames(Throwable().stackTrace)
+            Log.w(tag, createLog(msg), e)
+        }
+    }
+
     fun d(msg: String) {
         d(TAG, msg)
     }
@@ -53,6 +81,15 @@ object Logger {
             Log.e(tag, createLog(msg))
         }
     }
+
+
+    fun e(tag: String?, msg: String, e: Exception?) {
+        if (debug) {
+            getMethodNames(Throwable().stackTrace)
+            Log.e(tag, createLog(msg), e)
+        }
+    }
+
 
     private fun createLog(log: String): String {
         return "[" +

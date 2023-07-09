@@ -2,8 +2,8 @@ package com.xy.base.utils.record.record.recorder.wav;
 
 
 
+import com.xy.base.utils.Logger;
 import com.xy.base.utils.record.record.recorder.RecordConfig;
-import com.xy.base.utils.record.record.recorder.utils.Logger;
 import com.xy.base.utils.record.record.utils.ByteUtils;
 import com.xy.base.utils.record.record.utils.FileUtils;
 
@@ -54,14 +54,14 @@ public class WavUtils {
             wavRaf.write(header);
             wavRaf.close();
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Logger.INSTANCE.e( TAG, e.getMessage());
         } finally {
             try {
                 if (wavRaf != null) {
                     wavRaf.close();
                 }
             } catch (IOException e) {
-                Logger.e(e, TAG, e.getMessage());
+                Logger.INSTANCE.e(TAG, e.getMessage());
 
             }
         }
@@ -105,13 +105,13 @@ public class WavUtils {
             byte[] b = new byte[size];
             int len;
             if ((len = fis.read(b)) != size) {
-                Logger.e(TAG, "读取失败 len: %s", len);
+                Logger.INSTANCE.e(TAG, "读取失败 len: "+len);
                 return null;
             }
             bos.write(b, 0, len);
             buffer = bos.toByteArray();
         } catch (Exception e) {
-            Logger.e(e, TAG, e.getMessage());
+            Logger.INSTANCE.e( TAG, e.getMessage());
         } finally {
             try {
                 if (fis != null) {
@@ -123,7 +123,7 @@ public class WavUtils {
                     bos = null;
                 }
             } catch (IOException e) {
-                Logger.e(e, TAG, e.getMessage());
+                Logger.INSTANCE.e( TAG, e.getMessage());
             }
         }
         return buffer;
@@ -151,7 +151,7 @@ public class WavUtils {
      */
     public static long getWavDuration(byte[] header) {
         if (header == null || header.length < 44) {
-            Logger.e(TAG, "header size有误");
+            Logger.INSTANCE.e(TAG, "header size有误");
             return -1;
         }
         int byteRate = ByteUtils.toInt(header, 28);//28-31

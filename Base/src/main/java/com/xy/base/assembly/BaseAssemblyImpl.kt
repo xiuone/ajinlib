@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.xy.base.R
 import  com.xy.base.dialog.base.BaseDialog
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.dialog.listener.DialogCancelSureView
 import com.xy.base.assembly.load.LoadDialogView
 import com.xy.base.dialog.LoadProgressDialog
@@ -21,7 +21,7 @@ abstract class BaseAssemblyImpl(protected val rootView:View,
                                 private val contentView:View?=null,
                                 private val statusView:ViewGroup?=null,
                                 protected val loadDialog: LoadProgressDialog? = null,
-                                protected val activity:Activity?=null) : BaseAssemblyView, DialogCancelSureView,
+                                protected val activity:Activity?=null) : BaseAssemblyViewWithContext, DialogCancelSureView,
     LoadViewListener, LoadDialogView,LifecycleObserver {
 
     protected val TAG by lazy { this::class.java.name }

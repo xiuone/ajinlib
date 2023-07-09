@@ -8,12 +8,12 @@ import android.os.IBinder;
 import android.util.Log;
 
 
+import com.xy.base.utils.Logger;
 import com.xy.base.utils.record.record.recorder.listener.RecordDataListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordFftDataListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordResultListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordSoundSizeListener;
 import com.xy.base.utils.record.record.recorder.listener.RecordStateListener;
-import com.xy.base.utils.record.record.recorder.utils.Logger;
 import com.xy.base.utils.record.record.utils.FileUtils;
 
 import java.text.SimpleDateFormat;
@@ -171,22 +171,22 @@ public class RecordService extends Service {
     }
 
     private void doStartRecording(String path) {
-        Logger.v(TAG, "doStartRecording path: %s", path);
+        Logger.INSTANCE.v(TAG, "doStartRecording path: "+path);
         RecordHelper.getInstance().start(path, currentConfig);
     }
 
     private void doResumeRecording() {
-        Logger.v(TAG, "doResumeRecording");
+        Logger.INSTANCE.v(TAG, "doResumeRecording");
         RecordHelper.getInstance().resume();
     }
 
     private void doPauseRecording() {
-        Logger.v(TAG, "doResumeRecording");
+        Logger.INSTANCE.v(TAG, "doResumeRecording");
         RecordHelper.getInstance().pause();
     }
 
     private void doStopRecording() {
-        Logger.v(TAG, "doStopRecording");
+        Logger.INSTANCE.v(TAG, "doStopRecording");
         RecordHelper.getInstance().stop();
         stopSelf();
     }
@@ -208,7 +208,7 @@ public class RecordService extends Service {
         String fileDir =
                 currentConfig.getRecordDir();
         if (!FileUtils.createOrExistsDir(fileDir)) {
-            Logger.w(TAG, "文件夹创建失败：%s", fileDir);
+            Logger.INSTANCE.w(TAG, "文件夹创建失败："+ fileDir );
             return null;
         }
         String fileName = String.format(Locale.getDefault(), "record_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));

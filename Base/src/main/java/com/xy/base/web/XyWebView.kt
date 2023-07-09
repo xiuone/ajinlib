@@ -84,8 +84,6 @@ class XyWebView(context: Context,attrs: AttributeSet? = null) :FrameLayout(conte
         settings.setGeolocationEnabled(true)
         settings.savePassword = false
         settings.saveFormData = false
-        settings.setAppCacheEnabled(true)
-        settings.setAppCacheMaxSize((50 * 1024 * 1024).toLong())
         settings.useWideViewPort = true
         settings.setSupportZoom(true)
         settings.builtInZoomControls = true

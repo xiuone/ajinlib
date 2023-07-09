@@ -4,8 +4,8 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 
 
+import com.xy.base.utils.Logger;
 import com.xy.base.utils.record.record.recorder.RecordConfig;
-import com.xy.base.utils.record.record.recorder.utils.Logger;
 import com.xy.base.utils.record.record.utils.FileUtils;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class Mp3Utils {
             long duration = mf.getLong(MediaFormat.KEY_DURATION) / 1000L;
             return duration;
         } catch (IOException e) {
-            Logger.e(e, TAG, e.getMessage());
+            Logger.INSTANCE.e( TAG, e.getMessage());
         } finally {
             if (mex != null) {
                 mex.release();

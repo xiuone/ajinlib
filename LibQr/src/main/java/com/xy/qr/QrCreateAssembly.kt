@@ -1,16 +1,15 @@
 package com.xy.qr
 
-import com.hjq.permissions.Permission
 import com.king.zxing.util.CodeUtils
-import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.permission.OnPermissionCallback
+import com.xy.base.permission.Permission
+import com.xy.base.permission.XXPermissions
 import com.xy.base.utils.exp.*
-import com.xy.base.utils.permission.PermissionCallBack
-import com.xy.base.utils.permission.PermissionRequestMode
-import com.xy.base.utils.permission.requestPermission
 import com.xy.base.utils.runBackThread
 import com.xy.base.utils.runMain
 
-class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssembly<QrCreateAssemblyView>(view),PermissionCallBack{
+class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssemblyWithContext<QrCreateAssemblyView>(view),OnPermissionCallback{
 
     private val historyKey by lazy { this.view?.createSaveHistoryKey() }
 
@@ -20,16 +19,17 @@ class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssembly<QrCreateAssemb
     private val changeButton by lazy { this.view?.createChangeQrButton() }
     private val logoBitmap by lazy { this.view?.createLogoBitmap() }
     private val bitmapSize by lazy { this.view?.createBitmapSize()?:600 }
-
-    private val deniedDialog by lazy { this.view?.onCreatePermissionDenied() }
-    private val reasonDialog by lazy { this.view?.onCreatePermissionReason() }
+    private val interceptor by lazy { this.view?.onCreateIPermissionInterceptor() }
 
     override fun onCreateInit() {
         super.onCreateInit()
 
         saveButton?.setOnClick{
-            getContext()?.requestPermission(reasonDialog,deniedDialog,this, PermissionRequestMode(
-                arrayOf(Permission.WRITE_EXTERNAL_STORAGE),getContext()?.getResString(R.string.qr_permission_hint)))
+            val act = getCurrentAct()
+            val interceptor = interceptor
+            if (act != null && interceptor != null){
+                XXPermissions.with(act,interceptor).permission(Permission.WRITE_EXTERNAL_STORAGE).request(this)
+            }
         }
         changeButton?.setOnClick{
             createQr(this.view?.createNewContent())
@@ -56,10 +56,7 @@ class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssembly<QrCreateAssemb
         })
     }
 
-    /**
-     * 请求权限成功回调
-     */
-    override fun onGranted() {
+    override fun onGranted(permissions: List<String?>, allGranted: Boolean) {
         getContext()?.run {
             val filePath = getSdImagePath(getAppName(),"${System.currentTimeMillis()}.png")
             val sucHint = String.format(getResString(R.string.qr_permission_save_suc_hint),filePath)

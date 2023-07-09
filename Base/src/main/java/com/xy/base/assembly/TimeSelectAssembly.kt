@@ -6,18 +6,17 @@ import androidx.core.view.isVisible
 import com.github.gzuliyujiang.wheelview.contract.OnWheelChangedListener
 import com.github.gzuliyujiang.wheelview.widget.NumberWheelView
 import com.github.gzuliyujiang.wheelview.widget.WheelView
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.dialog.base.BaseDialog
 import com.xy.base.dialog.listener.DialogCancelSureView
 import com.xy.base.dialog.listener.DialogImplListener
 import com.xy.base.utils.exp.setOnClick
 import com.xy.base.utils.exp.showToast
 import java.util.*
-import kotlin.math.min
 
 abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc:()->Unit = {}):
-    BaseAssembly<TimeSelectAssembly.BirthAssemblyView>(view) , DialogImplListener,
+    BaseAssemblyWithContext<TimeSelectAssembly.BirthAssemblyView>(view) , DialogImplListener,
     OnWheelChangedListener {
 
     private var defaultYear = Int.MAX_VALUE
@@ -288,7 +287,7 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
 
 
 
-    interface BirthAssemblyView : BaseAssemblyView, DialogCancelSureView {
+    interface BirthAssemblyView : BaseAssemblyViewWithContext, DialogCancelSureView {
         fun onSelectBirthButton(): View?
         fun onBirthTextView(): TextView?
 

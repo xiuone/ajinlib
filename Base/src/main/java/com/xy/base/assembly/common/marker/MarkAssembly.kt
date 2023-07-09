@@ -3,7 +3,7 @@ package com.xy.base.assembly.common.marker
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.assembly.base.BaseAssemblyWithContext
 import com.xy.base.R
 import com.xy.base.utils.exp.*
 
@@ -11,7 +11,7 @@ import com.xy.base.utils.exp.*
 /**
  * 跳转到市场
  */
-class MarkAssembly(view: MarkerAssemblyView) : BaseAssembly<MarkerAssemblyView>(view) {
+class MarkAssembly(view: MarkerAssemblyView) : BaseAssemblyWithContext<MarkerAssemblyView>(view) {
 
     private val scoringButton by lazy { this.view?.scoringButtonView() }
 

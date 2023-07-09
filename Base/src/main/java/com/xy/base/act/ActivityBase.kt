@@ -17,38 +17,24 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleObserver
-import com.xy.base.R
 import com.xy.base.assembly.BaseAssemblyImpl
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
 import com.xy.base.listener.OpenPageListener
 import com.xy.base.utils.Logger
 import com.xy.base.utils.config.ConfigController
-import com.xy.base.utils.exp.getResColor
 import com.xy.base.utils.exp.getViewPosRect
-import com.xy.base.utils.exp.startAppActivity
-import com.xy.base.utils.permission.PermissionDialogDenied
-import com.xy.base.utils.permission.PermissionDialogReason
-import com.xy.base.utils.permission.PermissionUiListener
 import com.xy.base.utils.runMain
 import com.xy.base.utils.softkey.SoftKeyBoardDetector
 import kotlin.collections.HashMap
 
-abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<ActivityResult> ,OpenPageListener,
-    PermissionDialogReason.ReasonUiListener,PermissionDialogDenied.DeniedUiListener,PermissionUiListener {
+abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<ActivityResult> ,OpenPageListener{
     protected val ACTIVITY_BASE_LAUNCH by lazy { "ACTIVITY:BASE:LAUNCH:" }
     protected val TAG by lazy { this::class.java.name }
     private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     private val configController by lazy { ConfigController(::needReCreate) }
     private val unHindKeyView by lazy { ArrayList<View>() }
-    private val assemblyList by lazy { ArrayList<BaseAssembly<*>>() }
-    protected val permissionDialogReason by lazy { PermissionDialogReason(this,this) }
-    protected val permissionDialogDenied by lazy { PermissionDialogDenied(this,this) }
+    private val assemblyList by lazy { ArrayList<BaseAssemblyWithContext<*>>() }
 
-    override fun onCreatePermissionDenied(): PermissionDialogDenied? = permissionDialogDenied
-
-    override fun onCreatePermissionReason(): PermissionDialogReason?  = permissionDialogReason
 
     override fun onCreate(savedInstanceState: Bundle?) {
         onCreateBeFront()
@@ -64,7 +50,7 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         }
     }
 
-    protected open fun  addAssembly(vararg assemblyList: BaseAssembly<*>) {
+    protected open fun  addAssembly(vararg assemblyList: BaseAssemblyWithContext<*>) {
         if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
             for (assembly in assemblyList){
@@ -82,7 +68,7 @@ abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<Activit
         }
     }
 
-    protected open fun addAssemblyAndBuild(savedInstanceState : Bundle?,vararg assemblyList: BaseAssembly<*>) {
+    protected open fun addAssemblyAndBuild(savedInstanceState : Bundle?,vararg assemblyList: BaseAssemblyWithContext<*>) {
         if (assemblyList.isNullOrEmpty()) return
         synchronized(this){
             for (assembly in assemblyList){

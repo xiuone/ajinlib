@@ -44,7 +44,7 @@ fun Context.setSpInt(key: String?, value: Int) {
 
 
 @Synchronized
-fun Context.getSpLong(key: String?, defValue: Long): Long =
+fun Context.getSpLong(key: String?, defValue: Long=0): Long =
     getSharedPreferences()?.getLong(key, defValue)?:defValue
 
 

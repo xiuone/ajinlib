@@ -2,13 +2,13 @@ package com.xy.qr
 
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.utils.exp.isFileExist
 import java.util.ArrayList
 
 class QrScanAssembly(view: QrScanAssemblyView) :
-    BaseAssembly<QrScanAssembly.QrScanAssemblyView>(view),OnResultCallbackListener<LocalMedia>{
+    BaseAssemblyWithContext<QrScanAssembly.QrScanAssemblyView>(view),OnResultCallbackListener<LocalMedia>{
 
 
 
@@ -27,5 +27,5 @@ class QrScanAssembly(view: QrScanAssemblyView) :
     }
 
 
-    interface QrScanAssemblyView:BaseAssemblyView
+    interface QrScanAssemblyView:BaseAssemblyViewWithContext
 }

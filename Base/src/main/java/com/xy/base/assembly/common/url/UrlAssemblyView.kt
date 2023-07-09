@@ -2,10 +2,10 @@ package com.xy.base.assembly.common.url
 
 import android.view.View
 import android.widget.TextView
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.web.WebActivityOpenListener
 
-interface UrlAssemblyView :BaseAssemblyView{
+interface UrlAssemblyView :BaseAssemblyViewWithContext{
     fun onCreateWebActivityOpenListener(): WebActivityOpenListener?
     fun onCreateButtonView(): View?
     fun onCreateSelectView(): View?

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="permission_location" tools:ignore="ExtraTranslation">定位权限</string>
+    <string name="permission_write" tools:ignore="ExtraTranslation">读写权限</string>
+    <string name="permission_camera" tools:ignore="ExtraTranslation">相机权限</string>
+    <string name="permission_install" tools:ignore="ExtraTranslation">安装其他app权限</string>
+    <string name="permission_microphone" tools:ignore="ExtraTranslation">麦克风权限</string>
+    <string name="permission_mailList" tools:ignore="ExtraTranslation">通讯录权限</string>
+
+    <string name="permission_use_tips" tools:ignore="ExtraTranslation">%s使用说明:%s</string>
+    <string name="permission_mailList_use_des" tools:ignore="ExtraTranslation">通讯录权限详情</string>
+    <string name="permission_microphone_use_des" tools:ignore="ExtraTranslation">麦克风权限详情</string>
+    <string name="permission_install_use_des" tools:ignore="ExtraTranslation">安装其他app权限详情</string>
+    <string name="permission_camera_use_des" tools:ignore="ExtraTranslation">相机权限详情</string>
+    <string name="permission_write_use_des" tools:ignore="ExtraTranslation">读写权限详情</string>
+    <string name="permission_location_use_des" tools:ignore="ExtraTranslation">定位权限详情</string>
+
+    <string name="permission_denied_tips" tools:ignore="ExtraTranslation">%缺失:%s</string>
+    <string name="permission_mailList_denied_des" tools:ignore="ExtraTranslation">通讯录权限详情</string>
+    <string name="permission_microphone_denied_des" tools:ignore="ExtraTranslation">麦克风权限详情</string>
+    <string name="permission_install_denied_des" tools:ignore="ExtraTranslation">安装其他app权限详情</string>
+    <string name="permission_camera_denied_des" tools:ignore="ExtraTranslation">相机权限详情</string>
+    <string name="permission_write_denied_des" tools:ignore="ExtraTranslation">读写权限详情</string>
+    <string name="permission_location_denied_des" tools:ignore="ExtraTranslation">定位权限详情</string>
+
+</resources>

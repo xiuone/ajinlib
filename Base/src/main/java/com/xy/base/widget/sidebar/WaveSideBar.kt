@@ -254,6 +254,7 @@ class WaveSideBar @JvmOverloads constructor(context: Context, attrs: AttributeSe
     fun setIndexItems(data:MutableList<String>){
         mIndexItems.clear()
         mIndexItems.addAll(data)
+        visibility = if (mIndexItems.size <= 1) GONE else VISIBLE
         invalidate()
     }
 
@@ -278,6 +279,8 @@ class WaveSideBar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         onSelectIndexItemListener?.onSelectIndexItem(string)
         invalidate()
     }
+
+    fun getLatter() = mIndexItems
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && event?.repeatCount == 0 && isTouch) {

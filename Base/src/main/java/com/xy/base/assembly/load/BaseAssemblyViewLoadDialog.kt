@@ -1,5 +1,5 @@
 package com.xy.base.assembly.load
 
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 
-interface BaseAssemblyViewLoadDialog: BaseAssemblyView, LoadDialogView
+interface BaseAssemblyViewLoadDialog: BaseAssemblyViewWithContext, LoadDialogView

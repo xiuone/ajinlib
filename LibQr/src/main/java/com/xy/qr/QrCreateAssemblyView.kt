@@ -3,10 +3,11 @@ package com.xy.qr
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
-import com.xy.base.assembly.base.BaseAssemblyView
-import com.xy.base.utils.permission.PermissionUiListener
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
+import com.xy.base.permission.IPermissionInterceptor
+import com.xy.base.permission.IPermissionInterceptorCreateListener
 
-interface QrCreateAssemblyView :BaseAssemblyView, PermissionUiListener {
+interface QrCreateAssemblyView :BaseAssemblyViewWithContext ,IPermissionInterceptorCreateListener{
     fun createSaveView():View?
     fun createQrImageViewList():MutableList<ImageView?>
     fun createSaveQrButton():View?

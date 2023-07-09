@@ -2,6 +2,7 @@ package com.xy.base.utils.exp
 
 import android.content.Context
 import android.os.Environment
+import android.text.TextUtils
 import com.xy.base.utils.Logger
 import java.io.File
 
@@ -15,7 +16,7 @@ private fun Context.getSdcardPath() :String{
 
 fun Context.getDownPath():String = getSdcardPath() + "Download" + File.separator
 
-fun Context.getAppDownPath(strRes:String):String = getDownPath() + strRes + File.separator
+fun Context.getAppDownPath(strRes:String?):String = getDownPath() + if (!strRes.isNullOrEmpty())(strRes + File.separator) else ""
 
 /**
  * 获取文件夹路径    各种类型
@@ -56,53 +57,57 @@ fun Context.getAppZipPath(fileName:String):String = getAppZipDir() + fileName
 /**
  * 获取文件夹路径    各种类型
  */
-fun Context.getSdImageDir(strRes:String):String{
+fun Context.getSdImageDir(strRes:String?):String{
     return getAppDownPath(strRes) + "image" + File.separator
 }
 
-fun Context.getVideoDir(strRes:String):String{
+fun Context.getVideoDir(strRes:String?):String{
     return getAppDownPath(strRes) +"video" + File.separator
 }
 
-fun Context.getMusicDir(strRes:String):String{
+fun Context.getAudioDir(strRes:String?):String{
+    return getAppDownPath(strRes) +"audio" + File.separator
+}
+
+fun Context.getMusicDir(strRes:String?):String{
     return getAppDownPath(strRes) +"music" + File.separator
 }
 
-fun Context.getDocumentDir(strRes:String):String{
+fun Context.getDocumentDir(strRes:String?):String{
     return getAppDownPath(strRes) +"document" + File.separator
 }
 
-fun Context.getApkDir(strRes:String):String{
+fun Context.getApkDir(strRes:String?):String{
     return getAppDownPath(strRes) +"apk" + File.separator
 }
 
-fun Context.getZipDir(strRes:String):String{
+fun Context.getZipDir(strRes:String?):String{
     return getAppDownPath(strRes) +"zip" + File.separator
 }
 
 /**
  * 获取文件路径    各种类型
  */
-fun Context.getSdImagePath(strRes:String,fileName:String):String{
+fun Context.getSdImagePath(strRes:String?,fileName:String):String{
     return getSdImageDir( strRes) + fileName
 }
 
 
-fun Context.getSdVideoPath( strRes:String,fileName:String):String{
+fun Context.getSdVideoPath( strRes:String?,fileName:String):String{
     return getVideoDir( strRes) + fileName
 }
 
-fun Context.getSdMusicPath(strRes:String,fileName:String):String{
+fun Context.getSdMusicPath(strRes:String?,fileName:String):String{
     return getMusicDir( strRes) + fileName
 }
 
-fun Context.getSdDocumentPath( strRes:String,fileName:String):String{
+fun Context.getSdDocumentPath( strRes:String?,fileName:String):String{
     return getDocumentDir( strRes) + fileName
 }
 
-fun Context.getSdApkPath( strRes:String,fileName:String):String{
+fun Context.getSdApkPath( strRes:String?,fileName:String):String{
     return getApkDir( strRes) + fileName
 }
-fun Context.getSdZipPath( strRes:String,fileName:String):String{
+fun Context.getSdZipPath( strRes:String?,fileName:String):String{
     return getZipDir( strRes) + fileName
 }

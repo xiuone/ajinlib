@@ -6,10 +6,10 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory
 import com.amap.api.maps2d.model.LatLng
 import com.amap.api.maps2d.model.Marker
 import com.amap.api.maps2d.model.MarkerOptions
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 
-class MarkAssembly(view: MarkAssemblyView):BaseAssembly<MarkAssembly.MarkAssemblyView>(view), AMap.OnMarkerClickListener {
+class MarkAssembly(view: MarkAssemblyView):BaseAssemblyWithContext<MarkAssembly.MarkAssemblyView>(view), AMap.OnMarkerClickListener {
     private val mapView by lazy { this.view?.onCreateMapView() }
     private val aMap by lazy { mapView?.map }
     private val markerHashMap by lazy { HashMap<String, MarkTagMode>() }
@@ -56,7 +56,7 @@ class MarkAssembly(view: MarkAssemblyView):BaseAssembly<MarkAssembly.MarkAssembl
 
     data class MarkTagMode(val marker:Marker,val latlng:LatLng,val any: Any?)
 
-    interface MarkAssemblyView : BaseAssemblyView, MapBaseAssembly.MapBaseAssemblyView {
+    interface MarkAssemblyView : BaseAssemblyViewWithContext, MapBaseAssembly.MapBaseAssemblyView {
         fun onMarkClicked(latLng: LatLng, any: Any): Boolean = false
     }
 }

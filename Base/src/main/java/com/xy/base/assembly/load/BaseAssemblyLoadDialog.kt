@@ -2,9 +2,9 @@ package com.xy.base.assembly.load
 
 import androidx.lifecycle.LifecycleOwner
 import com.xy.base.listener.EmptyErrorListener
-import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.assembly.base.BaseAssemblyWithContext
 
-abstract class BaseAssemblyLoadDialog<T : BaseAssemblyViewLoadDialog>(view: T?) : BaseAssembly<T>(view),
+abstract class BaseAssemblyLoadDialog<T : BaseAssemblyViewLoadDialog>(view: T?) : BaseAssemblyWithContext<T>(view),
     EmptyErrorListener {
     /**
      * 提示框

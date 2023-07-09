@@ -117,6 +117,10 @@ fun Intent?.putTypeInt(value: Int):Intent?{
     this?.putExtra(typeStr,value)
     return this
 }
+fun Intent?.putTypeSerializable(value: Serializable):Intent?{
+    this?.putExtra(typeStr,value)
+    return this
+}
 fun Intent?.putTypeLong(value: Long):Intent?{
     this?.putExtra(typeStr,value)
     return this
@@ -133,9 +137,8 @@ fun Intent?.getTypeStr():String? = this?.getStringExtra(typeStr)
 fun Intent?.getTypeInt(def:Int = 0):Int = this?.getIntExtra(typeStr,def)?:def
 fun Intent?.getTypeLong(def:Long = 0):Long = this?.getLongExtra(typeStr,def)?:def
 fun Bundle?.getTypeInt(def:Int = 0):Int = this?.getInt(typeStr)?:def
-fun Bundle?.getTypeLong(def:Long = 0):Long {
-    return this?.getLong(typeStr)?:def
-}
+fun Bundle?.getTypeLong(def:Long = 0):Long = this?.getLong(typeStr)?:def
+fun Intent?.getTypeSerializable() = this?.getSerializableExtra(typeStr)
 
 fun Intent?.putTitle(value: String?):Intent?{
     this?.putExtra(title,value)

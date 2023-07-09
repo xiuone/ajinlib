@@ -2,9 +2,9 @@ package com.xy.base.assembly.common.mbuffer
 
 import android.view.View
 import android.widget.TextView
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 
-interface BufferAssemblyView : BaseAssemblyView {
+interface BufferAssemblyView : BaseAssemblyViewWithContext {
     /**
      * 显示缓存的TextView
      */

@@ -87,7 +87,7 @@ class EditView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         leftView?.setPadding(leftIconPadding,leftIconPadding,leftIconPadding,leftIconPadding)
         this.addView(leftView)
 
-        val rightLayoutParams = LayoutParams(leftIconSize,leftIconSize)
+        val rightLayoutParams = LayoutParams(delIconSize,delIconSize)
         rightLayoutParams.addRule(CENTER_VERTICAL)
         rightLayoutParams.addRule(ALIGN_PARENT_RIGHT)
         delView.setPadding(delIconPadding,delIconPadding,delIconPadding,delIconPadding)

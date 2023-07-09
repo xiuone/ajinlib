@@ -1,10 +1,9 @@
 package com.xy.base.assembly.common.lauch
 
 import android.view.View
-import android.widget.TextView
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 
-interface CommonLaunchAssemblyView : BaseAssemblyView {
+interface CommonLaunchAssemblyView : BaseAssemblyViewWithContext {
     /**
      * 同意按钮
      */

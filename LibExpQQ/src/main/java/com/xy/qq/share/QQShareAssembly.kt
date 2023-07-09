@@ -7,8 +7,8 @@ import com.tencent.connect.share.QQShare
 import com.tencent.connect.share.QzoneShare
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.UiError
-import com.xy.base.assembly.base.BaseAssembly
-import com.xy.base.assembly.base.BaseAssemblyView
+import com.xy.base.assembly.base.BaseAssemblyWithContext
+import com.xy.base.assembly.base.BaseAssemblyViewWithContext
 import com.xy.base.utils.Logger
 import com.xy.base.utils.exp.deleteFile
 import com.xy.base.utils.exp.getAppName
@@ -18,7 +18,7 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.collections.ArrayList
 
-class QQShareAssembly(view: QQShareAssemblyView) :BaseAssembly<QQShareAssembly.QQShareAssemblyView>(view),IUiListener{
+class QQShareAssembly(view: QQShareAssemblyView) :BaseAssemblyWithContext<QQShareAssembly.QQShareAssemblyView>(view),IUiListener{
     private var temporaryPath:String? = null
     private val qqShareFileDirName by lazy { "qqShare" }
 
@@ -91,7 +91,7 @@ class QQShareAssembly(view: QQShareAssemblyView) :BaseAssembly<QQShareAssembly.Q
     }
 
 
-    interface QQShareAssemblyView:BaseAssemblyView{
+    interface QQShareAssemblyView:BaseAssemblyViewWithContext{
         fun onComplete():String?
         fun onError():String?
         fun onCancel():String?

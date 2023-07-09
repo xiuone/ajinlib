@@ -2,15 +2,13 @@ package com.xy.base.assembly.common.url
 
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
-import android.util.Log
-import androidx.lifecycle.LifecycleOwner
-import com.xy.base.assembly.base.BaseAssembly
+import com.xy.base.assembly.base.BaseAssemblyWithContext
 import com.xy.base.utils.Logger
 import com.xy.base.utils.exp.replaceContentColor
 import com.xy.base.utils.exp.setContentClicked
 import com.xy.base.utils.exp.setOnClick
 
-class UrlRuleAssembly(view: UrlAssemblyView,private val select:()->Unit = {}) : BaseAssembly<UrlAssemblyView>(view){
+class UrlRuleAssembly(view: UrlAssemblyView,private val select:()->Unit = {}) : BaseAssemblyWithContext<UrlAssemblyView>(view){
     private val aboutView by lazy { this.view?.onCreateButtonView() }
     private val selectView by lazy { this.view?.onCreateSelectView() }
     private val ruleTextView by lazy { this.view?.onCreateRuleTextView() }
