@@ -2,22 +2,7 @@ package com.luck.picture.lib.basic
 
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
-import com.luck.picture.lib.app.PictureAppMaster.appContext
-import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
-import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
-import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
-import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
-import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
-import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
-import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
-import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
-import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
 import androidx.fragment.app.FragmentActivity
-import com.luck.picture.lib.utils.FileDirMap
-import androidx.core.content.FileProvider
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.luck.picture.lib.PictureSelectorSystemFragment
 import com.luck.picture.lib.R

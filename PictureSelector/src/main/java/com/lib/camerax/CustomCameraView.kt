@@ -27,7 +27,6 @@ import com.lib.camerax.utils.FileUtils.createTempFile
 import com.lib.camerax.utils.FileUtils.createCameraFile
 import com.lib.camerax.SimpleCameraX.Companion.putOutputUri
 import com.lib.camerax.utils.FileUtils.isContent
-import com.lib.camerax.listener.CameraListener.onError
 import com.lib.camerax.SimpleCameraX.Companion.getOutputPath
 import com.lib.camerax.utils.FileUtils.copyPath
 import com.lib.camerax.listener.CameraListener.onPictureSuccess
