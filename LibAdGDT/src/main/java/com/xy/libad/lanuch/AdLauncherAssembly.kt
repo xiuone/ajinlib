@@ -3,8 +3,8 @@ package com.xy.libad.lanuch
 import com.qq.e.ads.splash.SplashAD
 import com.qq.e.ads.splash.SplashADListener
 import com.qq.e.comm.util.AdError
-import com.xy.base.assembly.base.BaseAssemblyWithContext
-import com.xy.base.utils.Logger
+import xy.xy.base.assembly.base.BaseAssemblyWithContext
+import xy.xy.base.utils.Logger
 
 
 class AdLauncherAssembly(view: AdLauncherAssemblyView) : BaseAssemblyWithContext<AdLauncherAssemblyView>(view) , SplashADListener {

@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.text.TextUtils
 import com.tencent.mm.opensdk.modelmsg.*
-import com.xy.base.utils.ContextHolder
-import com.xy.base.utils.exp.getResBitmap
-import com.xy.base.utils.runBackThread
-import com.xy.base.utils.runMain
+import xy.xy.base.utils.ContextHolder
+import xy.xy.base.utils.exp.getResBitmap
+import xy.xy.base.utils.runBackThread
+import xy.xy.base.utils.runMain
 import com.xy.wechat.WxManger
 import java.io.ByteArrayOutputStream
 import java.net.URL

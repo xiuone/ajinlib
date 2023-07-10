@@ -1,8 +1,8 @@
 package com.xy.amap
 
 import com.amap.api.maps2d.MapView
-import com.xy.base.assembly.base.BaseAssemblyWithContext
-import com.xy.base.assembly.base.BaseAssemblyViewWithContext
+import xy.xy.base.assembly.base.BaseAssemblyWithContext
+import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 
 abstract class MapBaseAssembly<T:MapBaseAssembly.MapBaseAssemblyView>(view:T): BaseAssemblyWithContext<T>(view) {
     protected val mapView by lazy { this.view?.onCreateMapView() }

@@ -3,13 +3,13 @@ package com.xy.amap
 import android.Manifest
 import androidx.lifecycle.LifecycleOwner
 import com.amap.api.location.AMapLocationListener
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.xy.amap.location.LocationConfig
-import com.xy.base.assembly.base.BaseAssemblyWithContext
-import com.xy.base.assembly.base.BaseAssemblyViewWithContext
-import com.xy.base.permission.IPermissionInterceptorCreateListener
-import com.xy.base.permission.OnPermissionCallback
-import com.xy.base.permission.Permission
-import com.xy.base.permission.XXPermissions
+import xy.xy.base.assembly.base.BaseAssemblyWithContext
+import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
+import xy.xy.base.permission.IPermissionInterceptorCreateListener
 
 
 class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<LocationAssembly.LocationAssemblyView>(view){
@@ -35,9 +35,10 @@ class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<Loca
         val act = getCurrentAct()
         val interceptor = interceptor
         if (act != null && interceptor != null){
-            XXPermissions.with(act,interceptor)
+            XXPermissions.with(act)
                 .permission(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                .request(object :OnPermissionCallback{
+                .interceptor(interceptor)
+                .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: List<String?>, allGranted: Boolean) {
                         val lastLocation = LocationConfig.lastLocation
                         if (lastLocation != null && showOld){

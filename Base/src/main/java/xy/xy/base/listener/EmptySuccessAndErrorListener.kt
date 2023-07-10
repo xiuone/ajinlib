@@ -1,0 +1,3 @@
+package xy.xy.base.listener
+
+interface EmptySuccessAndErrorListener: EmptySuccessListener, EmptyErrorListener

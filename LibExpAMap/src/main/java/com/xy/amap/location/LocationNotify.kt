@@ -2,7 +2,7 @@ package com.xy.amap.location
 
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationListener
-import com.xy.base.utils.notify.NotifyBase
+import xy.xy.base.utils.notify.NotifyBase
 
 
 class LocationNotify :NotifyBase<AMapLocationListener>() ,AMapLocationListener{

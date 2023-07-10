@@ -3,7 +3,7 @@ package com.xy.amap.location
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
-import com.xy.base.utils.ContextHolder
+import xy.xy.base.utils.ContextHolder
 
 object LocationConfig {
 

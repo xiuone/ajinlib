@@ -1,6 +1,6 @@
 package com.xy.libad.video
 
-import com.xy.base.assembly.base.BaseAssemblyViewWithContext
+import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 
 interface AdVideoAssemblyView : BaseAssemblyViewWithContext {
     fun adVideoOver()

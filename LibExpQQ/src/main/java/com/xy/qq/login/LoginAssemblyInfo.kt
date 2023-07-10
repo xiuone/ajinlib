@@ -1,8 +1,8 @@
 package com.xy.qq.login
 
 import com.tencent.tauth.IUiListener
-import com.xy.base.utils.exp.getResString
-import com.xy.base.utils.exp.showToast
+import xy.xy.base.utils.exp.getResString
+import xy.xy.base.utils.exp.showToast
 import com.xy.qq.QQManger
 import com.xy.qq.R
 import org.json.JSONObject

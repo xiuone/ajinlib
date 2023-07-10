@@ -1,8 +1,8 @@
 package com.xy.qq
 
 import com.tencent.tauth.Tencent
-import com.xy.base.utils.ContextHolder
-import com.xy.base.utils.exp.getResString
+import xy.xy.base.utils.ContextHolder
+import xy.xy.base.utils.exp.getResString
 
 object QQManger {
     val qqAppId by lazy { ContextHolder.getContext()?.getResString(R.string.qq_app_id) }

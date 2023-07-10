@@ -10,7 +10,6 @@
     <external-path name="beta_external_path" path="Download/"/>
     <!--/storage/emulated/0/Android/data/com.bugly.upgrade.demo/files/apk/-->
     <external-path name="beta_external_files_path" path="Android/data/"/>
-    <root-path name="rc_root_path" path="" />
     <external-cache-path
         name="gdt_sdk_download_path1"
         path="com_qq_e_download" />

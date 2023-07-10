@@ -2,10 +2,10 @@ package com.xy.qq.login
 
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.UiError
-import com.xy.base.assembly.load.BaseAssemblyLoadDialog
-import com.xy.base.utils.Logger
-import com.xy.base.utils.exp.getResString
-import com.xy.base.utils.exp.showToast
+import xy.xy.base.assembly.load.BaseAssemblyLoadDialog
+import xy.xy.base.utils.Logger
+import xy.xy.base.utils.exp.getResString
+import xy.xy.base.utils.exp.showToast
 import com.xy.qq.R
 
 /**

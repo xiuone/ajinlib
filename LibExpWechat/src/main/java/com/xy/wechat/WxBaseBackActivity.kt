@@ -8,9 +8,9 @@ import com.tencent.mm.opensdk.modelbase.BaseResp
 import com.tencent.mm.opensdk.modelmsg.SendAuth
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler
-import com.xy.base.utils.Logger
-import com.xy.base.utils.exp.getResString
-import com.xy.base.utils.exp.showToast
+import xy.xy.base.utils.Logger
+import xy.xy.base.utils.exp.getResString
+import xy.xy.base.utils.exp.showToast
 
 abstract class WxBaseBackActivity : FragmentActivity(),IWXAPIEventHandler {
     private val wxAppId by lazy { getResString(R.string.wx_app_id) }

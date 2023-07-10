@@ -9,8 +9,9 @@ import com.amap.api.maps2d.LocationSource
 import com.amap.api.maps2d.LocationSource.OnLocationChangedListener
 import com.amap.api.maps2d.model.*
 import com.amap.api.maps2d.model.MyLocationStyle.LOCATION_TYPE_LOCATE
+import com.hjq.permissions.IPermissionInterceptor
 import com.xy.amap.location.LocationNotify
-import com.xy.base.permission.IPermissionInterceptor
+import xy.xy.base.permission.IPermissionInterceptorCreateListener
 
 
 class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemblyView>(view),
@@ -122,7 +123,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
         LocationNotify.instance.removeNotify(TAG)
     }
 
-    interface MapAssemblyView : MapBaseAssemblyView, IPermissionInterceptor {
+    interface MapAssemblyView : MapBaseAssemblyView, IPermissionInterceptorCreateListener {
         fun onCreateLocationAssembly(): LocationAssembly?
     }
 

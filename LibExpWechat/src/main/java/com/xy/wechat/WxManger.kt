@@ -2,8 +2,8 @@ package com.xy.wechat
 
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
-import com.xy.base.utils.ContextHolder
-import com.xy.base.utils.exp.getResString
+import xy.xy.base.utils.ContextHolder
+import xy.xy.base.utils.exp.getResString
 import com.xy.wechat.login.WxLoginListener
 import com.xy.wechat.share.WxShareListener
 

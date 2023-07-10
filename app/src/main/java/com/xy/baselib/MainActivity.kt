@@ -1,4 +1,4 @@
-package com.xy.baselib
+package xy.xy.baselib
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

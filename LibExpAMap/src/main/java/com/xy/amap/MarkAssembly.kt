@@ -6,8 +6,8 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory
 import com.amap.api.maps2d.model.LatLng
 import com.amap.api.maps2d.model.Marker
 import com.amap.api.maps2d.model.MarkerOptions
-import com.xy.base.assembly.base.BaseAssemblyWithContext
-import com.xy.base.assembly.base.BaseAssemblyViewWithContext
+import xy.xy.base.assembly.base.BaseAssemblyWithContext
+import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 
 class MarkAssembly(view: MarkAssemblyView):BaseAssemblyWithContext<MarkAssembly.MarkAssemblyView>(view), AMap.OnMarkerClickListener {
     private val mapView by lazy { this.view?.onCreateMapView() }

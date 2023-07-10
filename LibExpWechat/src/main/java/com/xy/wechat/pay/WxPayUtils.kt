@@ -2,8 +2,8 @@ package com.xy.wechat.pay
 
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.tencent.mm.opensdk.modelpay.PayReq
-import com.xy.base.utils.ContextHolder
-import com.xy.base.utils.exp.getResString
+import xy.xy.base.utils.ContextHolder
+import xy.xy.base.utils.exp.getResString
 import com.xy.wechat.R
 import com.xy.wechat.WxManger
 
