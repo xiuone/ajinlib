@@ -1,78 +1,44 @@
-package com.luck.picture.lib.adapter.holder;
+package com.luck.picture.lib.adapter.holder
 
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.photoview.PhotoView;
-import com.luck.picture.lib.utils.BitmapUtils;
-import com.luck.picture.lib.utils.DensityUtil;
-import com.luck.picture.lib.utils.MediaUtils;
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.IntentUtils
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.recyclerview.widget.RecyclerView
+import com.luck.picture.lib.R
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.photoview.PhotoView
+import com.luck.picture.lib.utils.BitmapUtils
+import com.luck.picture.lib.utils.DensityUtil
+import com.luck.picture.lib.utils.MediaUtils
 
 /**
  * @author：luck
  * @date：2021/11/20 3:17 下午
  * @describe：BasePreviewHolder
  */
-public abstract class BasePreviewHolder extends RecyclerView.ViewHolder {
-    /**
-     * 图片
-     */
-    public final static int ADAPTER_TYPE_IMAGE = 1;
-    /**
-     * 视频
-     */
-    public final static int ADAPTER_TYPE_VIDEO = 2;
-
-    /**
-     * 音频
-     */
-    public final static int ADAPTER_TYPE_AUDIO = 3;
-
-    protected final int screenWidth;
-    protected final int screenHeight;
-    protected final int screenAppInHeight;
-    protected LocalMedia media;
-    protected final SelectorConfig selectorConfig;
-    public PhotoView coverImageView;
-
-    public static BasePreviewHolder generate(ViewGroup parent, int viewType, int resource) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-        if (viewType == ADAPTER_TYPE_VIDEO) {
-            return new PreviewVideoHolder(itemView);
-        } else if (viewType == ADAPTER_TYPE_AUDIO) {
-            return new PreviewAudioHolder(itemView);
-        } else {
-            return new PreviewImageHolder(itemView);
-        }
-    }
-
-    public BasePreviewHolder(@NonNull View itemView) {
-        super(itemView);
-        this.selectorConfig = SelectorProviders.getInstance().getSelectorConfig();
-        this.screenWidth = DensityUtil.getRealScreenWidth(itemView.getContext());
-        this.screenHeight = DensityUtil.getScreenHeight(itemView.getContext());
-        this.screenAppInHeight = DensityUtil.getRealScreenHeight(itemView.getContext());
-        this.coverImageView = itemView.findViewById(R.id.preview_image);
-        findViews(itemView);
-    }
+abstract class BasePreviewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    protected val screenWidth: Int
+    protected val screenHeight: Int
+    protected val screenAppInHeight: Int
+    protected var media: LocalMedia? = null
+    protected val selectorConfig: SelectorConfig
+    @JvmField
+    var coverImageView: PhotoView
 
     /**
      * findViews
      *
      * @param itemView
      */
-    protected abstract void findViews(View itemView);
+    protected abstract fun findViews(itemView: View?)
 
     /**
      * load image cover
@@ -81,17 +47,17 @@ public abstract class BasePreviewHolder extends RecyclerView.ViewHolder {
      * @param maxWidth
      * @param maxHeight
      */
-    protected abstract void loadImage(final LocalMedia media, int maxWidth, int maxHeight);
+    protected abstract fun loadImage(media: LocalMedia, maxWidth: Int, maxHeight: Int)
 
     /**
      * 点击返回事件
      */
-    protected abstract void onClickBackPressed();
+    protected abstract fun onClickBackPressed()
 
     /**
      * 长按事件
      */
-    protected abstract void onLongPressDownload(LocalMedia media);
+    protected abstract fun onLongPressDownload(media: LocalMedia?)
 
     /**
      * bind Data
@@ -99,40 +65,40 @@ public abstract class BasePreviewHolder extends RecyclerView.ViewHolder {
      * @param media
      * @param position
      */
-    public void bindData(LocalMedia media, int position) {
-        this.media = media;
-        int[] size = getRealSizeFromMedia(media);
-        int[] maxImageSize = BitmapUtils.getMaxImageSize(size[0], size[1]);
-        loadImage(media, maxImageSize[0], maxImageSize[1]);
-        setScaleDisplaySize(media);
-        setCoverScaleType(media);
-        onClickBackPressed();
-        onLongPressDownload(media);
+    open fun bindData(media: LocalMedia, position: Int) {
+        this.media = media
+        val size = getRealSizeFromMedia(media)
+        val maxImageSize = BitmapUtils.getMaxImageSize(size[0], size[1])
+        loadImage(media, maxImageSize[0], maxImageSize[1])
+        setScaleDisplaySize(media)
+        setCoverScaleType(media)
+        onClickBackPressed()
+        onLongPressDownload(media)
     }
 
-    protected int[] getRealSizeFromMedia(LocalMedia media) {
-        if (media.isCut() && media.getCropImageWidth() > 0 && media.getCropImageHeight() > 0) {
-            return new int[]{media.getCropImageWidth(), media.getCropImageHeight()};
+    protected fun getRealSizeFromMedia(media: LocalMedia): IntArray {
+        return if (media.isCut && media.cropImageWidth > 0 && media.cropImageHeight > 0) {
+            intArrayOf(media.cropImageWidth, media.cropImageHeight)
         } else {
-            return new int[]{media.getWidth(), media.getHeight()};
+            intArrayOf(media.width, media.height)
         }
     }
 
-    protected void setCoverScaleType(LocalMedia media) {
-        if (MediaUtils.isLongImage(media.getWidth(), media.getHeight())) {
-            coverImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    protected fun setCoverScaleType(media: LocalMedia) {
+        if (MediaUtils.isLongImage(media.width, media.height)) {
+            coverImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         } else {
-            coverImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            coverImageView.scaleType = ImageView.ScaleType.FIT_CENTER
         }
     }
 
-    protected void setScaleDisplaySize(LocalMedia media) {
+    protected open fun setScaleDisplaySize(media: LocalMedia) {
         if (!selectorConfig.isPreviewZoomEffect && screenWidth < screenHeight) {
-            if (media.getWidth() > 0 && media.getHeight() > 0) {
-                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) coverImageView.getLayoutParams();
-                layoutParams.width = screenWidth;
-                layoutParams.height = screenAppInHeight;
-                layoutParams.gravity = Gravity.CENTER;
+            if (media.width > 0 && media.height > 0) {
+                val layoutParams = coverImageView.layoutParams as FrameLayout.LayoutParams
+                layoutParams.width = screenWidth
+                layoutParams.height = screenAppInHeight
+                layoutParams.gravity = Gravity.CENTER
             }
         }
     }
@@ -140,50 +106,73 @@ public abstract class BasePreviewHolder extends RecyclerView.ViewHolder {
     /**
      * onViewAttachedToWindow
      */
-    public void onViewAttachedToWindow() {
-
-    }
+    open fun onViewAttachedToWindow() {}
 
     /**
      * onViewDetachedFromWindow
      */
-    public void onViewDetachedFromWindow() {
-
-    }
+    open fun onViewDetachedFromWindow() {}
 
     /**
      * resume and pause play
      */
-    public void resumePausePlay() {
-
-    }
+    open fun resumePausePlay() {}
 
     /**
      * play ing
      */
-    public boolean isPlaying() {
-        return false;
-    }
+    open val isPlaying: Boolean
+        get() = false
 
     /**
      * release
      */
-    public void release() {
-
+    open fun release() {}
+    protected var mPreviewEventListener: OnPreviewEventListener? = null
+    fun setOnPreviewEventListener(listener: OnPreviewEventListener?) {
+        mPreviewEventListener = listener
     }
 
-    protected OnPreviewEventListener mPreviewEventListener;
-
-    public void setOnPreviewEventListener(OnPreviewEventListener listener) {
-        this.mPreviewEventListener = listener;
+    interface OnPreviewEventListener {
+        fun onBackPressed()
+        fun onPreviewVideoTitle(videoName: String?)
+        fun onLongPressDownload(media: LocalMedia?)
     }
 
-    public interface OnPreviewEventListener {
+    companion object {
+        /**
+         * 图片
+         */
+        const val ADAPTER_TYPE_IMAGE = 1
 
-        void onBackPressed();
+        /**
+         * 视频
+         */
+        const val ADAPTER_TYPE_VIDEO = 2
 
-        void onPreviewVideoTitle(String videoName);
+        /**
+         * 音频
+         */
+        const val ADAPTER_TYPE_AUDIO = 3
+        @JvmStatic
+        fun generate(parent: ViewGroup, viewType: Int, resource: Int): BasePreviewHolder {
+            val itemView = LayoutInflater.from(parent.context).inflate(resource, parent, false)
+            return if (viewType == ADAPTER_TYPE_VIDEO) {
+                PreviewVideoHolder(itemView)
+            } else if (viewType == ADAPTER_TYPE_AUDIO) {
+                PreviewAudioHolder(itemView)
+            } else {
+                PreviewImageHolder(itemView)
+            }
+        }
+    }
 
-        void onLongPressDownload(LocalMedia media);
+    init {
+        selectorConfig = SelectorProviders.instance.selectorConfig
+        screenWidth = DensityUtil.getRealScreenWidth(itemView.context)
+        screenHeight = DensityUtil.getScreenHeight(itemView.context)
+        screenAppInHeight = DensityUtil.getRealScreenHeight(itemView.context)
+        coverImageView = itemView.findViewById(R.id.preview_image)
+        findViews(itemView)
     }
 }

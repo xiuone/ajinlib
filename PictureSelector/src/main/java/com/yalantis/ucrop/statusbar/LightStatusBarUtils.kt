@@ -1,189 +1,248 @@
-package com.yalantis.ucrop.statusbar;
+package com.yalantis.ucrop.statusbar
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.os.Build;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import android.annotation.TargetApi
+import android.app.Activity
+import android.os.Build
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import java.lang.Exception
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @data：2018/3/28 下午1:01
  * @描述: 沉浸式
  */
-
-public class LightStatusBarUtils {
-    public static void setLightStatusBarAboveAPI23(Activity activity, boolean isMarginStatusBar
-            , boolean isMarginNavigationBar, boolean isTransStatusBar, boolean dark) {
+object LightStatusBarUtils {
+    fun setLightStatusBarAboveAPI23(
+        activity: Activity,
+        isMarginStatusBar: Boolean,
+        isMarginNavigationBar: Boolean,
+        isTransStatusBar: Boolean,
+        dark: Boolean
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
+            setLightStatusBar(
+                activity,
+                isMarginStatusBar,
+                isMarginNavigationBar,
+                isTransStatusBar,
+                dark
+            )
         }
     }
 
-    public static void setLightStatusBar(Activity activity, boolean dark) {
-        setLightStatusBar(activity, false, false, false, dark);
+    fun setLightStatusBar(activity: Activity, dark: Boolean) {
+        setLightStatusBar(activity, false, false, false, dark)
     }
 
-    public static void setLightStatusBar(Activity activity, boolean isMarginStatusBar
-            , boolean isMarginNavigationBar, boolean isTransStatusBar, boolean dark) {
-        switch (RomUtils.getLightStatausBarAvailableRomType()) {
-            case RomUtils.AvailableRomType.MIUI:
-                if (RomUtils.getMIUIVersionCode() >= 7) {
-                    setAndroidNativeLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
-                } else {
-                    setMIUILightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
-                }
-                break;
-
-            case RomUtils.AvailableRomType.FLYME:
-                setFlymeLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
-                break;
-
-            case RomUtils.AvailableRomType.ANDROID_NATIVE:
-                setAndroidNativeLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
-                break;
-
-            case RomUtils.AvailableRomType.NA:
-                // N/A do nothing
-                break;
+    fun setLightStatusBar(
+        activity: Activity,
+        isMarginStatusBar: Boolean,
+        isMarginNavigationBar: Boolean,
+        isTransStatusBar: Boolean,
+        dark: Boolean
+    ) {
+        when (RomUtils.getLightStatausBarAvailableRomType()) {
+            RomUtils.AvailableRomType.MIUI -> if (RomUtils.getMIUIVersionCode() >= 7) {
+                setAndroidNativeLightStatusBar(
+                    activity,
+                    isMarginStatusBar,
+                    isMarginNavigationBar,
+                    isTransStatusBar,
+                    dark
+                )
+            } else {
+                setMIUILightStatusBar(
+                    activity,
+                    isMarginStatusBar,
+                    isMarginNavigationBar,
+                    isTransStatusBar,
+                    dark
+                )
+            }
+            RomUtils.AvailableRomType.FLYME -> setFlymeLightStatusBar(
+                activity,
+                isMarginStatusBar,
+                isMarginNavigationBar,
+                isTransStatusBar,
+                dark
+            )
+            RomUtils.AvailableRomType.ANDROID_NATIVE -> setAndroidNativeLightStatusBar(
+                activity,
+                isMarginStatusBar,
+                isMarginNavigationBar,
+                isTransStatusBar,
+                dark
+            )
+            RomUtils.AvailableRomType.NA -> {}
         }
     }
 
-
-    private static boolean setMIUILightStatusBar(Activity activity, boolean isMarginStatusBar
-            , boolean isMarginNavigationBar, boolean isTransStatusBar, boolean darkmode) {
-        initStatusBarStyle(activity, isMarginStatusBar, isMarginNavigationBar);
-
-        Class<? extends Window> clazz = activity.getWindow().getClass();
+    private fun setMIUILightStatusBar(
+        activity: Activity,
+        isMarginStatusBar: Boolean,
+        isMarginNavigationBar: Boolean,
+        isTransStatusBar: Boolean,
+        darkmode: Boolean
+    ): Boolean {
+        initStatusBarStyle(activity, isMarginStatusBar, isMarginNavigationBar)
+        val clazz: Class<out Window> = activity.window.javaClass
         try {
-            int darkModeFlag = 0;
-            Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
-            Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
-            darkModeFlag = field.getInt(layoutParams);
-            Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
-            extraFlagField.invoke(activity.getWindow(), darkmode ? darkModeFlag : 0, darkModeFlag);
-            return true;
-        } catch (Exception e) {
-            setAndroidNativeLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, darkmode);
+            var darkModeFlag = 0
+            val layoutParams = Class.forName("android.view.MiuiWindowManager\$LayoutParams")
+            val field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE")
+            darkModeFlag = field.getInt(layoutParams)
+            val extraFlagField = clazz.getMethod(
+                "setExtraFlags",
+                Int::class.javaPrimitiveType,
+                Int::class.javaPrimitiveType
+            )
+            extraFlagField.invoke(activity.window, if (darkmode) darkModeFlag else 0, darkModeFlag)
+            return true
+        } catch (e: Exception) {
+            setAndroidNativeLightStatusBar(
+                activity,
+                isMarginStatusBar,
+                isMarginNavigationBar,
+                isTransStatusBar,
+                darkmode
+            )
         }
-        return false;
+        return false
     }
 
-    private static boolean setFlymeLightStatusBar(Activity activity, boolean isMarginStatusBar
-            , boolean isMarginNavigationBar, boolean isTransStatusBar, boolean dark) {
-        boolean result = false;
+    private fun setFlymeLightStatusBar(
+        activity: Activity?,
+        isMarginStatusBar: Boolean,
+        isMarginNavigationBar: Boolean,
+        isTransStatusBar: Boolean,
+        dark: Boolean
+    ): Boolean {
+        var result = false
         if (activity != null) {
-            initStatusBarStyle(activity, isMarginStatusBar, isMarginNavigationBar);
+            initStatusBarStyle(activity, isMarginStatusBar, isMarginNavigationBar)
             try {
-                WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-                Field darkFlag = WindowManager.LayoutParams.class
-                        .getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
-                Field meizuFlags = WindowManager.LayoutParams.class
-                        .getDeclaredField("meizuFlags");
-                darkFlag.setAccessible(true);
-                meizuFlags.setAccessible(true);
-                int bit = darkFlag.getInt(null);
-                int value = meizuFlags.getInt(lp);
-                if (dark) {
-                    value |= bit;
+                val lp = activity.window.attributes
+                val darkFlag = WindowManager.LayoutParams::class.java
+                    .getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON")
+                val meizuFlags = WindowManager.LayoutParams::class.java
+                    .getDeclaredField("meizuFlags")
+                darkFlag.isAccessible = true
+                meizuFlags.isAccessible = true
+                val bit = darkFlag.getInt(null)
+                var value = meizuFlags.getInt(lp)
+                value = if (dark) {
+                    value or bit
                 } else {
-                    value &= ~bit;
+                    value and bit.inv()
                 }
-                meizuFlags.setInt(lp, value);
-                activity.getWindow().setAttributes(lp);
-                result = true;
-
+                meizuFlags.setInt(lp, value)
+                activity.window.attributes = lp
+                result = true
                 if (RomUtils.getFlymeVersion() >= 7) {
-                    setAndroidNativeLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
+                    setAndroidNativeLightStatusBar(
+                        activity,
+                        isMarginStatusBar,
+                        isMarginNavigationBar,
+                        isTransStatusBar,
+                        dark
+                    )
                 }
-            } catch (Exception e) {
-                setAndroidNativeLightStatusBar(activity, isMarginStatusBar, isMarginNavigationBar, isTransStatusBar, dark);
+            } catch (e: Exception) {
+                setAndroidNativeLightStatusBar(
+                    activity,
+                    isMarginStatusBar,
+                    isMarginNavigationBar,
+                    isTransStatusBar,
+                    dark
+                )
             }
         }
-        return result;
+        return result
     }
 
     @TargetApi(11)
-    private static void setAndroidNativeLightStatusBar(Activity activity, boolean isMarginStatusBar
-            , boolean isMarginNavigationBar, boolean isTransStatusBar, boolean isDarkStatusBarIcon) {
-
+    private fun setAndroidNativeLightStatusBar(
+        activity: Activity,
+        isMarginStatusBar: Boolean,
+        isMarginNavigationBar: Boolean,
+        isTransStatusBar: Boolean,
+        isDarkStatusBarIcon: Boolean
+    ) {
         try {
             if (isTransStatusBar) {
-                Window window = activity.getWindow();
+                val window = activity.window
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     if (isMarginStatusBar && isMarginNavigationBar) {
                         //5.0版本及以上
                         if (isDarkStatusBarIcon && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                    | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
                         } else {
-                            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         }
                     } else if (!isMarginStatusBar && !isMarginNavigationBar) {
-
                         if (isDarkStatusBarIcon && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                    | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                            window.decorView.systemUiVisibility =
+                                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN //                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                        or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
                         } else {
-                            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                            window.decorView.systemUiVisibility =
+                                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN //                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
                         }
-
-
                     } else if (!isMarginStatusBar && isMarginNavigationBar) {
                         if (isDarkStatusBarIcon && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                    | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                            window.decorView.systemUiVisibility =
+                                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                        or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
                         } else {
-                            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                            window.decorView.systemUiVisibility =
+                                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
                         }
-
-
                     } else {
                         //留出来状态栏 不留出来导航栏 没找到办法。。
-                        return;
+                        return
                     }
                 }
             } else {
-                View decor = activity.getWindow().getDecorView();
+                val decor = activity.window.decorView
                 if (isDarkStatusBarIcon && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    decor.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                 } else {
                     // We want to change tint color to white again.
                     // You can also record the flags in advance so that you can turn UI back completely if
                     // you have set other flags before, such as translucent or full screen.
-                    decor.setSystemUiVisibility(0);
+                    decor.systemUiVisibility = 0
                 }
             }
-        } catch (Exception e) {
+        } catch (e: Exception) {
         }
     }
 
-    private static void initStatusBarStyle(Activity activity, boolean isMarginStatusBar
-            , boolean isMarginNavigationBar) {
+    private fun initStatusBarStyle(
+        activity: Activity, isMarginStatusBar: Boolean, isMarginNavigationBar: Boolean
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             if (isMarginStatusBar && isMarginNavigationBar) {
-                activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             } else if (!isMarginStatusBar && !isMarginNavigationBar) {
-                activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                activity.window.decorView.systemUiVisibility =
+                    (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
             } else if (!isMarginStatusBar && isMarginNavigationBar) {
-
-                activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                activity.window.decorView.systemUiVisibility =
+                    (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
             } else {
                 //留出来状态栏 不留出来导航栏 没找到办法。。
             }
         }
-
     }
 }

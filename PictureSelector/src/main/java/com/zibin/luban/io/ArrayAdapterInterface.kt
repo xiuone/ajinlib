@@ -1,29 +1,36 @@
-package com.zibin.luban.io;
+package com.zibin.luban.io
+
+import com.zibin.luban.io.BufferedInputStreamWrap
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.io.PoolAble
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
+import kotlin.Throws
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/8/26 3:19 下午
  * @describe：ArrayAdapterInterface
  */
-interface ArrayAdapterInterface<T> {
-
+internal interface ArrayAdapterInterface<T> {
     /**
      * TAG for logging.
      */
-    String getTag();
+    val tag: String
 
     /**
      * Return the length of the given array.
      */
-    int getArrayLength(T array);
+    fun getArrayLength(array: T): Int
 
     /**
      * Allocate and return an array of the specified size.
      */
-    T newArray(int length);
+    fun newArray(length: Int): T
 
     /**
      * Return the size of an element in the array in bytes (e.g. for int return 4).
      */
-    int getElementSizeInBytes();
+    val elementSizeInBytes: Int
 }

@@ -1,86 +1,88 @@
-package com.luck.picture.lib.engine;
+package com.luck.picture.lib.engine
 
-import android.view.View;
-
-import com.luck.picture.lib.basic.IBridgeLoaderFactory;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnInjectLayoutResourceListener;
-import com.luck.picture.lib.interfaces.OnResultCallbackListener;
+import com.luck.picture.lib.basic.IBridgeLoaderFactory
+import com.luck.picture.lib.config.PictureMimeType.isHasHttp
+import com.luck.picture.lib.config.SelectorProviders.Companion.instance
+import com.luck.picture.lib.config.SelectorProviders.selectorConfig
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnInjectLayoutResourceListener
+import com.luck.picture.lib.interfaces.OnResultCallbackListener
 
 /**
  * @author：luck
  * @date：2020/4/22 11:36 AM
  * @describe：PictureSelectorEngine
  */
-public interface PictureSelectorEngine {
-
+interface PictureSelectorEngine {
     /**
      * Create ImageLoad Engine
      *
      * @return
      */
-    ImageEngine createImageLoaderEngine();
+    fun createImageLoaderEngine(): ImageEngine?
 
     /**
      * Create compress Engine
      *
      * @return
      */
-    CompressEngine createCompressEngine();
+    fun createCompressEngine(): CompressEngine?
 
     /**
      * Create compress Engine
      *
      * @return
      */
-    CompressFileEngine createCompressFileEngine();
+    fun createCompressFileEngine(): CompressFileEngine?
 
     /**
      * Create loader data Engine
      *
      * @return
      */
-    ExtendLoaderEngine createLoaderDataEngine();
+    fun createLoaderDataEngine(): ExtendLoaderEngine?
 
     /**
      * Create video player  Engine
      *
      * @return
      */
-    VideoPlayerEngine createVideoPlayerEngine();
+    fun createVideoPlayerEngine(): VideoPlayerEngine<*>?
 
     /**
      * Create loader data Engine
      *
      * @return
      */
-    IBridgeLoaderFactory onCreateLoader();
+    fun onCreateLoader(): IBridgeLoaderFactory?
 
     /**
      * Create SandboxFileEngine  Engine
      *
      * @return
      */
-    SandboxFileEngine createSandboxFileEngine();
+    fun createSandboxFileEngine(): SandboxFileEngine?
 
     /**
      * Create UriToFileTransformEngine  Engine
      *
      * @return
      */
-    UriToFileTransformEngine createUriToFileTransformEngine();
+    fun createUriToFileTransformEngine(): UriToFileTransformEngine?
 
     /**
      * Create LayoutResource  Listener
      *
      * @return
      */
-    OnInjectLayoutResourceListener createLayoutResourceListener();
+    fun createLayoutResourceListener(): OnInjectLayoutResourceListener?
 
     /**
      * Create Result Listener
      *
      * @return
      */
-    OnResultCallbackListener<LocalMedia> getResultCallbackListener();
+    val resultCallbackListener: OnResultCallbackListener<LocalMedia?>?
 }

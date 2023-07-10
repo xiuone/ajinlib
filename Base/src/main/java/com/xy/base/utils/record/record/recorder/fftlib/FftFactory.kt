@@ -1,81 +1,62 @@
-package com.xy.base.utils.record.record.recorder.fftlib;
+package com.xy.base.utils.record.record.recorder.fftlib
 
-
-import androidx.camera.core.Logger;
+import com.xy.base.utils.Logger.d
+import com.xy.base.utils.record.record.recorder.fftlib.FftFactory
 
 /**
  * FFT 数据处理工厂
  */
-public class FftFactory {
-    private static final String TAG = FftFactory.class.getSimpleName();
-    private final Level level = Level.Original;
-
-    public FftFactory(Level level) {
-//        this.level = level;
-    }
-
-    public byte[] makeFftData(byte[] pcmData) {
+class FftFactory(level: Level?) {
+    private val level = Level.Original
+    fun makeFftData(pcmData: ByteArray): ByteArray? {
 //        Logger.d(TAG, "pcmData length: %s", pcmData.length);
-        if (pcmData.length < 1024) {
-            Logger.d(TAG, "makeFftData");
-            return null;
+        if (pcmData.size < 1024) {
+            d(TAG, "makeFftData")
+            return null
         }
-
-        double[] doubles = ByteUtils.toHardDouble(ByteUtils.toShorts(pcmData));
-        double[] fft = FFT.fft(doubles, 0);
-
-        switch (level) {
-            case Original:
-                return ByteUtils.toSoftBytes(fft);
-            case Maximal:
-//                return doFftMaximal(fft);
-            default:
-                return ByteUtils.toHardBytes(fft);
+        val doubles = ByteUtils.toHardDouble(ByteUtils.toShorts(pcmData))
+        val fft = FFT.fft(doubles, 0)
+        return when (level) {
+            Level.Original -> ByteUtils.toSoftBytes(fft)
+            Level.Maximal -> ByteUtils.toHardBytes(fft)
+            else -> ByteUtils.toHardBytes(fft)
         }
     }
 
-
-    private byte[] doFftMaximal(double[] fft) {
-        byte[] bytes = ByteUtils.toSoftBytes(fft);
-        byte[] result = new byte[bytes.length];
-
-        for (int i = 0; i < bytes.length; i++) {
-
+    private fun doFftMaximal(fft: DoubleArray): ByteArray {
+        val bytes = ByteUtils.toSoftBytes(fft)
+        val result = ByteArray(bytes.size)
+        for (i in bytes.indices) {
             if (isSimpleData(bytes, i)) {
-                result[i] = bytes[i];
+                result[i] = bytes[i]
             } else {
-                result[Math.max(i - 1, 0)] = (byte) (bytes[i] / 2);
-                result[Math.min(i + 1, result.length - 1)] = (byte) (bytes[i] / 2);
+                result[Math.max(i - 1, 0)] = (bytes[i] / 2).toByte()
+                result[Math.min(i + 1, result.size - 1)] = (bytes[i] / 2).toByte()
             }
         }
-
-        return result;
+        return result
     }
 
-    private boolean isSimpleData(byte[] data, int i) {
-
-        int start = Math.max(0, i - 5);
-        int end = Math.min(data.length, i + 5);
-
-        byte max = 0, min = 127;
-        for (int j = start; j < end; j++) {
+    private fun isSimpleData(data: ByteArray, i: Int): Boolean {
+        val start = Math.max(0, i - 5)
+        val end = Math.min(data.size, i + 5)
+        var max: Byte = 0
+        var min: Byte = 127
+        for (j in start until end) {
             if (data[j] > max) {
-                max = data[j];
+                max = data[j]
             }
             if (data[j] < min) {
-                min = data[j];
+                min = data[j]
             }
         }
-
-        return data[i] == min || data[i] == max;
+        return data[i] == min || data[i] == max
     }
-
 
     /**
      * FFT 处理等级
      */
-    public enum Level {
-
+    enum class Level {
         /**
          * 原始数据，不做任何优化
          */
@@ -97,4 +78,7 @@ public class FftFactory {
         Maximal
     }
 
+    companion object {
+        private val TAG = FftFactory::class.java.simpleName
+    }
 }

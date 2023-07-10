@@ -1,56 +1,37 @@
-package com.luck.picture.lib.app;
+package com.luck.picture.lib.app
 
-import android.content.Context;
-
-import com.luck.picture.lib.engine.PictureSelectorEngine;
+import android.content.Context
+import com.luck.picture.lib.engine.PictureSelectorEngine
 
 /**
  * @author：luck
  * @date：2019-12-03 15:12
  * @describe：PictureAppMaster
  */
-public class PictureAppMaster implements IApp {
+class PictureAppMaster private constructor() : IApp {
+    override val appContext: Context?
+        get() = if (app == null) {
+            null
+        } else app.getAppContext()
+    override val pictureSelectorEngine: PictureSelectorEngine?
+        get() = if (app == null) {
+            null
+        } else app.getPictureSelectorEngine()
+    var app: IApp? = null
 
-
-    @Override
-    public Context getAppContext() {
-        if (app == null) {
-            return null;
-        }
-        return app.getAppContext();
-    }
-
-    @Override
-    public PictureSelectorEngine getPictureSelectorEngine() {
-        if (app == null) {
-            return null;
-        }
-        return app.getPictureSelectorEngine();
-    }
-
-    private PictureAppMaster() {
-    }
-
-    private static PictureAppMaster mInstance;
-
-    public static PictureAppMaster getInstance() {
-        if (mInstance == null) {
-            synchronized (PictureAppMaster.class) {
+    companion object {
+        private var mInstance: PictureAppMaster? = null
+        @JvmStatic
+        val instance: PictureAppMaster?
+            get() {
                 if (mInstance == null) {
-                    mInstance = new PictureAppMaster();
+                    synchronized(PictureAppMaster::class.java) {
+                        if (mInstance == null) {
+                            mInstance = PictureAppMaster()
+                        }
+                    }
                 }
+                return mInstance
             }
-        }
-        return mInstance;
-    }
-
-    private IApp app;
-
-    public void setApp(IApp app) {
-        this.app = app;
-    }
-
-    public IApp getApp() {
-        return app;
     }
 }

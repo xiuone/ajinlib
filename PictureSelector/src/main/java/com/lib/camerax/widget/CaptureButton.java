@@ -18,11 +18,7 @@ import android.view.ViewGroup;
 import com.lib.camerax.CustomCameraConfig;
 import com.lib.camerax.listener.CaptureListener;
 import com.lib.camerax.listener.IObtainCameraView;
-import com.lib.camerax.permissions.PermissionChecker;
-import com.lib.camerax.permissions.PermissionResultCallback;
-import com.lib.camerax.permissions.SimpleXPermissionUtil;
 import com.lib.camerax.utils.DoubleUtils;
-import com.lib.camerax.utils.SimpleXSpUtils;
 
 /**
  * @author：luck

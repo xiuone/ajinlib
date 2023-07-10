@@ -1,42 +1,50 @@
-package com.zibin.luban.io;
+package com.zibin.luban.io
+
+import com.zibin.luban.io.BufferedInputStreamWrap
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.io.PoolAble
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
+import kotlin.Throws
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/8/26 3:15 下午
  * @describe：ArrayPool
  */
-public interface ArrayPool {
+interface ArrayPool {
+    /**
+     * Optionally adds the given array of the given type to the pool.
+     *
+     *
+     * Arrays may be ignored, for example if the array is larger than the maximum size of the pool.
+     *
+     */
+    @Deprecated("Use {@link #put(Object)}")
+    fun <T> put(array: T, arrayClass: Class<T>?)
 
     /**
      * Optionally adds the given array of the given type to the pool.
      *
-     * <p>Arrays may be ignored, for example if the array is larger than the maximum size of the pool.
      *
-     * @deprecated Use {@link #put(Object)}
+     * Arrays may be ignored, for example if the array is larger than the maximum size of the pool.
      */
-    @Deprecated
-    <T> void put(T array, Class<T> arrayClass);
-
-    /**
-     * Optionally adds the given array of the given type to the pool.
-     *
-     * <p>Arrays may be ignored, for example if the array is larger than the maximum size of the pool.
-     */
-    <T> void put(T array);
+    fun <T> put(array: T)
 
     /**
      * Returns a non-null array of the given type with a length >= to the given size.
      *
-     * <p>If an array of the given size isn't in the pool, a new one will be allocated.
      *
-     * <p>This class makes no guarantees about the contents of the returned array.
+     * If an array of the given size isn't in the pool, a new one will be allocated.
      *
-     * @see #getExact(int, Class)
+     *
+     * This class makes no guarantees about the contents of the returned array.
+     *
+     * @see .getExact
      */
-    <T> T get(int size, Class<T> arrayClass);
+    operator fun <T> get(size: Int, arrayClass: Class<T>): T
 
-
-    /** Clears all arrays from the pool. */
-    void clearMemory();
-
+    /** Clears all arrays from the pool.  */
+    fun clearMemory()
 }

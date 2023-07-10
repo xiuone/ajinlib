@@ -1,127 +1,104 @@
-package com.luck.picture.lib.animators;
+package com.luck.picture.lib.animators
 
-import android.animation.Animator;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-
-import androidx.recyclerview.widget.RecyclerView;
+import android.animation.Animator
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Interpolator
+import android.view.animation.LinearInterpolator
+import kotlin.jvm.JvmOverloads
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * @author：luck
  * @date：2020-04-18 14:12
  * @describe：BaseAnimationAdapter
  */
-public abstract class BaseAnimationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private RecyclerView.Adapter<RecyclerView.ViewHolder> mAdapter;
-    private int mDuration = 250;
-    private Interpolator mInterpolator = new LinearInterpolator();
-    private int mLastPosition = -1;
-
-    private boolean isFirstOnly = true;
-
-    public BaseAnimationAdapter(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
-        mAdapter = adapter;
+abstract class BaseAnimationAdapter(val wrappedAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var mDuration = 250
+    private var mInterpolator: Interpolator = LinearInterpolator()
+    private var mLastPosition = -1
+    private var isFirstOnly = true
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return wrappedAdapter.onCreateViewHolder(parent, viewType)
     }
 
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return mAdapter.onCreateViewHolder(parent, viewType);
+    override fun registerAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
+        super.registerAdapterDataObserver(observer)
+        wrappedAdapter.registerAdapterDataObserver(observer)
     }
 
-    @Override
-    public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
-        super.registerAdapterDataObserver(observer);
-        mAdapter.registerAdapterDataObserver(observer);
+    override fun unregisterAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
+        super.unregisterAdapterDataObserver(observer)
+        wrappedAdapter.unregisterAdapterDataObserver(observer)
     }
 
-    @Override
-    public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
-        super.unregisterAdapterDataObserver(observer);
-        mAdapter.unregisterAdapterDataObserver(observer);
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        wrappedAdapter.onAttachedToRecyclerView(recyclerView)
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        mAdapter.onAttachedToRecyclerView(recyclerView);
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        wrappedAdapter.onDetachedFromRecyclerView(recyclerView)
     }
 
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-        mAdapter.onDetachedFromRecyclerView(recyclerView);
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        wrappedAdapter.onViewAttachedToWindow(holder)
     }
 
-    @Override
-    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        mAdapter.onViewAttachedToWindow(holder);
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        wrappedAdapter.onViewDetachedFromWindow(holder)
     }
 
-    @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        mAdapter.onViewDetachedFromWindow(holder);
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        mAdapter.onBindViewHolder(holder, position);
-
-        int adapterPosition = holder.getAdapterPosition();
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        wrappedAdapter.onBindViewHolder(holder, position)
+        val adapterPosition = holder.adapterPosition
         if (!isFirstOnly || adapterPosition > mLastPosition) {
-            for (Animator anim : getAnimators(holder.itemView)) {
-                anim.setDuration(mDuration).start();
-                anim.setInterpolator(mInterpolator);
+            for (anim in getAnimators(holder.itemView)) {
+                anim.setDuration(mDuration.toLong()).start()
+                anim.interpolator = mInterpolator
             }
-            mLastPosition = adapterPosition;
+            mLastPosition = adapterPosition
         } else {
-            ViewHelper.clear(holder.itemView);
+            ViewHelper.clear(holder.itemView)
         }
     }
 
-    @Override
-    public void onViewRecycled(RecyclerView.ViewHolder holder) {
-        mAdapter.onViewRecycled(holder);
-        super.onViewRecycled(holder);
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        wrappedAdapter.onViewRecycled(holder)
+        super.onViewRecycled(holder)
     }
 
-    @Override
-    public int getItemCount() {
-        return mAdapter.getItemCount();
+    override fun getItemCount(): Int {
+        return wrappedAdapter.itemCount
     }
 
-    public void setDuration(int duration) {
-        mDuration = duration;
+    fun setDuration(duration: Int) {
+        mDuration = duration
     }
 
-    public void setInterpolator(Interpolator interpolator) {
-        mInterpolator = interpolator;
+    fun setInterpolator(interpolator: Interpolator) {
+        mInterpolator = interpolator
     }
 
-    public void setStartPosition(int start) {
-        mLastPosition = start;
+    fun setStartPosition(start: Int) {
+        mLastPosition = start
     }
 
-    protected abstract Animator[] getAnimators(View view);
-
-    public void setFirstOnly(boolean firstOnly) {
-        isFirstOnly = firstOnly;
+    protected abstract fun getAnimators(view: View): Array<Animator>
+    fun setFirstOnly(firstOnly: Boolean) {
+        isFirstOnly = firstOnly
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return mAdapter.getItemViewType(position);
+    override fun getItemViewType(position: Int): Int {
+        return wrappedAdapter.getItemViewType(position)
     }
 
-    public RecyclerView.Adapter<RecyclerView.ViewHolder> getWrappedAdapter() {
-        return mAdapter;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return mAdapter.getItemId(position);
+    override fun getItemId(position: Int): Long {
+        return wrappedAdapter.getItemId(position)
     }
 }

@@ -84,6 +84,6 @@ abstract class ActivityBaseStatus : ActivityBase(), ContextListener {
     override fun getCurrentAct(): Activity?  = this
     open fun setListener() {}
     @LayoutRes
-    abstract fun contentLayoutRes(): Int
+    open fun contentLayoutRes(): Int = R.layout.layout_fragment
     open fun titleLayoutRes(): Int = R.layout.a_layout_toolbar_top_default
 }

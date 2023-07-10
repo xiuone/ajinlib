@@ -1,25 +1,24 @@
-package com.zibin.luban;
+package com.zibin.luban
 
-import java.io.File;
+import java.io.File
 
-public interface OnCompressListener {
-
+interface OnCompressListener {
     /**
      * Fired when the compression is started, override to handle in your own code
      */
-    void onStart();
+    fun onStart()
 
     /**
      * Fired when a compression returns successfully, override to handle in your own code
      *
      * @param index compression index
      */
-    void onSuccess(int index, File compressFile);
+    fun onSuccess(index: Int, compressFile: File?)
 
     /**
      * Fired when a compression fails to complete, override to handle in your own code
      *
      * @param index compression error index
      */
-    void onError(int index, Throwable e);
+    fun onError(index: Int, e: Throwable?)
 }

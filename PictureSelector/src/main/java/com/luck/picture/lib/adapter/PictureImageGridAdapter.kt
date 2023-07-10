@@ -1,107 +1,75 @@
-package com.luck.picture.lib.adapter;
+package com.luck.picture.lib.adapter
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder;
-import com.luck.picture.lib.config.InjectResourceSource;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.entity.LocalMedia;
-import java.util.ArrayList;
-
+import android.annotation.SuppressLint
+import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.luck.picture.lib.R
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder.Companion.generate
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder.bindData
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder.setOnItemClickListener
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.Companion.generate
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.setOnPreviewEventListener
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.bindData
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.onViewAttachedToWindow
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.onViewDetachedFromWindow
+import com.luck.picture.lib.adapter.holder.PreviewVideoHolder.isPlaying
+import com.luck.picture.lib.adapter.holder.PreviewVideoHolder.startPlay
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.isPlaying
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.release
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder
+import com.luck.picture.lib.config.InjectResourceSource
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.config.SelectorConfig
+import kotlin.jvm.JvmOverloads
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.entity.LocalMedia
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2016-12-30 12:02
  * @describe：PictureImageGridAdapter
  */
-public class PictureImageGridAdapter extends RecyclerView.Adapter<BaseRecyclerMediaHolder> {
-    /**
-     * 拍照
-     */
-    public final static int ADAPTER_TYPE_CAMERA = 1;
-    /**
-     * 图片
-     */
-    public final static int ADAPTER_TYPE_IMAGE = 2;
-    /**
-     * 视频
-     */
-    public final static int ADAPTER_TYPE_VIDEO = 3;
-    /**
-     * 音频
-     */
-    public final static int ADAPTER_TYPE_AUDIO = 4;
+class PictureImageGridAdapter(private val mContext: Context, private val mConfig: SelectorConfig) :
+    RecyclerView.Adapter<BaseRecyclerMediaHolder>() {
+    var isDisplayCamera = false
+    var data = ArrayList<LocalMedia>()
+        private set
 
-    private boolean isDisplayCamera;
-
-    private ArrayList<LocalMedia> mData = new ArrayList<>();
-
-    private final SelectorConfig mConfig;
-
-    private final Context mContext;
-
-
-    public void notifyItemPositionChanged(int position) {
-        this.notifyItemChanged(position);
-    }
-
-    public PictureImageGridAdapter(Context context, SelectorConfig mConfig) {
-        this.mConfig = mConfig;
-        this.mContext = context;
+    fun notifyItemPositionChanged(position: Int) {
+        this.notifyItemChanged(position)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setDataAndDataSetChanged(ArrayList<LocalMedia> result) {
+    fun setDataAndDataSetChanged(result: ArrayList<LocalMedia>?) {
         if (result != null) {
-            this.mData = result;
-            notifyDataSetChanged();
+            data = result
+            notifyDataSetChanged()
         }
     }
 
-    public boolean isDisplayCamera() {
-        return isDisplayCamera;
-    }
+    val isDataEmpty: Boolean
+        get() = data.size == 0
 
-    public void setDisplayCamera(boolean displayCamera) {
-        isDisplayCamera = displayCamera;
-    }
-
-    public ArrayList<LocalMedia> getData() {
-        return mData;
-    }
-
-    public boolean isDataEmpty() {
-        return mData.size() == 0;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (isDisplayCamera && position == 0) {
-            return ADAPTER_TYPE_CAMERA;
+    override fun getItemViewType(position: Int): Int {
+        return if (isDisplayCamera && position == 0) {
+            ADAPTER_TYPE_CAMERA
         } else {
-            int adapterPosition = isDisplayCamera ? position - 1 : position;
-            String mimeType = mData.get(adapterPosition).getMimeType();
+            val adapterPosition = if (isDisplayCamera) position - 1 else position
+            val mimeType = data[adapterPosition].mimeType
             if (PictureMimeType.isHasVideo(mimeType)) {
-                return ADAPTER_TYPE_VIDEO;
+                return ADAPTER_TYPE_VIDEO
             } else if (PictureMimeType.isHasAudio(mimeType)) {
-                return ADAPTER_TYPE_AUDIO;
+                return ADAPTER_TYPE_AUDIO
             }
-            return ADAPTER_TYPE_IMAGE;
+            ADAPTER_TYPE_IMAGE
         }
     }
 
-    @NonNull
-    @Override
-    public BaseRecyclerMediaHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return BaseRecyclerMediaHolder.generate(parent, viewType, getItemResourceId(viewType), mConfig);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRecyclerMediaHolder {
+        return generate(parent, viewType, getItemResourceId(viewType), mConfig)
     }
 
     /**
@@ -110,61 +78,66 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<BaseRecyclerMe
      * @param viewType
      * @return
      */
-    private int getItemResourceId(int viewType) {
-        int layoutResourceId;
-        switch (viewType) {
-            case ADAPTER_TYPE_CAMERA:
-                return R.layout.ps_item_grid_camera;
-            case ADAPTER_TYPE_VIDEO:
-                layoutResourceId = InjectResourceSource.getLayoutResource(mContext, InjectResourceSource.MAIN_ITEM_VIDEO_LAYOUT_RESOURCE, mConfig);
-                return layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE ? layoutResourceId : R.layout.ps_item_grid_video;
-            case ADAPTER_TYPE_AUDIO:
-                layoutResourceId = InjectResourceSource.getLayoutResource(mContext, InjectResourceSource.MAIN_ITEM_AUDIO_LAYOUT_RESOURCE, mConfig);
-                return layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE ? layoutResourceId : R.layout.ps_item_grid_audio;
-            default:
-                layoutResourceId = InjectResourceSource.getLayoutResource(mContext, InjectResourceSource.MAIN_ITEM_IMAGE_LAYOUT_RESOURCE, mConfig);
-                return layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE ? layoutResourceId : R.layout.ps_item_grid_image;
+    private fun getItemResourceId(viewType: Int): Int {
+        val layoutResourceId: Int
+        return when (viewType) {
+            ADAPTER_TYPE_CAMERA -> R.layout.ps_item_grid_camera
+            ADAPTER_TYPE_VIDEO -> {
+                layoutResourceId = InjectResourceSource.getLayoutResource(
+                    mContext,
+                    InjectResourceSource.MAIN_ITEM_VIDEO_LAYOUT_RESOURCE,
+                    mConfig
+                )
+                if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) layoutResourceId else R.layout.ps_item_grid_video
+            }
+            ADAPTER_TYPE_AUDIO -> {
+                layoutResourceId = InjectResourceSource.getLayoutResource(
+                    mContext,
+                    InjectResourceSource.MAIN_ITEM_AUDIO_LAYOUT_RESOURCE,
+                    mConfig
+                )
+                if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) layoutResourceId else R.layout.ps_item_grid_audio
+            }
+            else -> {
+                layoutResourceId = InjectResourceSource.getLayoutResource(
+                    mContext,
+                    InjectResourceSource.MAIN_ITEM_IMAGE_LAYOUT_RESOURCE,
+                    mConfig
+                )
+                if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) layoutResourceId else R.layout.ps_item_grid_image
+            }
         }
     }
 
-    @Override
-    public void onBindViewHolder(final BaseRecyclerMediaHolder holder, final int position) {
+    override fun onBindViewHolder(holder: BaseRecyclerMediaHolder, position: Int) {
         if (getItemViewType(position) == ADAPTER_TYPE_CAMERA) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (listener != null) {
-                        listener.openCameraClick();
-                    }
+            holder.itemView.setOnClickListener {
+                if (listener != null) {
+                    listener!!.openCameraClick()
                 }
-            });
+            }
         } else {
-            int adapterPosition = isDisplayCamera ? position - 1 : position;
-            LocalMedia media = mData.get(adapterPosition);
-            holder.bindData(media, adapterPosition);
-            holder.setOnItemClickListener(listener);
+            val adapterPosition = if (isDisplayCamera) position - 1 else position
+            val media = data[adapterPosition]
+            holder.bindData(media, adapterPosition)
+            holder.setOnItemClickListener(listener)
         }
     }
 
-
-    @Override
-    public int getItemCount() {
-        return isDisplayCamera ? mData.size() + 1 : mData.size();
+    override fun getItemCount(): Int {
+        return if (isDisplayCamera) data.size + 1 else data.size
     }
 
-
-    private OnItemClickListener listener;
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+    private var listener: OnItemClickListener? = null
+    fun setOnItemClickListener(listener: OnItemClickListener?) {
+        this.listener = listener
     }
 
-    public interface OnItemClickListener {
-
+    interface OnItemClickListener {
         /**
          * 拍照
          */
-        void openCameraClick();
+        fun openCameraClick()
 
         /**
          * 列表item点击事件
@@ -173,7 +146,7 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<BaseRecyclerMe
          * @param position     当前下标
          * @param media        当前LocalMedia对象
          */
-        void onItemClick(View selectedView, int position, LocalMedia media);
+        fun onItemClick(selectedView: View?, position: Int, media: LocalMedia?)
 
         /**
          * 列表item长按事件
@@ -181,7 +154,7 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<BaseRecyclerMe
          * @param itemView
          * @param position
          */
-        void onItemLongClick(View itemView, int position);
+        fun onItemLongClick(itemView: View?, position: Int)
 
         /**
          * 列表勾选点击事件
@@ -190,6 +163,28 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<BaseRecyclerMe
          * @param position     当前下标
          * @param media        当前LocalMedia对象
          */
-        int onSelected(View selectedView, int position, LocalMedia media);
+        fun onSelected(selectedView: View?, position: Int, media: LocalMedia?): Int
+    }
+
+    companion object {
+        /**
+         * 拍照
+         */
+        const val ADAPTER_TYPE_CAMERA = 1
+
+        /**
+         * 图片
+         */
+        const val ADAPTER_TYPE_IMAGE = 2
+
+        /**
+         * 视频
+         */
+        const val ADAPTER_TYPE_VIDEO = 3
+
+        /**
+         * 音频
+         */
+        const val ADAPTER_TYPE_AUDIO = 4
     }
 }

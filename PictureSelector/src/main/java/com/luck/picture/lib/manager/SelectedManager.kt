@@ -1,14 +1,17 @@
-package com.luck.picture.lib.manager;
+package com.luck.picture.lib.manager
 
+import com.luck.picture.lib.interfaces.OnCallbackListener.onCall
+import com.luck.picture.lib.config.SelectMimeType.ofImage
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/11/20 8:57 下午
  * @describe：SelectedManager
  */
-public final class SelectedManager {
-    public static final int INVALID = -1;
-    public static final int ADD_SUCCESS = 0;
-    public static final int REMOVE = 1;
-    public static final int SUCCESS = 200;
+object SelectedManager {
+    const val INVALID = -1
+    const val ADD_SUCCESS = 0
+    const val REMOVE = 1
+    const val SUCCESS = 200
 }

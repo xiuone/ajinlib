@@ -1,245 +1,170 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import static android.app.Activity.RESULT_OK;
-import static android.view.KeyEvent.ACTION_UP;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.TextUtils;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.app.PictureAppMaster;
-import com.luck.picture.lib.config.Crop;
-import com.luck.picture.lib.config.CustomIntentKey;
-import com.luck.picture.lib.config.InjectResourceSource;
-import com.luck.picture.lib.config.PermissionEvent;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.config.SelectLimitType;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.config.SelectModeConfig;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.dialog.PhotoItemSelectedDialog;
-import com.luck.picture.lib.dialog.PictureLoadingDialog;
-import com.luck.picture.lib.dialog.RemindDialog;
-import com.luck.picture.lib.engine.PictureSelectorEngine;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.immersive.ImmersiveManager;
-import com.luck.picture.lib.interfaces.OnCallbackIndexListener;
-import com.luck.picture.lib.interfaces.OnCallbackListener;
-import com.luck.picture.lib.interfaces.OnItemClickListener;
-import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener;
-import com.luck.picture.lib.interfaces.OnRecordAudioInterceptListener;
-import com.luck.picture.lib.interfaces.OnRequestPermissionListener;
-import com.luck.picture.lib.language.LanguageConfig;
-import com.luck.picture.lib.language.PictureLanguageUtils;
-import com.luck.picture.lib.loader.IBridgeMediaLoader;
-import com.luck.picture.lib.manager.SelectedManager;
-import com.luck.picture.lib.permissions.PermissionChecker;
-import com.luck.picture.lib.permissions.PermissionConfig;
-import com.luck.picture.lib.permissions.PermissionResultCallback;
-import com.luck.picture.lib.permissions.PermissionUtil;
-import com.luck.picture.lib.service.ForegroundService;
-import com.luck.picture.lib.style.PictureWindowAnimationStyle;
-import com.luck.picture.lib.style.SelectMainStyle;
-import com.luck.picture.lib.thread.PictureThreadUtils;
-import com.luck.picture.lib.utils.ActivityCompatHelper;
-import com.luck.picture.lib.utils.BitmapUtils;
-import com.luck.picture.lib.utils.DateUtils;
-import com.luck.picture.lib.utils.FileDirMap;
-import com.luck.picture.lib.utils.MediaStoreUtils;
-import com.luck.picture.lib.utils.MediaUtils;
-import com.luck.picture.lib.utils.PictureFileUtils;
-import com.luck.picture.lib.utils.SdkVersionUtils;
-import com.luck.picture.lib.utils.SpUtils;
-import com.luck.picture.lib.utils.ToastUtils;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
+import android.media.AudioManager
+import android.media.SoundPool
+import android.net.Uri
+import android.os.Bundle
+import android.provider.MediaStore
+import android.text.TextUtils
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.luck.picture.lib.R
+import com.luck.picture.lib.config.*
+import com.luck.picture.lib.dialog.PhotoItemSelectedDialog
+import com.luck.picture.lib.dialog.PictureLoadingDialog
+import com.luck.picture.lib.dialog.RemindDialog
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.immersive.ImmersiveManager
+import com.luck.picture.lib.interfaces.OnCallbackIndexListener
+import com.luck.picture.lib.interfaces.OnCallbackListener
+import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
+import com.luck.picture.lib.interfaces.OnRecordAudioInterceptListener
+import com.luck.picture.lib.language.LanguageConfig
+import com.luck.picture.lib.language.PictureLanguageUtils
+import com.luck.picture.lib.loader.IBridgeMediaLoader
+import com.luck.picture.lib.manager.SelectedManager
+import com.luck.picture.lib.service.ForegroundService
+import com.luck.picture.lib.thread.PictureThreadUtils
+import com.luck.picture.lib.utils.*
+import org.json.JSONArray
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.lang.Exception
+import java.lang.NullPointerException
+import java.util.ArrayList
+import java.util.HashSet
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author：luck
  * @date：2021/11/19 10:02 下午
  * @describe：PictureCommonFragment
  */
-public abstract class PictureCommonFragment extends Fragment implements IPictureSelectorCommonEvent {
-    public static final String TAG = PictureCommonFragment.class.getSimpleName();
+abstract class PictureCommonFragment : Fragment(), IPictureSelectorCommonEvent {
     /**
      * PermissionResultCallback
      */
-    private PermissionResultCallback mPermissionResultCallback;
+    private var mPermissionResultCallback: PermissionResultCallback? = null
 
     /**
      * IBridgePictureBehavior
      */
-    protected IBridgePictureBehavior iBridgePictureBehavior;
+    protected var iBridgePictureBehavior: IBridgePictureBehavior? = null
 
     /**
      * page
      */
-    protected int mPage = 1;
+    protected var mPage = 1
 
     /**
      * Media Loader engine
      */
-    protected IBridgeMediaLoader mLoader;
+    protected var mLoader: IBridgeMediaLoader? = null
 
     /**
      * PictureSelector Config
      */
-    protected SelectorConfig selectorConfig;
+    protected var selectorConfig: SelectorConfig? = null
 
     /**
      * Loading Dialog
      */
-    private Dialog mLoadingDialog;
+    private var mLoadingDialog: Dialog? = null
 
     /**
      * click sound
      */
-    private SoundPool soundPool;
+    private var soundPool: SoundPool? = null
 
     /**
      * click sound effect id
      */
-    private int soundID;
+    private var soundID = 0
 
     /**
      * fragment enter anim duration
      */
-    private long enterAnimDuration;
+    private var enterAnimDuration: Long = 0
 
     /**
      * tipsDialog
      */
-    protected Dialog tipsDialog;
+    protected var tipsDialog: Dialog? = null
 
     /**
      * Context
      */
-    private Context context;
+    private var context: Context? = null
+    open val fragmentTag: String?
+        get() = TAG
 
-    public String getFragmentTag() {
-        return TAG;
-    }
+    override fun onCreateLoader() {}
+    override val resourceId: Int
+        get() = 0
 
-    @Override
-    public void onCreateLoader() {
-    }
-
-    @Override
-    public int getResourceId() {
-        return 0;
-    }
-
-
-    @Override
-    public void onFragmentResume() {
-
-    }
-
-    @Override
-    public void reStartSavedInstance(Bundle savedInstanceState) {
-
-    }
-
-    @Override
-    public void onCheckOriginalChange() {
-
-    }
-
-    @Override
-    public void dispatchCameraMediaResult(LocalMedia media) {
-
-    }
-
-
-    @Override
-    public void onSelectedChange(boolean isAddRemove, LocalMedia currentMedia) {
-
-    }
-
-    @Override
-    public void onFixedSelectedChange(LocalMedia oldLocalMedia) {
-
-    }
-
-    @Override
-    public void sendChangeSubSelectPositionEvent(boolean adapterChange) {
-
-    }
-
-    @Override
-    public void handlePermissionSettingResult(String[] permissions) {
-
-    }
-
-    @Override
-    public void onEditMedia(Intent intent) {
-
-    }
-
-    @Override
-    public void onEnterFragment() {
-
-    }
-
-    @Override
-    public void onExitFragment() {
-
-    }
-
-    protected Context getAppContext() {
-        Context ctx = getContext();
-        if (ctx != null) {
-            return ctx;
-        } else {
-            Context appContext = PictureAppMaster.getInstance().getAppContext();
-            if (appContext != null) {
-                return appContext;
+    override fun onFragmentResume() {}
+    override fun reStartSavedInstance(savedInstanceState: Bundle?) {}
+    override fun onCheckOriginalChange() {}
+    override fun dispatchCameraMediaResult(media: LocalMedia?) {}
+    override fun onSelectedChange(isAddRemove: Boolean, currentMedia: LocalMedia?) {}
+    override fun onFixedSelectedChange(oldLocalMedia: LocalMedia?) {}
+    override fun sendChangeSubSelectPositionEvent(adapterChange: Boolean) {}
+    override fun handlePermissionSettingResult(permissions: Array<String?>?) {}
+    override fun onEditMedia(intent: Intent?) {}
+    override fun onEnterFragment() {}
+    override fun onExitFragment() {}
+    protected val appContext: Context?
+        protected get() {
+            val ctx = getContext()
+            if (ctx != null) {
+                return ctx
+            } else {
+                val appContext = instance!!.appContext
+                if (appContext != null) {
+                    return appContext
+                }
             }
+            return context
         }
-        return context;
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (mPermissionResultCallback != null) {
-            PermissionChecker.getInstance().onRequestPermissionsResult(grantResults, mPermissionResultCallback);
-            mPermissionResultCallback = null;
+            PermissionChecker.getInstance()
+                .onRequestPermissionsResult(grantResults, mPermissionResultCallback)
+            mPermissionResultCallback = null
         }
     }
 
@@ -248,30 +173,28 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param callback
      */
-    public void setPermissionsResultAction(PermissionResultCallback callback) {
-        mPermissionResultCallback = callback;
+    fun setPermissionsResultAction(callback: PermissionResultCallback?) {
+        mPermissionResultCallback = callback
     }
 
-    @Override
-    public void handlePermissionDenied(String[] permissionArray) {
-        PermissionConfig.CURRENT_REQUEST_PERMISSION = permissionArray;
-        if (permissionArray != null && permissionArray.length > 0) {
-            SpUtils.putBoolean(getAppContext(), permissionArray[0], true);
+    override fun handlePermissionDenied(permissionArray: Array<String>) {
+        PermissionConfig.CURRENT_REQUEST_PERMISSION = permissionArray
+        if (permissionArray != null && permissionArray.size > 0) {
+            SpUtils.putBoolean(appContext, permissionArray[0], true)
         }
-        if (selectorConfig.onPermissionDeniedListener != null) {
-            onPermissionExplainEvent(false, null);
-            selectorConfig.onPermissionDeniedListener
-                    .onDenied(this, permissionArray, PictureConfig.REQUEST_GO_SETTING,
-                            new OnCallbackListener<Boolean>() {
-                                @Override
-                                public void onCall(Boolean isResult) {
-                                    if (isResult) {
-                                        handlePermissionSettingResult(PermissionConfig.CURRENT_REQUEST_PERMISSION);
-                                    }
-                                }
-                            });
+        if (selectorConfig!!.onPermissionDeniedListener != null) {
+            onPermissionExplainEvent(false, null)
+            selectorConfig!!.onPermissionDeniedListener
+                .onDenied(this, permissionArray, PictureConfig.REQUEST_GO_SETTING,
+                    object : OnCallbackListener<Boolean?> {
+                        override fun onCall(isResult: Boolean) {
+                            if (isResult) {
+                                handlePermissionSettingResult(PermissionConfig.CURRENT_REQUEST_PERMISSION)
+                            }
+                        }
+                    })
         } else {
-            PermissionUtil.goIntentSetting(this, PictureConfig.REQUEST_GO_SETTING);
+            PermissionUtil.goIntentSetting(this, PictureConfig.REQUEST_GO_SETTING)
         }
     }
 
@@ -280,49 +203,50 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @return
      */
-    protected boolean isNormalDefaultEnter() {
-        return getActivity() instanceof PictureSelectorSupporterActivity || getActivity() instanceof PictureSelectorTransparentActivity;
+    protected val isNormalDefaultEnter: Boolean
+        protected get() = activity is PictureSelectorSupporterActivity || activity is PictureSelectorTransparentActivity
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return if (resourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) {
+            inflater.inflate(resourceId, container, false)
+        } else super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (getResourceId() != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) {
-            return inflater.inflate(getResourceId(), container, false);
-        }
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        selectorConfig = SelectorProviders.getInstance().getSelectorConfig();
-        FileDirMap.init(view.getContext());
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        selectorConfig = SelectorProviders.instance.selectorConfig
+        FileDirMap.init(view.context)
         if (selectorConfig.viewLifecycle != null) {
-            selectorConfig.viewLifecycle.onViewCreated(this, view, savedInstanceState);
+            selectorConfig.viewLifecycle.onViewCreated(this, view, savedInstanceState)
         }
-        if (selectorConfig.onCustomLoadingListener != null) {
-            mLoadingDialog = selectorConfig.onCustomLoadingListener.create(getAppContext());
+        mLoadingDialog = if (selectorConfig.onCustomLoadingListener != null) {
+            selectorConfig.onCustomLoadingListener.create(appContext)
         } else {
-            mLoadingDialog = new PictureLoadingDialog(getAppContext());
+            PictureLoadingDialog(appContext)
         }
-        setRequestedOrientation();
-        setTranslucentStatusBar();
-        setRootViewKeyListener(requireView());
+        setRequestedOrientation()
+        setTranslucentStatusBar()
+        setRootViewKeyListener(requireView())
         if (selectorConfig.isOpenClickSound && !selectorConfig.isOnlyCamera) {
-            soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-            soundID = soundPool.load(getAppContext(), R.raw.ps_click_music, 1);
+            soundPool = SoundPool(1, AudioManager.STREAM_MUSIC, 0)
+            soundID = soundPool!!.load(appContext, R.raw.ps_click_music, 1)
         }
     }
-
 
     /**
      * 设置透明状态栏
      */
-    private void setTranslucentStatusBar() {
-        if (selectorConfig.isPreviewFullScreenMode) {
-            SelectMainStyle selectMainStyle = selectorConfig.selectorStyle.getSelectMainStyle();
-            ImmersiveManager.translucentStatusBar(requireActivity(), selectMainStyle.isDarkStatusBarBlack());
+    private fun setTranslucentStatusBar() {
+        if (selectorConfig!!.isPreviewFullScreenMode) {
+            val selectMainStyle = selectorConfig!!.selectorStyle.selectMainStyle
+            ImmersiveManager.translucentStatusBar(
+                requireActivity(),
+                selectMainStyle.isDarkStatusBarBlack
+            )
         }
     }
 
@@ -331,103 +255,111 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param view
      */
-    public void setRootViewKeyListener(View view) {
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        view.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == ACTION_UP) {
-                    onKeyBackFragmentFinish();
-                    return true;
-                }
-                return false;
+    fun setRootViewKeyListener(view: View) {
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                onKeyBackFragmentFinish()
+                return@OnKeyListener true
             }
-        });
+            false
+        })
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        initAppLanguage();
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        initAppLanguage()
     }
 
-
-    @Nullable
-    @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        PictureWindowAnimationStyle windowAnimationStyle = selectorConfig.selectorStyle.getWindowAnimationStyle();
-        Animation loadAnimation;
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        val windowAnimationStyle = selectorConfig!!.selectorStyle.windowAnimationStyle
+        val loadAnimation: Animation
         if (enter) {
-            if (windowAnimationStyle.activityEnterAnimation != 0) {
-                loadAnimation = AnimationUtils.loadAnimation(getAppContext(), windowAnimationStyle.activityEnterAnimation);
+            loadAnimation = if (windowAnimationStyle.activityEnterAnimation != 0) {
+                AnimationUtils.loadAnimation(
+                    appContext,
+                    windowAnimationStyle.activityEnterAnimation
+                )
             } else {
-                loadAnimation = AnimationUtils.loadAnimation(getAppContext(), R.anim.ps_anim_alpha_enter);
+                AnimationUtils.loadAnimation(
+                    appContext,
+                    R.anim.ps_anim_alpha_enter
+                )
             }
-            setEnterAnimationDuration(loadAnimation.getDuration());
-            onEnterFragment();
+            enterAnimationDuration = loadAnimation.duration
+            onEnterFragment()
         } else {
-            if (windowAnimationStyle.activityExitAnimation != 0) {
-                loadAnimation = AnimationUtils.loadAnimation(getAppContext(), windowAnimationStyle.activityExitAnimation);
+            loadAnimation = if (windowAnimationStyle.activityExitAnimation != 0) {
+                AnimationUtils.loadAnimation(
+                    appContext,
+                    windowAnimationStyle.activityExitAnimation
+                )
             } else {
-                loadAnimation = AnimationUtils.loadAnimation(getAppContext(), R.anim.ps_anim_alpha_exit);
+                AnimationUtils.loadAnimation(
+                    appContext,
+                    R.anim.ps_anim_alpha_exit
+                )
             }
-            onExitFragment();
+            onExitFragment()
         }
-        return loadAnimation;
+        return loadAnimation
     }
 
-    public void setEnterAnimationDuration(long duration) {
-        this.enterAnimDuration = duration;
-    }
+    var enterAnimationDuration: Long
+        get() {
+            val DIFFERENCE: Long = 50
+            val duration =
+                if (enterAnimDuration > DIFFERENCE) enterAnimDuration - DIFFERENCE else enterAnimDuration
+            return if (duration >= 0) duration else 0
+        }
+        set(duration) {
+            enterAnimDuration = duration
+        }
 
-
-    public long getEnterAnimationDuration() {
-        final long DIFFERENCE = 50;
-        long duration = enterAnimDuration > DIFFERENCE ? enterAnimDuration - DIFFERENCE : enterAnimDuration;
-        return duration >= 0 ? duration : 0;
-    }
-
-
-    @Override
-    public int confirmSelect(LocalMedia currentMedia, boolean isSelected) {
-        if (selectorConfig.onSelectFilterListener != null) {
-            if (selectorConfig.onSelectFilterListener.onSelectFilter(currentMedia)) {
-                boolean isSelectLimit = false;
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), currentMedia, selectorConfig, SelectLimitType.SELECT_NOT_SUPPORT_SELECT_LIMIT);
+    override fun confirmSelect(currentMedia: LocalMedia, isSelected: Boolean): Int {
+        if (selectorConfig!!.onSelectFilterListener != null) {
+            if (selectorConfig!!.onSelectFilterListener.onSelectFilter(currentMedia)) {
+                var isSelectLimit = false
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            currentMedia,
+                            selectorConfig,
+                            SelectLimitType.SELECT_NOT_SUPPORT_SELECT_LIMIT
+                        )
                 }
                 if (isSelectLimit) {
                 } else {
-                    ToastUtils.showToast(getAppContext(), getString(R.string.ps_select_no_support));
+                    ToastUtils.showToast(appContext, getString(R.string.ps_select_no_support))
                 }
-                return SelectedManager.INVALID;
+                return SelectedManager.INVALID
             }
         }
-        int checkSelectValidity = isCheckSelectValidity(currentMedia, isSelected);
+        val checkSelectValidity = isCheckSelectValidity(currentMedia, isSelected)
         if (checkSelectValidity != SelectedManager.SUCCESS) {
-            return SelectedManager.INVALID;
+            return SelectedManager.INVALID
         }
-        List<LocalMedia> selectedResult = selectorConfig.getSelectedResult();
-        int resultCode;
+        val selectedResult: MutableList<LocalMedia> = selectorConfig!!.selectedResult
+        val resultCode: Int
         if (isSelected) {
-            selectedResult.remove(currentMedia);
-            resultCode = SelectedManager.REMOVE;
+            selectedResult.remove(currentMedia)
+            resultCode = SelectedManager.REMOVE
         } else {
-            if (selectorConfig.selectionMode == SelectModeConfig.SINGLE) {
-                if (selectedResult.size() > 0) {
-                    sendFixedSelectedChangeEvent(selectedResult.get(0));
-                    selectedResult.clear();
+            if (selectorConfig!!.selectionMode == SelectModeConfig.SINGLE) {
+                if (selectedResult.size > 0) {
+                    sendFixedSelectedChangeEvent(selectedResult[0])
+                    selectedResult.clear()
                 }
             }
-            selectedResult.add(currentMedia);
-            currentMedia.setNum(selectedResult.size());
-            resultCode = SelectedManager.ADD_SUCCESS;
-            playClickEffect();
+            selectedResult.add(currentMedia)
+            currentMedia.num = selectedResult.size
+            resultCode = SelectedManager.ADD_SUCCESS
+            playClickEffect()
         }
-        sendSelectedChangeEvent(resultCode == SelectedManager.ADD_SUCCESS, currentMedia);
-        return resultCode;
+        sendSelectedChangeEvent(resultCode == SelectedManager.ADD_SUCCESS, currentMedia)
+        return resultCode
     }
 
     /**
@@ -437,295 +369,468 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      * @param isSelected   选中或是取消
      * @return
      */
-    protected int isCheckSelectValidity(LocalMedia currentMedia, boolean isSelected) {
-        String curMimeType = currentMedia.getMimeType();
-        long curDuration = currentMedia.getDuration();
-        long curFileSize = currentMedia.getSize();
-        List<LocalMedia> selectedResult = selectorConfig.getSelectedResult();
-        if (selectorConfig.isWithVideoImage) {
+    protected fun isCheckSelectValidity(currentMedia: LocalMedia, isSelected: Boolean): Int {
+        val curMimeType = currentMedia.mimeType
+        val curDuration = currentMedia.duration
+        val curFileSize = currentMedia.size
+        val selectedResult: List<LocalMedia> = selectorConfig!!.selectedResult
+        if (selectorConfig!!.isWithVideoImage) {
             // 共选型模式
-            int selectVideoSize = 0;
-            for (int i = 0; i < selectedResult.size(); i++) {
-                String mimeType = selectedResult.get(i).getMimeType();
+            var selectVideoSize = 0
+            for (i in selectedResult.indices) {
+                val mimeType = selectedResult[i].mimeType
                 if (PictureMimeType.isHasVideo(mimeType)) {
-                    selectVideoSize++;
+                    selectVideoSize++
                 }
             }
-            if (checkWithMimeTypeValidity(currentMedia,isSelected, curMimeType, selectVideoSize, curFileSize, curDuration)) {
-                return SelectedManager.INVALID;
+            if (checkWithMimeTypeValidity(
+                    currentMedia,
+                    isSelected,
+                    curMimeType,
+                    selectVideoSize,
+                    curFileSize,
+                    curDuration
+                )
+            ) {
+                return SelectedManager.INVALID
             }
         } else {
             // 单一型模式
-            if (checkOnlyMimeTypeValidity(currentMedia,isSelected, curMimeType, selectorConfig.getResultFirstMimeType(), curFileSize, curDuration)) {
-                return SelectedManager.INVALID;
+            if (checkOnlyMimeTypeValidity(
+                    currentMedia,
+                    isSelected,
+                    curMimeType,
+                    selectorConfig!!.resultFirstMimeType,
+                    curFileSize,
+                    curDuration
+                )
+            ) {
+                return SelectedManager.INVALID
             }
         }
-        return SelectedManager.SUCCESS;
+        return SelectedManager.SUCCESS
     }
 
-    @SuppressLint({"StringFormatInvalid", "StringFormatMatches"})
-    @Override
-    public boolean checkWithMimeTypeValidity(LocalMedia media, boolean isSelected, String curMimeType, int selectVideoSize, long fileSize, long duration) {
-        if (selectorConfig.selectMaxFileSize > 0) {
-            if (fileSize > selectorConfig.selectMaxFileSize) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), media, selectorConfig,
-                                    SelectLimitType.SELECT_MAX_FILE_SIZE_LIMIT);
+    @SuppressLint("StringFormatInvalid", "StringFormatMatches")
+    override fun checkWithMimeTypeValidity(
+        media: LocalMedia?,
+        isSelected: Boolean,
+        curMimeType: String,
+        selectVideoSize: Int,
+        fileSize: Long,
+        duration: Long
+    ): Boolean {
+        if (selectorConfig!!.selectMaxFileSize > 0) {
+            if (fileSize > selectorConfig!!.selectMaxFileSize) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext, media, selectorConfig,
+                            SelectLimitType.SELECT_MAX_FILE_SIZE_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                String maxFileSize = PictureFileUtils.formatFileSize(selectorConfig.selectMaxFileSize);
-                showTipsDialog(getString(R.string.ps_select_max_size, maxFileSize));
-                return true;
+                val maxFileSize = PictureFileUtils.formatFileSize(
+                    selectorConfig!!.selectMaxFileSize
+                )
+                showTipsDialog(getString(R.string.ps_select_max_size, maxFileSize))
+                return true
             }
         }
-        if (selectorConfig.selectMinFileSize > 0) {
-            if (fileSize < selectorConfig.selectMinFileSize) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), media, selectorConfig,
-                                    SelectLimitType.SELECT_MIN_FILE_SIZE_LIMIT);
+        if (selectorConfig!!.selectMinFileSize > 0) {
+            if (fileSize < selectorConfig!!.selectMinFileSize) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext, media, selectorConfig,
+                            SelectLimitType.SELECT_MIN_FILE_SIZE_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                String minFileSize = PictureFileUtils.formatFileSize(selectorConfig.selectMinFileSize);
-                showTipsDialog(getString(R.string.ps_select_min_size, minFileSize));
-                return true;
+                val minFileSize = PictureFileUtils.formatFileSize(
+                    selectorConfig!!.selectMinFileSize
+                )
+                showTipsDialog(getString(R.string.ps_select_min_size, minFileSize))
+                return true
             }
         }
-
         if (PictureMimeType.isHasVideo(curMimeType)) {
-            if (selectorConfig.selectionMode == SelectModeConfig.MULTIPLE) {
-                if (selectorConfig.maxVideoSelectNum <= 0) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(), media, selectorConfig, SelectLimitType.SELECT_NOT_WITH_SELECT_LIMIT);
+            if (selectorConfig!!.selectionMode == SelectModeConfig.MULTIPLE) {
+                if (selectorConfig!!.maxVideoSelectNum <= 0) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                media,
+                                selectorConfig,
+                                SelectLimitType.SELECT_NOT_WITH_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
                     // 如果视频可选数量是0
-                    showTipsDialog(getString(R.string.ps_rule));
-                    return true;
+                    showTipsDialog(getString(R.string.ps_rule))
+                    return true
                 }
-
-                if (!isSelected && selectorConfig.getSelectedResult().size() >= selectorConfig.maxSelectNum) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(), media, selectorConfig, SelectLimitType.SELECT_MAX_SELECT_LIMIT);
+                if (!isSelected && selectorConfig!!.selectedResult.size >= selectorConfig!!.maxSelectNum) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                media,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MAX_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
-                    showTipsDialog(getString(R.string.ps_message_max_num, selectorConfig.maxSelectNum));
-                    return true;
+                    showTipsDialog(
+                        getString(
+                            R.string.ps_message_max_num,
+                            selectorConfig!!.maxSelectNum
+                        )
+                    )
+                    return true
                 }
-
-                if (!isSelected && selectVideoSize >= selectorConfig.maxVideoSelectNum) {
+                if (!isSelected && selectVideoSize >= selectorConfig!!.maxVideoSelectNum) {
                     // 如果选择的是视频
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(), media, selectorConfig, SelectLimitType.SELECT_MAX_VIDEO_SELECT_LIMIT);
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                media,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MAX_VIDEO_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
-                    showTipsDialog(getTipsMsg(getAppContext(), curMimeType, selectorConfig.maxVideoSelectNum));
-                    return true;
+                    showTipsDialog(
+                        getTipsMsg(
+                            appContext, curMimeType, selectorConfig!!.maxVideoSelectNum
+                        )
+                    )
+                    return true
                 }
             }
-
-            if (!isSelected && selectorConfig.selectMinDurationSecond > 0 && DateUtils.millisecondToSecond(duration) < selectorConfig.selectMinDurationSecond) {
+            if (!isSelected && selectorConfig!!.selectMinDurationSecond > 0 && DateUtils.millisecondToSecond(
+                    duration
+                ) < selectorConfig!!.selectMinDurationSecond
+            ) {
                 // 视频小于最低指定的长度
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), media,  selectorConfig,
-                                    SelectLimitType.SELECT_MIN_VIDEO_SECOND_SELECT_LIMIT);
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext, media, selectorConfig,
+                            SelectLimitType.SELECT_MIN_VIDEO_SECOND_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_select_video_min_second, selectorConfig.selectMinDurationSecond / 1000));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_select_video_min_second,
+                        selectorConfig!!.selectMinDurationSecond / 1000
+                    )
+                )
+                return true
             }
-
-            if (!isSelected && selectorConfig.selectMaxDurationSecond > 0 && DateUtils.millisecondToSecond(duration) > selectorConfig.selectMaxDurationSecond) {
+            if (!isSelected && selectorConfig!!.selectMaxDurationSecond > 0 && DateUtils.millisecondToSecond(
+                    duration
+                ) > selectorConfig!!.selectMaxDurationSecond
+            ) {
                 // 视频时长超过了指定的长度
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(),  media, selectorConfig,
-                                    SelectLimitType.SELECT_MAX_VIDEO_SECOND_SELECT_LIMIT);
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext, media, selectorConfig,
+                            SelectLimitType.SELECT_MAX_VIDEO_SECOND_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_select_video_max_second, selectorConfig.selectMaxDurationSecond / 1000));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_select_video_max_second,
+                        selectorConfig!!.selectMaxDurationSecond / 1000
+                    )
+                )
+                return true
             }
         } else {
-            if (selectorConfig.selectionMode == SelectModeConfig.MULTIPLE) {
-                if (!isSelected && selectorConfig.getSelectedResult().size() >= selectorConfig.maxSelectNum) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(),  media, selectorConfig,
-                                        SelectLimitType.SELECT_MAX_SELECT_LIMIT);
+            if (selectorConfig!!.selectionMode == SelectModeConfig.MULTIPLE) {
+                if (!isSelected && selectorConfig!!.selectedResult.size >= selectorConfig!!.maxSelectNum) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext, media, selectorConfig,
+                                SelectLimitType.SELECT_MAX_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
-                    showTipsDialog(getString(R.string.ps_message_max_num, selectorConfig.maxSelectNum));
-                    return true;
+                    showTipsDialog(
+                        getString(
+                            R.string.ps_message_max_num,
+                            selectorConfig!!.maxSelectNum
+                        )
+                    )
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
     @SuppressLint("StringFormatInvalid")
-    @Override
-    public boolean checkOnlyMimeTypeValidity(LocalMedia media, boolean isSelected, String curMimeType, String existMimeType, long fileSize, long duration) {
+    override fun checkOnlyMimeTypeValidity(
+        media: LocalMedia?,
+        isSelected: Boolean,
+        curMimeType: String,
+        existMimeType: String?,
+        fileSize: Long,
+        duration: Long
+    ): Boolean {
         if (PictureMimeType.isMimeTypeSame(existMimeType, curMimeType)) {
             // ignore
         } else {
-            if (selectorConfig.onSelectLimitTipsListener != null) {
-                boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                        .onSelectLimitTips(getAppContext(), media, selectorConfig, SelectLimitType.SELECT_NOT_WITH_SELECT_LIMIT);
+            if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                    .onSelectLimitTips(
+                        appContext,
+                        media,
+                        selectorConfig,
+                        SelectLimitType.SELECT_NOT_WITH_SELECT_LIMIT
+                    )
                 if (isSelectLimit) {
-                    return true;
+                    return true
                 }
             }
-            showTipsDialog(getString(R.string.ps_rule));
-            return true;
+            showTipsDialog(getString(R.string.ps_rule))
+            return true
         }
-        if (selectorConfig.selectMaxFileSize > 0) {
-            if (fileSize > selectorConfig.selectMaxFileSize) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), media, selectorConfig,
-                                    SelectLimitType.SELECT_MAX_FILE_SIZE_LIMIT);
+        if (selectorConfig!!.selectMaxFileSize > 0) {
+            if (fileSize > selectorConfig!!.selectMaxFileSize) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext, media, selectorConfig,
+                            SelectLimitType.SELECT_MAX_FILE_SIZE_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                String maxFileSize = PictureFileUtils.formatFileSize(selectorConfig.selectMaxFileSize);
-                showTipsDialog(getString(R.string.ps_select_max_size, maxFileSize));
-                return true;
+                val maxFileSize = PictureFileUtils.formatFileSize(
+                    selectorConfig!!.selectMaxFileSize
+                )
+                showTipsDialog(getString(R.string.ps_select_max_size, maxFileSize))
+                return true
             }
         }
-        if (selectorConfig.selectMinFileSize > 0) {
-            if (fileSize < selectorConfig.selectMinFileSize) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(),  media, selectorConfig,
-                                    SelectLimitType.SELECT_MIN_FILE_SIZE_LIMIT);
+        if (selectorConfig!!.selectMinFileSize > 0) {
+            if (fileSize < selectorConfig!!.selectMinFileSize) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext, media, selectorConfig,
+                            SelectLimitType.SELECT_MIN_FILE_SIZE_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                String minFileSize = PictureFileUtils.formatFileSize(selectorConfig.selectMinFileSize);
-                showTipsDialog(getString(R.string.ps_select_min_size, minFileSize));
-                return true;
+                val minFileSize = PictureFileUtils.formatFileSize(
+                    selectorConfig!!.selectMinFileSize
+                )
+                showTipsDialog(getString(R.string.ps_select_min_size, minFileSize))
+                return true
             }
         }
         if (PictureMimeType.isHasVideo(curMimeType)) {
-            if (selectorConfig.selectionMode == SelectModeConfig.MULTIPLE) {
-                selectorConfig.maxVideoSelectNum = selectorConfig.maxVideoSelectNum > 0 ? selectorConfig.maxVideoSelectNum : selectorConfig.maxSelectNum;
-                if (!isSelected && selectorConfig.getSelectCount() >= selectorConfig.maxVideoSelectNum) {
+            if (selectorConfig!!.selectionMode == SelectModeConfig.MULTIPLE) {
+                selectorConfig!!.maxVideoSelectNum =
+                    if (selectorConfig!!.maxVideoSelectNum > 0) selectorConfig!!.maxVideoSelectNum else selectorConfig!!.maxSelectNum
+                if (!isSelected && selectorConfig!!.selectCount >= selectorConfig!!.maxVideoSelectNum) {
                     // 如果先选择的是视频
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MAX_VIDEO_SELECT_LIMIT);
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                media,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MAX_VIDEO_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
-                    showTipsDialog(getTipsMsg(getAppContext(), curMimeType, selectorConfig.maxVideoSelectNum));
-                    return true;
+                    showTipsDialog(
+                        getTipsMsg(
+                            appContext, curMimeType, selectorConfig!!.maxVideoSelectNum
+                        )
+                    )
+                    return true
                 }
             }
-            if (!isSelected && selectorConfig.selectMinDurationSecond > 0 && DateUtils.millisecondToSecond(duration) < selectorConfig.selectMinDurationSecond) {
+            if (!isSelected && selectorConfig!!.selectMinDurationSecond > 0 && DateUtils.millisecondToSecond(
+                    duration
+                ) < selectorConfig!!.selectMinDurationSecond
+            ) {
                 // 视频小于最低指定的长度
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MIN_VIDEO_SECOND_SELECT_LIMIT);
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            media,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MIN_VIDEO_SECOND_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_select_video_min_second, selectorConfig.selectMinDurationSecond / 1000));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_select_video_min_second,
+                        selectorConfig!!.selectMinDurationSecond / 1000
+                    )
+                )
+                return true
             }
-
-            if (!isSelected && selectorConfig.selectMaxDurationSecond > 0 && DateUtils.millisecondToSecond(duration) > selectorConfig.selectMaxDurationSecond) {
+            if (!isSelected && selectorConfig!!.selectMaxDurationSecond > 0 && DateUtils.millisecondToSecond(
+                    duration
+                ) > selectorConfig!!.selectMaxDurationSecond
+            ) {
                 // 视频时长超过了指定的长度
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MAX_VIDEO_SECOND_SELECT_LIMIT);
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            media,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MAX_VIDEO_SECOND_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_select_video_max_second, selectorConfig.selectMaxDurationSecond / 1000));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_select_video_max_second,
+                        selectorConfig!!.selectMaxDurationSecond / 1000
+                    )
+                )
+                return true
             }
         } else if (PictureMimeType.isHasAudio(curMimeType)) {
-            if (selectorConfig.selectionMode == SelectModeConfig.MULTIPLE) {
-                if (!isSelected && selectorConfig.getSelectedResult().size() >= selectorConfig.maxSelectNum) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MAX_SELECT_LIMIT);
+            if (selectorConfig!!.selectionMode == SelectModeConfig.MULTIPLE) {
+                if (!isSelected && selectorConfig!!.selectedResult.size >= selectorConfig!!.maxSelectNum) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                media,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MAX_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
-                    showTipsDialog(getTipsMsg(getAppContext(), curMimeType, selectorConfig.maxSelectNum));
-                    return true;
+                    showTipsDialog(
+                        getTipsMsg(
+                            appContext, curMimeType, selectorConfig!!.maxSelectNum
+                        )
+                    )
+                    return true
                 }
             }
-
-            if (!isSelected && selectorConfig.selectMinDurationSecond > 0 && DateUtils.millisecondToSecond(duration) < selectorConfig.selectMinDurationSecond) {
+            if (!isSelected && selectorConfig!!.selectMinDurationSecond > 0 && DateUtils.millisecondToSecond(
+                    duration
+                ) < selectorConfig!!.selectMinDurationSecond
+            ) {
                 // 音频小于最低指定的长度
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MIN_AUDIO_SECOND_SELECT_LIMIT);
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            media,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MIN_AUDIO_SECOND_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_select_audio_min_second, selectorConfig.selectMinDurationSecond / 1000));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_select_audio_min_second,
+                        selectorConfig!!.selectMinDurationSecond / 1000
+                    )
+                )
+                return true
             }
-            if (!isSelected && selectorConfig.selectMaxDurationSecond > 0 && DateUtils.millisecondToSecond(duration) > selectorConfig.selectMaxDurationSecond) {
+            if (!isSelected && selectorConfig!!.selectMaxDurationSecond > 0 && DateUtils.millisecondToSecond(
+                    duration
+                ) > selectorConfig!!.selectMaxDurationSecond
+            ) {
                 // 音频时长超过了指定的长度
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MAX_AUDIO_SECOND_SELECT_LIMIT);
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            media,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MAX_AUDIO_SECOND_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_select_audio_max_second, selectorConfig.selectMaxDurationSecond / 1000));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_select_audio_max_second,
+                        selectorConfig!!.selectMaxDurationSecond / 1000
+                    )
+                )
+                return true
             }
         } else {
-            if (selectorConfig.selectionMode == SelectModeConfig.MULTIPLE) {
-                if (!isSelected && selectorConfig.getSelectedResult().size() >= selectorConfig.maxSelectNum) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(),  media, selectorConfig, SelectLimitType.SELECT_MAX_SELECT_LIMIT);
+            if (selectorConfig!!.selectionMode == SelectModeConfig.MULTIPLE) {
+                if (!isSelected && selectorConfig!!.selectedResult.size >= selectorConfig!!.maxSelectNum) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                media,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MAX_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
-                    showTipsDialog(getTipsMsg(getAppContext(), curMimeType, selectorConfig.maxSelectNum));
-                    return true;
+                    showTipsDialog(
+                        getTipsMsg(
+                            appContext, curMimeType, selectorConfig!!.maxSelectNum
+                        )
+                    )
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
@@ -733,258 +838,237 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param tips
      */
-    private void showTipsDialog(String tips) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    private fun showTipsDialog(tips: String) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
         try {
-            if (tipsDialog != null && tipsDialog.isShowing()) {
-                return;
+            if (tipsDialog != null && tipsDialog!!.isShowing) {
+                return
             }
-            tipsDialog = RemindDialog.buildDialog(getAppContext(), tips);
-            tipsDialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+            tipsDialog = RemindDialog.buildDialog(appContext, tips)
+            tipsDialog.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    /**
-     * 根据类型获取相应的Toast文案
-     *
-     * @param context
-     * @param mimeType
-     * @param maxSelectNum
-     * @return
-     */
-    @SuppressLint("StringFormatInvalid")
-    private static String getTipsMsg(Context context, String mimeType, int maxSelectNum) {
-        if (PictureMimeType.isHasVideo(mimeType)) {
-            return context.getString(R.string.ps_message_video_max_num, String.valueOf(maxSelectNum));
-        } else if (PictureMimeType.isHasAudio(mimeType)) {
-            return context.getString(R.string.ps_message_audio_max_num, String.valueOf(maxSelectNum));
-        } else {
-            return context.getString(R.string.ps_message_max_num, String.valueOf(maxSelectNum));
-        }
-    }
-
-    @Override
-    public void sendSelectedChangeEvent(boolean isAddRemove, LocalMedia currentMedia) {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
-            for (int i = 0; i < fragments.size(); i++) {
-                Fragment fragment = fragments.get(i);
-                if (fragment instanceof PictureCommonFragment) {
-                    ((PictureCommonFragment) fragment).onSelectedChange(isAddRemove, currentMedia);
+    override fun sendSelectedChangeEvent(isAddRemove: Boolean, currentMedia: LocalMedia?) {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            val fragments = activity!!.supportFragmentManager.fragments
+            for (i in fragments.indices) {
+                val fragment = fragments[i]
+                if (fragment is PictureCommonFragment) {
+                    fragment.onSelectedChange(isAddRemove, currentMedia)
                 }
             }
         }
     }
 
-    @Override
-    public void sendFixedSelectedChangeEvent(LocalMedia currentMedia) {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
-            for (int i = 0; i < fragments.size(); i++) {
-                Fragment fragment = fragments.get(i);
-                if (fragment instanceof PictureCommonFragment) {
-                    ((PictureCommonFragment) fragment).onFixedSelectedChange(currentMedia);
+    override fun sendFixedSelectedChangeEvent(currentMedia: LocalMedia?) {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            val fragments = activity!!.supportFragmentManager.fragments
+            for (i in fragments.indices) {
+                val fragment = fragments[i]
+                if (fragment is PictureCommonFragment) {
+                    fragment.onFixedSelectedChange(currentMedia)
                 }
             }
         }
     }
 
-    @Override
-    public void sendSelectedOriginalChangeEvent() {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
-            for (int i = 0; i < fragments.size(); i++) {
-                Fragment fragment = fragments.get(i);
-                if (fragment instanceof PictureCommonFragment) {
-                    ((PictureCommonFragment) fragment).onCheckOriginalChange();
+    override fun sendSelectedOriginalChangeEvent() {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            val fragments = activity!!.supportFragmentManager.fragments
+            for (i in fragments.indices) {
+                val fragment = fragments[i]
+                if (fragment is PictureCommonFragment) {
+                    fragment.onCheckOriginalChange()
                 }
             }
         }
     }
 
-    @Override
-    public void openSelectedCamera() {
-        switch (selectorConfig.chooseMode) {
-            case SelectMimeType.TYPE_ALL:
-                if (selectorConfig.ofAllCameraType == SelectMimeType.ofImage()) {
-                    openImageCamera();
-                } else if (selectorConfig.ofAllCameraType == SelectMimeType.ofVideo()) {
-                    openVideoCamera();
+    override fun openSelectedCamera() {
+        when (selectorConfig!!.chooseMode) {
+            SelectMimeType.TYPE_ALL -> if (selectorConfig!!.ofAllCameraType == SelectMimeType.ofImage()) {
+                openImageCamera()
+            } else if (selectorConfig!!.ofAllCameraType == SelectMimeType.ofVideo()) {
+                openVideoCamera()
+            } else {
+                onSelectedOnlyCamera()
+            }
+            SelectMimeType.TYPE_IMAGE -> openImageCamera()
+            SelectMimeType.TYPE_VIDEO -> openVideoCamera()
+            SelectMimeType.TYPE_AUDIO -> openSoundRecording()
+            else -> {}
+        }
+    }
+
+    override fun onSelectedOnlyCamera() {
+        val selectedDialog = PhotoItemSelectedDialog.newInstance()
+        selectedDialog.setOnItemClickListener { v, position ->
+            when (position) {
+                PhotoItemSelectedDialog.IMAGE_CAMERA -> if (selectorConfig!!.onCameraInterceptListener != null) {
+                    onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE)
                 } else {
-                    onSelectedOnlyCamera();
+                    openImageCamera()
                 }
-                break;
-            case SelectMimeType.TYPE_IMAGE:
-                openImageCamera();
-                break;
-            case SelectMimeType.TYPE_VIDEO:
-                openVideoCamera();
-                break;
-            case SelectMimeType.TYPE_AUDIO:
-                openSoundRecording();
-                break;
-            default:
-                break;
+                PhotoItemSelectedDialog.VIDEO_CAMERA -> if (selectorConfig!!.onCameraInterceptListener != null) {
+                    onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO)
+                } else {
+                    openVideoCamera()
+                }
+                else -> {}
+            }
         }
+        selectedDialog.setOnDismissListener { isCancel, dialog ->
+            if (selectorConfig!!.isOnlyCamera && isCancel) {
+                onKeyBackFragmentFinish()
+            }
+        }
+        selectedDialog.show(childFragmentManager, "PhotoItemSelectedDialog")
     }
 
-
-    @Override
-    public void onSelectedOnlyCamera() {
-        PhotoItemSelectedDialog selectedDialog = PhotoItemSelectedDialog.newInstance();
-        selectedDialog.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                switch (position) {
-                    case PhotoItemSelectedDialog.IMAGE_CAMERA:
-                        if (selectorConfig.onCameraInterceptListener != null) {
-                            onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE);
-                        } else {
-                            openImageCamera();
-                        }
-                        break;
-                    case PhotoItemSelectedDialog.VIDEO_CAMERA:
-                        if (selectorConfig.onCameraInterceptListener != null) {
-                            onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO);
-                        } else {
-                            openVideoCamera();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-        selectedDialog.setOnDismissListener(new PhotoItemSelectedDialog.OnDismissListener() {
-            @Override
-            public void onDismiss(boolean isCancel, DialogInterface dialog) {
-                if (selectorConfig.isOnlyCamera && isCancel) {
-                    onKeyBackFragmentFinish();
-                }
-            }
-        });
-        selectedDialog.show(getChildFragmentManager(), "PhotoItemSelectedDialog");
-    }
-
-    @Override
-    public void openImageCamera() {
-        onPermissionExplainEvent(true, PermissionConfig.CAMERA);
-        if (selectorConfig.onPermissionsEventListener != null) {
-            onApplyPermissionsEvent(PermissionEvent.EVENT_IMAGE_CAMERA, PermissionConfig.CAMERA);
+    override fun openImageCamera() {
+        onPermissionExplainEvent(true, PermissionConfig.CAMERA)
+        if (selectorConfig!!.onPermissionsEventListener != null) {
+            onApplyPermissionsEvent(PermissionEvent.EVENT_IMAGE_CAMERA, PermissionConfig.CAMERA)
         } else {
             PermissionChecker.getInstance().requestPermissions(this, PermissionConfig.CAMERA,
-                    new PermissionResultCallback() {
-                        @Override
-                        public void onGranted() {
-                            startCameraImageCapture();
-                        }
+                object : PermissionResultCallback() {
+                    fun onGranted() {
+                        startCameraImageCapture()
+                    }
 
-                        @Override
-                        public void onDenied() {
-                            handlePermissionDenied(PermissionConfig.CAMERA);
-                        }
-                    });
+                    fun onDenied() {
+                        handlePermissionDenied(PermissionConfig.CAMERA)
+                    }
+                })
         }
     }
 
     /**
      * Start ACTION_IMAGE_CAPTURE
      */
-    protected void startCameraImageCapture() {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            onPermissionExplainEvent(false, null);
-            if (selectorConfig.onCameraInterceptListener != null) {
-                onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE);
+    protected fun startCameraImageCapture() {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            onPermissionExplainEvent(false, null)
+            if (selectorConfig!!.onCameraInterceptListener != null) {
+                onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE)
             } else {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    ForegroundService.startForegroundService(getAppContext(), selectorConfig.isCameraForegroundService);
-                    Uri imageUri = MediaStoreUtils.createCameraOutImageUri(getAppContext(), selectorConfig);
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                if (cameraIntent.resolveActivity(activity!!.packageManager) != null) {
+                    ForegroundService.startForegroundService(
+                        appContext,
+                        selectorConfig!!.isCameraForegroundService
+                    )
+                    val imageUri = MediaStoreUtils.createCameraOutImageUri(
+                        appContext, selectorConfig
+                    )
                     if (imageUri != null) {
-                        if (selectorConfig.isCameraAroundState) {
-                            cameraIntent.putExtra(PictureConfig.CAMERA_FACING, PictureConfig.CAMERA_BEFORE);
+                        if (selectorConfig!!.isCameraAroundState) {
+                            cameraIntent.putExtra(
+                                PictureConfig.CAMERA_FACING,
+                                PictureConfig.CAMERA_BEFORE
+                            )
                         }
-                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                        startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA);
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                        startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA)
                     }
                 }
             }
         }
     }
 
-
-    @Override
-    public void openVideoCamera() {
-        onPermissionExplainEvent(true, PermissionConfig.CAMERA);
-        if (selectorConfig.onPermissionsEventListener != null) {
-            onApplyPermissionsEvent(PermissionEvent.EVENT_VIDEO_CAMERA, PermissionConfig.CAMERA);
+    override fun openVideoCamera() {
+        onPermissionExplainEvent(true, PermissionConfig.CAMERA)
+        if (selectorConfig!!.onPermissionsEventListener != null) {
+            onApplyPermissionsEvent(PermissionEvent.EVENT_VIDEO_CAMERA, PermissionConfig.CAMERA)
         } else {
             PermissionChecker.getInstance().requestPermissions(this, PermissionConfig.CAMERA,
-                    new PermissionResultCallback() {
-                        @Override
-                        public void onGranted() {
-                            startCameraVideoCapture();
-                        }
+                object : PermissionResultCallback() {
+                    fun onGranted() {
+                        startCameraVideoCapture()
+                    }
 
-                        @Override
-                        public void onDenied() {
-                            handlePermissionDenied(PermissionConfig.CAMERA);
-                        }
-                    });
+                    fun onDenied() {
+                        handlePermissionDenied(PermissionConfig.CAMERA)
+                    }
+                })
         }
     }
 
     /**
      * Start ACTION_VIDEO_CAPTURE
      */
-    protected void startCameraVideoCapture() {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            onPermissionExplainEvent(false, null);
-            if (selectorConfig.onCameraInterceptListener != null) {
-                onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO);
+    protected fun startCameraVideoCapture() {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            onPermissionExplainEvent(false, null)
+            if (selectorConfig!!.onCameraInterceptListener != null) {
+                onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO)
             } else {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    ForegroundService.startForegroundService(getAppContext(), selectorConfig.isCameraForegroundService);
-                    Uri videoUri = MediaStoreUtils.createCameraOutVideoUri(getAppContext(), selectorConfig);
+                val cameraIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                if (cameraIntent.resolveActivity(activity!!.packageManager) != null) {
+                    ForegroundService.startForegroundService(
+                        appContext,
+                        selectorConfig!!.isCameraForegroundService
+                    )
+                    val videoUri = MediaStoreUtils.createCameraOutVideoUri(
+                        appContext, selectorConfig
+                    )
                     if (videoUri != null) {
-                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
-                        if (selectorConfig.isCameraAroundState) {
-                            cameraIntent.putExtra(PictureConfig.CAMERA_FACING, PictureConfig.CAMERA_BEFORE);
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
+                        if (selectorConfig!!.isCameraAroundState) {
+                            cameraIntent.putExtra(
+                                PictureConfig.CAMERA_FACING,
+                                PictureConfig.CAMERA_BEFORE
+                            )
                         }
-                        cameraIntent.putExtra(PictureConfig.EXTRA_QUICK_CAPTURE, selectorConfig.isQuickCapture);
-                        cameraIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, selectorConfig.recordVideoMaxSecond);
-                        cameraIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, selectorConfig.videoQuality);
-                        startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA);
+                        cameraIntent.putExtra(
+                            PictureConfig.EXTRA_QUICK_CAPTURE,
+                            selectorConfig!!.isQuickCapture
+                        )
+                        cameraIntent.putExtra(
+                            MediaStore.EXTRA_DURATION_LIMIT,
+                            selectorConfig!!.recordVideoMaxSecond
+                        )
+                        cameraIntent.putExtra(
+                            MediaStore.EXTRA_VIDEO_QUALITY,
+                            selectorConfig!!.videoQuality
+                        )
+                        startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA)
                     }
                 }
             }
         }
     }
 
-
-    @Override
-    public void openSoundRecording() {
-        if (selectorConfig.onRecordAudioListener != null) {
-            ForegroundService.startForegroundService(getAppContext(), selectorConfig.isCameraForegroundService);
-            selectorConfig.onRecordAudioListener.onRecordAudio(this, PictureConfig.REQUEST_CAMERA);
+    override fun openSoundRecording() {
+        if (selectorConfig!!.onRecordAudioListener != null) {
+            ForegroundService.startForegroundService(
+                appContext,
+                selectorConfig!!.isCameraForegroundService
+            )
+            selectorConfig!!.onRecordAudioListener.onRecordAudio(this, PictureConfig.REQUEST_CAMERA)
         } else {
-            throw new NullPointerException(OnRecordAudioInterceptListener.class.getSimpleName() + " interface needs to be implemented for recording");
+            throw NullPointerException(OnRecordAudioInterceptListener::class.java.simpleName + " interface needs to be implemented for recording")
         }
     }
-
 
     /**
      * 拦截相机事件并处理返回结果
      */
-    @Override
-    public void onInterceptCameraEvent(int cameraMode) {
-        ForegroundService.startForegroundService(getAppContext(), selectorConfig.isCameraForegroundService);
-        selectorConfig.onCameraInterceptListener.openCamera(this, cameraMode, PictureConfig.REQUEST_CAMERA);
+    override fun onInterceptCameraEvent(cameraMode: Int) {
+        ForegroundService.startForegroundService(
+            appContext,
+            selectorConfig!!.isCameraForegroundService
+        )
+        selectorConfig!!.onCameraInterceptListener.openCamera(
+            this,
+            cameraMode,
+            PictureConfig.REQUEST_CAMERA
+        )
     }
 
     /**
@@ -992,23 +1076,20 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param permissionArray
      */
-    @Override
-    public void onApplyPermissionsEvent(int event, String[] permissionArray) {
-        selectorConfig.onPermissionsEventListener.requestPermission(this, permissionArray,
-                new OnRequestPermissionListener() {
-                    @Override
-                    public void onCall(String[] permissionArray, boolean isResult) {
-                        if (isResult) {
-                            if (event == PermissionEvent.EVENT_VIDEO_CAMERA) {
-                                startCameraVideoCapture();
-                            } else {
-                                startCameraImageCapture();
-                            }
-                        } else {
-                            handlePermissionDenied(permissionArray);
-                        }
-                    }
-                });
+    override fun onApplyPermissionsEvent(event: Int, permissionArray: Array<String?>?) {
+        selectorConfig!!.onPermissionsEventListener.requestPermission(
+            this, permissionArray
+        ) { permissionArray, isResult ->
+            if (isResult) {
+                if (event == PermissionEvent.EVENT_VIDEO_CAMERA) {
+                    startCameraVideoCapture()
+                } else {
+                    startCameraImageCapture()
+                }
+            } else {
+                handlePermissionDenied(permissionArray)
+            }
+        }
     }
 
     /**
@@ -1016,19 +1097,24 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param permissionArray
      */
-    @Override
-    public void onPermissionExplainEvent(boolean isDisplayExplain, String[] permissionArray) {
-        if (selectorConfig.onPermissionDescriptionListener != null) {
+    override fun onPermissionExplainEvent(
+        isDisplayExplain: Boolean,
+        permissionArray: Array<String?>?
+    ) {
+        if (selectorConfig!!.onPermissionDescriptionListener != null) {
             if (isDisplayExplain) {
-                if (PermissionChecker.isCheckSelfPermission(getAppContext(), permissionArray)) {
-                    SpUtils.putBoolean(getAppContext(), permissionArray[0], false);
+                if (PermissionChecker.isCheckSelfPermission(appContext, permissionArray)) {
+                    SpUtils.putBoolean(appContext, permissionArray!![0], false)
                 } else {
-                    if (!SpUtils.getBoolean(getAppContext(), permissionArray[0], false)) {
-                        selectorConfig.onPermissionDescriptionListener.onPermissionDescription(this, permissionArray);
+                    if (!SpUtils.getBoolean(appContext, permissionArray!![0], false)) {
+                        selectorConfig!!.onPermissionDescriptionListener.onPermissionDescription(
+                            this,
+                            permissionArray
+                        )
                     }
                 }
             } else {
-                selectorConfig.onPermissionDescriptionListener.onDismiss(this);
+                selectorConfig!!.onPermissionDescriptionListener.onDismiss(this)
             }
         }
     }
@@ -1036,100 +1122,115 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * 点击选择的音效
      */
-    private void playClickEffect() {
-        if (soundPool != null && selectorConfig.isOpenClickSound) {
-            soundPool.play(soundID, 0.1F, 0.5F, 0, 1, 1);
+    private fun playClickEffect() {
+        if (soundPool != null && selectorConfig!!.isOpenClickSound) {
+            soundPool!!.play(soundID, 0.1f, 0.5f, 0, 1, 1f)
         }
     }
 
     /**
      * 释放音效资源
      */
-    private void releaseSoundPool() {
+    private fun releaseSoundPool() {
         try {
             if (soundPool != null) {
-                soundPool.release();
-                soundPool = null;
+                soundPool!!.release()
+                soundPool = null
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        ForegroundService.stopService(getAppContext());
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        ForegroundService.stopService(appContext)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == PictureConfig.REQUEST_CAMERA) {
-                dispatchHandleCamera(data);
+                dispatchHandleCamera(data)
             } else if (requestCode == Crop.REQUEST_EDIT_CROP) {
-                onEditMedia(data);
+                onEditMedia(data)
             } else if (requestCode == Crop.REQUEST_CROP) {
-                List<LocalMedia> selectedResult = selectorConfig.getSelectedResult();
+                val selectedResult: List<LocalMedia> = selectorConfig!!.selectedResult
                 try {
-                    if (selectedResult.size() == 1) {
-                        LocalMedia media = selectedResult.get(0);
-                        Uri output = Crop.getOutput(data);
-                        media.setCutPath(output != null ? output.getPath() : "");
-                        media.setCut(!TextUtils.isEmpty(media.getCutPath()));
-                        media.setCropImageWidth(Crop.getOutputImageWidth(data));
-                        media.setCropImageHeight(Crop.getOutputImageHeight(data));
-                        media.setCropOffsetX(Crop.getOutputImageOffsetX(data));
-                        media.setCropOffsetY(Crop.getOutputImageOffsetY(data));
-                        media.setCropResultAspectRatio(Crop.getOutputCropAspectRatio(data));
-                        media.setCustomData(Crop.getOutputCustomExtraData(data));
-                        media.setSandboxPath(media.getCutPath());
+                    if (selectedResult.size == 1) {
+                        val media = selectedResult[0]
+                        val output = Crop.getOutput(
+                            data!!
+                        )
+                        media.cutPath = if (output != null) output.path else ""
+                        media.isCut = !TextUtils.isEmpty(media.cutPath)
+                        media.cropImageWidth = Crop.getOutputImageWidth(
+                            data
+                        )
+                        media.cropImageHeight = Crop.getOutputImageHeight(
+                            data
+                        )
+                        media.cropOffsetX = Crop.getOutputImageOffsetX(
+                            data
+                        )
+                        media.cropOffsetY = Crop.getOutputImageOffsetY(
+                            data
+                        )
+                        media.cropResultAspectRatio = Crop.getOutputCropAspectRatio(
+                            data
+                        )
+                        media.customData = Crop.getOutputCustomExtraData(
+                            data
+                        )
+                        media.sandboxPath = media.cutPath
                     } else {
-                        String extra = data.getStringExtra(MediaStore.EXTRA_OUTPUT);
+                        var extra = data!!.getStringExtra(MediaStore.EXTRA_OUTPUT)
                         if (TextUtils.isEmpty(extra)) {
-                            extra = data.getStringExtra(CustomIntentKey.EXTRA_OUTPUT_URI);
+                            extra = data.getStringExtra(CustomIntentKey.EXTRA_OUTPUT_URI)
                         }
-                        JSONArray array = new JSONArray(extra);
-                        if (array.length() == selectedResult.size()) {
-                            for (int i = 0; i < selectedResult.size(); i++) {
-                                LocalMedia media = selectedResult.get(i);
-                                JSONObject item = array.optJSONObject(i);
-                                media.setCutPath(item.optString(CustomIntentKey.EXTRA_OUT_PUT_PATH));
-                                media.setCut(!TextUtils.isEmpty(media.getCutPath()));
-                                media.setCropImageWidth(item.optInt(CustomIntentKey.EXTRA_IMAGE_WIDTH));
-                                media.setCropImageHeight(item.optInt(CustomIntentKey.EXTRA_IMAGE_HEIGHT));
-                                media.setCropOffsetX(item.optInt(CustomIntentKey.EXTRA_OFFSET_X));
-                                media.setCropOffsetY(item.optInt(CustomIntentKey.EXTRA_OFFSET_Y));
-                                media.setCropResultAspectRatio((float) item.optDouble(CustomIntentKey.EXTRA_ASPECT_RATIO));
-                                media.setCustomData(item.optString(CustomIntentKey.EXTRA_CUSTOM_EXTRA_DATA));
-                                media.setSandboxPath(media.getCutPath());
+                        val array = JSONArray(extra)
+                        if (array.length() == selectedResult.size) {
+                            for (i in selectedResult.indices) {
+                                val media = selectedResult[i]
+                                val item = array.optJSONObject(i)
+                                media.cutPath = item.optString(CustomIntentKey.EXTRA_OUT_PUT_PATH)
+                                media.isCut = !TextUtils.isEmpty(media.cutPath)
+                                media.cropImageWidth =
+                                    item.optInt(CustomIntentKey.EXTRA_IMAGE_WIDTH)
+                                media.cropImageHeight =
+                                    item.optInt(CustomIntentKey.EXTRA_IMAGE_HEIGHT)
+                                media.cropOffsetX = item.optInt(CustomIntentKey.EXTRA_OFFSET_X)
+                                media.cropOffsetY = item.optInt(CustomIntentKey.EXTRA_OFFSET_Y)
+                                media.cropResultAspectRatio =
+                                    item.optDouble(CustomIntentKey.EXTRA_ASPECT_RATIO).toFloat()
+                                media.customData =
+                                    item.optString(CustomIntentKey.EXTRA_CUSTOM_EXTRA_DATA)
+                                media.sandboxPath = media.cutPath
                             }
                         }
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ToastUtils.showToast(getAppContext(), e.getMessage());
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    ToastUtils.showToast(appContext, e.message)
                 }
-
-                ArrayList<LocalMedia> result = new ArrayList<>(selectedResult);
+                val result = ArrayList(selectedResult)
                 if (checkCompressValidity()) {
-                    onCompress(result);
+                    onCompress(result)
                 } else if (checkOldCompressValidity()) {
-                    onOldCompress(result);
+                    onOldCompress(result)
                 } else {
-                    onResultEvent(result);
+                    onResultEvent(result)
                 }
             }
         } else if (resultCode == Crop.RESULT_CROP_ERROR) {
-            Throwable throwable = data != null ? Crop.getError(data) : new Throwable("image crop error");
+            val throwable = if (data != null) Crop.getError(data) else Throwable("image crop error")
             if (throwable != null) {
-                ToastUtils.showToast(getAppContext(), throwable.getMessage());
+                ToastUtils.showToast(appContext, throwable.message)
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             if (requestCode == PictureConfig.REQUEST_CAMERA) {
-                if (!TextUtils.isEmpty(selectorConfig.cameraPath)) {
-                    MediaUtils.deleteUri(getAppContext(), selectorConfig.cameraPath);
-                    selectorConfig.cameraPath = "";
+                if (!TextUtils.isEmpty(selectorConfig!!.cameraPath)) {
+                    MediaUtils.deleteUri(appContext, selectorConfig!!.cameraPath)
+                    selectorConfig!!.cameraPath = ""
                 }
             } else if (requestCode == PictureConfig.REQUEST_GO_SETTING) {
-                handlePermissionSettingResult(PermissionConfig.CURRENT_REQUEST_PERMISSION);
+                handlePermissionSettingResult(PermissionConfig.CURRENT_REQUEST_PERMISSION)
             }
         }
     }
@@ -1137,63 +1238,70 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * 相机事件回调处理
      */
-    private void dispatchHandleCamera(Intent intent) {
-        PictureThreadUtils.executeByIo(new PictureThreadUtils.SimpleTask<LocalMedia>() {
-
-            @Override
-            public LocalMedia doInBackground() {
-                String outputPath = getOutputPath(intent);
+    private fun dispatchHandleCamera(intent: Intent?) {
+        PictureThreadUtils.executeByIo(object : PictureThreadUtils.SimpleTask<LocalMedia?>() {
+            override fun doInBackground(): LocalMedia {
+                val outputPath = getOutputPath(intent)
                 if (!TextUtils.isEmpty(outputPath)) {
-                    selectorConfig.cameraPath = outputPath;
+                    selectorConfig!!.cameraPath = outputPath
                 }
-                if (TextUtils.isEmpty(selectorConfig.cameraPath)) {
-                    return null;
+                if (TextUtils.isEmpty(selectorConfig!!.cameraPath)) {
+                    return null
                 }
-                if (selectorConfig.chooseMode == SelectMimeType.ofAudio()) {
-                    copyOutputAudioToDir();
+                if (selectorConfig!!.chooseMode == SelectMimeType.ofAudio()) {
+                    copyOutputAudioToDir()
                 }
-                LocalMedia media = buildLocalMedia(selectorConfig.cameraPath);
-                media.setCameraSource(true);
-                return media;
+                val media = buildLocalMedia(
+                    selectorConfig!!.cameraPath
+                )
+                media.isCameraSource = true
+                return media
             }
 
-            @Override
-            public void onSuccess(LocalMedia result) {
-                PictureThreadUtils.cancel(this);
+            override fun onSuccess(result: LocalMedia) {
+                PictureThreadUtils.cancel(this)
                 if (result != null) {
-                    onScannerScanFile(result);
-                    dispatchCameraMediaResult(result);
+                    onScannerScanFile(result)
+                    dispatchCameraMediaResult(result)
                 }
-                selectorConfig.cameraPath = "";
+                selectorConfig!!.cameraPath = ""
             }
-        });
+        })
     }
 
     /**
      * copy录音文件至指定目录
      */
-    private void copyOutputAudioToDir() {
+    private fun copyOutputAudioToDir() {
         try {
-            if (!TextUtils.isEmpty(selectorConfig.outPutAudioDir)) {
-                InputStream inputStream = PictureMimeType.isContent(selectorConfig.cameraPath)
-                        ? PictureContentResolver.openInputStream(getAppContext(), Uri.parse(selectorConfig.cameraPath)) : new FileInputStream(selectorConfig.cameraPath);
-                String audioFileName;
-                if (TextUtils.isEmpty(selectorConfig.outPutAudioFileName)) {
-                    audioFileName = "";
+            if (!TextUtils.isEmpty(selectorConfig!!.outPutAudioDir)) {
+                val inputStream = if (PictureMimeType.isContent(
+                        selectorConfig!!.cameraPath
+                    )
+                ) PictureContentResolver.openInputStream(
+                    appContext, Uri.parse(selectorConfig!!.cameraPath)
+                ) else FileInputStream(
+                    selectorConfig!!.cameraPath
+                )
+                val audioFileName: String
+                audioFileName = if (TextUtils.isEmpty(selectorConfig!!.outPutAudioFileName)) {
+                    ""
                 } else {
-                    audioFileName = selectorConfig.isOnlyCamera
-                            ? selectorConfig.outPutAudioFileName : System.currentTimeMillis() + "_" + selectorConfig.outPutAudioFileName;
+                    if (selectorConfig!!.isOnlyCamera) selectorConfig!!.outPutAudioFileName else System.currentTimeMillis()
+                        .toString() + "_" + selectorConfig!!.outPutAudioFileName
                 }
-                File outputFile = PictureFileUtils.createCameraFile(getAppContext(),
-                        selectorConfig.chooseMode, audioFileName, "", selectorConfig.outPutAudioDir);
-                FileOutputStream outputStream = new FileOutputStream(outputFile.getAbsolutePath());
+                val outputFile = PictureFileUtils.createCameraFile(
+                    appContext,
+                    selectorConfig!!.chooseMode, audioFileName, "", selectorConfig!!.outPutAudioDir
+                )
+                val outputStream = FileOutputStream(outputFile.absolutePath)
                 if (PictureFileUtils.writeFileFromIS(inputStream, outputStream)) {
-                    MediaUtils.deleteUri(getAppContext(), selectorConfig.cameraPath);
-                    selectorConfig.cameraPath = outputFile.getAbsolutePath();
+                    MediaUtils.deleteUri(appContext, selectorConfig!!.cameraPath)
+                    selectorConfig!!.cameraPath = outputFile.absolutePath
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
         }
     }
 
@@ -1203,20 +1311,23 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      * @param data
      * @return
      */
-    protected String getOutputPath(Intent data) {
+    protected fun getOutputPath(data: Intent?): String? {
         if (data == null) {
-            return null;
+            return null
         }
-        Uri outPutUri = data.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
-        String cameraPath = selectorConfig.cameraPath;
-        boolean isCameraFileExists = TextUtils.isEmpty(cameraPath) || PictureMimeType.isContent(cameraPath) || new File(cameraPath).exists();
-        if ((selectorConfig.chooseMode == SelectMimeType.ofAudio() || !isCameraFileExists) && outPutUri == null) {
-            outPutUri = data.getData();
+        var outPutUri = data.getParcelableExtra<Uri>(MediaStore.EXTRA_OUTPUT)
+        val cameraPath = selectorConfig!!.cameraPath
+        val isCameraFileExists =
+            TextUtils.isEmpty(cameraPath) || PictureMimeType.isContent(cameraPath) || File(
+                cameraPath
+            ).exists()
+        if ((selectorConfig!!.chooseMode == SelectMimeType.ofAudio() || !isCameraFileExists) && outPutUri == null) {
+            outPutUri = data.data
         }
         if (outPutUri == null) {
-            return null;
+            return null
         }
-        return PictureMimeType.isContent(outPutUri.toString()) ? outPutUri.toString() : outPutUri.getPath();
+        return if (PictureMimeType.isContent(outPutUri.toString())) outPutUri.toString() else outPutUri.path
     }
 
     /**
@@ -1224,22 +1335,24 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param media 要刷新的对象
      */
-    private void onScannerScanFile(LocalMedia media) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    private fun onScannerScanFile(media: LocalMedia) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
         if (SdkVersionUtils.isQ()) {
-            if (PictureMimeType.isHasVideo(media.getMimeType()) && PictureMimeType.isContent(media.getPath())) {
-                new PictureMediaScannerConnection(getActivity(), media.getRealPath());
+            if (PictureMimeType.isHasVideo(media.mimeType) && PictureMimeType.isContent(media.path)) {
+                PictureMediaScannerConnection(activity, media.realPath)
             }
         } else {
-            String path = PictureMimeType.isContent(media.getPath()) ? media.getRealPath() : media.getPath();
-            new PictureMediaScannerConnection(getActivity(), path);
-            if (PictureMimeType.isHasImage(media.getMimeType())) {
-                File dirFile = new File(path);
-                int lastImageId = MediaUtils.getDCIMLastImageId(getAppContext(), dirFile.getParent());
+            val path = if (PictureMimeType.isContent(media.path)) media.realPath else media.path
+            PictureMediaScannerConnection(activity, path)
+            if (PictureMimeType.isHasImage(media.mimeType)) {
+                val dirFile = File(path)
+                val lastImageId = MediaUtils.getDCIMLastImageId(
+                    appContext, dirFile.parent
+                )
                 if (lastImageId != -1) {
-                    MediaUtils.removeMedia(getAppContext(), lastImageId);
+                    MediaUtils.removeMedia(appContext, lastImageId)
                 }
             }
         }
@@ -1250,18 +1363,20 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param absolutePath
      */
-    protected LocalMedia buildLocalMedia(String absolutePath) {
-        LocalMedia media = LocalMedia.generateLocalMedia(getAppContext(), absolutePath);
-        media.setChooseModel(selectorConfig.chooseMode);
+    protected fun buildLocalMedia(absolutePath: String?): LocalMedia {
+        val media = LocalMedia.generateLocalMedia(
+            appContext, absolutePath
+        )
+        media.chooseModel = selectorConfig!!.chooseMode
         if (SdkVersionUtils.isQ() && !PictureMimeType.isContent(absolutePath)) {
-            media.setSandboxPath(absolutePath);
+            media.sandboxPath = absolutePath
         } else {
-            media.setSandboxPath(null);
+            media.sandboxPath = null
         }
-        if (selectorConfig.isCameraRotateImage && PictureMimeType.isHasImage(media.getMimeType())) {
-            BitmapUtils.rotateImage(getAppContext(), absolutePath);
+        if (selectorConfig!!.isCameraRotateImage && PictureMimeType.isHasImage(media.mimeType)) {
+            BitmapUtils.rotateImage(appContext, absolutePath)
         }
-        return media;
+        return media
     }
 
     /**
@@ -1269,340 +1384,384 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @return
      */
-    private boolean checkCompleteSelectLimit() {
-        if (selectorConfig.selectionMode != SelectModeConfig.MULTIPLE || selectorConfig.isOnlyCamera) {
-            return false;
+    private fun checkCompleteSelectLimit(): Boolean {
+        if (selectorConfig!!.selectionMode != SelectModeConfig.MULTIPLE || selectorConfig!!.isOnlyCamera) {
+            return false
         }
-        if (selectorConfig.isWithVideoImage) {
+        if (selectorConfig!!.isWithVideoImage) {
             // 共选型模式
-            ArrayList<LocalMedia> selectedResult = selectorConfig.getSelectedResult();
-            int selectImageSize = 0;
-            int selectVideoSize = 0;
-            for (int i = 0; i < selectedResult.size(); i++) {
-                String mimeType = selectedResult.get(i).getMimeType();
+            val selectedResult = selectorConfig!!.selectedResult
+            var selectImageSize = 0
+            var selectVideoSize = 0
+            for (i in selectedResult.indices) {
+                val mimeType = selectedResult[i].mimeType
                 if (PictureMimeType.isHasVideo(mimeType)) {
-                    selectVideoSize++;
+                    selectVideoSize++
                 } else {
-                    selectImageSize++;
+                    selectImageSize++
                 }
             }
-            if (selectorConfig.minSelectNum > 0) {
-                if (selectImageSize < selectorConfig.minSelectNum) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(), null, selectorConfig, SelectLimitType.SELECT_MIN_SELECT_LIMIT);
+            if (selectorConfig!!.minSelectNum > 0) {
+                if (selectImageSize < selectorConfig!!.minSelectNum) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                null,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MIN_SELECT_LIMIT
+                            )
                         if (isSelectLimit) {
-                            return true;
-                        }
-                    }
-                    showTipsDialog(getString(R.string.ps_min_img_num, String.valueOf(selectorConfig.minSelectNum)));
-                    return true;
-                }
-            }
-            if (selectorConfig.minVideoSelectNum > 0) {
-                if (selectVideoSize < selectorConfig.minVideoSelectNum) {
-                    if (selectorConfig.onSelectLimitTipsListener != null) {
-                        boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                                .onSelectLimitTips(getAppContext(), null, selectorConfig, SelectLimitType.SELECT_MIN_VIDEO_SELECT_LIMIT);
-                        if (isSelectLimit) {
-                            return true;
+                            return true
                         }
                     }
                     showTipsDialog(
-                            getString(R.string.ps_min_video_num, String.valueOf(selectorConfig.minVideoSelectNum)));
-                    return true;
+                        getString(
+                            R.string.ps_min_img_num,
+                            selectorConfig!!.minSelectNum.toString()
+                        )
+                    )
+                    return true
+                }
+            }
+            if (selectorConfig!!.minVideoSelectNum > 0) {
+                if (selectVideoSize < selectorConfig!!.minVideoSelectNum) {
+                    if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                        val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                            .onSelectLimitTips(
+                                appContext,
+                                null,
+                                selectorConfig,
+                                SelectLimitType.SELECT_MIN_VIDEO_SELECT_LIMIT
+                            )
+                        if (isSelectLimit) {
+                            return true
+                        }
+                    }
+                    showTipsDialog(
+                        getString(
+                            R.string.ps_min_video_num,
+                            selectorConfig!!.minVideoSelectNum.toString()
+                        )
+                    )
+                    return true
                 }
             }
         } else {
             // 单类型模式
-            String mimeType = selectorConfig.getResultFirstMimeType();
-            if (PictureMimeType.isHasImage(mimeType) && selectorConfig.minSelectNum > 0
-                    && selectorConfig.getSelectCount() < selectorConfig.minSelectNum) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), null, selectorConfig, SelectLimitType.SELECT_MIN_SELECT_LIMIT);
+            val mimeType = selectorConfig!!.resultFirstMimeType
+            if (PictureMimeType.isHasImage(mimeType) && selectorConfig!!.minSelectNum > 0 && selectorConfig!!.selectCount < selectorConfig!!.minSelectNum) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            null,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MIN_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_min_img_num,
-                        String.valueOf(selectorConfig.minSelectNum)));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_min_img_num,
+                        selectorConfig!!.minSelectNum.toString()
+                    )
+                )
+                return true
             }
-            if (PictureMimeType.isHasVideo(mimeType) && selectorConfig.minVideoSelectNum > 0
-                    && selectorConfig.getSelectCount() < selectorConfig.minVideoSelectNum) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), null, selectorConfig, SelectLimitType.SELECT_MIN_VIDEO_SELECT_LIMIT);
+            if (PictureMimeType.isHasVideo(mimeType) && selectorConfig!!.minVideoSelectNum > 0 && selectorConfig!!.selectCount < selectorConfig!!.minVideoSelectNum) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            null,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MIN_VIDEO_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_min_video_num,
-                        String.valueOf(selectorConfig.minVideoSelectNum)));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_min_video_num,
+                        selectorConfig!!.minVideoSelectNum.toString()
+                    )
+                )
+                return true
             }
-
-            if (PictureMimeType.isHasAudio(mimeType) && selectorConfig.minAudioSelectNum > 0
-                    && selectorConfig.getSelectCount() < selectorConfig.minAudioSelectNum) {
-                if (selectorConfig.onSelectLimitTipsListener != null) {
-                    boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener
-                            .onSelectLimitTips(getAppContext(), null, selectorConfig, SelectLimitType.SELECT_MIN_AUDIO_SELECT_LIMIT);
+            if (PictureMimeType.isHasAudio(mimeType) && selectorConfig!!.minAudioSelectNum > 0 && selectorConfig!!.selectCount < selectorConfig!!.minAudioSelectNum) {
+                if (selectorConfig!!.onSelectLimitTipsListener != null) {
+                    val isSelectLimit = selectorConfig!!.onSelectLimitTipsListener
+                        .onSelectLimitTips(
+                            appContext,
+                            null,
+                            selectorConfig,
+                            SelectLimitType.SELECT_MIN_AUDIO_SELECT_LIMIT
+                        )
                     if (isSelectLimit) {
-                        return true;
+                        return true
                     }
                 }
-                showTipsDialog(getString(R.string.ps_min_audio_num,
-                        String.valueOf(selectorConfig.minAudioSelectNum)));
-                return true;
+                showTipsDialog(
+                    getString(
+                        R.string.ps_min_audio_num,
+                        selectorConfig!!.minAudioSelectNum.toString()
+                    )
+                )
+                return true
             }
         }
-        return false;
+        return false
     }
 
     /**
      * 分发处理结果，比如压缩、裁剪、沙盒路径转换
      */
-    protected void dispatchTransformResult() {
+    protected fun dispatchTransformResult() {
         if (checkCompleteSelectLimit()) {
-            return;
+            return
         }
-        if (!isAdded()) {
-            return;
+        if (!isAdded) {
+            return
         }
-        ArrayList<LocalMedia> selectedResult = selectorConfig.getSelectedResult();
-        ArrayList<LocalMedia> result = new ArrayList<>(selectedResult);
+        val selectedResult = selectorConfig!!.selectedResult
+        val result = ArrayList(selectedResult)
         if (checkCropValidity()) {
-            onCrop(result);
+            onCrop(result)
         } else if (checkOldCropValidity()) {
-            onOldCrop(result);
+            onOldCrop(result)
         } else if (checkCompressValidity()) {
-            onCompress(result);
+            onCompress(result)
         } else if (checkOldCompressValidity()) {
-            onOldCompress(result);
+            onOldCompress(result)
         } else {
-            onResultEvent(result);
+            onResultEvent(result)
         }
     }
 
-    @Override
-    public void onCrop(ArrayList<LocalMedia> result) {
-        Uri srcUri = null;
-        Uri destinationUri = null;
-        ArrayList<String> dataCropSource = new ArrayList<>();
-        for (int i = 0; i < result.size(); i++) {
-            LocalMedia media = result.get(i);
-            dataCropSource.add(media.getAvailablePath());
-            if (srcUri == null && PictureMimeType.isHasImage(media.getMimeType())) {
-                String currentCropPath = media.getAvailablePath();
-                if (PictureMimeType.isContent(currentCropPath) || PictureMimeType.isHasHttp(currentCropPath)) {
-                    srcUri = Uri.parse(currentCropPath);
-                } else {
-                    srcUri = Uri.fromFile(new File(currentCropPath));
-                }
-                String fileName = DateUtils.getCreateFileName("CROP_") + ".jpg";
-                Context context = getAppContext();
-                File externalFilesDir = new File(FileDirMap.getFileDirPath(context, SelectMimeType.TYPE_IMAGE));
-                File outputFile = new File(externalFilesDir.getAbsolutePath(), fileName);
-                destinationUri = Uri.fromFile(outputFile);
-            }
-        }
-        selectorConfig.cropFileEngine.onStartCrop(this, srcUri, destinationUri, dataCropSource, Crop.REQUEST_CROP);
-    }
-
-    @Override
-    public void onOldCrop(ArrayList<LocalMedia> result) {
-        LocalMedia currentLocalMedia = null;
-        for (int i = 0; i < result.size(); i++) {
-            LocalMedia item = result.get(i);
-            if (PictureMimeType.isHasImage(result.get(i).getMimeType())) {
-                currentLocalMedia = item;
-                break;
-            }
-        }
-        selectorConfig.cropEngine.onStartCrop(this, currentLocalMedia, result, Crop.REQUEST_CROP);
-    }
-
-    @Override
-    public void onCompress(ArrayList<LocalMedia> result) {
-        showLoading();
-        ConcurrentHashMap<String, LocalMedia> queue = new ConcurrentHashMap<>();
-        ArrayList<Uri> source = new ArrayList<>();
-        for (int i = 0; i < result.size(); i++) {
-            LocalMedia media = result.get(i);
-            String availablePath = media.getAvailablePath();
-            if (PictureMimeType.isHasHttp(availablePath)) {
-                continue;
-            }
-            if (selectorConfig.isCheckOriginalImage && selectorConfig.isOriginalSkipCompress) {
-                continue;
-            }
-            if (PictureMimeType.isHasImage(media.getMimeType())) {
-                Uri uri = PictureMimeType.isContent(availablePath) ? Uri.parse(availablePath) : Uri.fromFile(new File(availablePath));
-                source.add(uri);
-                queue.put(availablePath, media);
-            }
-        }
-        if (queue.size() == 0) {
-            onResultEvent(result);
-        } else {
-            selectorConfig.compressFileEngine.onStartCompress(getAppContext(), source, new OnKeyValueResultCallbackListener() {
-                @Override
-                public void onCallback(String srcPath, String compressPath) {
-                    if (TextUtils.isEmpty(srcPath)) {
-                        onResultEvent(result);
+    override fun onCrop(result: ArrayList<LocalMedia>) {
+        var srcUri: Uri? = null
+        var destinationUri: Uri? = null
+        val dataCropSource = ArrayList<String>()
+        for (i in result.indices) {
+            val media = result[i]
+            dataCropSource.add(media.availablePath)
+            if (srcUri == null && PictureMimeType.isHasImage(media.mimeType)) {
+                val currentCropPath = media.availablePath
+                srcUri =
+                    if (PictureMimeType.isContent(currentCropPath) || PictureMimeType.isHasHttp(
+                            currentCropPath
+                        )
+                    ) {
+                        Uri.parse(currentCropPath)
                     } else {
-                        LocalMedia media = queue.get(srcPath);
-                        if (media != null) {
-                            if (SdkVersionUtils.isQ()){
-                                if (!TextUtils.isEmpty(compressPath) && (compressPath.contains("Android/data/")
-                                        || compressPath.contains("data/user/"))) {
-                                    media.setCompressPath(compressPath);
-                                    media.setCompressed(!TextUtils.isEmpty(compressPath));
-                                    media.setSandboxPath(media.getCompressPath());
-                                }
-                            } else {
-                                media.setCompressPath(compressPath);
-                                media.setCompressed(!TextUtils.isEmpty(compressPath));
-                            }
-                            queue.remove(srcPath);
-                        }
-                        if (queue.size() == 0) {
-                            onResultEvent(result);
-                        }
+                        Uri.fromFile(File(currentCropPath))
                     }
-                }
-            });
+                val fileName = DateUtils.getCreateFileName("CROP_") + ".jpg"
+                val context = appContext
+                val externalFilesDir =
+                    File(FileDirMap.getFileDirPath(context, SelectMimeType.TYPE_IMAGE))
+                val outputFile = File(externalFilesDir.absolutePath, fileName)
+                destinationUri = Uri.fromFile(outputFile)
+            }
         }
+        selectorConfig!!.cropFileEngine.onStartCrop(
+            this,
+            srcUri,
+            destinationUri,
+            dataCropSource,
+            Crop.REQUEST_CROP
+        )
     }
 
-    @Override
-    public void onOldCompress(ArrayList<LocalMedia> result) {
-        showLoading();
-        if (selectorConfig.isCheckOriginalImage && selectorConfig.isOriginalSkipCompress) {
-            onResultEvent(result);
+    override fun onOldCrop(result: ArrayList<LocalMedia>) {
+        var currentLocalMedia: LocalMedia? = null
+        for (i in result.indices) {
+            val item = result[i]
+            if (PictureMimeType.isHasImage(result[i].mimeType)) {
+                currentLocalMedia = item
+                break
+            }
+        }
+        selectorConfig!!.cropEngine.onStartCrop(this, currentLocalMedia, result, Crop.REQUEST_CROP)
+    }
+
+    override fun onCompress(result: ArrayList<LocalMedia>) {
+        showLoading()
+        val queue = ConcurrentHashMap<String, LocalMedia>()
+        val source = ArrayList<Uri>()
+        for (i in result.indices) {
+            val media = result[i]
+            val availablePath = media.availablePath
+            if (PictureMimeType.isHasHttp(availablePath)) {
+                continue
+            }
+            if (selectorConfig!!.isCheckOriginalImage && selectorConfig!!.isOriginalSkipCompress) {
+                continue
+            }
+            if (PictureMimeType.isHasImage(media.mimeType)) {
+                val uri =
+                    if (PictureMimeType.isContent(availablePath)) Uri.parse(availablePath) else Uri.fromFile(
+                        File(availablePath)
+                    )
+                source.add(uri)
+                queue[availablePath] = media
+            }
+        }
+        if (queue.size == 0) {
+            onResultEvent(result)
         } else {
-            selectorConfig.compressEngine.onStartCompress(getAppContext(), result,
-                    new OnCallbackListener<ArrayList<LocalMedia>>() {
-                        @Override
-                        public void onCall(ArrayList<LocalMedia> result) {
-                            onResultEvent(result);
+            selectorConfig!!.compressFileEngine.onStartCompress(
+                appContext,
+                source
+            ) { srcPath, compressPath ->
+                if (TextUtils.isEmpty(srcPath)) {
+                    onResultEvent(result)
+                } else {
+                    val media = queue[srcPath]
+                    if (media != null) {
+                        if (SdkVersionUtils.isQ()) {
+                            if (!TextUtils.isEmpty(compressPath) && (compressPath.contains("Android/data/")
+                                        || compressPath.contains("data/user/"))
+                            ) {
+                                media.compressPath = compressPath
+                                media.isCompressed = !TextUtils.isEmpty(compressPath)
+                                media.sandboxPath = media.compressPath
+                            }
+                        } else {
+                            media.compressPath = compressPath
+                            media.isCompressed = !TextUtils.isEmpty(compressPath)
                         }
-                    });
+                        queue.remove(srcPath)
+                    }
+                    if (queue.size == 0) {
+                        onResultEvent(result)
+                    }
+                }
+            }
         }
     }
 
-    @Override
-    public boolean checkCropValidity() {
-        if (selectorConfig.cropFileEngine != null) {
-            HashSet<String> filterSet = new HashSet<>();
-            List<String> filters = selectorConfig.skipCropList;
-            if (filters != null && filters.size() > 0) {
-                filterSet.addAll(filters);
+    override fun onOldCompress(result: ArrayList<LocalMedia>) {
+        showLoading()
+        if (selectorConfig!!.isCheckOriginalImage && selectorConfig!!.isOriginalSkipCompress) {
+            onResultEvent(result)
+        } else {
+            selectorConfig!!.compressEngine.onStartCompress(
+                appContext, result,
+                object : OnCallbackListener<ArrayList<LocalMedia?>?> {
+                    override fun onCall(result: ArrayList<LocalMedia>) {
+                        onResultEvent(result)
+                    }
+                })
+        }
+    }
+
+    override fun checkCropValidity(): Boolean {
+        if (selectorConfig!!.cropFileEngine != null) {
+            val filterSet = HashSet<String>()
+            val filters = selectorConfig!!.skipCropList
+            if (filters != null && filters.size > 0) {
+                filterSet.addAll(filters)
             }
-            if (selectorConfig.getSelectCount() == 1) {
-                String mimeType = selectorConfig.getResultFirstMimeType();
-                boolean isHasImage = PictureMimeType.isHasImage(mimeType);
+            return if (selectorConfig!!.selectCount == 1) {
+                val mimeType = selectorConfig!!.resultFirstMimeType
+                val isHasImage = PictureMimeType.isHasImage(mimeType)
                 if (isHasImage) {
                     if (filterSet.contains(mimeType)) {
-                        return false;
+                        return false
                     }
                 }
-                return isHasImage;
+                isHasImage
             } else {
-                int notSupportCropCount = 0;
-                for (int i = 0; i < selectorConfig.getSelectCount(); i++) {
-                    LocalMedia media = selectorConfig.getSelectedResult().get(i);
-                    if (PictureMimeType.isHasImage(media.getMimeType())) {
-                        if (filterSet.contains(media.getMimeType())) {
-                            notSupportCropCount++;
+                var notSupportCropCount = 0
+                for (i in 0 until selectorConfig!!.selectCount) {
+                    val media = selectorConfig!!.selectedResult[i]
+                    if (PictureMimeType.isHasImage(media.mimeType)) {
+                        if (filterSet.contains(media.mimeType)) {
+                            notSupportCropCount++
                         }
                     }
                 }
-                return notSupportCropCount != selectorConfig.getSelectCount();
+                notSupportCropCount != selectorConfig!!.selectCount
             }
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean checkOldCropValidity() {
-        if (selectorConfig.cropEngine != null) {
-            HashSet<String> filterSet = new HashSet<>();
-            List<String> filters = selectorConfig.skipCropList;
-            if (filters != null && filters.size() > 0) {
-                filterSet.addAll(filters);
+    override fun checkOldCropValidity(): Boolean {
+        if (selectorConfig!!.cropEngine != null) {
+            val filterSet = HashSet<String>()
+            val filters = selectorConfig!!.skipCropList
+            if (filters != null && filters.size > 0) {
+                filterSet.addAll(filters)
             }
-            if (selectorConfig.getSelectCount() == 1) {
-                String mimeType = selectorConfig.getResultFirstMimeType();
-                boolean isHasImage = PictureMimeType.isHasImage(mimeType);
+            return if (selectorConfig!!.selectCount == 1) {
+                val mimeType = selectorConfig!!.resultFirstMimeType
+                val isHasImage = PictureMimeType.isHasImage(mimeType)
                 if (isHasImage) {
                     if (filterSet.contains(mimeType)) {
-                        return false;
+                        return false
                     }
                 }
-                return isHasImage;
+                isHasImage
             } else {
-                int notSupportCropCount = 0;
-                for (int i = 0; i < selectorConfig.getSelectCount(); i++) {
-                    LocalMedia media = selectorConfig.getSelectedResult().get(i);
-                    if (PictureMimeType.isHasImage(media.getMimeType())) {
-                        if (filterSet.contains(media.getMimeType())) {
-                            notSupportCropCount++;
+                var notSupportCropCount = 0
+                for (i in 0 until selectorConfig!!.selectCount) {
+                    val media = selectorConfig!!.selectedResult[i]
+                    if (PictureMimeType.isHasImage(media.mimeType)) {
+                        if (filterSet.contains(media.mimeType)) {
+                            notSupportCropCount++
                         }
                     }
                 }
-                return notSupportCropCount != selectorConfig.getSelectCount();
+                notSupportCropCount != selectorConfig!!.selectCount
             }
         }
-        return false;
+        return false
     }
 
-
-    @Override
-    public boolean checkCompressValidity() {
-        if (selectorConfig.compressFileEngine != null) {
-            for (int i = 0; i < selectorConfig.getSelectCount(); i++) {
-                LocalMedia media = selectorConfig.getSelectedResult().get(i);
-                if (PictureMimeType.isHasImage(media.getMimeType())) {
-                    return true;
+    override fun checkCompressValidity(): Boolean {
+        if (selectorConfig!!.compressFileEngine != null) {
+            for (i in 0 until selectorConfig!!.selectCount) {
+                val media = selectorConfig!!.selectedResult[i]
+                if (PictureMimeType.isHasImage(media.mimeType)) {
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean checkOldCompressValidity() {
-        if (selectorConfig.compressEngine != null) {
-            for (int i = 0; i < selectorConfig.getSelectCount(); i++) {
-                LocalMedia media = selectorConfig.getSelectedResult().get(i);
-                if (PictureMimeType.isHasImage(media.getMimeType())) {
-                    return true;
+    override fun checkOldCompressValidity(): Boolean {
+        if (selectorConfig!!.compressEngine != null) {
+            for (i in 0 until selectorConfig!!.selectCount) {
+                val media = selectorConfig!!.selectedResult[i]
+                if (PictureMimeType.isHasImage(media.mimeType)) {
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean checkTransformSandboxFile() {
-        return SdkVersionUtils.isQ() && selectorConfig.uriToFileTransformEngine != null;
+    override fun checkTransformSandboxFile(): Boolean {
+        return SdkVersionUtils.isQ() && selectorConfig!!.uriToFileTransformEngine != null
     }
 
-    @Override
-    public boolean checkOldTransformSandboxFile() {
-        return SdkVersionUtils.isQ() && selectorConfig.sandboxFileEngine != null;
+    override fun checkOldTransformSandboxFile(): Boolean {
+        return SdkVersionUtils.isQ() && selectorConfig!!.sandboxFileEngine != null
     }
 
-    @Override
-    public boolean checkAddBitmapWatermark() {
-        return selectorConfig.onBitmapWatermarkListener != null;
+    override fun checkAddBitmapWatermark(): Boolean {
+        return selectorConfig!!.onBitmapWatermarkListener != null
     }
 
-    @Override
-    public boolean checkVideoThumbnail() {
-        return selectorConfig.onVideoThumbnailEventListener != null;
+    override fun checkVideoThumbnail(): Boolean {
+        return selectorConfig!!.onVideoThumbnailEventListener != null
     }
 
     /**
@@ -1610,32 +1769,35 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param result
      */
-    private void videoThumbnail(ArrayList<LocalMedia> result) {
-        ConcurrentHashMap<String, LocalMedia> queue = new ConcurrentHashMap<>();
-        for (int i = 0; i < result.size(); i++) {
-            LocalMedia media = result.get(i);
-            String availablePath = media.getAvailablePath();
-            if (PictureMimeType.isHasVideo(media.getMimeType()) || PictureMimeType.isUrlHasVideo(availablePath)) {
-                queue.put(availablePath, media);
+    private fun videoThumbnail(result: ArrayList<LocalMedia>) {
+        val queue = ConcurrentHashMap<String, LocalMedia>()
+        for (i in result.indices) {
+            val media = result[i]
+            val availablePath = media.availablePath
+            if (PictureMimeType.isHasVideo(media.mimeType) || PictureMimeType.isUrlHasVideo(
+                    availablePath
+                )
+            ) {
+                queue[availablePath] = media
             }
         }
-        if (queue.size() == 0) {
-            onCallBackResult(result);
+        if (queue.size == 0) {
+            onCallBackResult(result)
         } else {
-            for (Map.Entry<String, LocalMedia> entry : queue.entrySet()) {
-                selectorConfig.onVideoThumbnailEventListener.onVideoThumbnail(getAppContext(), entry.getKey(), new OnKeyValueResultCallbackListener() {
-                    @Override
-                    public void onCallback(String srcPath, String resultPath) {
-                        LocalMedia media = queue.get(srcPath);
-                        if (media != null) {
-                            media.setVideoThumbnailPath(resultPath);
-                            queue.remove(srcPath);
-                        }
-                        if (queue.size() == 0) {
-                            onCallBackResult(result);
-                        }
+            for ((key) in queue) {
+                selectorConfig!!.onVideoThumbnailEventListener.onVideoThumbnail(
+                    appContext,
+                    key
+                ) { srcPath, resultPath ->
+                    val media = queue[srcPath]
+                    if (media != null) {
+                        media.videoThumbnailPath = resultPath
+                        queue.remove(srcPath)
                     }
-                });
+                    if (queue.size == 0) {
+                        onCallBackResult(result)
+                    }
+                }
             }
         }
     }
@@ -1643,40 +1805,37 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * 添加水印
      */
-    private void addBitmapWatermark(ArrayList<LocalMedia> result) {
-        ConcurrentHashMap<String, LocalMedia> queue = new ConcurrentHashMap<>();
-        for (int i = 0; i < result.size(); i++) {
-            LocalMedia media = result.get(i);
-            if (PictureMimeType.isHasAudio(media.getMimeType())) {
-                continue;
+    private fun addBitmapWatermark(result: ArrayList<LocalMedia>) {
+        val queue = ConcurrentHashMap<String, LocalMedia>()
+        for (i in result.indices) {
+            val media = result[i]
+            if (PictureMimeType.isHasAudio(media.mimeType)) {
+                continue
             }
-            String availablePath = media.getAvailablePath();
-            queue.put(availablePath, media);
+            val availablePath = media.availablePath
+            queue[availablePath] = media
         }
-        if (queue.size() == 0) {
-            dispatchWatermarkResult(result);
+        if (queue.size == 0) {
+            dispatchWatermarkResult(result)
         } else {
-            for (Map.Entry<String, LocalMedia> entry : queue.entrySet()) {
-                String srcPath = entry.getKey();
-                LocalMedia media = entry.getValue();
-                selectorConfig.onBitmapWatermarkListener.onAddBitmapWatermark(getAppContext(),
-                        srcPath, media.getMimeType(), new OnKeyValueResultCallbackListener() {
-                            @Override
-                            public void onCallback(String srcPath, String resultPath) {
-                                if (TextUtils.isEmpty(srcPath)) {
-                                    dispatchWatermarkResult(result);
-                                } else {
-                                    LocalMedia media = queue.get(srcPath);
-                                    if (media != null) {
-                                        media.setWatermarkPath(resultPath);
-                                        queue.remove(srcPath);
-                                    }
-                                    if (queue.size() == 0) {
-                                        dispatchWatermarkResult(result);
-                                    }
-                                }
-                            }
-                        });
+            for ((srcPath1, media1) in queue) {
+                selectorConfig!!.onBitmapWatermarkListener.onAddBitmapWatermark(
+                    appContext,
+                    srcPath, media.mimeType
+                ) { srcPath, resultPath ->
+                    if (TextUtils.isEmpty(srcPath)) {
+                        dispatchWatermarkResult(result)
+                    } else {
+                        val media = queue[srcPath]
+                        if (media != null) {
+                            media.watermarkPath = resultPath
+                            queue.remove(srcPath)
+                        }
+                        if (queue.size == 0) {
+                            dispatchWatermarkResult(result)
+                        }
+                    }
+                }
             }
         }
     }
@@ -1686,28 +1845,27 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param result
      */
-    private void dispatchUriToFileTransformResult(ArrayList<LocalMedia> result) {
-        showLoading();
+    private fun dispatchUriToFileTransformResult(result: ArrayList<LocalMedia>) {
+        showLoading()
         if (checkAddBitmapWatermark()) {
-            addBitmapWatermark(result);
+            addBitmapWatermark(result)
         } else if (checkVideoThumbnail()) {
-            videoThumbnail(result);
+            videoThumbnail(result)
         } else {
-            onCallBackResult(result);
+            onCallBackResult(result)
         }
     }
-
 
     /**
      * dispatchWatermarkResult
      *
      * @param result
      */
-    private void dispatchWatermarkResult(ArrayList<LocalMedia> result) {
+    private fun dispatchWatermarkResult(result: ArrayList<LocalMedia>) {
         if (checkVideoThumbnail()) {
-            videoThumbnail(result);
+            videoThumbnail(result)
         } else {
-            onCallBackResult(result);
+            onCallBackResult(result)
         }
     }
 
@@ -1716,53 +1874,51 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param result
      */
-    private void uriToFileTransform29(ArrayList<LocalMedia> result) {
-        showLoading();
-        ConcurrentHashMap<String, LocalMedia> queue = new ConcurrentHashMap<>();
-        for (int i = 0; i < result.size(); i++) {
-            LocalMedia media = result.get(i);
-            queue.put(media.getPath(), media);
+    private fun uriToFileTransform29(result: ArrayList<LocalMedia>) {
+        showLoading()
+        val queue = ConcurrentHashMap<String, LocalMedia>()
+        for (i in result.indices) {
+            val media = result[i]
+            queue[media.path] = media
         }
-        if (queue.size() == 0) {
-            dispatchUriToFileTransformResult(result);
+        if (queue.size == 0) {
+            dispatchUriToFileTransformResult(result)
         } else {
-            PictureThreadUtils.executeByIo(new PictureThreadUtils.SimpleTask<ArrayList<LocalMedia>>() {
-
-                @Override
-                public ArrayList<LocalMedia> doInBackground() {
-                    for (Map.Entry<String, LocalMedia> entry : queue.entrySet()) {
-                        LocalMedia media = entry.getValue();
-                        if (selectorConfig.isCheckOriginalImage || TextUtils.isEmpty(media.getSandboxPath())) {
-                            selectorConfig.uriToFileTransformEngine.onUriToFileAsyncTransform(getAppContext(), media.getPath(), media.getMimeType(), new OnKeyValueResultCallbackListener() {
-                                @Override
-                                public void onCallback(String srcPath, String resultPath) {
+            PictureThreadUtils.executeByIo<ArrayList<LocalMedia>>(object :
+                PictureThreadUtils.SimpleTask<ArrayList<LocalMedia?>?>() {
+                override fun doInBackground(): ArrayList<LocalMedia?>? {
+                    for ((_, media1) in queue) {
+                        if (selectorConfig!!.isCheckOriginalImage || TextUtils.isEmpty(media.sandboxPath)) {
+                            selectorConfig!!.uriToFileTransformEngine.onUriToFileAsyncTransform(
+                                appContext,
+                                media.path,
+                                media.mimeType,
+                                OnKeyValueResultCallbackListener { srcPath, resultPath ->
                                     if (TextUtils.isEmpty(srcPath)) {
-                                        return;
+                                        return@OnKeyValueResultCallbackListener
                                     }
-                                    LocalMedia media = queue.get(srcPath);
+                                    val media = queue[srcPath]
                                     if (media != null) {
-                                        if (TextUtils.isEmpty(media.getSandboxPath())) {
-                                            media.setSandboxPath(resultPath);
+                                        if (TextUtils.isEmpty(media.sandboxPath)) {
+                                            media.sandboxPath = resultPath
                                         }
-                                        if (selectorConfig.isCheckOriginalImage) {
-                                            media.setOriginalPath(resultPath);
-                                            media.setOriginal(!TextUtils.isEmpty(resultPath));
+                                        if (selectorConfig!!.isCheckOriginalImage) {
+                                            media.originalPath = resultPath
+                                            media.isOriginal = !TextUtils.isEmpty(resultPath)
                                         }
-                                        queue.remove(srcPath);
+                                        queue.remove(srcPath)
                                     }
-                                }
-                            });
+                                })
                         }
                     }
-                    return result;
+                    return result
                 }
 
-                @Override
-                public void onSuccess(ArrayList<LocalMedia> result) {
-                    PictureThreadUtils.cancel(this);
-                    dispatchUriToFileTransformResult(result);
+                override fun onSuccess(result: ArrayList<LocalMedia>) {
+                    PictureThreadUtils.cancel(this)
+                    dispatchUriToFileTransformResult(result)
                 }
-            });
+            })
         }
     }
 
@@ -1771,50 +1927,48 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      *
      * @param result
      */
-    @Deprecated
-    private void copyExternalPathToAppInDirFor29(ArrayList<LocalMedia> result) {
-        showLoading();
-        PictureThreadUtils.executeByIo(new PictureThreadUtils.SimpleTask<ArrayList<LocalMedia>>() {
-            @Override
-            public ArrayList<LocalMedia> doInBackground() {
-                for (int i = 0; i < result.size(); i++) {
-                    LocalMedia media = result.get(i);
-                    selectorConfig.sandboxFileEngine.onStartSandboxFileTransform(getAppContext(), selectorConfig.isCheckOriginalImage, i,
-                            media, new OnCallbackIndexListener<LocalMedia>() {
-                                @Override
-                                public void onCall(LocalMedia data, int index) {
-                                    LocalMedia media = result.get(index);
-                                    media.setSandboxPath(data.getSandboxPath());
-                                    if (selectorConfig.isCheckOriginalImage) {
-                                        media.setOriginalPath(data.getOriginalPath());
-                                        media.setOriginal(!TextUtils.isEmpty(data.getOriginalPath()));
-                                    }
+    @Deprecated("")
+    private fun copyExternalPathToAppInDirFor29(result: ArrayList<LocalMedia>) {
+        showLoading()
+        PictureThreadUtils.executeByIo<ArrayList<LocalMedia>>(object :
+            PictureThreadUtils.SimpleTask<ArrayList<LocalMedia?>?>() {
+            override fun doInBackground(): ArrayList<LocalMedia?>? {
+                for (i in result.indices) {
+                    val media = result[i]
+                    selectorConfig!!.sandboxFileEngine.onStartSandboxFileTransform(
+                        appContext, selectorConfig!!.isCheckOriginalImage, i,
+                        media, object : OnCallbackIndexListener<LocalMedia?> {
+                            override fun onCall(data: LocalMedia, index: Int) {
+                                val media = result[index]
+                                media.sandboxPath = data.sandboxPath
+                                if (selectorConfig!!.isCheckOriginalImage) {
+                                    media.originalPath = data.originalPath
+                                    media.isOriginal = !TextUtils.isEmpty(data.originalPath)
                                 }
-                            });
+                            }
+                        })
                 }
-                return result;
+                return result
             }
 
-            @Override
-            public void onSuccess(ArrayList<LocalMedia> result) {
-                PictureThreadUtils.cancel(this);
-                dispatchUriToFileTransformResult(result);
+            override fun onSuccess(result: ArrayList<LocalMedia>) {
+                PictureThreadUtils.cancel(this)
+                dispatchUriToFileTransformResult(result)
             }
-        });
+        })
     }
-
 
     /**
      * 构造原图数据
      *
      * @param result
      */
-    private void mergeOriginalImage(ArrayList<LocalMedia> result) {
-        if (selectorConfig.isCheckOriginalImage) {
-            for (int i = 0; i < result.size(); i++) {
-                LocalMedia media = result.get(i);
-                media.setOriginal(true);
-                media.setOriginalPath(media.getPath());
+    private fun mergeOriginalImage(result: ArrayList<LocalMedia>) {
+        if (selectorConfig!!.isCheckOriginalImage) {
+            for (i in result.indices) {
+                val media = result[i]
+                media.isOriginal = true
+                media.originalPath = media.path
             }
         }
     }
@@ -1822,152 +1976,147 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * 返回处理完成后的选择结果
      */
-    @Override
-    public void onResultEvent(ArrayList<LocalMedia> result) {
+    override fun onResultEvent(result: ArrayList<LocalMedia>) {
         if (checkTransformSandboxFile()) {
-            uriToFileTransform29(result);
+            uriToFileTransform29(result)
         } else if (checkOldTransformSandboxFile()) {
-            copyExternalPathToAppInDirFor29(result);
+            copyExternalPathToAppInDirFor29(result)
         } else {
-            mergeOriginalImage(result);
-            dispatchUriToFileTransformResult(result);
+            mergeOriginalImage(result)
+            dispatchUriToFileTransformResult(result)
         }
     }
-
 
     /**
      * 返回结果
      */
-    private void onCallBackResult(ArrayList<LocalMedia> result) {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            dismissLoading();
-            if (selectorConfig.isActivityResultBack) {
-                getActivity().setResult(RESULT_OK, PictureSelector.putIntentResult(result));
-                onSelectFinish(RESULT_OK, result);
+    private fun onCallBackResult(result: ArrayList<LocalMedia>) {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            dismissLoading()
+            if (selectorConfig!!.isActivityResultBack) {
+                activity!!.setResult(
+                    Activity.RESULT_OK,
+                    PictureSelector.Companion.putIntentResult(result)
+                )
+                onSelectFinish(Activity.RESULT_OK, result)
             } else {
-                if (selectorConfig.onResultCallListener != null) {
-                    selectorConfig.onResultCallListener.onResult(result);
+                if (selectorConfig!!.onResultCallListener != null) {
+                    selectorConfig!!.onResultCallListener.onResult(result)
                 }
             }
-            onExitPictureSelector();
+            onExitPictureSelector()
         }
     }
 
     /**
      * set app language
      */
-    @Override
-    public void initAppLanguage() {
+    override fun initAppLanguage() {
         if (selectorConfig == null) {
-            selectorConfig = SelectorProviders.getInstance().getSelectorConfig();
+            selectorConfig = SelectorProviders.instance.selectorConfig
         }
-        if (selectorConfig != null && selectorConfig.language != LanguageConfig.UNKNOWN_LANGUAGE) {
-            PictureLanguageUtils.setAppLanguage(getActivity(), selectorConfig.language, selectorConfig.defaultLanguage);
+        if (selectorConfig != null && selectorConfig!!.language != LanguageConfig.UNKNOWN_LANGUAGE) {
+            PictureLanguageUtils.setAppLanguage(
+                activity,
+                selectorConfig!!.language,
+                selectorConfig!!.defaultLanguage
+            )
         }
     }
 
-    @Override
-    public void onRecreateEngine() {
-        createImageLoaderEngine();
-        createVideoPlayerEngine();
-        createCompressEngine();
-        createSandboxFileEngine();
-        createLoaderDataEngine();
-        createResultCallbackListener();
-        createLayoutResourceListener();
+    override fun onRecreateEngine() {
+        createImageLoaderEngine()
+        createVideoPlayerEngine()
+        createCompressEngine()
+        createSandboxFileEngine()
+        createLoaderDataEngine()
+        createResultCallbackListener()
+        createLayoutResourceListener()
     }
 
-    @Override
-    public void onKeyBackFragmentFinish() {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            if (selectorConfig.isActivityResultBack) {
-                getActivity().setResult(Activity.RESULT_CANCELED);
-                onSelectFinish(Activity.RESULT_CANCELED, null);
+    override fun onKeyBackFragmentFinish() {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            if (selectorConfig!!.isActivityResultBack) {
+                activity!!.setResult(Activity.RESULT_CANCELED)
+                onSelectFinish(Activity.RESULT_CANCELED, null)
             } else {
-                if (selectorConfig.onResultCallListener != null) {
-                    selectorConfig.onResultCallListener.onCancel();
+                if (selectorConfig!!.onResultCallListener != null) {
+                    selectorConfig!!.onResultCallListener.onCancel()
                 }
             }
-            onExitPictureSelector();
+            onExitPictureSelector()
         }
     }
 
-    @Override
-    public void onDestroy() {
-        releaseSoundPool();
-        super.onDestroy();
+    override fun onDestroy() {
+        releaseSoundPool()
+        super.onDestroy()
     }
 
-    @Override
-    public void showLoading() {
+    override fun showLoading() {
         try {
-            if (ActivityCompatHelper.isDestroy(getActivity())) {
-                return;
+            if (ActivityCompatHelper.isDestroy(activity)) {
+                return
             }
-            if (!mLoadingDialog.isShowing()) {
-                mLoadingDialog.show();
+            if (!mLoadingDialog!!.isShowing) {
+                mLoadingDialog!!.show()
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-
-    @Override
-    public void dismissLoading() {
+    override fun dismissLoading() {
         try {
-            if (ActivityCompatHelper.isDestroy(getActivity())) {
-                return;
+            if (ActivityCompatHelper.isDestroy(activity)) {
+                return
             }
-            if (mLoadingDialog.isShowing()) {
-                mLoadingDialog.dismiss();
+            if (mLoadingDialog!!.isShowing) {
+                mLoadingDialog!!.dismiss()
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        initAppLanguage();
-        onRecreateEngine();
-        super.onAttach(context);
-        this.context = context;
-        if (getParentFragment() instanceof IBridgePictureBehavior) {
-            iBridgePictureBehavior = (IBridgePictureBehavior) getParentFragment();
-        } else if (context instanceof IBridgePictureBehavior) {
-            iBridgePictureBehavior = (IBridgePictureBehavior) context;
+    override fun onAttach(context: Context) {
+        initAppLanguage()
+        onRecreateEngine()
+        super.onAttach(context)
+        this.context = context
+        if (parentFragment is IBridgePictureBehavior) {
+            iBridgePictureBehavior = parentFragment as IBridgePictureBehavior?
+        } else if (context is IBridgePictureBehavior) {
+            iBridgePictureBehavior = context
         }
     }
 
     /**
      * setRequestedOrientation
      */
-    protected void setRequestedOrientation() {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    protected fun setRequestedOrientation() {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
-        getActivity().setRequestedOrientation(selectorConfig.requestedOrientation);
+        activity!!.requestedOrientation = selectorConfig!!.requestedOrientation
     }
 
     /**
      * back current Fragment
      */
-    protected void onBackCurrentFragment() {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            if (!isStateSaved()) {
-                if (selectorConfig.viewLifecycle != null) {
-                    selectorConfig.viewLifecycle.onDestroy(this);
+    protected fun onBackCurrentFragment() {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            if (!isStateSaved) {
+                if (selectorConfig!!.viewLifecycle != null) {
+                    selectorConfig!!.viewLifecycle.onDestroy(this)
                 }
-                getActivity().getSupportFragmentManager().popBackStack();
+                activity!!.supportFragmentManager.popBackStack()
             }
-
-            List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
-            for (int i = 0; i < fragments.size(); i++) {
-                Fragment fragment = fragments.get(i);
-                if (fragment instanceof PictureCommonFragment) {
-                    ((PictureCommonFragment) fragment).onFragmentResume();
+            val fragments = activity!!.supportFragmentManager.fragments
+            for (i in fragments.indices) {
+                val fragment = fragments[i]
+                if (fragment is PictureCommonFragment) {
+                    fragment.onFragmentResume()
                 }
             }
         }
@@ -1979,44 +2128,44 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      * @param resultCode
      * @param result
      */
-    protected void onSelectFinish(int resultCode, ArrayList<LocalMedia> result) {
+    protected fun onSelectFinish(resultCode: Int, result: ArrayList<LocalMedia>?) {
         if (null != iBridgePictureBehavior) {
-            SelectorResult selectorResult = getResult(resultCode, result);
-            iBridgePictureBehavior.onSelectFinish(selectorResult);
+            val selectorResult = getResult(resultCode, result)
+            iBridgePictureBehavior!!.onSelectFinish(selectorResult)
         }
     }
 
     /**
      * exit PictureSelector
      */
-    protected void onExitPictureSelector() {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            if (isNormalDefaultEnter()) {
-                if (selectorConfig.viewLifecycle != null) {
-                    selectorConfig.viewLifecycle.onDestroy(this);
+    protected open fun onExitPictureSelector() {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            if (isNormalDefaultEnter) {
+                if (selectorConfig!!.viewLifecycle != null) {
+                    selectorConfig!!.viewLifecycle.onDestroy(this)
                 }
-                getActivity().finish();
+                activity!!.finish()
             } else {
-                List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
-                for (int i = 0; i < fragments.size(); i++) {
-                    Fragment fragment = fragments.get(i);
-                    if (fragment instanceof PictureCommonFragment) {
-                        onBackCurrentFragment();
+                val fragments = activity!!.supportFragmentManager.fragments
+                for (i in fragments.indices) {
+                    val fragment = fragments[i]
+                    if (fragment is PictureCommonFragment) {
+                        onBackCurrentFragment()
                     }
                 }
             }
         }
-        SelectorProviders.getInstance().destroy();
+        SelectorProviders.instance.destroy()
     }
 
     /**
      * Get the image loading engine again, provided that the user implements the IApp interface in the Application
      */
-    private void createImageLoaderEngine() {
-        if (selectorConfig.imageEngine == null) {
-            PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
+    private fun createImageLoaderEngine() {
+        if (selectorConfig!!.imageEngine == null) {
+            val baseEngine = instance!!.pictureSelectorEngine
             if (baseEngine != null) {
-                selectorConfig.imageEngine = baseEngine.createImageLoaderEngine();
+                selectorConfig!!.imageEngine = baseEngine.createImageLoaderEngine()
             }
         }
     }
@@ -2024,11 +2173,11 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * Get the video player engine again, provided that the user implements the IApp interface in the Application
      */
-    private void createVideoPlayerEngine(){
-        if (selectorConfig.videoPlayerEngine == null) {
-            PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
+    private fun createVideoPlayerEngine() {
+        if (selectorConfig!!.videoPlayerEngine == null) {
+            val baseEngine = instance!!.pictureSelectorEngine
             if (baseEngine != null) {
-                selectorConfig.videoPlayerEngine = baseEngine.createVideoPlayerEngine();
+                selectorConfig!!.videoPlayerEngine = baseEngine.createVideoPlayerEngine()
             }
         }
     }
@@ -2036,20 +2185,18 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * Get the image loader data engine again, provided that the user implements the IApp interface in the Application
      */
-    private void createLoaderDataEngine() {
-        if (selectorConfig.isLoaderDataEngine) {
-            if (selectorConfig.loaderDataEngine == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
-                if (baseEngine != null)
-                    selectorConfig.loaderDataEngine = baseEngine.createLoaderDataEngine();
+    private fun createLoaderDataEngine() {
+        if (selectorConfig!!.isLoaderDataEngine) {
+            if (selectorConfig!!.loaderDataEngine == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
+                if (baseEngine != null) selectorConfig!!.loaderDataEngine =
+                    baseEngine.createLoaderDataEngine()
             }
         }
-
-        if (selectorConfig.isLoaderFactoryEngine) {
-            if (selectorConfig.loaderFactory == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
-                if (baseEngine != null)
-                    selectorConfig.loaderFactory = baseEngine.onCreateLoader();
+        if (selectorConfig!!.isLoaderFactoryEngine) {
+            if (selectorConfig!!.loaderFactory == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
+                if (baseEngine != null) selectorConfig!!.loaderFactory = baseEngine.onCreateLoader()
             }
         }
     }
@@ -2057,50 +2204,48 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * Get the image compress engine again, provided that the user implements the IApp interface in the Application
      */
-    private void createCompressEngine() {
-        if (selectorConfig.isCompressEngine) {
-            if (selectorConfig.compressFileEngine == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
-                if (baseEngine != null)
-                    selectorConfig.compressFileEngine = baseEngine.createCompressFileEngine();
+    private fun createCompressEngine() {
+        if (selectorConfig!!.isCompressEngine) {
+            if (selectorConfig!!.compressFileEngine == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
+                if (baseEngine != null) selectorConfig!!.compressFileEngine =
+                    baseEngine.createCompressFileEngine()
             }
-            if (selectorConfig.compressEngine == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
-                if (baseEngine != null)
-                    selectorConfig.compressEngine = baseEngine.createCompressEngine();
+            if (selectorConfig!!.compressEngine == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
+                if (baseEngine != null) selectorConfig!!.compressEngine =
+                    baseEngine.createCompressEngine()
             }
         }
     }
-
 
     /**
      * Get the Sandbox engine again, provided that the user implements the IApp interface in the Application
      */
-    private void createSandboxFileEngine() {
-        if (selectorConfig.isSandboxFileEngine) {
-            if (selectorConfig.uriToFileTransformEngine == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
-                if (baseEngine != null)
-                    selectorConfig.uriToFileTransformEngine = baseEngine.createUriToFileTransformEngine();
+    private fun createSandboxFileEngine() {
+        if (selectorConfig!!.isSandboxFileEngine) {
+            if (selectorConfig!!.uriToFileTransformEngine == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
+                if (baseEngine != null) selectorConfig!!.uriToFileTransformEngine =
+                    baseEngine.createUriToFileTransformEngine()
             }
-            if (selectorConfig.sandboxFileEngine == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
-                if (baseEngine != null)
-                    selectorConfig.sandboxFileEngine = baseEngine.createSandboxFileEngine();
+            if (selectorConfig!!.sandboxFileEngine == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
+                if (baseEngine != null) selectorConfig!!.sandboxFileEngine =
+                    baseEngine.createSandboxFileEngine()
             }
         }
     }
 
-
     /**
      * Retrieve the result callback listener, provided that the user implements the IApp interface in the Application
      */
-    private void createResultCallbackListener() {
-        if (selectorConfig.isResultListenerBack) {
-            if (selectorConfig.onResultCallListener == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
+    private fun createResultCallbackListener() {
+        if (selectorConfig!!.isResultListenerBack) {
+            if (selectorConfig!!.onResultCallListener == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
                 if (baseEngine != null) {
-                    selectorConfig.onResultCallListener = baseEngine.getResultCallbackListener();
+                    selectorConfig!!.onResultCallListener = baseEngine.resultCallbackListener
                 }
             }
         }
@@ -2109,17 +2254,17 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     /**
      * Retrieve the layout callback listener, provided that the user implements the IApp interface in the Application
      */
-    private void createLayoutResourceListener() {
-        if (selectorConfig.isInjectLayoutResource) {
-            if (selectorConfig.onLayoutResourceListener == null) {
-                PictureSelectorEngine baseEngine = PictureAppMaster.getInstance().getPictureSelectorEngine();
+    private fun createLayoutResourceListener() {
+        if (selectorConfig!!.isInjectLayoutResource) {
+            if (selectorConfig!!.onLayoutResourceListener == null) {
+                val baseEngine = instance!!.pictureSelectorEngine
                 if (baseEngine != null) {
-                    selectorConfig.onLayoutResourceListener = baseEngine.createLayoutResourceListener();
+                    selectorConfig!!.onLayoutResourceListener =
+                        baseEngine.createLayoutResourceListener()
                 }
             }
         }
     }
-
 
     /**
      * generate result
@@ -2127,21 +2272,46 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      * @param data result
      * @return
      */
-    protected SelectorResult getResult(int resultCode, ArrayList<LocalMedia> data) {
-        return new SelectorResult(resultCode, data != null ? PictureSelector.putIntentResult(data) : null);
+    protected fun getResult(resultCode: Int, data: ArrayList<LocalMedia>?): SelectorResult {
+        return SelectorResult(
+            resultCode,
+            if (data != null) PictureSelector.Companion.putIntentResult(data) else null
+        )
     }
 
     /**
      * SelectorResult
      */
-    public static class SelectorResult {
+    class SelectorResult(var mResultCode: Int, var mResultData: Intent?)
+    companion object {
+        val TAG = PictureCommonFragment::class.java.simpleName
 
-        public int mResultCode;
-        public Intent mResultData;
-
-        public SelectorResult(int resultCode, Intent data) {
-            mResultCode = resultCode;
-            mResultData = data;
+        /**
+         * 根据类型获取相应的Toast文案
+         *
+         * @param context
+         * @param mimeType
+         * @param maxSelectNum
+         * @return
+         */
+        @SuppressLint("StringFormatInvalid")
+        private fun getTipsMsg(context: Context?, mimeType: String, maxSelectNum: Int): String {
+            return if (PictureMimeType.isHasVideo(mimeType)) {
+                context!!.getString(
+                    R.string.ps_message_video_max_num,
+                    maxSelectNum.toString()
+                )
+            } else if (PictureMimeType.isHasAudio(mimeType)) {
+                context!!.getString(
+                    R.string.ps_message_audio_max_num,
+                    maxSelectNum.toString()
+                )
+            } else {
+                context!!.getString(
+                    R.string.ps_message_max_num,
+                    maxSelectNum.toString()
+                )
+            }
         }
     }
 }

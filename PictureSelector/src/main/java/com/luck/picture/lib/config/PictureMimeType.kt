@@ -1,24 +1,29 @@
-package com.luck.picture.lib.config;
+package com.luck.picture.lib.config
 
-
-import android.text.TextUtils;
+import android.text.TextUtils
+import com.luck.picture.lib.config.SelectorConfig
+import kotlin.jvm.Synchronized
+import com.luck.picture.lib.utils.FileDirMap
+import kotlin.jvm.Volatile
+import com.luck.picture.lib.config.SelectorProviders
+import java.lang.Exception
+import java.util.*
 
 /**
  * @author：luck
  * @date：2017-5-24 17:02
  * @describe：PictureMimeType
  */
-
-public final class PictureMimeType {
-
+object PictureMimeType {
     /**
      * isGif
      *
      * @param mimeType
      * @return
      */
-    public static boolean isHasGif(String mimeType) {
-        return mimeType != null && (mimeType.equals("image/gif") || mimeType.equals("image/GIF"));
+    @JvmStatic
+    fun isHasGif(mimeType: String?): Boolean {
+        return mimeType != null && (mimeType == "image/gif" || mimeType == "image/GIF")
     }
 
     /**
@@ -27,8 +32,9 @@ public final class PictureMimeType {
      * @param url
      * @return
      */
-    public static boolean isUrlHasGif(String url) {
-        return url.toLowerCase().endsWith(".gif");
+    @JvmStatic
+    fun isUrlHasGif(url: String): Boolean {
+        return url.lowercase(Locale.getDefault()).endsWith(".gif")
     }
 
     /**
@@ -37,11 +43,11 @@ public final class PictureMimeType {
      * @param url
      * @return
      */
-    public static boolean isUrlHasImage(String url) {
-        return url.toLowerCase().endsWith(".jpg")
-                || url.toLowerCase().endsWith(".jpeg")
-                || url.toLowerCase().endsWith(".png")
-                || url.toLowerCase().endsWith(".heic");
+    fun isUrlHasImage(url: String): Boolean {
+        return (url.lowercase(Locale.getDefault()).endsWith(".jpg")
+                || url.lowercase(Locale.getDefault()).endsWith(".jpeg")
+                || url.lowercase(Locale.getDefault()).endsWith(".png")
+                || url.lowercase(Locale.getDefault()).endsWith(".heic"))
     }
 
     /**
@@ -50,8 +56,8 @@ public final class PictureMimeType {
      * @param mimeType
      * @return
      */
-    public static boolean isHasWebp(String mimeType) {
-        return mimeType != null && mimeType.equalsIgnoreCase("image/webp");
+    fun isHasWebp(mimeType: String?): Boolean {
+        return mimeType != null && mimeType.equals("image/webp", ignoreCase = true)
     }
 
     /**
@@ -60,8 +66,8 @@ public final class PictureMimeType {
      * @param url
      * @return
      */
-    public static boolean isUrlHasWebp(String url) {
-        return url.toLowerCase().endsWith(".webp");
+    fun isUrlHasWebp(url: String): Boolean {
+        return url.lowercase(Locale.getDefault()).endsWith(".webp")
     }
 
     /**
@@ -70,8 +76,9 @@ public final class PictureMimeType {
      * @param mimeType
      * @return
      */
-    public static boolean isHasVideo(String mimeType) {
-        return mimeType != null && mimeType.startsWith(MIME_TYPE_PREFIX_VIDEO);
+    @JvmStatic
+    fun isHasVideo(mimeType: String?): Boolean {
+        return mimeType != null && mimeType.startsWith(MIME_TYPE_PREFIX_VIDEO)
     }
 
     /**
@@ -80,8 +87,8 @@ public final class PictureMimeType {
      * @param url
      * @return
      */
-    public static boolean isUrlHasVideo(String url) {
-        return url.toLowerCase().endsWith(".mp4");
+    fun isUrlHasVideo(url: String): Boolean {
+        return url.lowercase(Locale.getDefault()).endsWith(".mp4")
     }
 
     /**
@@ -90,8 +97,9 @@ public final class PictureMimeType {
      * @param mimeType
      * @return
      */
-    public static boolean isHasAudio(String mimeType) {
-        return mimeType != null && mimeType.startsWith(MIME_TYPE_PREFIX_AUDIO);
+    @JvmStatic
+    fun isHasAudio(mimeType: String?): Boolean {
+        return mimeType != null && mimeType.startsWith(MIME_TYPE_PREFIX_AUDIO)
     }
 
     /**
@@ -100,8 +108,9 @@ public final class PictureMimeType {
      * @param url
      * @return
      */
-    public static boolean isUrlHasAudio(String url) {
-        return url.toLowerCase().endsWith(".amr") || url.toLowerCase().endsWith(".mp3");
+    fun isUrlHasAudio(url: String): Boolean {
+        return url.lowercase(Locale.getDefault())
+            .endsWith(".amr") || url.lowercase(Locale.getDefault()).endsWith(".mp3")
     }
 
     /**
@@ -110,8 +119,9 @@ public final class PictureMimeType {
      * @param mimeType
      * @return
      */
-    public static boolean isHasImage(String mimeType) {
-        return mimeType != null && mimeType.startsWith(MIME_TYPE_PREFIX_IMAGE);
+    @JvmStatic
+    fun isHasImage(mimeType: String?): Boolean {
+        return mimeType != null && mimeType.startsWith(MIME_TYPE_PREFIX_IMAGE)
     }
 
     /**
@@ -120,13 +130,13 @@ public final class PictureMimeType {
      * @param mimeType
      * @return
      */
-    public static boolean isHasBmp(String mimeType) {
-        if (TextUtils.isEmpty(mimeType)) {
-            return false;
-        }
-        return mimeType.startsWith(PictureMimeType.ofBMP())
-                || mimeType.startsWith(PictureMimeType.ofXmsBMP())
-                || mimeType.startsWith(PictureMimeType.ofWapBMP());
+    @JvmStatic
+    fun isHasBmp(mimeType: String): Boolean {
+        return if (TextUtils.isEmpty(mimeType)) {
+            false
+        } else mimeType.startsWith(ofBMP())
+                || mimeType.startsWith(ofXmsBMP())
+                || mimeType.startsWith(ofWapBMP())
     }
 
     /**
@@ -134,11 +144,12 @@ public final class PictureMimeType {
      *
      * @param is image file mimeType
      */
-    public static boolean isJPEG(String mimeType) {
-        if (TextUtils.isEmpty(mimeType)) {
-            return false;
-        }
-        return mimeType.startsWith(MIME_TYPE_JPEG) || mimeType.startsWith(MIME_TYPE_JPG);
+    fun isJPEG(mimeType: String): Boolean {
+        return if (TextUtils.isEmpty(mimeType)) {
+            false
+        } else mimeType.startsWith(MIME_TYPE_JPEG) || mimeType.startsWith(
+            MIME_TYPE_JPG
+        )
     }
 
     /**
@@ -146,13 +157,11 @@ public final class PictureMimeType {
      *
      * @param is image file mimeType
      */
-    public static boolean isJPG(String mimeType) {
-        if (TextUtils.isEmpty(mimeType)) {
-            return false;
-        }
-        return mimeType.startsWith(MIME_TYPE_JPG);
+    fun isJPG(mimeType: String): Boolean {
+        return if (TextUtils.isEmpty(mimeType)) {
+            false
+        } else mimeType.startsWith(MIME_TYPE_JPG)
     }
-
 
     /**
      * is Network image
@@ -160,11 +169,11 @@ public final class PictureMimeType {
      * @param path
      * @return
      */
-    public static boolean isHasHttp(String path) {
-        if (TextUtils.isEmpty(path)) {
-            return false;
-        }
-        return path.startsWith("http") || path.startsWith("https");
+    @JvmStatic
+    fun isHasHttp(path: String): Boolean {
+        return if (TextUtils.isEmpty(path)) {
+            false
+        } else path.startsWith("http") || path.startsWith("https")
     }
 
     /**
@@ -174,11 +183,12 @@ public final class PictureMimeType {
      * @param newMimeType 当次选中的资源类型
      * @return
      */
-    public static boolean isMimeTypeSame(String oldMimeType, String newMimeType) {
-        if (TextUtils.isEmpty(oldMimeType)) {
-            return true;
-        }
-        return getMimeType(oldMimeType) == getMimeType(newMimeType);
+    fun isMimeTypeSame(oldMimeType: String, newMimeType: String): Boolean {
+        return if (TextUtils.isEmpty(oldMimeType)) {
+            true
+        } else getMimeType(oldMimeType) == getMimeType(
+            newMimeType
+        )
     }
 
     /**
@@ -186,16 +196,16 @@ public final class PictureMimeType {
      *
      * @return
      */
-    public static int getMimeType(String mimeType) {
+    fun getMimeType(mimeType: String): Int {
         if (TextUtils.isEmpty(mimeType)) {
-            return SelectMimeType.TYPE_IMAGE;
+            return SelectMimeType.TYPE_IMAGE
         }
-        if (mimeType.startsWith(MIME_TYPE_PREFIX_VIDEO)) {
-            return SelectMimeType.TYPE_VIDEO;
+        return if (mimeType.startsWith(MIME_TYPE_PREFIX_VIDEO)) {
+            SelectMimeType.TYPE_VIDEO
         } else if (mimeType.startsWith(MIME_TYPE_PREFIX_AUDIO)) {
-            return SelectMimeType.TYPE_AUDIO;
+            SelectMimeType.TYPE_AUDIO
         } else {
-            return SelectMimeType.TYPE_IMAGE;
+            SelectMimeType.TYPE_IMAGE
         }
     }
 
@@ -205,12 +215,13 @@ public final class PictureMimeType {
      * @param mineType
      * @return
      */
-    public static String getLastSourceSuffix(String mineType) {
-        try {
-            return mineType.substring(mineType.lastIndexOf("/")).replace("/", ".");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return JPG;
+    @JvmStatic
+    fun getLastSourceSuffix(mineType: String): String {
+        return try {
+            mineType.substring(mineType.lastIndexOf("/")).replace("/", ".")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            JPG
         }
     }
 
@@ -220,17 +231,18 @@ public final class PictureMimeType {
      * @param path
      * @return
      */
-    public static String getUrlToFileName(String path) {
-        String result = "";
+    @JvmStatic
+    fun getUrlToFileName(path: String): String {
+        var result = ""
         try {
-            int lastIndexOf = path.lastIndexOf("/");
+            val lastIndexOf = path.lastIndexOf("/")
             if (lastIndexOf != -1) {
-                result = path.substring(lastIndexOf + 1);
+                result = path.substring(lastIndexOf + 1)
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return result;
+        return result
     }
 
     /**
@@ -239,122 +251,97 @@ public final class PictureMimeType {
      * @param url
      * @return
      */
-    public static boolean isContent(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return false;
-        }
-        return url.startsWith("content://");
+    @JvmStatic
+    fun isContent(url: String): Boolean {
+        return if (TextUtils.isEmpty(url)) {
+            false
+        } else url.startsWith("content://")
     }
 
-
-    public static String ofPNG() {
-        return MIME_TYPE_PNG;
+    fun ofPNG(): String {
+        return MIME_TYPE_PNG
     }
 
-    public static String ofJPEG() {
-        return MIME_TYPE_JPEG;
+    @JvmStatic
+    fun ofJPEG(): String {
+        return MIME_TYPE_JPEG
     }
 
-    public static String ofBMP() {
-        return MIME_TYPE_BMP;
+    fun ofBMP(): String {
+        return MIME_TYPE_BMP
     }
 
-    public static String ofXmsBMP() {
-        return MIME_TYPE_XMS_BMP;
+    fun ofXmsBMP(): String {
+        return MIME_TYPE_XMS_BMP
     }
 
-    public static String ofWapBMP() {
-        return MIME_TYPE_WAP_BMP;
+    fun ofWapBMP(): String {
+        return MIME_TYPE_WAP_BMP
     }
 
-    public static String ofGIF() {
-        return MIME_TYPE_GIF;
+    @JvmStatic
+    fun ofGIF(): String {
+        return MIME_TYPE_GIF
     }
 
-    public static String ofWEBP() {
-        return MIME_TYPE_WEBP;
+    @JvmStatic
+    fun ofWEBP(): String {
+        return MIME_TYPE_WEBP
     }
 
-    public static String of3GP() {
-        return MIME_TYPE_3GP;
+    fun of3GP(): String {
+        return MIME_TYPE_3GP
     }
 
-    public static String ofMP4() {
-        return MIME_TYPE_MP4;
+    fun ofMP4(): String {
+        return MIME_TYPE_MP4
     }
 
-    public static String ofMPEG() {
-        return MIME_TYPE_MPEG;
+    fun ofMPEG(): String {
+        return MIME_TYPE_MPEG
     }
 
-    public static String ofAVI() {
-        return MIME_TYPE_AVI;
+    fun ofAVI(): String {
+        return MIME_TYPE_AVI
     }
 
-
-    public final static String MIME_TYPE_IMAGE = "image/jpeg";
-    public final static String MIME_TYPE_VIDEO = "video/mp4";
-    public final static String MIME_TYPE_AUDIO = "audio/mpeg";
-    public final static String MIME_TYPE_AUDIO_AMR = "audio/amr";
-
-    public final static String MIME_TYPE_PREFIX_IMAGE = "image";
-    public final static String MIME_TYPE_PREFIX_VIDEO = "video";
-    public final static String MIME_TYPE_PREFIX_AUDIO = "audio";
-
-    private final static String MIME_TYPE_PNG = "image/png";
-    public final static String MIME_TYPE_JPEG = "image/jpeg";
-    private final static String MIME_TYPE_JPG = "image/jpg";
-    private final static String MIME_TYPE_BMP = "image/bmp";
-    private final static String MIME_TYPE_XMS_BMP = "image/x-ms-bmp";
-    private final static String MIME_TYPE_WAP_BMP = "image/vnd.wap.wbmp";
-    private final static String MIME_TYPE_GIF = "image/gif";
-    private final static String MIME_TYPE_WEBP = "image/webp";
-
-    private final static String MIME_TYPE_3GP = "video/3gp";
-    private final static String MIME_TYPE_MP4 = "video/mp4";
-    private final static String MIME_TYPE_MPEG = "video/mpeg";
-    private final static String MIME_TYPE_AVI = "video/avi";
-
-
-
-    public final static String JPEG = ".jpeg";
-
-    public final static String JPG = ".jpg";
-
-    public final static String PNG = ".png";
-
-    public final static String WEBP = ".webp";
-
-    public final static String GIF = ".gif";
-
-    public final static String BMP = ".bmp";
-
-    public final static String AMR = ".amr";
-
-    public final static String WAV = ".wav";
-
-    public final static String MP3 = ".mp3";
-
-    public final static String MP4 = ".mp4";
-
-    public final static String AVI = ".avi";
-
-    public final static String JPEG_Q = "image/jpeg";
-
-    public final static String PNG_Q = "image/png";
-
-    public final static String MP4_Q = "video/mp4";
-
-    public final static String AVI_Q = "video/avi";
-
-    public final static String AMR_Q = "audio/amr";
-
-    public final static String WAV_Q = "audio/x-wav";
-
-    public final static String MP3_Q = "audio/mpeg";
-
-    public final static String DCIM = "DCIM/Camera";
-
-    public final static String CAMERA = "Camera";
-
+    const val MIME_TYPE_IMAGE = "image/jpeg"
+    const val MIME_TYPE_VIDEO = "video/mp4"
+    const val MIME_TYPE_AUDIO = "audio/mpeg"
+    const val MIME_TYPE_AUDIO_AMR = "audio/amr"
+    const val MIME_TYPE_PREFIX_IMAGE = "image"
+    const val MIME_TYPE_PREFIX_VIDEO = "video"
+    const val MIME_TYPE_PREFIX_AUDIO = "audio"
+    private const val MIME_TYPE_PNG = "image/png"
+    const val MIME_TYPE_JPEG = "image/jpeg"
+    private const val MIME_TYPE_JPG = "image/jpg"
+    private const val MIME_TYPE_BMP = "image/bmp"
+    private const val MIME_TYPE_XMS_BMP = "image/x-ms-bmp"
+    private const val MIME_TYPE_WAP_BMP = "image/vnd.wap.wbmp"
+    private const val MIME_TYPE_GIF = "image/gif"
+    private const val MIME_TYPE_WEBP = "image/webp"
+    private const val MIME_TYPE_3GP = "video/3gp"
+    private const val MIME_TYPE_MP4 = "video/mp4"
+    private const val MIME_TYPE_MPEG = "video/mpeg"
+    private const val MIME_TYPE_AVI = "video/avi"
+    const val JPEG = ".jpeg"
+    const val JPG = ".jpg"
+    const val PNG = ".png"
+    const val WEBP = ".webp"
+    const val GIF = ".gif"
+    const val BMP = ".bmp"
+    const val AMR = ".amr"
+    const val WAV = ".wav"
+    const val MP3 = ".mp3"
+    const val MP4 = ".mp4"
+    const val AVI = ".avi"
+    const val JPEG_Q = "image/jpeg"
+    const val PNG_Q = "image/png"
+    const val MP4_Q = "video/mp4"
+    const val AVI_Q = "video/avi"
+    const val AMR_Q = "audio/amr"
+    const val WAV_Q = "audio/x-wav"
+    const val MP3_Q = "audio/mpeg"
+    const val DCIM = "DCIM/Camera"
+    const val CAMERA = "Camera"
 }

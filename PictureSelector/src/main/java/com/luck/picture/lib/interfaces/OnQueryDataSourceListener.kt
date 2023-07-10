@@ -1,17 +1,17 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
 
-import java.util.List;
+import com.luck.picture.lib.config.SelectorConfig
 
 /**
  * @author：luck
  * @date：2020-04-16 12:42
  * @describe：OnQueryDataSourceListener
  */
-public interface OnQueryDataSourceListener<T> {
+interface OnQueryDataSourceListener<T> {
     /**
      * Query data source
      *
      * @param result The data source
      */
-    void onComplete(List<T> result);
+    fun onComplete(result: List<T>?)
 }

@@ -1,103 +1,77 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import android.app.Activity;
-import android.content.Intent;
-
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-
-import com.luck.picture.lib.PictureOnlyCameraFragment;
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.FileSizeUnit;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.config.SelectModeConfig;
-import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.config.VideoQuality;
-import com.luck.picture.lib.engine.CompressEngine;
-import com.luck.picture.lib.engine.CompressFileEngine;
-import com.luck.picture.lib.engine.CropEngine;
-import com.luck.picture.lib.engine.CropFileEngine;
-import com.luck.picture.lib.engine.SandboxFileEngine;
-import com.luck.picture.lib.engine.UriToFileTransformEngine;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnBitmapWatermarkEventListener;
-import com.luck.picture.lib.interfaces.OnCameraInterceptListener;
-import com.luck.picture.lib.interfaces.OnCustomLoadingListener;
-import com.luck.picture.lib.interfaces.OnPermissionDeniedListener;
-import com.luck.picture.lib.interfaces.OnPermissionDescriptionListener;
-import com.luck.picture.lib.interfaces.OnPermissionsInterceptListener;
-import com.luck.picture.lib.interfaces.OnRecordAudioInterceptListener;
-import com.luck.picture.lib.interfaces.OnResultCallbackListener;
-import com.luck.picture.lib.interfaces.OnSelectLimitTipsListener;
-import com.luck.picture.lib.interfaces.OnVideoThumbnailEventListener;
-import com.luck.picture.lib.language.LanguageConfig;
-import com.luck.picture.lib.manager.SelectedManager;
-import com.luck.picture.lib.utils.DoubleUtils;
-import com.luck.picture.lib.utils.SdkVersionUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.utils.FileDirMap
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
+import com.luck.picture.lib.PictureOnlyCameraFragment
+import com.luck.picture.lib.R
+import com.luck.picture.lib.config.*
+import com.luck.picture.lib.engine.*
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.*
+import com.luck.picture.lib.utils.DoubleUtils
+import com.luck.picture.lib.utils.SdkVersionUtils
+import java.lang.NullPointerException
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2022/1/18 9:33 上午
  * @describe：PictureSelectionCameraModel
  */
-public final class PictureSelectionCameraModel {
-    private final SelectorConfig selectionConfig;
-    private final PictureSelector selector;
-
-    public PictureSelectionCameraModel(PictureSelector selector, int chooseMode) {
-        this.selector = selector;
-        selectionConfig = new SelectorConfig();
-        SelectorProviders.getInstance().addSelectorConfigQueue(selectionConfig);
-        selectionConfig.chooseMode = chooseMode;
-        selectionConfig.isOnlyCamera = true;
-        selectionConfig.isDisplayTimeAxis = false;
-        selectionConfig.isPreviewFullScreenMode = false;
-        selectionConfig.isPreviewZoomEffect = false;
-        selectionConfig.isOpenClickSound = false;
-    }
+class PictureSelectionCameraModel(private val selector: PictureSelector, chooseMode: Int) {
+    private val selectionConfig: SelectorConfig
 
     /**
      * Set App Language
      *
-     * @param language {@link LanguageConfig}
+     * @param language [LanguageConfig]
      * @return PictureSelectionModel
      */
-    public PictureSelectionCameraModel setLanguage(int language) {
-        selectionConfig.language = language;
-        return this;
+    fun setLanguage(language: Int): PictureSelectionCameraModel {
+        selectionConfig.language = language
+        return this
     }
 
     /**
      * Set App default Language
      *
-     * @param defaultLanguage default language {@link LanguageConfig}
+     * @param defaultLanguage default language [LanguageConfig]
      * @return PictureSelectionModel
      */
-    public PictureSelectionCameraModel setDefaultLanguage(int defaultLanguage) {
-        selectionConfig.defaultLanguage = defaultLanguage;
-        return this;
+    fun setDefaultLanguage(defaultLanguage: Int): PictureSelectionCameraModel {
+        selectionConfig.defaultLanguage = defaultLanguage
+        return this
     }
 
     /**
      * Image Compress the engine
      *
      * @param engine Image Compress the engine
-     * Please use {@link CompressFileEngine}
+     * Please use [CompressFileEngine]
      * @return
      */
-    @Deprecated
-    public PictureSelectionCameraModel setCompressEngine(CompressEngine engine) {
-        selectionConfig.compressEngine = engine;
-        selectionConfig.isCompressEngine = true;
-        return this;
+    @Deprecated("")
+    fun setCompressEngine(engine: CompressEngine?): PictureSelectionCameraModel {
+        selectionConfig.compressEngine = engine
+        selectionConfig.isCompressEngine = true
+        return this
     }
 
     /**
@@ -106,23 +80,23 @@ public final class PictureSelectionCameraModel {
      * @param engine Image Compress the engine
      * @return
      */
-    public PictureSelectionCameraModel setCompressEngine(CompressFileEngine engine) {
-        selectionConfig.compressFileEngine = engine;
-        selectionConfig.isCompressEngine = true;
-        return this;
+    fun setCompressEngine(engine: CompressFileEngine?): PictureSelectionCameraModel {
+        selectionConfig.compressFileEngine = engine
+        selectionConfig.isCompressEngine = true
+        return this
     }
 
     /**
      * Image Crop the engine
      *
      * @param engine Image Crop the engine
-     * Please Use {@link CropFileEngine}
+     * Please Use [CropFileEngine]
      * @return
      */
-    @Deprecated
-    public PictureSelectionCameraModel setCropEngine(CropEngine engine) {
-        selectionConfig.cropEngine = engine;
-        return this;
+    @Deprecated("")
+    fun setCropEngine(engine: CropEngine?): PictureSelectionCameraModel {
+        selectionConfig.cropEngine = engine
+        return this
     }
 
     /**
@@ -131,27 +105,27 @@ public final class PictureSelectionCameraModel {
      * @param engine Image Crop the engine
      * @return
      */
-    public PictureSelectionCameraModel setCropEngine(CropFileEngine engine) {
-        selectionConfig.cropFileEngine = engine;
-        return this;
+    fun setCropEngine(engine: CropFileEngine?): PictureSelectionCameraModel {
+        selectionConfig.cropFileEngine = engine
+        return this
     }
 
     /**
      * App Sandbox file path transform
      *
      * @param engine App Sandbox path transform
-     * Please Use {@link UriToFileTransformEngine}
+     * Please Use [UriToFileTransformEngine]
      * @return
      */
-    @Deprecated
-    public PictureSelectionCameraModel setSandboxFileEngine(SandboxFileEngine engine) {
+    @Deprecated("")
+    fun setSandboxFileEngine(engine: SandboxFileEngine?): PictureSelectionCameraModel {
         if (SdkVersionUtils.isQ()) {
-            selectionConfig.sandboxFileEngine = engine;
-            selectionConfig.isSandboxFileEngine = true;
+            selectionConfig.sandboxFileEngine = engine
+            selectionConfig.isSandboxFileEngine = true
         } else {
-            selectionConfig.isSandboxFileEngine = false;
+            selectionConfig.isSandboxFileEngine = false
         }
-        return this;
+        return this
     }
 
     /**
@@ -160,14 +134,14 @@ public final class PictureSelectionCameraModel {
      * @param engine App Sandbox path transform
      * @return
      */
-    public PictureSelectionCameraModel setSandboxFileEngine(UriToFileTransformEngine engine) {
+    fun setSandboxFileEngine(engine: UriToFileTransformEngine?): PictureSelectionCameraModel {
         if (SdkVersionUtils.isQ()) {
-            selectionConfig.uriToFileTransformEngine = engine;
-            selectionConfig.isSandboxFileEngine = true;
+            selectionConfig.uriToFileTransformEngine = engine
+            selectionConfig.isSandboxFileEngine = true
         } else {
-            selectionConfig.isSandboxFileEngine = false;
+            selectionConfig.isSandboxFileEngine = false
         }
-        return this;
+        return this
     }
 
     /**
@@ -178,13 +152,12 @@ public final class PictureSelectionCameraModel {
      * time the activity is visible.
      *
      * @param requestedOrientation An orientation constant as used in
-     *                             {@link android.content.pm.ActivityInfo.screenOrientation ActivityInfo.screenOrientation}.
+     * [ActivityInfo.screenOrientation][android.content.pm.ActivityInfo.screenOrientation].
      */
-    public PictureSelectionCameraModel setRequestedOrientation(int requestedOrientation) {
-        selectionConfig.requestedOrientation = requestedOrientation;
-        return this;
+    fun setRequestedOrientation(requestedOrientation: Int): PictureSelectionCameraModel {
+        selectionConfig.requestedOrientation = requestedOrientation
+        return this
     }
-
 
     /**
      * Intercept camera click events, and users can implement their own camera framework
@@ -192,9 +165,9 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setCameraInterceptListener(OnCameraInterceptListener listener) {
-        selectionConfig.onCameraInterceptListener = listener;
-        return this;
+    fun setCameraInterceptListener(listener: OnCameraInterceptListener?): PictureSelectionCameraModel {
+        selectionConfig.onCameraInterceptListener = listener
+        return this
     }
 
     /**
@@ -203,9 +176,9 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setRecordAudioInterceptListener(OnRecordAudioInterceptListener listener) {
-        selectionConfig.onRecordAudioListener = listener;
-        return this;
+    fun setRecordAudioInterceptListener(listener: OnRecordAudioInterceptListener?): PictureSelectionCameraModel {
+        selectionConfig.onRecordAudioListener = listener
+        return this
     }
 
     /**
@@ -214,9 +187,9 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setPermissionsInterceptListener(OnPermissionsInterceptListener listener) {
-        selectionConfig.onPermissionsEventListener = listener;
-        return this;
+    fun setPermissionsInterceptListener(listener: OnPermissionsInterceptListener?): PictureSelectionCameraModel {
+        selectionConfig.onPermissionsEventListener = listener
+        return this
     }
 
     /**
@@ -225,20 +198,20 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setPermissionDescriptionListener(OnPermissionDescriptionListener listener) {
-        selectionConfig.onPermissionDescriptionListener = listener;
-        return this;
+    fun setPermissionDescriptionListener(listener: OnPermissionDescriptionListener?): PictureSelectionCameraModel {
+        selectionConfig.onPermissionDescriptionListener = listener
+        return this
     }
 
     /**
-     *  Permission denied
+     * Permission denied
      *
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setPermissionDeniedListener(OnPermissionDeniedListener listener) {
-        selectionConfig.onPermissionDeniedListener = listener;
-        return this;
+    fun setPermissionDeniedListener(listener: OnPermissionDeniedListener?): PictureSelectionCameraModel {
+        selectionConfig.onPermissionDeniedListener = listener
+        return this
     }
 
     /**
@@ -246,9 +219,9 @@ public final class PictureSelectionCameraModel {
      *
      * @param listener
      */
-    public PictureSelectionCameraModel setSelectLimitTipsListener(OnSelectLimitTipsListener listener) {
-        selectionConfig.onSelectLimitTipsListener = listener;
-        return this;
+    fun setSelectLimitTipsListener(listener: OnSelectLimitTipsListener?): PictureSelectionCameraModel {
+        selectionConfig.onSelectLimitTipsListener = listener
+        return this
     }
 
     /**
@@ -257,11 +230,11 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setAddBitmapWatermarkListener(OnBitmapWatermarkEventListener listener) {
+    fun setAddBitmapWatermarkListener(listener: OnBitmapWatermarkEventListener?): PictureSelectionCameraModel {
         if (selectionConfig.chooseMode != SelectMimeType.ofAudio()) {
-            selectionConfig.onBitmapWatermarkListener = listener;
+            selectionConfig.onBitmapWatermarkListener = listener
         }
-        return this;
+        return this
     }
 
     /**
@@ -270,11 +243,11 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setVideoThumbnailListener(OnVideoThumbnailEventListener listener) {
+    fun setVideoThumbnailListener(listener: OnVideoThumbnailEventListener?): PictureSelectionCameraModel {
         if (selectionConfig.chooseMode != SelectMimeType.ofAudio()) {
-            selectionConfig.onVideoThumbnailEventListener = listener;
+            selectionConfig.onVideoThumbnailEventListener = listener
         }
-        return this;
+        return this
     }
 
     /**
@@ -283,9 +256,9 @@ public final class PictureSelectionCameraModel {
      * @param listener
      * @return
      */
-    public PictureSelectionCameraModel setCustomLoadingListener(OnCustomLoadingListener listener) {
-        selectionConfig.onCustomLoadingListener = listener;
-        return this;
+    fun setCustomLoadingListener(listener: OnCustomLoadingListener?): PictureSelectionCameraModel {
+        selectionConfig.onCustomLoadingListener = listener
+        return this
     }
 
     /**
@@ -295,37 +268,38 @@ public final class PictureSelectionCameraModel {
      * @param isForeground
      * @return
      */
-    public PictureSelectionCameraModel isCameraForegroundService(boolean isForeground) {
-        selectionConfig.isCameraForegroundService = isForeground;
-        return this;
+    fun isCameraForegroundService(isForeground: Boolean): PictureSelectionCameraModel {
+        selectionConfig.isCameraForegroundService = isForeground
+        return this
     }
 
     /**
      * Choose between photographing and shooting in ofAll mode
      *
-     * @param ofAllCameraType {@link SelectMimeType.ofImage or SelectMimeType.ofVideo}
-     *                        The default is ofAll() mode
+     * @param ofAllCameraType [or SelectMimeType.ofVideo][SelectMimeType.ofImage]
+     * The default is ofAll() mode
      * @return
      */
-    public PictureSelectionCameraModel setOfAllCameraType(int ofAllCameraType) {
-        selectionConfig.ofAllCameraType = ofAllCameraType;
-        return this;
+    fun setOfAllCameraType(ofAllCameraType: Int): PictureSelectionCameraModel {
+        selectionConfig.ofAllCameraType = ofAllCameraType
+        return this
     }
 
     /**
      * Do you need to display the original controller
-     * <p>
+     *
+     *
      * It needs to be used with setSandboxFileEngine
-     * {@link LocalMedia .setOriginalPath()}
-     * </p>
+     * [.setOriginalPath()][LocalMedia]
+     *
      *
      * @param isOriginalControl
      * @return
      */
-    public PictureSelectionCameraModel isOriginalControl(boolean isOriginalControl) {
-        selectionConfig.isOriginalControl = isOriginalControl;
-        selectionConfig.isCheckOriginalImage = isOriginalControl;
-        return this;
+    fun isOriginalControl(isOriginalControl: Boolean): PictureSelectionCameraModel {
+        selectionConfig.isOriginalControl = isOriginalControl
+        selectionConfig.isCheckOriginalImage = isOriginalControl
+        return this
     }
 
     /**
@@ -334,25 +308,26 @@ public final class PictureSelectionCameraModel {
      * @param isOriginalSkipCompress
      * @return
      */
-    public PictureSelectionCameraModel isOriginalSkipCompress(boolean isOriginalSkipCompress) {
-        selectionConfig.isOriginalSkipCompress = isOriginalSkipCompress;
-        return this;
+    fun isOriginalSkipCompress(isOriginalSkipCompress: Boolean): PictureSelectionCameraModel {
+        selectionConfig.isOriginalSkipCompress = isOriginalSkipCompress
+        return this
     }
 
     /**
      * The video quality output mode is only for system recording, and there are only two modes: poor quality or high quality
      *
      * @param videoQuality video quality and 0 or 1
-     *                     Use {@link VideoQuality}
-     *                     <p>
-     *                     There are limitations, only high or low
-     *                     </p>
+     * Use [VideoQuality]
+     *
+     *
+     * There are limitations, only high or low
+     *
      * @return
      */
-    @Deprecated
-    public PictureSelectionCameraModel setVideoQuality(int videoQuality) {
-        selectionConfig.videoQuality = videoQuality;
-        return this;
+    @Deprecated("")
+    fun setVideoQuality(videoQuality: Int): PictureSelectionCameraModel {
+        selectionConfig.videoQuality = videoQuality
+        return this
     }
 
     /**
@@ -360,9 +335,10 @@ public final class PictureSelectionCameraModel {
      *
      * @param maxSelectNum PictureSelector max selection
      */
-    private PictureSelectionCameraModel setMaxSelectNum(int maxSelectNum) {
-        selectionConfig.maxSelectNum = selectionConfig.selectionMode == SelectModeConfig.SINGLE ? 1 : maxSelectNum;
-        return this;
+    private fun setMaxSelectNum(maxSelectNum: Int): PictureSelectionCameraModel {
+        selectionConfig.maxSelectNum =
+            if (selectionConfig.selectionMode == SelectModeConfig.SINGLE) 1 else maxSelectNum
+        return this
     }
 
     /**
@@ -370,9 +346,10 @@ public final class PictureSelectionCameraModel {
      *
      * @param maxVideoSelectNum PictureSelector video max selection
      */
-    public PictureSelectionCameraModel setMaxVideoSelectNum(int maxVideoSelectNum) {
-        selectionConfig.maxVideoSelectNum = selectionConfig.chooseMode == SelectMimeType.ofVideo() ? 0 : maxVideoSelectNum;
-        return this;
+    fun setMaxVideoSelectNum(maxVideoSelectNum: Int): PictureSelectionCameraModel {
+        selectionConfig.maxVideoSelectNum =
+            if (selectionConfig.chooseMode == SelectMimeType.ofVideo()) 0 else maxVideoSelectNum
+        return this
     }
 
     /**
@@ -381,13 +358,13 @@ public final class PictureSelectionCameraModel {
      * @param fileKbSize Filter max file size
      * @return
      */
-    public PictureSelectionCameraModel setSelectMaxFileSize(long fileKbSize) {
+    fun setSelectMaxFileSize(fileKbSize: Long): PictureSelectionCameraModel {
         if (fileKbSize >= FileSizeUnit.MB) {
-            selectionConfig.selectMaxFileSize = fileKbSize;
+            selectionConfig.selectMaxFileSize = fileKbSize
         } else {
-            selectionConfig.selectMaxFileSize = fileKbSize * FileSizeUnit.KB;
+            selectionConfig.selectMaxFileSize = fileKbSize * FileSizeUnit.KB
         }
-        return this;
+        return this
     }
 
     /**
@@ -396,25 +373,13 @@ public final class PictureSelectionCameraModel {
      * @param fileKbSize Filter min file size
      * @return
      */
-    public PictureSelectionCameraModel setSelectMinFileSize(long fileKbSize) {
+    fun setSelectMinFileSize(fileKbSize: Long): PictureSelectionCameraModel {
         if (fileKbSize >= FileSizeUnit.MB) {
-            selectionConfig.selectMinFileSize = fileKbSize;
+            selectionConfig.selectMinFileSize = fileKbSize
         } else {
-            selectionConfig.selectMinFileSize = fileKbSize * FileSizeUnit.KB;
+            selectionConfig.selectMinFileSize = fileKbSize * FileSizeUnit.KB
         }
-        return this;
-    }
-
-
-    /**
-     * camera output image format
-     *
-     * @param imageFormat PictureSelector media format
-     * @return
-     */
-    public PictureSelectionCameraModel setCameraImageFormat(String imageFormat) {
-        selectionConfig.cameraImageFormat = imageFormat;
-        return this;
+        return this
     }
 
     /**
@@ -423,9 +388,20 @@ public final class PictureSelectionCameraModel {
      * @param imageFormat PictureSelector media format
      * @return
      */
-    public PictureSelectionCameraModel setCameraImageFormatForQ(String imageFormat) {
-        selectionConfig.cameraImageFormatForQ = imageFormat;
-        return this;
+    fun setCameraImageFormat(imageFormat: String?): PictureSelectionCameraModel {
+        selectionConfig.cameraImageFormat = imageFormat
+        return this
+    }
+
+    /**
+     * camera output image format
+     *
+     * @param imageFormat PictureSelector media format
+     * @return
+     */
+    fun setCameraImageFormatForQ(imageFormat: String?): PictureSelectionCameraModel {
+        selectionConfig.cameraImageFormatForQ = imageFormat
+        return this
     }
 
     /**
@@ -434,9 +410,9 @@ public final class PictureSelectionCameraModel {
      * @param videoFormat PictureSelector media format
      * @return
      */
-    public PictureSelectionCameraModel setCameraVideoFormat(String videoFormat) {
-        selectionConfig.cameraVideoFormat = videoFormat;
-        return this;
+    fun setCameraVideoFormat(videoFormat: String?): PictureSelectionCameraModel {
+        selectionConfig.cameraVideoFormat = videoFormat
+        return this
     }
 
     /**
@@ -445,9 +421,9 @@ public final class PictureSelectionCameraModel {
      * @param videoFormat PictureSelector media format
      * @return
      */
-    public PictureSelectionCameraModel setCameraVideoFormatForQ(String videoFormat) {
-        selectionConfig.cameraVideoFormatForQ = videoFormat;
-        return this;
+    fun setCameraVideoFormatForQ(videoFormat: String?): PictureSelectionCameraModel {
+        selectionConfig.cameraVideoFormatForQ = videoFormat
+        return this
     }
 
     /**
@@ -456,20 +432,19 @@ public final class PictureSelectionCameraModel {
      * @param maxSecond video record second
      * @return
      */
-    public PictureSelectionCameraModel setRecordVideoMaxSecond(int maxSecond) {
-        selectionConfig.recordVideoMaxSecond = maxSecond;
-        return this;
+    fun setRecordVideoMaxSecond(maxSecond: Int): PictureSelectionCameraModel {
+        selectionConfig.recordVideoMaxSecond = maxSecond
+        return this
     }
 
     /**
      * @param minSecond video record second
      * @return
      */
-    public PictureSelectionCameraModel setRecordVideoMinSecond(int minSecond) {
-        selectionConfig.recordVideoMinSecond = minSecond;
-        return this;
+    fun setRecordVideoMinSecond(minSecond: Int): PictureSelectionCameraModel {
+        selectionConfig.recordVideoMinSecond = minSecond
+        return this
     }
-
 
     /**
      * Select the max number of seconds for video or audio support
@@ -477,9 +452,9 @@ public final class PictureSelectionCameraModel {
      * @param maxDurationSecond select video max second
      * @return
      */
-    public PictureSelectionCameraModel setSelectMaxDurationSecond(int maxDurationSecond) {
-        selectionConfig.selectMaxDurationSecond = maxDurationSecond * 1000;
-        return this;
+    fun setSelectMaxDurationSecond(maxDurationSecond: Int): PictureSelectionCameraModel {
+        selectionConfig.selectMaxDurationSecond = maxDurationSecond * 1000
+        return this
     }
 
     /**
@@ -488,29 +463,29 @@ public final class PictureSelectionCameraModel {
      * @param minDurationSecond select video min second
      * @return
      */
-    public PictureSelectionCameraModel setSelectMinDurationSecond(int minDurationSecond) {
-        selectionConfig.selectMinDurationSecond = minDurationSecond * 1000;
-        return this;
+    fun setSelectMinDurationSecond(minDurationSecond: Int): PictureSelectionCameraModel {
+        selectionConfig.selectMinDurationSecond = minDurationSecond * 1000
+        return this
     }
-
 
     /**
      * @param outPutCameraDir Camera output path
-     *                        <p>Audio mode setting is not supported</p>
+     *
+     * Audio mode setting is not supported
      * @return
      */
-    public PictureSelectionCameraModel setOutputCameraDir(String outPutCameraDir) {
-        selectionConfig.outPutCameraDir = outPutCameraDir;
-        return this;
+    fun setOutputCameraDir(outPutCameraDir: String?): PictureSelectionCameraModel {
+        selectionConfig.outPutCameraDir = outPutCameraDir
+        return this
     }
 
     /**
      * @param outPutAudioDir Audio output path
      * @return
      */
-    public PictureSelectionCameraModel setOutputAudioDir(String outPutAudioDir) {
-        selectionConfig.outPutAudioDir = outPutAudioDir;
-        return this;
+    fun setOutputAudioDir(outPutAudioDir: String?): PictureSelectionCameraModel {
+        selectionConfig.outPutAudioDir = outPutAudioDir
+        return this
     }
 
     /**
@@ -520,9 +495,9 @@ public final class PictureSelectionCameraModel {
      * @param fileName
      * @return
      */
-    public PictureSelectionCameraModel setOutputCameraImageFileName(String fileName) {
-        selectionConfig.outPutCameraImageFileName = fileName;
-        return this;
+    fun setOutputCameraImageFileName(fileName: String?): PictureSelectionCameraModel {
+        selectionConfig.outPutCameraImageFileName = fileName
+        return this
     }
 
     /**
@@ -532,9 +507,9 @@ public final class PictureSelectionCameraModel {
      * @param fileName
      * @return
      */
-    public PictureSelectionCameraModel setOutputCameraVideoFileName(String fileName) {
-        selectionConfig.outPutCameraVideoFileName = fileName;
-        return this;
+    fun setOutputCameraVideoFileName(fileName: String?): PictureSelectionCameraModel {
+        selectionConfig.outPutCameraVideoFileName = fileName
+        return this
     }
 
     /**
@@ -544,28 +519,27 @@ public final class PictureSelectionCameraModel {
      * @param fileName
      * @return
      */
-    public PictureSelectionCameraModel setOutputAudioFileName(String fileName) {
-        selectionConfig.outPutAudioFileName = fileName;
-        return this;
+    fun setOutputAudioFileName(fileName: String?): PictureSelectionCameraModel {
+        selectionConfig.outPutAudioFileName = fileName
+        return this
     }
-
 
     /**
      * @param selectedList Select the selected picture set
      * @return
      */
-    public PictureSelectionCameraModel setSelectedData(List<LocalMedia> selectedList) {
+    fun setSelectedData(selectedList: List<LocalMedia>?): PictureSelectionCameraModel {
         if (selectedList == null) {
-            return this;
+            return this
         }
-        setMaxSelectNum(selectedList.size() + 1);
-        setMaxVideoSelectNum(selectedList.size() + 1);
+        setMaxSelectNum(selectedList.size + 1)
+        setMaxVideoSelectNum(selectedList.size + 1)
         if (selectionConfig.selectionMode == SelectModeConfig.SINGLE && selectionConfig.isDirectReturnSingle) {
-            selectionConfig.selectedResult.clear();
+            selectionConfig.selectedResult.clear()
         } else {
-            selectionConfig.addAllSelectResult(new ArrayList<>(selectedList));
+            selectionConfig.addAllSelectResult(ArrayList(selectedList))
         }
-        return this;
+        return this
     }
 
     /**
@@ -574,129 +548,132 @@ public final class PictureSelectionCameraModel {
      * @param isQuickCapture
      * @return
      */
-    public PictureSelectionCameraModel isQuickCapture(boolean isQuickCapture) {
-        selectionConfig.isQuickCapture = isQuickCapture;
-        return this;
+    fun isQuickCapture(isQuickCapture: Boolean): PictureSelectionCameraModel {
+        selectionConfig.isQuickCapture = isQuickCapture
+        return this
     }
 
     /**
      * Set camera direction (after default image)
      */
-    public PictureSelectionCameraModel isCameraAroundState(boolean isCameraAroundState) {
-        selectionConfig.isCameraAroundState = isCameraAroundState;
-        return this;
+    fun isCameraAroundState(isCameraAroundState: Boolean): PictureSelectionCameraModel {
+        selectionConfig.isCameraAroundState = isCameraAroundState
+        return this
     }
 
     /**
      * Camera image rotation, automatic correction
      */
-    public PictureSelectionCameraModel isCameraRotateImage(boolean isCameraRotateImage) {
-        selectionConfig.isCameraRotateImage = isCameraRotateImage;
-        return this;
+    fun isCameraRotateImage(isCameraRotateImage: Boolean): PictureSelectionCameraModel {
+        selectionConfig.isCameraRotateImage = isCameraRotateImage
+        return this
     }
 
     /**
      * Start PictureSelector
-     * <p>
-     * The {@link IBridgePictureBehavior} interface needs to be
+     *
+     *
+     * The [IBridgePictureBehavior] interface needs to be
      * implemented in the activity or fragment you call to receive the returned results
-     * </p>
-     * <p>
+     *
+     *
+     *
      * If the navigation component manages fragments,
-     * it is recommended to use {@link PictureSelectionCameraModel.forResultActivity()} in openCamera mode
-     * </p>
+     * it is recommended to use [] in openCamera mode
+     *
      */
-    public void forResult() {
+    fun forResult() {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
-            selectionConfig.isResultListenerBack = false;
-            selectionConfig.isActivityResultBack = true;
-            FragmentManager fragmentManager = null;
-            if (activity instanceof FragmentActivity) {
-                fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
+            selectionConfig.isResultListenerBack = false
+            selectionConfig.isActivityResultBack = true
+            var fragmentManager: FragmentManager? = null
+            if (activity is FragmentActivity) {
+                fragmentManager = activity.supportFragmentManager
             }
             if (fragmentManager == null) {
-                throw new NullPointerException("FragmentManager cannot be null");
+                throw NullPointerException("FragmentManager cannot be null")
             }
-            if (!(activity instanceof IBridgePictureBehavior)) {
-                throw new NullPointerException("Use only camera openCamera mode," +
-                        "Activity or Fragment interface needs to be implemented " + IBridgePictureBehavior.class);
+            if (activity !is IBridgePictureBehavior) {
+                throw NullPointerException(
+                    "Use only camera openCamera mode," +
+                            "Activity or Fragment interface needs to be implemented " + IBridgePictureBehavior::class.java
+                )
             }
-            Fragment fragment = fragmentManager.findFragmentByTag(PictureOnlyCameraFragment.TAG);
+            val fragment = fragmentManager.findFragmentByTag(PictureOnlyCameraFragment.TAG)
             if (fragment != null) {
-                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
-            FragmentInjectManager.injectSystemRoomFragment(fragmentManager,
-                    PictureOnlyCameraFragment.TAG, PictureOnlyCameraFragment.newInstance());
+            FragmentInjectManager.injectSystemRoomFragment(
+                fragmentManager,
+                PictureOnlyCameraFragment.TAG, PictureOnlyCameraFragment.newInstance()
+            )
         }
     }
-
 
     /**
      * Start PictureSelector Camera
-     * <p>
+     *
+     *
      * If the navigation component manages fragments,
-     * it is recommended to use {@link PictureSelectionCameraModel.forResultActivity()} in openCamera mode
-     * </p>
+     * it is recommended to use [] in openCamera mode
+     *
      *
      * @param call
      */
-    public void forResult(OnResultCallbackListener<LocalMedia> call) {
+    fun forResult(call: OnResultCallbackListener<LocalMedia?>?) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
             if (call == null) {
-                throw new NullPointerException("OnResultCallbackListener cannot be null");
+                throw NullPointerException("OnResultCallbackListener cannot be null")
             }
             // 绑定回调监听
-            selectionConfig.isResultListenerBack = true;
-            selectionConfig.isActivityResultBack = false;
-            selectionConfig.onResultCallListener = call;
-            FragmentManager fragmentManager = null;
-            if (activity instanceof FragmentActivity) {
-                fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+            selectionConfig.isResultListenerBack = true
+            selectionConfig.isActivityResultBack = false
+            selectionConfig.onResultCallListener = call
+            var fragmentManager: FragmentManager? = null
+            if (activity is FragmentActivity) {
+                fragmentManager = activity.supportFragmentManager
             }
             if (fragmentManager == null) {
-                throw new NullPointerException("FragmentManager cannot be null");
+                throw NullPointerException("FragmentManager cannot be null")
             }
-            Fragment fragment = fragmentManager.findFragmentByTag(PictureOnlyCameraFragment.TAG);
+            val fragment = fragmentManager.findFragmentByTag(PictureOnlyCameraFragment.TAG)
             if (fragment != null) {
-                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
-            FragmentInjectManager.injectSystemRoomFragment(fragmentManager,
-                    PictureOnlyCameraFragment.TAG, PictureOnlyCameraFragment.newInstance());
+            FragmentInjectManager.injectSystemRoomFragment(
+                fragmentManager,
+                PictureOnlyCameraFragment.TAG, PictureOnlyCameraFragment.newInstance()
+            )
         }
     }
-
 
     /**
      * build PictureOnlyCameraFragment
-     * <p>
-     * The {@link IBridgePictureBehavior} interface needs to be
+     *
+     *
+     * The [IBridgePictureBehavior] interface needs to be
      * implemented in the activity or fragment you call to receive the returned results
-     * </p>
+     *
      */
-    public PictureOnlyCameraFragment build() {
-        Activity activity = selector.getActivity();
-        if (activity == null) {
-            throw new NullPointerException("Activity cannot be null");
-        }
-        if (!(activity instanceof IBridgePictureBehavior)) {
-            throw new NullPointerException("Use only build PictureOnlyCameraFragment," +
-                    "Activity or Fragment interface needs to be implemented " + IBridgePictureBehavior.class);
+    fun build(): PictureOnlyCameraFragment {
+        val activity = selector.activity
+            ?: throw NullPointerException("Activity cannot be null")
+        if (activity !is IBridgePictureBehavior) {
+            throw NullPointerException(
+                "Use only build PictureOnlyCameraFragment," +
+                        "Activity or Fragment interface needs to be implemented " + IBridgePictureBehavior::class.java
+            )
         }
         // 绑定回调监听
-        selectionConfig.isResultListenerBack = false;
-        selectionConfig.isActivityResultBack = true;
-        selectionConfig.onResultCallListener = null;
-        return new PictureOnlyCameraFragment();
+        selectionConfig.isResultListenerBack = false
+        selectionConfig.isActivityResultBack = true
+        selectionConfig.onResultCallListener = null
+        return PictureOnlyCameraFragment()
     }
-
 
     /**
      * build and launch PictureSelector Camera
@@ -704,113 +681,122 @@ public final class PictureSelectionCameraModel {
      * @param containerViewId fragment container id
      * @param call
      */
-    public PictureOnlyCameraFragment buildLaunch(int containerViewId, OnResultCallbackListener<LocalMedia> call) {
-        Activity activity = selector.getActivity();
-        if (activity == null) {
-            throw new NullPointerException("Activity cannot be null");
-        }
+    fun buildLaunch(
+        containerViewId: Int,
+        call: OnResultCallbackListener<LocalMedia?>?
+    ): PictureOnlyCameraFragment {
+        val activity = selector.activity
+            ?: throw NullPointerException("Activity cannot be null")
         if (call == null) {
-            throw new NullPointerException("OnResultCallbackListener cannot be null");
+            throw NullPointerException("OnResultCallbackListener cannot be null")
         }
         // 绑定回调监听
-        selectionConfig.isResultListenerBack = true;
-        selectionConfig.isActivityResultBack = false;
-        selectionConfig.onResultCallListener = call;
-        FragmentManager fragmentManager = null;
-        if (activity instanceof FragmentActivity) {
-            fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+        selectionConfig.isResultListenerBack = true
+        selectionConfig.isActivityResultBack = false
+        selectionConfig.onResultCallListener = call
+        var fragmentManager: FragmentManager? = null
+        if (activity is FragmentActivity) {
+            fragmentManager = activity.supportFragmentManager
         }
         if (fragmentManager == null) {
-            throw new NullPointerException("FragmentManager cannot be null");
+            throw NullPointerException("FragmentManager cannot be null")
         }
-        PictureOnlyCameraFragment onlyCameraFragment = new PictureOnlyCameraFragment();
-        Fragment fragment = fragmentManager.findFragmentByTag(onlyCameraFragment.getFragmentTag());
+        val onlyCameraFragment = PictureOnlyCameraFragment()
+        val fragment = fragmentManager.findFragmentByTag(onlyCameraFragment.fragmentTag)
         if (fragment != null) {
-            fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+            fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
         }
         fragmentManager.beginTransaction()
-                .add(containerViewId, onlyCameraFragment, onlyCameraFragment.getFragmentTag())
-                .addToBackStack(onlyCameraFragment.getFragmentTag())
-                .commitAllowingStateLoss();
-        return onlyCameraFragment;
+            .add(containerViewId, onlyCameraFragment, onlyCameraFragment.fragmentTag)
+            .addToBackStack(onlyCameraFragment.fragmentTag)
+            .commitAllowingStateLoss()
+        return onlyCameraFragment
     }
 
     /**
      * Start PictureSelector
-     * <p>
+     *
+     *
      * If you are in the Navigation Fragment scene, you must use this method
-     * </p>
+     *
      *
      * @param requestCode
      */
-    public void forResultActivity(int requestCode) {
+    fun forResultActivity(requestCode: Int) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
-            selectionConfig.isResultListenerBack = false;
-            selectionConfig.isActivityResultBack = true;
-            Intent intent = new Intent(activity, PictureSelectorTransparentActivity.class);
-            Fragment fragment = selector.getFragment();
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
+            selectionConfig.isResultListenerBack = false
+            selectionConfig.isActivityResultBack = true
+            val intent = Intent(activity, PictureSelectorTransparentActivity::class.java)
+            val fragment = selector.fragment
             if (fragment != null) {
-                fragment.startActivityForResult(intent, requestCode);
+                fragment.startActivityForResult(intent, requestCode)
             } else {
-                activity.startActivityForResult(intent, requestCode);
+                activity.startActivityForResult(intent, requestCode)
             }
-            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0);
+            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0)
         }
     }
 
     /**
      * ActivityResultLauncher PictureSelector
-     * <p>
-     *     If you are in the Navigation Fragment scene, you must use this method
-     * </p>
      *
-     * @param launcher use {@link Activity.registerForActivityResult( ActivityResultContract , ActivityResultCallback )}
+     *
+     * If you are in the Navigation Fragment scene, you must use this method
+     *
+     *
+     * @param launcher use []
      */
-    public void forResultActivity(ActivityResultLauncher<Intent> launcher) {
+    fun forResultActivity(launcher: ActivityResultLauncher<Intent?>?) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
             if (launcher == null) {
-                throw new NullPointerException("ActivityResultLauncher cannot be null");
+                throw NullPointerException("ActivityResultLauncher cannot be null")
             }
-            selectionConfig.isResultListenerBack = false;
-            selectionConfig.isActivityResultBack = true;
-            Intent intent = new Intent(activity, PictureSelectorTransparentActivity.class);
-            launcher.launch(intent);
-            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0);
+            selectionConfig.isResultListenerBack = false
+            selectionConfig.isActivityResultBack = true
+            val intent = Intent(activity, PictureSelectorTransparentActivity::class.java)
+            launcher.launch(intent)
+            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0)
         }
     }
 
     /**
      * Start PictureSelector
-     * <p>
+     *
+     *
      * If you are in the Navigation Fragment scene, you must use this method
-     * </>
+     * >
      *
      * @param call
      */
-    public void forResultActivity(OnResultCallbackListener<LocalMedia> call) {
+    fun forResultActivity(call: OnResultCallbackListener<LocalMedia?>?) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
             if (call == null) {
-                throw new NullPointerException("OnResultCallbackListener cannot be null");
+                throw NullPointerException("OnResultCallbackListener cannot be null")
             }
             // 绑定回调监听
-            selectionConfig.isResultListenerBack = true;
-            selectionConfig.isActivityResultBack = false;
-            selectionConfig.onResultCallListener = call;
-            Intent intent = new Intent(activity, PictureSelectorTransparentActivity.class);
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0);
+            selectionConfig.isResultListenerBack = true
+            selectionConfig.isActivityResultBack = false
+            selectionConfig.onResultCallListener = call
+            val intent = Intent(activity, PictureSelectorTransparentActivity::class.java)
+            activity.startActivity(intent)
+            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0)
         }
+    }
+
+    init {
+        selectionConfig = SelectorConfig()
+        SelectorProviders.instance.addSelectorConfigQueue(selectionConfig)
+        selectionConfig.chooseMode = chooseMode
+        selectionConfig.isOnlyCamera = true
+        selectionConfig.isDisplayTimeAxis = false
+        selectionConfig.isPreviewFullScreenMode = false
+        selectionConfig.isPreviewZoomEffect = false
+        selectionConfig.isOpenClickSound = false
     }
 }

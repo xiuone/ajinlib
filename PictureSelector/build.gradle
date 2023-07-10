@@ -1,4 +1,9 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+}
+
 
 android {
     compileSdkVersion 33
@@ -26,21 +31,28 @@ android {
     }
 }
 dependencies {
-    def camerax_version = "1.2.1"
-    implementation "androidx.appcompat:appcompat:1.3.1"
-    implementation "androidx.recyclerview:recyclerview:1.2.1"
-    implementation "androidx.activity:activity:1.3.1"
-    implementation "androidx.fragment:fragment:1.3.1"
+    implementation project(path: ':Base')
     implementation "androidx.exifinterface:exifinterface:1.3.3"
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.3"
-
     implementation "androidx.transition:transition:1.4.1"
-    implementation "com.squareup.okhttp3:okhttp:3.12.13"
-    implementation "com.google.code.gson:gson:2.8.6"
 
-    api "androidx.camera:camera-core:${camerax_version}"
-    api "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-view:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    api 'com.king.zxing:zxing-lite:2.0.2'
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release       //如果这里报错，先注释，构建Gradle结束在解除
+                groupId = 'com.gitee.Myajin'
+                //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
+                artifactId = 'PictureSelector'
+            }
+        }
+    }
 }

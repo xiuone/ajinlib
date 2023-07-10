@@ -1,10 +1,8 @@
-package com.yalantis.ucrop.callback;
+package com.yalantis.ucrop.callback
 
 /**
  * Interface for crop bound change notifying.
  */
-public interface CropBoundsChangeListener {
-
-    void onCropAspectRatioChanged(float cropRatio);
-
+interface CropBoundsChangeListener {
+    fun onCropAspectRatioChanged(cropRatio: Float)
 }

@@ -1,69 +1,82 @@
-package com.luck.picture.lib.config;
+package com.luck.picture.lib.config
+
+import com.luck.picture.lib.config.SelectorConfig
+import kotlin.jvm.Synchronized
+import com.luck.picture.lib.utils.FileDirMap
+import kotlin.jvm.Volatile
+import com.luck.picture.lib.config.SelectorProviders
 
 /**
  * @author：luck
  * @date：2021/11/23 6:53 下午
  * @describe：SelectMimeType
  */
-public class SelectMimeType {
-
+object SelectMimeType {
     /**
      * GET image or video only
-     * <p>
+     *
+     *
      * excluding Audio
-     * </p>
+     *
      */
-    public static int ofAll() {
-        return TYPE_ALL;
+    @JvmStatic
+    fun ofAll(): Int {
+        return TYPE_ALL
     }
 
     /**
      * GET image only
      */
-    public static int ofImage() {
-        return TYPE_IMAGE;
+    @JvmStatic
+    fun ofImage(): Int {
+        return TYPE_IMAGE
     }
 
     /**
      * GET video only
      */
-    public static int ofVideo() {
-        return TYPE_VIDEO;
+    @JvmStatic
+    fun ofVideo(): Int {
+        return TYPE_VIDEO
     }
 
     /**
      * GET audio only
-     * <p>
+     *
+     *
      * # No longer maintain audio related functions,
      * but can continue to use but there will be phone compatibility issues
-     * <p>
+     *
+     *
      * 不再维护音频相关功能，但可以继续使用但会有机型兼容性问题
      */
-    public static int ofAudio() {
-        return TYPE_AUDIO;
+    @JvmStatic
+    fun ofAudio(): Int {
+        return TYPE_AUDIO
     }
 
-
-    public final static int TYPE_ALL = 0;
-    public final static int TYPE_IMAGE = 1;
-    public final static int TYPE_VIDEO = 2;
-    public final static int TYPE_AUDIO = 3;
+    const val TYPE_ALL = 0
+    const val TYPE_IMAGE = 1
+    const val TYPE_VIDEO = 2
+    const val TYPE_AUDIO = 3
 
     /**
      * System all image or video album
      */
-    public final static String SYSTEM_ALL = SelectMimeType.SYSTEM_IMAGE + "," + SelectMimeType.SYSTEM_VIDEO;
+    const val SYSTEM_ALL = SYSTEM_IMAGE + "," + SYSTEM_VIDEO
 
     /**
      * System image album
      */
-    public final static String SYSTEM_IMAGE = "image/*";
+    const val SYSTEM_IMAGE = "image/*"
+
     /**
      * System video album
      */
-    public final static String SYSTEM_VIDEO = "video/*";
+    const val SYSTEM_VIDEO = "video/*"
+
     /**
      * System audio album
      */
-    public final static String SYSTEM_AUDIO = "audio/*";
+    const val SYSTEM_AUDIO = "audio/*"
 }

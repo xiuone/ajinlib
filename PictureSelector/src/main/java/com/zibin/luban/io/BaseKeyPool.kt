@@ -1,34 +1,41 @@
-package com.zibin.luban.io;
+package com.zibin.luban.io
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import com.zibin.luban.io.BufferedInputStreamWrap
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.io.PoolAble
+import java.util.*
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
+import kotlin.Throws
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/8/26 3:13 下午
  * @describe：BaseKeyPool
  */
-abstract class BaseKeyPool<T extends PoolAble> {
-    private static final int MAX_SIZE = 20;
-    private final Queue<T> keyPool = createQueue(MAX_SIZE);
-
-    T get() {
-        T result = keyPool.poll();
+internal abstract class BaseKeyPool<T : PoolAble?> {
+    private val keyPool = createQueue<T>(MAX_SIZE)
+    fun get(): T? {
+        var result = keyPool.poll()
         if (result == null) {
-            result = create();
+            result = create()
         }
-        return result;
+        return result
     }
 
-    public void offer(T key) {
-        if (keyPool.size() < MAX_SIZE) {
-            keyPool.offer(key);
+    fun offer(key: T) {
+        if (keyPool.size < MAX_SIZE) {
+            keyPool.offer(key)
         }
     }
 
-    public static <T> Queue<T> createQueue(int size) {
-        return new ArrayDeque<>(size);
-    }
+    abstract fun create(): T
 
-    abstract T create();
+    companion object {
+        private const val MAX_SIZE = 20
+        fun <T> createQueue(size: Int): Queue<T> {
+            return ArrayDeque(size)
+        }
+    }
 }

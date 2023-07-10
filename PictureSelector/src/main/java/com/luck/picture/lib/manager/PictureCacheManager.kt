@@ -1,43 +1,37 @@
-package com.luck.picture.lib.manager;
+package com.luck.picture.lib.manager
 
-import android.content.Context;
-import android.os.Environment;
-
-import com.luck.picture.lib.basic.PictureMediaScannerConnection;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.interfaces.OnCallbackListener;
-import com.luck.picture.lib.thread.PictureThreadUtils;
-
-import java.io.File;
+import android.content.Context
+import android.os.Environment
+import com.luck.picture.lib.basic.PictureMediaScannerConnection
+import com.luck.picture.lib.interfaces.OnCallbackListener.onCall
+import com.luck.picture.lib.config.SelectMimeType.ofImage
+import com.luck.picture.lib.interfaces.OnCallbackListener
+import com.luck.picture.lib.thread.PictureThreadUtils
+import java.io.File
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/5/28 5:50 PM
  * @describe：PictureCacheManager
  */
-public class PictureCacheManager {
-
+object PictureCacheManager {
     /**
      * set empty PictureSelector Cache
      */
-    public static void deleteCacheDirFile(String cacheDir) {
-        deleteCacheDirFile(cacheDir, null);
-    }
-
     /**
      * set empty PictureSelector Cache
      */
-    public static void deleteCacheDirFile(String cacheDir, OnCallbackListener<String> listener) {
-        File cacheFileDir = new File(cacheDir);
-        File[] files = cacheFileDir.listFiles();
+    @JvmOverloads
+    fun deleteCacheDirFile(cacheDir: String?, listener: OnCallbackListener<String?>? = null) {
+        val cacheFileDir = File(cacheDir)
+        val files = cacheFileDir.listFiles()
         if (files != null) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    boolean isResult = file.delete();
+            for (file in files) {
+                if (file.isFile) {
+                    val isResult = file.delete()
                     if (isResult) {
-                        if (listener != null) {
-                            listener.onCall(file.getAbsolutePath());
-                        }
+                        listener?.onCall(file.absolutePath)
                     }
                 }
             }
@@ -50,8 +44,8 @@ public class PictureCacheManager {
      * @param context
      * @param type    image or video ...
      */
-    public static void deleteCacheRefreshDirFile(Context context, int type) {
-        deleteCacheDirFile(context, type, true, null);
+    fun deleteCacheRefreshDirFile(context: Context, type: Int) {
+        deleteCacheDirFile(context, type, true, null)
     }
 
     /**
@@ -60,8 +54,8 @@ public class PictureCacheManager {
      * @param context
      * @param type    image or video ...
      */
-    public static void deleteCacheDirFile(Context context, int type) {
-        deleteCacheDirFile(context, type, false, null);
+    fun deleteCacheDirFile(context: Context, type: Int) {
+        deleteCacheDirFile(context, type, false, null)
     }
 
     /**
@@ -70,8 +64,8 @@ public class PictureCacheManager {
      * @param context
      * @param type    image or video ...
      */
-    public static void deleteCacheDirFile(Context context, int type, OnCallbackListener<String> listener) {
-        deleteCacheDirFile(context, type, false, listener);
+    fun deleteCacheDirFile(context: Context, type: Int, listener: OnCallbackListener<String>?) {
+        deleteCacheDirFile(context, type, false, listener)
     }
 
     /**
@@ -80,27 +74,30 @@ public class PictureCacheManager {
      * @param context
      * @param type    image or video ...
      */
-    private static void deleteCacheDirFile(Context context, int type, boolean isRefresh, OnCallbackListener<String> listener) {
-        File cutDir = context.getExternalFilesDir(type == SelectMimeType.ofImage()
-                ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_MOVIES);
+    private fun deleteCacheDirFile(
+        context: Context,
+        type: Int,
+        isRefresh: Boolean,
+        listener: OnCallbackListener<String>?
+    ) {
+        val cutDir =
+            context.getExternalFilesDir(if (type == ofImage()) Environment.DIRECTORY_PICTURES else Environment.DIRECTORY_MOVIES)
         if (cutDir != null) {
-            File[] files = cutDir.listFiles();
+            val files = cutDir.listFiles()
             if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        boolean isResult = file.delete();
+                for (file in files) {
+                    if (file.isFile) {
+                        val isResult = file.delete()
                         if (isResult) {
                             if (isRefresh) {
-                                PictureThreadUtils.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new PictureMediaScannerConnection(context, file.getAbsolutePath());
-                                    }
-                                });
-                            } else {
-                                if (listener != null) {
-                                    listener.onCall(file.getAbsolutePath());
+                                PictureThreadUtils.runOnUiThread {
+                                    PictureMediaScannerConnection(
+                                        context,
+                                        file.absolutePath
+                                    )
                                 }
+                            } else {
+                                listener?.onCall(file.absolutePath)
                             }
                         }
                     }
@@ -114,8 +111,8 @@ public class PictureCacheManager {
      *
      * @param context
      */
-    public static void deleteAllCacheDirFile(Context context) {
-        deleteAllCacheDirFile(context, false, null);
+    fun deleteAllCacheDirFile(context: Context) {
+        deleteAllCacheDirFile(context, false, null)
     }
 
     /**
@@ -123,8 +120,8 @@ public class PictureCacheManager {
      *
      * @param context
      */
-    public static void deleteAllCacheDirFile(Context context, OnCallbackListener<String> listener) {
-        deleteAllCacheDirFile(context, false, listener);
+    fun deleteAllCacheDirFile(context: Context, listener: OnCallbackListener<String>?) {
+        deleteAllCacheDirFile(context, false, listener)
     }
 
     /**
@@ -132,8 +129,8 @@ public class PictureCacheManager {
      *
      * @param context
      */
-    public static void deleteAllCacheDirRefreshFile(Context context) {
-        deleteAllCacheDirFile(context, true, null);
+    fun deleteAllCacheDirRefreshFile(context: Context) {
+        deleteAllCacheDirFile(context, true, null)
     }
 
     /**
@@ -141,79 +138,74 @@ public class PictureCacheManager {
      *
      * @param context
      */
-    private static void deleteAllCacheDirFile(Context context, boolean isRefresh, OnCallbackListener<String> listener) {
-
-        File dirPictures = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    private fun deleteAllCacheDirFile(
+        context: Context,
+        isRefresh: Boolean,
+        listener: OnCallbackListener<String>?
+    ) {
+        val dirPictures = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         if (dirPictures != null) {
-            File[] files = dirPictures.listFiles();
+            val files = dirPictures.listFiles()
             if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        boolean isResult = file.delete();
+                for (file in files) {
+                    if (file.isFile) {
+                        val isResult = file.delete()
                         if (isResult) {
                             if (isRefresh) {
-                                PictureThreadUtils.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new PictureMediaScannerConnection(context, file.getAbsolutePath());
-                                    }
-                                });
-                            } else {
-                                if (listener != null) {
-                                    listener.onCall(file.getAbsolutePath());
+                                PictureThreadUtils.runOnUiThread {
+                                    PictureMediaScannerConnection(
+                                        context,
+                                        file.absolutePath
+                                    )
                                 }
+                            } else {
+                                listener?.onCall(file.absolutePath)
                             }
                         }
                     }
                 }
             }
         }
-
-        File dirMovies = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+        val dirMovies = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
         if (dirMovies != null) {
-            File[] files = dirMovies.listFiles();
+            val files = dirMovies.listFiles()
             if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        boolean isResult = file.delete();
+                for (file in files) {
+                    if (file.isFile) {
+                        val isResult = file.delete()
                         if (isResult) {
                             if (isRefresh) {
-                                PictureThreadUtils.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new PictureMediaScannerConnection(context, file.getAbsolutePath());
-                                    }
-                                });
-                            } else {
-                                if (listener != null) {
-                                    listener.onCall(file.getAbsolutePath());
+                                PictureThreadUtils.runOnUiThread {
+                                    PictureMediaScannerConnection(
+                                        context,
+                                        file.absolutePath
+                                    )
                                 }
+                            } else {
+                                listener?.onCall(file.absolutePath)
                             }
                         }
                     }
                 }
             }
         }
-
-        File dirMusic = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        val dirMusic = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         if (dirMusic != null) {
-            File[] files = dirMusic.listFiles();
+            val files = dirMusic.listFiles()
             if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        boolean isResult = file.delete();
+                for (file in files) {
+                    if (file.isFile) {
+                        val isResult = file.delete()
                         if (isResult) {
                             if (isRefresh) {
-                                PictureThreadUtils.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new PictureMediaScannerConnection(context, file.getAbsolutePath());
-                                    }
-                                });
-                            } else {
-                                if (listener != null) {
-                                    listener.onCall(file.getAbsolutePath());
+                                PictureThreadUtils.runOnUiThread {
+                                    PictureMediaScannerConnection(
+                                        context,
+                                        file.absolutePath
+                                    )
                                 }
+                            } else {
+                                listener?.onCall(file.absolutePath)
                             }
                         }
                     }

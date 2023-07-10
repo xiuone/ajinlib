@@ -1,134 +1,138 @@
-package com.luck.picture.lib.adapter;
+package com.luck.picture.lib.adapter
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.InjectResourceSource;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.entity.LocalMediaFolder;
-import com.luck.picture.lib.interfaces.OnAlbumItemClickListener;
-import com.luck.picture.lib.style.AlbumWindowStyle;
-import com.luck.picture.lib.style.PictureSelectorStyle;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.luck.picture.lib.R
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder.Companion.generate
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder.bindData
+import com.luck.picture.lib.adapter.holder.BaseRecyclerMediaHolder.setOnItemClickListener
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.Companion.generate
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.setOnPreviewEventListener
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.bindData
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.onViewAttachedToWindow
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.onViewDetachedFromWindow
+import com.luck.picture.lib.adapter.holder.PreviewVideoHolder.isPlaying
+import com.luck.picture.lib.adapter.holder.PreviewVideoHolder.startPlay
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.isPlaying
+import com.luck.picture.lib.adapter.holder.BasePreviewHolder.release
+import com.luck.picture.lib.config.InjectResourceSource
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.config.SelectorConfig
+import kotlin.jvm.JvmOverloads
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.entity.LocalMediaFolder
+import com.luck.picture.lib.interfaces.OnAlbumItemClickListener
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2016-12-11 17:02
  * @describe：PictureAlbumDirectoryAdapter
  */
-public class PictureAlbumAdapter extends RecyclerView.Adapter<PictureAlbumAdapter.ViewHolder> {
-    private List<LocalMediaFolder> albumList;
-    private final SelectorConfig selectorConfig;
-
-    public PictureAlbumAdapter(SelectorConfig config) {
-        this.selectorConfig = config;
+class PictureAlbumAdapter(private val selectorConfig: SelectorConfig) :
+    RecyclerView.Adapter<PictureAlbumAdapter.ViewHolder>() {
+    private var albumList: List<LocalMediaFolder>? = null
+    fun bindAlbumData(albumList: List<LocalMediaFolder>?) {
+        this.albumList = ArrayList(albumList)
     }
 
-    public void bindAlbumData(List<LocalMediaFolder> albumList) {
-        this.albumList = new ArrayList<>(albumList);
+    fun getAlbumList(): List<LocalMediaFolder> {
+        return if (albumList != null) albumList!! else ArrayList()
     }
 
-    public List<LocalMediaFolder> getAlbumList() {
-        return albumList != null ? albumList : new ArrayList<>();
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutResourceId = InjectResourceSource.getLayoutResource(parent.getContext(), InjectResourceSource.ALBUM_ITEM_LAYOUT_RESOURCE, selectorConfig);
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE ? layoutResourceId : R.layout.ps_album_folder_item, parent, false);
-        return new ViewHolder(itemView);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutResourceId = InjectResourceSource.getLayoutResource(
+            parent.context,
+            InjectResourceSource.ALBUM_ITEM_LAYOUT_RESOURCE,
+            selectorConfig
+        )
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(
+                if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) layoutResourceId else R.layout.ps_album_folder_item,
+                parent,
+                false
+            )
+        return ViewHolder(itemView)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        LocalMediaFolder folder = albumList.get(position);
-        String name = folder.getFolderName();
-        int imageNum = folder.getFolderTotalNum();
-        String imagePath = folder.getFirstImagePath();
-        holder.tvSelectTag.setVisibility(folder.isSelectTag() ? View.VISIBLE : View.INVISIBLE);
-        LocalMediaFolder currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder;
-        holder.itemView.setSelected(currentLocalMediaFolder != null
-                && folder.getBucketId() == currentLocalMediaFolder.getBucketId());
-        String firstMimeType = folder.getFirstMimeType();
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val folder = albumList!![position]
+        val name = folder.folderName
+        val imageNum = folder.folderTotalNum
+        val imagePath = folder.firstImagePath
+        holder.tvSelectTag.visibility = if (folder.isSelectTag) View.VISIBLE else View.INVISIBLE
+        val currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder
+        holder.itemView.isSelected = (currentLocalMediaFolder != null
+                && folder.bucketId == currentLocalMediaFolder.bucketId)
+        val firstMimeType = folder.firstMimeType
         if (PictureMimeType.isHasAudio(firstMimeType)) {
-            holder.ivFirstImage.setImageResource(R.drawable.ps_audio_placeholder);
+            holder.ivFirstImage.setImageResource(R.drawable.ps_audio_placeholder)
         } else {
             if (selectorConfig.imageEngine != null) {
-                selectorConfig.imageEngine.loadAlbumCover(holder.itemView.getContext(),
-                        imagePath, holder.ivFirstImage);
+                selectorConfig.imageEngine.loadAlbumCover(
+                    holder.itemView.context,
+                    imagePath, holder.ivFirstImage
+                )
             }
         }
-        Context context = holder.itemView.getContext();
-        holder.tvFolderName.setText(context.getString(R.string.ps_camera_roll_num, name, imageNum));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onAlbumItemClickListener == null) {
-                    return;
-                }
-                onAlbumItemClickListener.onItemClick(position, folder);
+        val context = holder.itemView.context
+        holder.tvFolderName.text = context.getString(R.string.ps_camera_roll_num, name, imageNum)
+        holder.itemView.setOnClickListener(View.OnClickListener {
+            if (onAlbumItemClickListener == null) {
+                return@OnClickListener
             }
-        });
+            onAlbumItemClickListener!!.onItemClick(position, folder)
+        })
     }
 
-    @Override
-    public int getItemCount() {
-        return albumList.size();
+    override fun getItemCount(): Int {
+        return albumList!!.size
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivFirstImage;
-        TextView tvFolderName, tvSelectTag;
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var ivFirstImage: ImageView
+        var tvFolderName: TextView
+        var tvSelectTag: TextView
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ivFirstImage = itemView.findViewById(R.id.first_image);
-            tvFolderName = itemView.findViewById(R.id.tv_folder_name);
-            tvSelectTag = itemView.findViewById(R.id.tv_select_tag);
-            PictureSelectorStyle selectorStyle = selectorConfig.selectorStyle;
-            AlbumWindowStyle albumWindowStyle = selectorStyle.getAlbumWindowStyle();
-            int itemBackground = albumWindowStyle.getAlbumAdapterItemBackground();
+        init {
+            ivFirstImage = itemView.findViewById(R.id.first_image)
+            tvFolderName = itemView.findViewById(R.id.tv_folder_name)
+            tvSelectTag = itemView.findViewById(R.id.tv_select_tag)
+            val selectorStyle = selectorConfig.selectorStyle
+            val albumWindowStyle = selectorStyle.albumWindowStyle
+            val itemBackground = albumWindowStyle.albumAdapterItemBackground
             if (itemBackground != 0) {
-                itemView.setBackgroundResource(itemBackground);
+                itemView.setBackgroundResource(itemBackground)
             }
-            int itemSelectStyle = albumWindowStyle.getAlbumAdapterItemSelectStyle();
+            val itemSelectStyle = albumWindowStyle.albumAdapterItemSelectStyle
             if (itemSelectStyle != 0) {
-                tvSelectTag.setBackgroundResource(itemSelectStyle);
+                tvSelectTag.setBackgroundResource(itemSelectStyle)
             }
-            int titleColor = albumWindowStyle.getAlbumAdapterItemTitleColor();
+            val titleColor = albumWindowStyle.albumAdapterItemTitleColor
             if (titleColor != 0) {
-                tvFolderName.setTextColor(titleColor);
+                tvFolderName.setTextColor(titleColor)
             }
-            int titleSize = albumWindowStyle.getAlbumAdapterItemTitleSize();
+            val titleSize = albumWindowStyle.albumAdapterItemTitleSize
             if (titleSize > 0) {
-                tvFolderName.setTextSize(titleSize);
+                tvFolderName.textSize = titleSize.toFloat()
             }
         }
     }
 
-    private OnAlbumItemClickListener onAlbumItemClickListener;
+    private var onAlbumItemClickListener: OnAlbumItemClickListener? = null
 
     /**
      * 专辑列表桥接类
      *
      * @param listener
      */
-    public void setOnIBridgeAlbumWidget(OnAlbumItemClickListener listener) {
-        this.onAlbumItemClickListener = listener;
+    fun setOnIBridgeAlbumWidget(listener: OnAlbumItemClickListener?) {
+        onAlbumItemClickListener = listener
     }
-
 }

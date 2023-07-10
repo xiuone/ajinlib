@@ -1,49 +1,65 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import android.content.Context;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.text.TextUtils;
+import android.content.Context
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.text.TextUtils
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.FileDirMap
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 
 /**
  * @author：luck
  * @date：2019-12-03 10:41
  * @describe：刷新相册
  */
-public class PictureMediaScannerConnection implements MediaScannerConnection.MediaScannerConnectionClient {
-    public interface ScanListener {
-        void onScanFinish();
+class PictureMediaScannerConnection : MediaScannerConnection.MediaScannerConnectionClient {
+    interface ScanListener {
+        fun onScanFinish()
     }
 
-    private final MediaScannerConnection mMs;
-    private final String mPath;
-    private ScanListener mListener;
+    private val mMs: MediaScannerConnection
+    private val mPath: String
+    private var mListener: ScanListener? = null
 
-    public PictureMediaScannerConnection(Context context, String path, ScanListener l) {
-        this.mListener = l;
-        this.mPath = path;
-        this.mMs = new MediaScannerConnection(context.getApplicationContext(), this);
-        this.mMs.connect();
+    constructor(context: Context, path: String, l: ScanListener?) {
+        mListener = l
+        mPath = path
+        mMs = MediaScannerConnection(context.applicationContext, this)
+        mMs.connect()
     }
 
-    public PictureMediaScannerConnection(Context context, String path) {
-        this.mPath = path;
-        this.mMs = new MediaScannerConnection(context.getApplicationContext(), this);
-        this.mMs.connect();
+    constructor(context: Context?, path: String) {
+        mPath = path
+        mMs = MediaScannerConnection(context!!.applicationContext, this)
+        mMs.connect()
     }
 
-    @Override
-    public void onMediaScannerConnected() {
+    override fun onMediaScannerConnected() {
         if (!TextUtils.isEmpty(mPath)) {
-            mMs.scanFile(mPath, null);
+            mMs.scanFile(mPath, null)
         }
     }
 
-    @Override
-    public void onScanCompleted(String path, Uri uri) {
-        mMs.disconnect();
+    override fun onScanCompleted(path: String, uri: Uri) {
+        mMs.disconnect()
         if (mListener != null) {
-            mListener.onScanFinish();
+            mListener!!.onScanFinish()
         }
     }
 }

@@ -1,23 +1,44 @@
-package com.luck.picture.lib.utils;
+package com.luck.picture.lib.utils
 
-import android.content.Context;
-import android.graphics.ColorFilter;
-import android.text.TextUtils;
-
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.BlendModeColorFilterCompat;
-import androidx.core.graphics.BlendModeCompat;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.content.Context
+import android.graphics.ColorFilter
+import android.text.TextUtils
+import com.luck.picture.lib.config.PictureMimeType.isContent
+import com.luck.picture.lib.basic.PictureContentResolver.openInputStream
+import com.luck.picture.lib.basic.PictureContentResolver.openOutputStream
+import com.luck.picture.lib.immersive.RomUtils.isSamsung
+import com.luck.picture.lib.thread.PictureThreadUtils.executeByIo
+import com.luck.picture.lib.config.PictureMimeType.isHasAudio
+import com.luck.picture.lib.config.PictureMimeType.isHasVideo
+import com.luck.picture.lib.config.PictureMimeType.isHasGif
+import com.luck.picture.lib.config.PictureMimeType.isUrlHasGif
+import com.luck.picture.lib.config.PictureMimeType.isHasHttp
+import com.luck.picture.lib.thread.PictureThreadUtils.cancel
+import com.luck.picture.lib.interfaces.OnCallbackListener.onCall
+import com.luck.picture.lib.config.PictureMimeType.isHasImage
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.config.SelectMimeType.ofImage
+import com.luck.picture.lib.config.PictureMimeType.getLastSourceSuffix
+import com.luck.picture.lib.thread.PictureThreadUtils.isInUiThread
+import com.luck.picture.lib.thread.PictureThreadUtils.runOnUiThread
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.utils.FileDirMap
+import com.luck.picture.lib.config.SelectorConfig
+import androidx.core.content.FileProvider
+import kotlin.jvm.JvmOverloads
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeCompat
+import java.util.regex.Pattern
 
 /**
  * @author：luck
  * @date：2021/11/20 3:27 下午
  * @describe：StyleUtils
  */
-public class StyleUtils {
-    private static final int INVALID = 0;
+object StyleUtils {
+    private const val INVALID = 0
 
     /**
      * 验证样式资源的合法性
@@ -25,8 +46,9 @@ public class StyleUtils {
      * @param resource
      * @return
      */
-    public static boolean checkStyleValidity(int resource) {
-        return resource != INVALID;
+    @kotlin.jvm.JvmStatic
+    fun checkStyleValidity(resource: Int): Boolean {
+        return resource != INVALID
     }
 
     /**
@@ -35,8 +57,9 @@ public class StyleUtils {
      * @param text
      * @return
      */
-    public static boolean checkTextValidity(String text) {
-        return !TextUtils.isEmpty(text);
+    @kotlin.jvm.JvmStatic
+    fun checkTextValidity(text: String?): Boolean {
+        return !TextUtils.isEmpty(text)
     }
 
     /**
@@ -45,11 +68,12 @@ public class StyleUtils {
      * @param text
      * @return
      */
-    public static boolean checkTextFormatValidity(String text) {
-        String pattern = "\\([^)]*\\)";
-        Pattern compile = Pattern.compile(pattern);
-        Matcher matcher = compile.matcher(text);
-        return matcher.find();
+    @kotlin.jvm.JvmStatic
+    fun checkTextFormatValidity(text: String?): Boolean {
+        val pattern = "\\([^)]*\\)"
+        val compile = Pattern.compile(pattern)
+        val matcher = compile.matcher(text)
+        return matcher.find()
     }
 
     /**
@@ -58,15 +82,16 @@ public class StyleUtils {
      * @param text
      * @return
      */
-    public static boolean checkTextTwoFormatValidity(String text) {
-        String pattern = "%[^%]*\\d";
-        Pattern compile = Pattern.compile(pattern);
-        Matcher matcher = compile.matcher(text);
-        int count = 0;
+    @kotlin.jvm.JvmStatic
+    fun checkTextTwoFormatValidity(text: String?): Boolean {
+        val pattern = "%[^%]*\\d"
+        val compile = Pattern.compile(pattern)
+        val matcher = compile.matcher(text)
+        var count = 0
         while (matcher.find()) {
-            count++;
+            count++
         }
-        return count >= 2;
+        return count >= 2
     }
 
     /**
@@ -75,8 +100,9 @@ public class StyleUtils {
      * @param size
      * @return
      */
-    public static boolean checkSizeValidity(int size) {
-        return size > INVALID;
+    @kotlin.jvm.JvmStatic
+    fun checkSizeValidity(size: Int): Boolean {
+        return size > INVALID
     }
 
     /**
@@ -85,8 +111,8 @@ public class StyleUtils {
      * @param size
      * @return
      */
-    public static boolean checkArrayValidity(int[] array) {
-        return array != null && array.length > 0;
+    fun checkArrayValidity(array: IntArray?): Boolean {
+        return array != null && array.size > 0
     }
 
     /**
@@ -96,8 +122,11 @@ public class StyleUtils {
      * @param color
      * @return
      */
-    public static ColorFilter getColorFilter(Context context, int color) {
-        return BlendModeColorFilterCompat.createBlendModeColorFilterCompat
-                (ContextCompat.getColor(context, color), BlendModeCompat.SRC_ATOP);
+    fun getColorFilter(context: Context?, color: Int): ColorFilter? {
+        return BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+            ContextCompat.getColor(
+                context!!, color
+            ), BlendModeCompat.SRC_ATOP
+        )
     }
 }

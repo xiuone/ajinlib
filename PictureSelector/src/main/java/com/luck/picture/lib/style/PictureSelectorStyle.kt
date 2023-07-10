@@ -1,75 +1,45 @@
-package com.luck.picture.lib.style;
+package com.luck.picture.lib.style
+
+import androidx.annotation.AnimRes
 
 /**
  * @author：luck
  * @date：2021/11/15 4:12 下午
  * @describe：PictureSelectorUIStyle
  */
-public class PictureSelectorStyle {
+class PictureSelectorStyle {
     /**
      * Album Window Style
      */
-    private AlbumWindowStyle albumWindowStyle;
+    var albumWindowStyle: AlbumWindowStyle? = null
+        get() = if (field == null) AlbumWindowStyle() else field
 
     /**
      * TitleBar UI Style
      */
-    private TitleBarStyle titleBarStyle;
+    var titleBarStyle: TitleBarStyle? = null
+        get() = if (field == null) TitleBarStyle() else field
 
     /**
      * SelectMainStyle
      */
-    private SelectMainStyle selectMainStyle;
+    var selectMainStyle: SelectMainStyle? = null
+        get() = if (field == null) SelectMainStyle() else field
+
     /**
      * BottomBar UI Style
      */
-    private BottomNavBarStyle bottomBarStyle;
+    var bottomBarStyle: BottomNavBarStyle? = null
+        get() = if (field == null) BottomNavBarStyle() else field
 
     /**
      * PictureSelector Window AnimationStyle
      */
-    private PictureWindowAnimationStyle windowAnimationStyle;
-
-    public TitleBarStyle getTitleBarStyle() {
-        return titleBarStyle == null ? new TitleBarStyle() : titleBarStyle;
-    }
-
-    public void setTitleBarStyle(TitleBarStyle titleBarStyle) {
-        this.titleBarStyle = titleBarStyle;
-    }
-
-    public SelectMainStyle getSelectMainStyle() {
-        return selectMainStyle == null ? new SelectMainStyle() : selectMainStyle;
-    }
-
-    public void setSelectMainStyle(SelectMainStyle selectMainStyle) {
-        this.selectMainStyle = selectMainStyle;
-    }
-
-    public BottomNavBarStyle getBottomBarStyle() {
-        return bottomBarStyle == null ? new BottomNavBarStyle() : bottomBarStyle;
-    }
-
-    public void setBottomBarStyle(BottomNavBarStyle bottomBarStyle) {
-        this.bottomBarStyle = bottomBarStyle;
-    }
-
-    public PictureWindowAnimationStyle getWindowAnimationStyle() {
-        if (windowAnimationStyle == null) {
-            windowAnimationStyle = PictureWindowAnimationStyle.ofDefaultWindowAnimationStyle();
+    var windowAnimationStyle: PictureWindowAnimationStyle? = null
+        get() {
+            if (field == null) {
+                field = PictureWindowAnimationStyle.Companion.ofDefaultWindowAnimationStyle()
+            }
+            return field
         }
-        return windowAnimationStyle;
-    }
-
-    public void setWindowAnimationStyle(PictureWindowAnimationStyle windowAnimationStyle) {
-        this.windowAnimationStyle = windowAnimationStyle;
-    }
-
-    public AlbumWindowStyle getAlbumWindowStyle() {
-        return albumWindowStyle == null ? new AlbumWindowStyle() : albumWindowStyle;
-    }
-
-    public void setAlbumWindowStyle(AlbumWindowStyle albumWindowStyle) {
-        this.albumWindowStyle = albumWindowStyle;
-    }
 }

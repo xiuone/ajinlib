@@ -1,30 +1,32 @@
-package com.zibin.luban.io;
+package com.zibin.luban.io
+
+import com.zibin.luban.io.BufferedInputStreamWrap
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.io.PoolAble
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
+import kotlin.Throws
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/8/26 3:20 下午
  * @describe：ByteArrayAdapter
  */
-public final class ByteArrayAdapter implements ArrayAdapterInterface<byte[]> {
-    private static final String TAG = "ByteArrayPool";
-
-    @Override
-    public String getTag() {
-        return TAG;
+class ByteArrayAdapter : ArrayAdapterInterface<ByteArray> {
+    override fun getArrayLength(array: ByteArray): Int {
+        return array.size
     }
 
-    @Override
-    public int getArrayLength(byte[] array) {
-        return array.length;
+    override fun newArray(length: Int): ByteArray {
+        return ByteArray(length)
     }
 
-    @Override
-    public byte[] newArray(int length) {
-        return new byte[length];
-    }
+    override val elementSizeInBytes: Int
+        get() = 1
 
-    @Override
-    public int getElementSizeInBytes() {
-        return 1;
+    companion object {
+        val tag = "ByteArrayPool"
+            get() = Companion.field
     }
 }

@@ -1,103 +1,85 @@
-package com.yalantis.ucrop;
+package com.yalantis.ucrop
 
-import android.graphics.ColorFilter;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.BlendModeColorFilterCompat;
-import androidx.core.graphics.BlendModeCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.luck.picture.lib.R;
-
-import java.util.List;
+import android.graphics.ColorFilter
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.luck.picture.lib.R
 
 /**
  * @author：luck
  * @date：2016-12-31 22:22
  * @describe：UCropGalleryAdapter
  */
-
-public class UCropGalleryAdapter extends RecyclerView.Adapter<UCropGalleryAdapter.ViewHolder> {
-    private final List<String> list;
-    private int currentSelectPosition;
-
-    public UCropGalleryAdapter(List<String> list) {
-        this.list = list;
+class UCropGalleryAdapter constructor(private val list: List<String>?) :
+    RecyclerView.Adapter<UCropGalleryAdapter.ViewHolder>() {
+    var currentSelectPosition: Int = 0
+    public override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
+        val view: View = LayoutInflater.from(parent.getContext()).inflate(
+            R.layout.ucrop_gallery_adapter_item,
+            parent, false
+        )
+        return ViewHolder(view)
     }
 
-    public void setCurrentSelectPosition(int currentSelectPosition) {
-        this.currentSelectPosition = currentSelectPosition;
-    }
-
-    public int getCurrentSelectPosition() {
-        return currentSelectPosition;
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ucrop_gallery_adapter_item,
-                parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        String path = list.get(position);
+    public override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val path: String = list!!.get(position)
         if (UCropDevelopConfig.imageEngine != null) {
-            UCropDevelopConfig.imageEngine.loadImage(holder.itemView.getContext(), path, holder.mIvPhoto);
+            UCropDevelopConfig.imageEngine!!.loadImage(
+                holder.itemView.getContext(),
+                path,
+                holder.mIvPhoto
+            )
         }
-        ColorFilter colorFilter;
+        val colorFilter: ColorFilter?
         if (currentSelectPosition == position) {
-            holder.mViewCurrentSelect.setVisibility(View.VISIBLE);
-            colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat
-                    (ContextCompat.getColor(holder.itemView.getContext(), R.color.ucrop_color_80),
-                            BlendModeCompat.SRC_ATOP);
+            holder.mViewCurrentSelect.setVisibility(View.VISIBLE)
+            colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                ContextCompat.getColor(holder.itemView.getContext(), R.color.ucrop_color_80),
+                BlendModeCompat.SRC_ATOP
+            )
         } else {
-            colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat
-                    (ContextCompat.getColor(holder.itemView.getContext(), R.color.ucrop_color_20),
-                            BlendModeCompat.SRC_ATOP);
-            holder.mViewCurrentSelect.setVisibility(View.GONE);
+            colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                ContextCompat.getColor(holder.itemView.getContext(), R.color.ucrop_color_20),
+                BlendModeCompat.SRC_ATOP
+            )
+            holder.mViewCurrentSelect.setVisibility(View.GONE)
         }
-        holder.mIvPhoto.setColorFilter(colorFilter);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.mIvPhoto.setColorFilter(colorFilter)
+        holder.itemView.setOnClickListener(object : View.OnClickListener {
+            public override fun onClick(v: View) {
                 if (listener != null) {
-                    listener.onItemClick(holder.getAbsoluteAdapterPosition(), v);
+                    listener!!.onItemClick(holder.getAdapterPosition(), v)
                 }
             }
-        });
+        })
     }
 
-
-    @Override
-    public int getItemCount() {
-        return list != null ? list.size() : 0;
+    public override fun getItemCount(): Int {
+        return if (list != null) list.size else 0
     }
 
+    class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
+        var mIvPhoto: ImageView
+        var mViewCurrentSelect: View
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView mIvPhoto;
-        View mViewCurrentSelect;
-
-        public ViewHolder(View view) {
-            super(view);
-            mIvPhoto = view.findViewById(R.id.iv_photo);
-            mViewCurrentSelect = view.findViewById(R.id.view_current_select);
+        init {
+            mIvPhoto = view.findViewById(R.id.iv_photo)
+            mViewCurrentSelect = view.findViewById(R.id.view_current_select)
         }
     }
 
-    private OnItemClickListener listener;
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+    private var listener: OnItemClickListener? = null
+    fun setOnItemClickListener(listener: OnItemClickListener?) {
+        this.listener = listener
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(int position, View view);
+    open interface OnItemClickListener {
+        fun onItemClick(position: Int, view: View?)
     }
 }

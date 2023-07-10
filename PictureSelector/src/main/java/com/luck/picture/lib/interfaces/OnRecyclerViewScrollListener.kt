@@ -1,12 +1,13 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
+
+import com.luck.picture.lib.config.SelectorConfig
 
 /**
  * @author：luck
  * @date：2020-04-14 18:44
  * @describe：OnRecyclerViewScrollListener
  */
-public interface OnRecyclerViewScrollListener {
-
+interface OnRecyclerViewScrollListener {
     /**
      * Called when the scroll position of this RecyclerView changes. Subclasses should use this method to respond to scrolling within the adapter's data set instead of an explicit listener.
      * This method will always be invoked before listeners. If a subclass needs to perform any additional upkeep or bookkeeping after scrolling but before listeners run, this is a good place to do so.
@@ -15,7 +16,7 @@ public interface OnRecyclerViewScrollListener {
      * dx – horizontal distance scrolled in pixels
      * dy – vertical distance scrolled in pixels
      */
-    void onScrolled(int dx, int dy);
+    fun onScrolled(dx: Int, dy: Int)
 
     /**
      * Called when the scroll state of this RecyclerView changes. Subclasses should use this method to respond to state changes instead of an explicit listener.
@@ -23,6 +24,5 @@ public interface OnRecyclerViewScrollListener {
      * Params:
      * state – the new scroll state, one of SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING or SCROLL_STATE_SETTLING
      */
-    void onScrollStateChanged(int state);
-
+    fun onScrollStateChanged(state: Int)
 }

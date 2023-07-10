@@ -1,87 +1,67 @@
-package com.luck.picture.lib.obj.pool;
+package com.luck.picture.lib.obj.pool
 
-import java.util.LinkedList;
+import java.util.*
 
 /**
  * @author：luck
  * @date：2022/6/25 22:36 晚上
  * @describe：ObjectPools
  */
-public final class ObjectPools {
-
-    public ObjectPools() {
-    }
-
-    public interface Pool<T> {
+class ObjectPools {
+    interface Pool<T> {
         /**
          * 获取对象
          */
-        T acquire();
+        fun acquire(): T
 
         /**
          * 释放对象
          */
-        boolean release(T obj);
+        fun release(obj: T): Boolean
 
         /**
          * 销毁对象池
          */
-        void destroy();
+        fun destroy()
     }
 
-    public static class SimpleObjectPool<T> implements Pool<T> {
-        private final LinkedList<T> mPool;
-
-        public SimpleObjectPool() {
-            mPool = new LinkedList<>();
+    open class SimpleObjectPool<T> : Pool<T> {
+        private val mPool: LinkedList<T>
+        override fun acquire(): T {
+            return mPool.poll()
         }
 
-        @Override
-        public T acquire() {
-            return mPool.poll();
+        override fun release(obj: T): Boolean {
+            return if (isInPool(obj)) {
+                false
+            } else mPool.add(obj)
         }
 
-        @Override
-        public boolean release(T obj) {
-            if (isInPool(obj)){
-                return false;
-            }
-            return mPool.add(obj);
+        override fun destroy() {
+            mPool.clear()
         }
 
-        @Override
-        public void destroy() {
-            mPool.clear();
+        private fun isInPool(obj: T): Boolean {
+            return mPool.contains(obj)
         }
 
-        private boolean isInPool(T obj) {
-            return mPool.contains(obj);
+        init {
+            mPool = LinkedList()
         }
     }
 
-
-    public static class SynchronizedPool<T> extends SimpleObjectPool<T> {
-        private final Object mLock = new Object();
-
-        @Override
-        public T acquire() {
-            synchronized (mLock) {
-                return super.acquire();
-            }
+    class SynchronizedPool<T> : SimpleObjectPool<T>() {
+        private val mLock = Any()
+        override fun acquire(): T {
+            synchronized(mLock) { return super.acquire() }
         }
 
-        @Override
-        public boolean release(T obj) {
-            synchronized (mLock) {
-                return super.release(obj);
-            }
+        override fun release(obj: T): Boolean {
+            synchronized(mLock) { return super.release(obj) }
         }
 
-        @Override
-        public void destroy() {
-            synchronized (mLock) {
-                super.destroy();
-            }
+        override fun destroy() {
+            synchronized(mLock) { super.destroy() }
         }
     }
 }

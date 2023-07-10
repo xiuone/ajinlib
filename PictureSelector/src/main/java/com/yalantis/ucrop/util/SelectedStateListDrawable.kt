@@ -1,42 +1,44 @@
-package com.yalantis.ucrop.util;
+package com.yalantis.ucrop.util
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
+import android.R
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.StateListDrawable
+import com.yalantis.ucrop.callback.BitmapLoadCallback
+import com.yalantis.ucrop.task.BitmapLoadTask
+import com.yalantis.ucrop.util.BitmapLoadUtils
+import com.yalantis.ucrop.util.EglUtils
+import kotlin.Throws
+import androidx.annotation.RequiresApi
+import com.yalantis.ucrop.util.RotationGestureDetector.OnRotationGestureListener
+import com.yalantis.ucrop.util.RotationGestureDetector
 
 /**
  * Hack class to properly support state drawable back to Android 1.6
  */
-public class SelectedStateListDrawable extends StateListDrawable {
-
-    private int mSelectionColor;
-
-    public SelectedStateListDrawable(Drawable drawable, int selectionColor) {
-        super();
-        this.mSelectionColor = selectionColor;
-        addState(new int[]{android.R.attr.state_selected}, drawable);
-        addState(new int[]{}, drawable);
-    }
-
-    @Override
-    protected boolean onStateChange(int[] states) {
-        boolean isStatePressedInArray = false;
-        for (int state : states) {
-            if (state == android.R.attr.state_selected) {
-                isStatePressedInArray = true;
+class SelectedStateListDrawable(drawable: Drawable?, private val mSelectionColor: Int) :
+    StateListDrawable() {
+    override fun onStateChange(states: IntArray): Boolean {
+        var isStatePressedInArray = false
+        for (state in states) {
+            if (state == R.attr.state_selected) {
+                isStatePressedInArray = true
             }
         }
         if (isStatePressedInArray) {
-            super.setColorFilter(mSelectionColor, PorterDuff.Mode.SRC_ATOP);
+            super.setColorFilter(mSelectionColor, PorterDuff.Mode.SRC_ATOP)
         } else {
-            super.clearColorFilter();
+            super.clearColorFilter()
         }
-        return super.onStateChange(states);
+        return super.onStateChange(states)
     }
 
-    @Override
-    public boolean isStateful() {
-        return true;
+    override fun isStateful(): Boolean {
+        return true
     }
 
+    init {
+        addState(intArrayOf(R.attr.state_selected), drawable)
+        addState(intArrayOf(), drawable)
+    }
 }

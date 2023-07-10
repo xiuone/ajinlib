@@ -1,14 +1,16 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
+
+import com.luck.picture.lib.config.SelectorConfig
 
 /**
  * @author：luck
  * @date：2020/4/24 11:48 AM
  * @describe：OnCallbackIndexListener
  */
-public interface OnCallbackIndexListener<T> {
+interface OnCallbackIndexListener<T> {
     /**
      * @param data
      * @param index
      */
-    void onCall(T data, int index);
+    fun onCall(data: T, index: Int)
 }

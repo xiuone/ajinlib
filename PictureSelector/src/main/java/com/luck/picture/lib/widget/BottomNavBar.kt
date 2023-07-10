@@ -1,224 +1,304 @@
-package com.luck.picture.lib.widget;
+package com.luck.picture.lib.widget
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.style.BottomNavBarStyle;
-import com.luck.picture.lib.style.PictureSelectorStyle;
-import com.luck.picture.lib.utils.DensityUtil;
-import com.luck.picture.lib.utils.PictureFileUtils;
-import com.luck.picture.lib.utils.StyleUtils;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.View
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.RelativeLayout
+import android.widget.TextView
+import com.luck.picture.lib.config.SelectorProviders.Companion.instance
+import com.luck.picture.lib.config.SelectorProviders.selectorConfig
+import com.luck.picture.lib.config.SelectorConfig.selectCount
+import com.luck.picture.lib.style.PictureSelectorStyle.bottomBarStyle
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomOriginalDrawableLeft
+import com.luck.picture.lib.utils.StyleUtils.checkStyleValidity
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomOriginalTextResId
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomOriginalText
+import com.luck.picture.lib.utils.StyleUtils.checkTextValidity
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomOriginalTextSize
+import com.luck.picture.lib.utils.StyleUtils.checkSizeValidity
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomOriginalTextColor
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomNarBarHeight
+import com.luck.picture.lib.utils.DensityUtil.dip2px
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomNarBarBackgroundColor
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewNormalTextColor
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewNormalTextSize
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewNormalTextResId
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewNormalText
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomEditorTextResId
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomEditorText
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomEditorTextSize
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomEditorTextColor
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewSelectTextColor
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewSelectTextResId
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewSelectText
+import com.luck.picture.lib.utils.StyleUtils.checkTextFormatValidity
+import com.luck.picture.lib.config.SelectorConfig.selectedResult
+import com.luck.picture.lib.utils.PictureFileUtils.formatAccurateUnitFileSize
+import com.luck.picture.lib.style.PictureSelectorStyle.selectMainStyle
+import com.luck.picture.lib.style.SelectMainStyle.selectNormalBackgroundResources
+import com.luck.picture.lib.style.SelectMainStyle.selectNormalTextResId
+import com.luck.picture.lib.style.SelectMainStyle.selectNormalText
+import com.luck.picture.lib.utils.StyleUtils.checkTextTwoFormatValidity
+import com.luck.picture.lib.style.SelectMainStyle.selectNormalTextSize
+import com.luck.picture.lib.style.SelectMainStyle.selectNormalTextColor
+import com.luck.picture.lib.style.BottomNavBarStyle.isCompleteCountTips
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomSelectNumResources
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomSelectNumTextSize
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomSelectNumTextColor
+import com.luck.picture.lib.style.SelectMainStyle.selectBackgroundResources
+import com.luck.picture.lib.style.SelectMainStyle.selectTextResId
+import com.luck.picture.lib.style.SelectMainStyle.selectText
+import com.luck.picture.lib.style.SelectMainStyle.selectTextSize
+import com.luck.picture.lib.style.SelectMainStyle.selectTextColor
+import com.luck.picture.lib.utils.ValueOf.toString
+import com.luck.picture.lib.interfaces.OnSelectAnimListener.onSelectAnim
+import com.luck.picture.lib.style.SelectMainStyle.isCompleteSelectRelativeTop
+import com.luck.picture.lib.config.PictureMimeType.isContent
+import com.luck.picture.lib.style.BottomNavBarStyle.bottomPreviewNarBarBackgroundColor
+import com.luck.picture.lib.style.PictureSelectorStyle.titleBarStyle
+import com.luck.picture.lib.style.TitleBarStyle.previewTitleBackgroundColor
+import com.luck.picture.lib.style.TitleBarStyle.titleBackgroundColor
+import com.luck.picture.lib.style.TitleBarStyle.previewTitleLeftBackResource
+import com.luck.picture.lib.interfaces.OnRecyclerViewPreloadMoreListener.onRecyclerViewPreloadMore
+import com.luck.picture.lib.interfaces.OnRecyclerViewScrollListener.onScrolled
+import com.luck.picture.lib.interfaces.OnRecyclerViewScrollStateListener.onScrollSlow
+import com.luck.picture.lib.interfaces.OnRecyclerViewScrollStateListener.onScrollFast
+import com.luck.picture.lib.interfaces.OnRecyclerViewScrollListener.onScrollStateChanged
+import com.luck.picture.lib.config.SelectMimeType.ofAudio
+import com.luck.picture.lib.utils.DensityUtil.getStatusBarHeight
+import com.luck.picture.lib.style.TitleBarStyle.titleBarHeight
+import com.luck.picture.lib.style.TitleBarStyle.isDisplayTitleBarLine
+import com.luck.picture.lib.style.TitleBarStyle.titleBarLineColor
+import com.luck.picture.lib.style.TitleBarStyle.titleLeftBackResource
+import com.luck.picture.lib.style.TitleBarStyle.titleDefaultTextResId
+import com.luck.picture.lib.style.TitleBarStyle.titleDefaultText
+import com.luck.picture.lib.style.TitleBarStyle.titleTextSize
+import com.luck.picture.lib.style.TitleBarStyle.titleTextColor
+import com.luck.picture.lib.style.TitleBarStyle.titleDrawableRightResource
+import com.luck.picture.lib.style.TitleBarStyle.titleAlbumBackgroundResource
+import com.luck.picture.lib.style.TitleBarStyle.isHideCancelButton
+import com.luck.picture.lib.style.TitleBarStyle.titleCancelBackgroundResource
+import com.luck.picture.lib.style.TitleBarStyle.titleCancelTextResId
+import com.luck.picture.lib.style.TitleBarStyle.titleCancelText
+import com.luck.picture.lib.style.TitleBarStyle.titleCancelTextColor
+import com.luck.picture.lib.style.TitleBarStyle.titleCancelTextSize
+import com.luck.picture.lib.style.TitleBarStyle.previewDeleteBackgroundResource
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import androidx.core.content.ContextCompat
+import kotlin.jvm.JvmOverloads
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.ViewCompat
+import com.luck.picture.lib.R
 
 /**
  * @author：luck
  * @date：2021/11/17 10:46 上午
  * @describe：BottomNavBar
  */
-public class BottomNavBar extends RelativeLayout implements View.OnClickListener {
-    protected TextView tvPreview;
-    protected TextView tvImageEditor;
-    private CheckBox originalCheckbox;
-    protected SelectorConfig config;
+open class BottomNavBar : RelativeLayout, View.OnClickListener {
+    protected var tvPreview: TextView? = null
+    protected var tvImageEditor: TextView? = null
+    private var originalCheckbox: CheckBox? = null
+    protected var config: SelectorConfig? = null
 
-    public BottomNavBar(Context context) {
-        super(context);
-        init();
+    constructor(context: Context?) : super(context) {
+        init()
     }
 
-    public BottomNavBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+        init()
     }
 
-    public BottomNavBar(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init()
     }
 
-    protected void init() {
-        inflateLayout();
-        setClickable(true);
-        setFocusable(true);
-        config = SelectorProviders.getInstance().getSelectorConfig();
-        tvPreview = findViewById(R.id.ps_tv_preview);
-        tvImageEditor = findViewById(R.id.ps_tv_editor);
-        originalCheckbox = findViewById(R.id.cb_original);
-        tvPreview.setOnClickListener(this);
-        tvImageEditor.setVisibility(GONE);
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ps_color_grey));
-        originalCheckbox.setChecked(config.isCheckOriginalImage);
-        originalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                config.isCheckOriginalImage = isChecked;
-                originalCheckbox.setChecked(config.isCheckOriginalImage);
-                if (bottomNavBarListener != null) {
-                    bottomNavBarListener.onCheckOriginalChange();
-                    if (isChecked && config.getSelectCount() == 0) {
-                        bottomNavBarListener.onFirstCheckOriginalSelectedChange();
-                    }
+    protected fun init() {
+        inflateLayout()
+        isClickable = true
+        isFocusable = true
+        config = instance!!.selectorConfig
+        tvPreview = findViewById(R.id.ps_tv_preview)
+        tvImageEditor = findViewById(R.id.ps_tv_editor)
+        originalCheckbox = findViewById(R.id.cb_original)
+        tvPreview.setOnClickListener(this)
+        tvImageEditor.setVisibility(GONE)
+        setBackgroundColor(ContextCompat.getColor(context, R.color.ps_color_grey))
+        originalCheckbox.setChecked(config!!.isCheckOriginalImage)
+        originalCheckbox.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, isChecked ->
+            config!!.isCheckOriginalImage = isChecked
+            originalCheckbox.setChecked(config!!.isCheckOriginalImage)
+            if (bottomNavBarListener != null) {
+                bottomNavBarListener!!.onCheckOriginalChange()
+                if (isChecked && config!!.selectCount == 0) {
+                    bottomNavBarListener!!.onFirstCheckOriginalSelectedChange()
                 }
             }
-        });
-        handleLayoutUI();
+        })
+        handleLayoutUI()
     }
 
-    protected void inflateLayout() {
-        inflate(getContext(), R.layout.ps_bottom_nav_bar, this);
+    protected fun inflateLayout() {
+        inflate(context, R.layout.ps_bottom_nav_bar, this)
     }
 
-    protected void handleLayoutUI(){
-
-    }
-
-    public void setBottomNavBarStyle() {
-        if (config.isDirectReturnSingle) {
-            setVisibility(GONE);
-            return;
+    protected open fun handleLayoutUI() {}
+    open fun setBottomNavBarStyle() {
+        if (config!!.isDirectReturnSingle) {
+            visibility = GONE
+            return
         }
-        PictureSelectorStyle selectorStyle = config.selectorStyle;
-        BottomNavBarStyle bottomBarStyle = selectorStyle.getBottomBarStyle();
-        if (config.isOriginalControl) {
-            originalCheckbox.setVisibility(View.VISIBLE);
-            int originalDrawableLeft = bottomBarStyle.getBottomOriginalDrawableLeft();
-            if (StyleUtils.checkStyleValidity(originalDrawableLeft)) {
-                originalCheckbox.setButtonDrawable(originalDrawableLeft);
+        val selectorStyle = config!!.selectorStyle
+        val bottomBarStyle = selectorStyle!!.bottomBarStyle
+        if (config!!.isOriginalControl) {
+            originalCheckbox!!.visibility = VISIBLE
+            val originalDrawableLeft = bottomBarStyle!!.bottomOriginalDrawableLeft
+            if (checkStyleValidity(originalDrawableLeft)) {
+                originalCheckbox!!.setButtonDrawable(originalDrawableLeft)
             }
-            String bottomOriginalText = StyleUtils.checkStyleValidity(bottomBarStyle.getBottomOriginalTextResId())
-                    ? getContext().getString(bottomBarStyle.getBottomOriginalTextResId()) : bottomBarStyle.getBottomOriginalText();
-            if (StyleUtils.checkTextValidity(bottomOriginalText)) {
-                originalCheckbox.setText(bottomOriginalText);
+            val bottomOriginalText = if (checkStyleValidity(
+                    bottomBarStyle.bottomOriginalTextResId
+                )
+            ) context.getString(
+                bottomBarStyle.bottomOriginalTextResId
+            ) else bottomBarStyle.bottomOriginalText!!
+            if (checkTextValidity(bottomOriginalText)) {
+                originalCheckbox!!.text = bottomOriginalText
             }
-            int originalTextSize = bottomBarStyle.getBottomOriginalTextSize();
-            if (StyleUtils.checkSizeValidity(originalTextSize)) {
-                originalCheckbox.setTextSize(originalTextSize);
+            val originalTextSize = bottomBarStyle.bottomOriginalTextSize
+            if (checkSizeValidity(originalTextSize)) {
+                originalCheckbox!!.textSize = originalTextSize.toFloat()
             }
-            int originalTextColor = bottomBarStyle.getBottomOriginalTextColor();
-            if (StyleUtils.checkStyleValidity(originalTextColor)) {
-                originalCheckbox.setTextColor(originalTextColor);
+            val originalTextColor = bottomBarStyle.bottomOriginalTextColor
+            if (checkStyleValidity(originalTextColor)) {
+                originalCheckbox!!.setTextColor(originalTextColor)
             }
         }
-
-        int narBarHeight = bottomBarStyle.getBottomNarBarHeight();
-        if (StyleUtils.checkSizeValidity(narBarHeight)) {
-            getLayoutParams().height = narBarHeight;
+        val narBarHeight = bottomBarStyle!!.bottomNarBarHeight
+        if (checkSizeValidity(narBarHeight)) {
+            layoutParams.height = narBarHeight
         } else {
-            getLayoutParams().height = DensityUtil.dip2px(getContext(), 46);
+            layoutParams.height = dip2px(context, 46f)
         }
-
-        int backgroundColor = bottomBarStyle.getBottomNarBarBackgroundColor();
-        if (StyleUtils.checkStyleValidity(backgroundColor)) {
-            setBackgroundColor(backgroundColor);
+        val backgroundColor = bottomBarStyle.bottomNarBarBackgroundColor
+        if (checkStyleValidity(backgroundColor)) {
+            setBackgroundColor(backgroundColor)
         }
-
-        int previewNormalTextColor = bottomBarStyle.getBottomPreviewNormalTextColor();
-        if (StyleUtils.checkStyleValidity(previewNormalTextColor)) {
-            tvPreview.setTextColor(previewNormalTextColor);
+        val previewNormalTextColor = bottomBarStyle.bottomPreviewNormalTextColor
+        if (checkStyleValidity(previewNormalTextColor)) {
+            tvPreview!!.setTextColor(previewNormalTextColor)
         }
-        int previewTextSize = bottomBarStyle.getBottomPreviewNormalTextSize();
-        if (StyleUtils.checkSizeValidity(previewTextSize)) {
-            tvPreview.setTextSize(previewTextSize);
+        val previewTextSize = bottomBarStyle.bottomPreviewNormalTextSize
+        if (checkSizeValidity(previewTextSize)) {
+            tvPreview!!.textSize = previewTextSize.toFloat()
         }
-        String bottomPreviewText = StyleUtils.checkStyleValidity(bottomBarStyle.getBottomPreviewNormalTextResId())
-                ? getContext().getString(bottomBarStyle.getBottomPreviewNormalTextResId()) : bottomBarStyle.getBottomPreviewNormalText();
-        if (StyleUtils.checkTextValidity(bottomPreviewText)) {
-            tvPreview.setText(bottomPreviewText);
+        val bottomPreviewText = if (checkStyleValidity(
+                bottomBarStyle.bottomPreviewNormalTextResId
+            )
+        ) context.getString(
+            bottomBarStyle.bottomPreviewNormalTextResId
+        ) else bottomBarStyle.bottomPreviewNormalText!!
+        if (checkTextValidity(bottomPreviewText)) {
+            tvPreview!!.text = bottomPreviewText
         }
-
-        String editorText = StyleUtils.checkStyleValidity(bottomBarStyle.getBottomEditorTextResId())
-                ? getContext().getString(bottomBarStyle.getBottomEditorTextResId()) : bottomBarStyle.getBottomEditorText();
-        if (StyleUtils.checkTextValidity(editorText)) {
-            tvImageEditor.setText(editorText);
+        val editorText = if (checkStyleValidity(
+                bottomBarStyle.bottomEditorTextResId
+            )
+        ) context.getString(bottomBarStyle.bottomEditorTextResId) else bottomBarStyle.bottomEditorText!!
+        if (checkTextValidity(editorText)) {
+            tvImageEditor!!.text = editorText
         }
-        int editorTextSize = bottomBarStyle.getBottomEditorTextSize();
-        if (StyleUtils.checkSizeValidity(editorTextSize)) {
-            tvImageEditor.setTextSize(editorTextSize);
+        val editorTextSize = bottomBarStyle.bottomEditorTextSize
+        if (checkSizeValidity(editorTextSize)) {
+            tvImageEditor!!.textSize = editorTextSize.toFloat()
         }
-        int editorTextColor = bottomBarStyle.getBottomEditorTextColor();
-        if (StyleUtils.checkStyleValidity(editorTextColor)) {
-            tvImageEditor.setTextColor(editorTextColor);
+        val editorTextColor = bottomBarStyle.bottomEditorTextColor
+        if (checkStyleValidity(editorTextColor)) {
+            tvImageEditor!!.setTextColor(editorTextColor)
         }
-
-        int originalDrawableLeft = bottomBarStyle.getBottomOriginalDrawableLeft();
-        if (StyleUtils.checkStyleValidity(originalDrawableLeft)) {
-            originalCheckbox.setButtonDrawable(originalDrawableLeft);
+        val originalDrawableLeft = bottomBarStyle.bottomOriginalDrawableLeft
+        if (checkStyleValidity(originalDrawableLeft)) {
+            originalCheckbox!!.setButtonDrawable(originalDrawableLeft)
         }
-
-        String originalText = StyleUtils.checkStyleValidity(bottomBarStyle.getBottomOriginalTextResId())
-                ? getContext().getString(bottomBarStyle.getBottomOriginalTextResId()) : bottomBarStyle.getBottomOriginalText();
-        if (StyleUtils.checkTextValidity(originalText)) {
-            originalCheckbox.setText(originalText);
+        val originalText = if (checkStyleValidity(
+                bottomBarStyle.bottomOriginalTextResId
+            )
+        ) context.getString(bottomBarStyle.bottomOriginalTextResId) else bottomBarStyle.bottomOriginalText!!
+        if (checkTextValidity(originalText)) {
+            originalCheckbox!!.text = originalText
         }
-
-        int originalTextSize = bottomBarStyle.getBottomOriginalTextSize();
-        if (StyleUtils.checkSizeValidity(originalTextSize)) {
-            originalCheckbox.setTextSize(originalTextSize);
+        val originalTextSize = bottomBarStyle.bottomOriginalTextSize
+        if (checkSizeValidity(originalTextSize)) {
+            originalCheckbox!!.textSize = originalTextSize.toFloat()
         }
-
-        int originalTextColor = bottomBarStyle.getBottomOriginalTextColor();
-        if (StyleUtils.checkStyleValidity(originalTextColor)) {
-            originalCheckbox.setTextColor(originalTextColor);
+        val originalTextColor = bottomBarStyle.bottomOriginalTextColor
+        if (checkStyleValidity(originalTextColor)) {
+            originalCheckbox!!.setTextColor(originalTextColor)
         }
     }
 
     /**
      * 原图选项发生变化
      */
-    public void setOriginalCheck() {
-        originalCheckbox.setChecked(config.isCheckOriginalImage);
+    fun setOriginalCheck() {
+        originalCheckbox!!.isChecked = config!!.isCheckOriginalImage
     }
 
     /**
      * 选择结果发生变化
      */
-    public void setSelectedChange() {
-        calculateFileTotalSize();
-        PictureSelectorStyle selectorStyle = config.selectorStyle;
-        BottomNavBarStyle bottomBarStyle = selectorStyle.getBottomBarStyle();
-        if (config.getSelectCount() > 0) {
-            tvPreview.setEnabled(true);
-            int previewSelectTextColor = bottomBarStyle.getBottomPreviewSelectTextColor();
-            if (StyleUtils.checkStyleValidity(previewSelectTextColor)) {
-                tvPreview.setTextColor(previewSelectTextColor);
+    fun setSelectedChange() {
+        calculateFileTotalSize()
+        val selectorStyle = config!!.selectorStyle
+        val bottomBarStyle = selectorStyle!!.bottomBarStyle
+        if (config!!.selectCount > 0) {
+            tvPreview!!.isEnabled = true
+            val previewSelectTextColor = bottomBarStyle!!.bottomPreviewSelectTextColor
+            if (checkStyleValidity(previewSelectTextColor)) {
+                tvPreview!!.setTextColor(previewSelectTextColor)
             } else {
-                tvPreview.setTextColor(ContextCompat.getColor(getContext(), R.color.ps_color_fa632d));
+                tvPreview!!.setTextColor(ContextCompat.getColor(context, R.color.ps_color_fa632d))
             }
-            String previewSelectText = StyleUtils.checkStyleValidity(bottomBarStyle.getBottomPreviewSelectTextResId())
-                    ? getContext().getString(bottomBarStyle.getBottomPreviewSelectTextResId()) : bottomBarStyle.getBottomPreviewSelectText();
-            if (StyleUtils.checkTextValidity(previewSelectText)) {
-                if (StyleUtils.checkTextFormatValidity(previewSelectText)) {
-                    tvPreview.setText(String.format(previewSelectText, config.getSelectCount()));
+            val previewSelectText = if (checkStyleValidity(
+                    bottomBarStyle.bottomPreviewSelectTextResId
+                )
+            ) context.getString(
+                bottomBarStyle.bottomPreviewSelectTextResId
+            ) else bottomBarStyle.bottomPreviewSelectText!!
+            if (checkTextValidity(previewSelectText)) {
+                if (checkTextFormatValidity(previewSelectText)) {
+                    tvPreview!!.text = String.format(previewSelectText, config!!.selectCount)
                 } else {
-                    tvPreview.setText(previewSelectText);
+                    tvPreview!!.text = previewSelectText
                 }
             } else {
-                tvPreview.setText(getContext().getString(R.string.ps_preview_num, config.getSelectCount()));
+                tvPreview!!.text = context.getString(R.string.ps_preview_num, config!!.selectCount)
             }
         } else {
-            tvPreview.setEnabled(false);
-            int previewNormalTextColor = bottomBarStyle.getBottomPreviewNormalTextColor();
-            if (StyleUtils.checkStyleValidity(previewNormalTextColor)) {
-                tvPreview.setTextColor(previewNormalTextColor);
+            tvPreview!!.isEnabled = false
+            val previewNormalTextColor = bottomBarStyle!!.bottomPreviewNormalTextColor
+            if (checkStyleValidity(previewNormalTextColor)) {
+                tvPreview!!.setTextColor(previewNormalTextColor)
             } else {
-                tvPreview.setTextColor(ContextCompat.getColor(getContext(), R.color.ps_color_9b));
+                tvPreview!!.setTextColor(ContextCompat.getColor(context, R.color.ps_color_9b))
             }
-            String previewText = StyleUtils.checkStyleValidity(bottomBarStyle.getBottomPreviewNormalTextResId())
-                    ? getContext().getString(bottomBarStyle.getBottomPreviewNormalTextResId()) : bottomBarStyle.getBottomPreviewNormalText();
-            if (StyleUtils.checkTextValidity(previewText)) {
-                tvPreview.setText(previewText);
+            val previewText = if (checkStyleValidity(
+                    bottomBarStyle.bottomPreviewNormalTextResId
+                )
+            ) context.getString(
+                bottomBarStyle.bottomPreviewNormalTextResId
+            ) else bottomBarStyle.bottomPreviewNormalText!!
+            if (checkTextValidity(previewText)) {
+                tvPreview!!.text = previewText
             } else {
-                tvPreview.setText(getContext().getString(R.string.ps_preview));
+                tvPreview!!.text = context.getString(R.string.ps_preview)
             }
         }
     }
@@ -226,73 +306,65 @@ public class BottomNavBar extends RelativeLayout implements View.OnClickListener
     /**
      * 计算原图大小
      */
-    private void calculateFileTotalSize() {
-        if (config.isOriginalControl) {
-            long totalSize = 0;
-            for (int i = 0; i < config.getSelectCount(); i++) {
-                LocalMedia media = config.getSelectedResult().get(i);
-                totalSize += media.getSize();
+    private fun calculateFileTotalSize() {
+        if (config!!.isOriginalControl) {
+            var totalSize: Long = 0
+            for (i in 0 until config!!.selectCount) {
+                val media = config!!.selectedResult[i]
+                totalSize += media.size
             }
             if (totalSize > 0) {
-                String fileSize = PictureFileUtils.formatAccurateUnitFileSize(totalSize);
-                originalCheckbox.setText(getContext().getString(R.string.ps_original_image, fileSize));
+                val fileSize = formatAccurateUnitFileSize(totalSize)
+                originalCheckbox!!.text = context.getString(R.string.ps_original_image, fileSize)
             } else {
-                originalCheckbox.setText(getContext().getString(R.string.ps_default_original_image));
+                originalCheckbox!!.text = context.getString(R.string.ps_default_original_image)
             }
         } else {
-            originalCheckbox.setText(getContext().getString(R.string.ps_default_original_image));
+            originalCheckbox!!.text =
+                context.getString(R.string.ps_default_original_image)
         }
     }
 
-    @Override
-    public void onClick(View view) {
+    override fun onClick(view: View) {
         if (bottomNavBarListener == null) {
-            return;
+            return
         }
-        int id = view.getId();
+        val id = view.id
         if (id == R.id.ps_tv_preview) {
-            bottomNavBarListener.onPreview();
+            bottomNavBarListener!!.onPreview()
         }
     }
 
-    protected OnBottomNavBarListener bottomNavBarListener;
+    protected var bottomNavBarListener: OnBottomNavBarListener? = null
 
     /**
      * 预览NarBar的功能事件回调
      *
      * @param listener
      */
-    public void setOnBottomNavBarListener(OnBottomNavBarListener listener) {
-        this.bottomNavBarListener = listener;
+    fun setOnBottomNavBarListener(listener: OnBottomNavBarListener?) {
+        bottomNavBarListener = listener
     }
 
-    public static class OnBottomNavBarListener {
+    open class OnBottomNavBarListener {
         /**
          * 预览
          */
-        public void onPreview() {
-
-        }
+        open fun onPreview() {}
 
         /**
          * 编辑图片
          */
-        public void onEditImage() {
-
-        }
+        open fun onEditImage() {}
 
         /**
          * 原图发生变化
          */
-        public void onCheckOriginalChange() {
-
-        }
+        open fun onCheckOriginalChange() {}
 
         /**
          * 首次选择原图并加入选择结果
          */
-        public void onFirstCheckOriginalSelectedChange(){
-
-        }
+        open fun onFirstCheckOriginalSelectedChange() {}
     }
 }

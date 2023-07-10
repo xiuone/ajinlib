@@ -1,17 +1,29 @@
-package com.yalantis.ucrop.util;
+package com.yalantis.ucrop.util
 
-public final class CubicEasing {
+import com.yalantis.ucrop.callback.BitmapLoadCallback
+import com.yalantis.ucrop.task.BitmapLoadTask
+import com.yalantis.ucrop.util.BitmapLoadUtils
+import com.yalantis.ucrop.util.EglUtils
+import kotlin.Throws
+import androidx.annotation.RequiresApi
+import com.yalantis.ucrop.util.RotationGestureDetector.OnRotationGestureListener
+import com.yalantis.ucrop.util.RotationGestureDetector
 
-    public static float easeOut(float time, float start, float end, float duration) {
-        return end * ((time = time / duration - 1.0f) * time * time + 1.0f) + start;
+object CubicEasing {
+    @JvmStatic
+    fun easeOut(time: Float, start: Float, end: Float, duration: Float): Float {
+        var time = time
+        return end * ((time / duration - 1.0f.also { time = it }) * time * time + 1.0f) + start
     }
 
-    public static float easeIn(float time, float start, float end, float duration) {
-        return end * (time /= duration) * time * time + start;
+    fun easeIn(time: Float, start: Float, end: Float, duration: Float): Float {
+        var time = time
+        return end * duration.let { time /= it; time } * time * time + start
     }
 
-    public static float easeInOut(float time, float start, float end, float duration) {
-        return (time /= duration / 2.0f) < 1.0f ? end / 2.0f * time * time * time + start : end / 2.0f * ((time -= 2.0f) * time * time + 2.0f) + start;
+    @JvmStatic
+    fun easeInOut(time: Float, start: Float, end: Float, duration: Float): Float {
+        var time = time
+        return if (duration / 2.0f.let { time /= it; time } < 1.0f) end / 2.0f * time * time * time + start else end / 2.0f * (2.0f.let { time -= it; time } * time * time + 2.0f) + start
     }
-
 }

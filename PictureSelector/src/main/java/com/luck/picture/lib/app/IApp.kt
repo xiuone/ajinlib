@@ -1,26 +1,25 @@
-package com.luck.picture.lib.app;
+package com.luck.picture.lib.app
 
-import android.content.Context;
-
-import com.luck.picture.lib.engine.PictureSelectorEngine;
+import android.content.Context
+import com.luck.picture.lib.engine.PictureSelectorEngine
 
 /**
  * @author：luck
  * @date：2019-12-03 15:14
  * @describe：IApp
  */
-public interface IApp {
+interface IApp {
     /**
      * Application
      *
      * @return
      */
-    Context getAppContext();
+    val appContext: Context?
 
     /**
      * PictureSelectorEngine
      *
      * @return
      */
-    PictureSelectorEngine getPictureSelectorEngine();
+    val pictureSelectorEngine: PictureSelectorEngine?
 }

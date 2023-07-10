@@ -1,182 +1,125 @@
-package com.luck.picture.lib;
+package com.luck.picture.lib
 
-import android.annotation.SuppressLint;
-import android.app.Service;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.os.Vibrator;
-import android.text.TextUtils;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import com.luck.picture.lib.adapter.PictureImageGridAdapter;
-import com.luck.picture.lib.animators.AlphaInAnimationAdapter;
-import com.luck.picture.lib.animators.AnimationType;
-import com.luck.picture.lib.animators.SlideInBottomAnimationAdapter;
-import com.luck.picture.lib.basic.FragmentInjectManager;
-import com.luck.picture.lib.basic.IPictureSelectorEvent;
-import com.luck.picture.lib.basic.PictureCommonFragment;
-import com.luck.picture.lib.config.InjectResourceSource;
-import com.luck.picture.lib.config.PermissionEvent;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.config.SelectModeConfig;
-import com.luck.picture.lib.decoration.GridSpacingItemDecoration;
-import com.luck.picture.lib.dialog.AlbumListPopWindow;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.entity.LocalMediaFolder;
-import com.luck.picture.lib.interfaces.OnAlbumItemClickListener;
-import com.luck.picture.lib.interfaces.OnQueryAlbumListener;
-import com.luck.picture.lib.interfaces.OnQueryAllAlbumListener;
-import com.luck.picture.lib.interfaces.OnQueryDataResultListener;
-import com.luck.picture.lib.interfaces.OnRecyclerViewPreloadMoreListener;
-import com.luck.picture.lib.interfaces.OnRecyclerViewScrollListener;
-import com.luck.picture.lib.interfaces.OnRecyclerViewScrollStateListener;
-import com.luck.picture.lib.interfaces.OnRequestPermissionListener;
-import com.luck.picture.lib.loader.IBridgeMediaLoader;
-import com.luck.picture.lib.loader.LocalMediaLoader;
-import com.luck.picture.lib.loader.LocalMediaPageLoader;
-import com.luck.picture.lib.magical.BuildRecycleItemViewParams;
-import com.luck.picture.lib.manager.SelectedManager;
-import com.luck.picture.lib.permissions.PermissionChecker;
-import com.luck.picture.lib.permissions.PermissionConfig;
-import com.luck.picture.lib.permissions.PermissionResultCallback;
-import com.luck.picture.lib.style.PictureSelectorStyle;
-import com.luck.picture.lib.style.SelectMainStyle;
-import com.luck.picture.lib.utils.ActivityCompatHelper;
-import com.luck.picture.lib.utils.AnimUtils;
-import com.luck.picture.lib.utils.DateUtils;
-import com.luck.picture.lib.utils.DensityUtil;
-import com.luck.picture.lib.utils.DoubleUtils;
-import com.luck.picture.lib.utils.StyleUtils;
-import com.luck.picture.lib.utils.ToastUtils;
-import com.luck.picture.lib.utils.ValueOf;
-import com.luck.picture.lib.widget.BottomNavBar;
-import com.luck.picture.lib.widget.CompleteSelectView;
-import com.luck.picture.lib.widget.RecyclerPreloadView;
-import com.luck.picture.lib.widget.SlideSelectTouchListener;
-import com.luck.picture.lib.widget.SlideSelectionHandler;
-import com.luck.picture.lib.widget.TitleBar;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import android.annotation.SuppressLint
+import android.app.Service
+import android.os.Bundle
+import android.os.SystemClock
+import android.os.Vibrator
+import android.text.TextUtils
+import android.view.View
+import android.view.animation.AnimationUtils
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
+import com.luck.picture.lib.adapter.PictureImageGridAdapter
+import com.luck.picture.lib.animators.AlphaInAnimationAdapter
+import com.luck.picture.lib.animators.AnimationType
+import com.luck.picture.lib.animators.SlideInBottomAnimationAdapter
+import com.luck.picture.lib.basic.FragmentInjectManager
+import com.luck.picture.lib.basic.IPictureSelectorEvent
+import com.luck.picture.lib.basic.PictureCommonFragment
+import com.luck.picture.lib.config.*
+import com.luck.picture.lib.decoration.GridSpacingItemDecoration
+import com.luck.picture.lib.dialog.AlbumListPopWindow
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.entity.LocalMediaFolder
+import com.luck.picture.lib.interfaces.*
+import com.luck.picture.lib.loader.IBridgeMediaLoader
+import com.luck.picture.lib.loader.LocalMediaLoader
+import com.luck.picture.lib.loader.LocalMediaPageLoader
+import com.luck.picture.lib.magical.BuildRecycleItemViewParams
+import com.luck.picture.lib.manager.SelectedManager
+import com.luck.picture.lib.permissions.PermissionChecker
+import com.luck.picture.lib.utils.*
+import com.luck.picture.lib.widget.*
+import java.io.File
+import java.lang.Exception
+import java.lang.NullPointerException
+import java.util.ArrayList
+import java.util.HashSet
 
 /**
  * @author：luck
  * @date：2021/11/17 10:24 上午
  * @describe：PictureSelectorFragment
  */
-public class PictureSelectorFragment extends PictureCommonFragment
-        implements OnRecyclerViewPreloadMoreListener, IPictureSelectorEvent {
-    public static final String TAG = PictureSelectorFragment.class.getSimpleName();
-    private static final Object LOCK = new Object();
-    /**
-     * 这个时间对应的是R.anim.ps_anim_modal_in里面的
-     */
-    private static int SELECT_ANIM_DURATION = 135;
-    private RecyclerPreloadView mRecycler;
-    private TextView tvDataEmpty;
-    private TitleBar titleBar;
-    private BottomNavBar bottomNarBar;
-    private CompleteSelectView completeSelectView;
-    private TextView tvCurrentDataTime;
-    private long intervalClickTime = 0;
-    private int allFolderSize;
-    private int currentPosition = -1;
+class PictureSelectorFragment : PictureCommonFragment(), OnRecyclerViewPreloadMoreListener,
+    IPictureSelectorEvent {
+    private var mRecycler: RecyclerPreloadView? = null
+    private var tvDataEmpty: TextView? = null
+    private var titleBar: TitleBar? = null
+    private var bottomNarBar: BottomNavBar? = null
+    private var completeSelectView: CompleteSelectView? = null
+    private var tvCurrentDataTime: TextView? = null
+    private var intervalClickTime: Long = 0
+    private var allFolderSize = 0
+    private var currentPosition = -1
+
     /**
      * Use camera to callback
      */
-    private boolean isCameraCallback;
+    private var isCameraCallback = false
+
     /**
      * memory recycling
      */
-    private boolean isMemoryRecycling;
-    private boolean isDisplayCamera;
-
-    private PictureImageGridAdapter mAdapter;
-
-    private AlbumListPopWindow albumListPopWindow;
-
-    private SlideSelectTouchListener mDragSelectTouchListener;
-
-    public static PictureSelectorFragment newInstance() {
-        PictureSelectorFragment fragment = new PictureSelectorFragment();
-        fragment.setArguments(new Bundle());
-        return fragment;
+    private var isMemoryRecycling = false
+    private var isDisplayCamera = false
+    private var mAdapter: PictureImageGridAdapter? = null
+    private var albumListPopWindow: AlbumListPopWindow? = null
+    private var mDragSelectTouchListener: SlideSelectTouchListener? = null
+    override fun getFragmentTag(): String {
+        return TAG
     }
 
-    @Override
-    public String getFragmentTag() {
-        return TAG;
-    }
-
-    @Override
-    public int getResourceId() {
-        int layoutResourceId = InjectResourceSource.getLayoutResource(getContext(), InjectResourceSource.MAIN_SELECTOR_LAYOUT_RESOURCE, selectorConfig);
-        if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) {
-            return layoutResourceId;
-        }
-        return R.layout.ps_fragment_selector;
+    override fun getResourceId(): Int {
+        val layoutResourceId = InjectResourceSource.getLayoutResource(
+            context, InjectResourceSource.MAIN_SELECTOR_LAYOUT_RESOURCE, selectorConfig
+        )
+        return if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) {
+            layoutResourceId
+        } else R.layout.ps_fragment_selector
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    @Override
-    public void onSelectedChange(boolean isAddRemove, LocalMedia currentMedia) {
-        bottomNarBar.setSelectedChange();
-        completeSelectView.setSelectedChange(false);
+    override fun onSelectedChange(isAddRemove: Boolean, currentMedia: LocalMedia) {
+        bottomNarBar!!.setSelectedChange()
+        completeSelectView!!.setSelectedChange(false)
         // 刷新列表数据
         if (checkNotifyStrategy(isAddRemove)) {
-            mAdapter.notifyItemPositionChanged(currentMedia.position);
-            mRecycler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                }
-            }, SELECT_ANIM_DURATION);
+            mAdapter!!.notifyItemPositionChanged(currentMedia.position)
+            mRecycler!!.postDelayed(
+                { mAdapter!!.notifyDataSetChanged() },
+                SELECT_ANIM_DURATION.toLong()
+            )
         } else {
-            mAdapter.notifyItemPositionChanged(currentMedia.position);
+            mAdapter!!.notifyItemPositionChanged(currentMedia.position)
         }
         if (!isAddRemove) {
-            sendChangeSubSelectPositionEvent(true);
+            sendChangeSubSelectPositionEvent(true)
         }
     }
 
-    @Override
-    public void onFixedSelectedChange(LocalMedia oldLocalMedia) {
-        mAdapter.notifyItemPositionChanged(oldLocalMedia.position);
+    override fun onFixedSelectedChange(oldLocalMedia: LocalMedia) {
+        mAdapter!!.notifyItemPositionChanged(oldLocalMedia.position)
     }
 
-    @Override
-    public void sendChangeSubSelectPositionEvent(boolean adapterChange) {
-        if (selectorConfig.selectorStyle.getSelectMainStyle().isSelectNumberStyle()) {
-            for (int index = 0; index < selectorConfig.getSelectCount(); index++) {
-                LocalMedia media = selectorConfig.getSelectedResult().get(index);
-                media.setNum(index + 1);
+    override fun sendChangeSubSelectPositionEvent(adapterChange: Boolean) {
+        if (selectorConfig.selectorStyle.selectMainStyle.isSelectNumberStyle) {
+            for (index in 0 until selectorConfig.selectCount) {
+                val media = selectorConfig.selectedResult[index]
+                media.num = index + 1
                 if (adapterChange) {
-                    mAdapter.notifyItemPositionChanged(media.position);
+                    mAdapter!!.notifyItemPositionChanged(media.position)
                 }
             }
         }
     }
 
-    @Override
-    public void onCheckOriginalChange() {
-        bottomNarBar.setOriginalCheck();
+    override fun onCheckOriginalChange() {
+        bottomNarBar!!.setOriginalCheck()
     }
 
     /**
@@ -185,562 +128,565 @@ public class PictureSelectorFragment extends PictureCommonFragment
      * @param isAddRemove
      * @return
      */
-    private boolean checkNotifyStrategy(boolean isAddRemove) {
-        boolean isNotifyAll = false;
+    private fun checkNotifyStrategy(isAddRemove: Boolean): Boolean {
+        var isNotifyAll = false
         if (selectorConfig.isMaxSelectEnabledMask) {
             if (selectorConfig.isWithVideoImage) {
                 if (selectorConfig.selectionMode == SelectModeConfig.SINGLE) {
                     // ignore
                 } else {
-                    isNotifyAll = selectorConfig.getSelectCount() == selectorConfig.maxSelectNum
-                            || (!isAddRemove && selectorConfig.getSelectCount() == selectorConfig.maxSelectNum - 1);
+                    isNotifyAll = (selectorConfig.selectCount == selectorConfig.maxSelectNum
+                            || !isAddRemove && selectorConfig.selectCount == selectorConfig.maxSelectNum - 1)
                 }
             } else {
-                if (selectorConfig.getSelectCount() == 0 || (isAddRemove && selectorConfig.getSelectCount() == 1)) {
-                    // 首次添加或单选，选择数量变为0了，都notifyDataSetChanged
-                    isNotifyAll = true;
-                } else {
-                    if (PictureMimeType.isHasVideo(selectorConfig.getResultFirstMimeType())) {
-                        int maxSelectNum = selectorConfig.maxVideoSelectNum > 0
-                                ? selectorConfig.maxVideoSelectNum : selectorConfig.maxSelectNum;
-                        isNotifyAll = selectorConfig.getSelectCount() == maxSelectNum
-                                || (!isAddRemove && selectorConfig.getSelectCount() == maxSelectNum - 1);
+                isNotifyAll =
+                    if (selectorConfig.selectCount == 0 || isAddRemove && selectorConfig.selectCount == 1) {
+                        // 首次添加或单选，选择数量变为0了，都notifyDataSetChanged
+                        true
                     } else {
-                        isNotifyAll = selectorConfig.getSelectCount() == selectorConfig.maxSelectNum
-                                || (!isAddRemove && selectorConfig.getSelectCount() == selectorConfig.maxSelectNum - 1);
+                        if (PictureMimeType.isHasVideo(selectorConfig.resultFirstMimeType)) {
+                            val maxSelectNum =
+                                if (selectorConfig.maxVideoSelectNum > 0) selectorConfig.maxVideoSelectNum else selectorConfig.maxSelectNum
+                            (selectorConfig.selectCount == maxSelectNum
+                                    || !isAddRemove && selectorConfig.selectCount == maxSelectNum - 1)
+                        } else {
+                            (selectorConfig.selectCount == selectorConfig.maxSelectNum
+                                    || !isAddRemove && selectorConfig.selectCount == selectorConfig.maxSelectNum - 1)
+                        }
                     }
-                }
             }
         }
-        return isNotifyAll;
+        return isNotifyAll
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PictureConfig.EXTRA_ALL_FOLDER_SIZE, allFolderSize);
-        outState.putInt(PictureConfig.EXTRA_CURRENT_PAGE, mPage);
-        outState.putInt(PictureConfig.EXTRA_PREVIEW_CURRENT_POSITION, mRecycler.getLastVisiblePosition());
-        outState.putBoolean(PictureConfig.EXTRA_DISPLAY_CAMERA, mAdapter.isDisplayCamera());
-        selectorConfig.addAlbumDataSource(albumListPopWindow.getAlbumList());
-        selectorConfig.addDataSource(mAdapter.getData());
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(PictureConfig.EXTRA_ALL_FOLDER_SIZE, allFolderSize)
+        outState.putInt(PictureConfig.EXTRA_CURRENT_PAGE, mPage)
+        outState.putInt(
+            PictureConfig.EXTRA_PREVIEW_CURRENT_POSITION,
+            mRecycler!!.lastVisiblePosition
+        )
+        outState.putBoolean(PictureConfig.EXTRA_DISPLAY_CAMERA, mAdapter!!.isDisplayCamera)
+        selectorConfig.addAlbumDataSource(albumListPopWindow!!.albumList)
+        selectorConfig.addDataSource(mAdapter!!.data)
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        reStartSavedInstance(savedInstanceState);
-        isMemoryRecycling = savedInstanceState != null;
-        tvDataEmpty = view.findViewById(R.id.tv_data_empty);
-        completeSelectView = view.findViewById(R.id.ps_complete_select);
-        titleBar = view.findViewById(R.id.title_bar);
-        bottomNarBar = view.findViewById(R.id.bottom_nar_bar);
-        tvCurrentDataTime = view.findViewById(R.id.tv_current_data_time);
-        onCreateLoader();
-        initAlbumListPopWindow();
-        initTitleBar();
-        initComplete();
-        initRecycler(view);
-        initBottomNavBar();
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        reStartSavedInstance(savedInstanceState!!)
+        isMemoryRecycling = savedInstanceState != null
+        tvDataEmpty = view.findViewById(R.id.tv_data_empty)
+        completeSelectView = view.findViewById(R.id.ps_complete_select)
+        titleBar = view.findViewById(R.id.title_bar)
+        bottomNarBar = view.findViewById(R.id.bottom_nar_bar)
+        tvCurrentDataTime = view.findViewById(R.id.tv_current_data_time)
+        onCreateLoader()
+        initAlbumListPopWindow()
+        initTitleBar()
+        initComplete()
+        initRecycler(view)
+        initBottomNavBar()
         if (isMemoryRecycling) {
-            recoverSaveInstanceData();
+            recoverSaveInstanceData()
         } else {
-            requestLoadData();
+            requestLoadData()
         }
     }
 
-
-    @Override
-    public void onFragmentResume() {
-        setRootViewKeyListener(requireView());
+    override fun onFragmentResume() {
+        setRootViewKeyListener(requireView())
     }
 
-    @Override
-    public void reStartSavedInstance(Bundle savedInstanceState) {
+    override fun reStartSavedInstance(savedInstanceState: Bundle) {
         if (savedInstanceState != null) {
-            allFolderSize = savedInstanceState.getInt(PictureConfig.EXTRA_ALL_FOLDER_SIZE);
-            mPage = savedInstanceState.getInt(PictureConfig.EXTRA_CURRENT_PAGE, mPage);
-            currentPosition = savedInstanceState.getInt(PictureConfig.EXTRA_PREVIEW_CURRENT_POSITION, currentPosition);
-            isDisplayCamera = savedInstanceState.getBoolean(PictureConfig.EXTRA_DISPLAY_CAMERA, selectorConfig.isDisplayCamera);
+            allFolderSize = savedInstanceState.getInt(PictureConfig.EXTRA_ALL_FOLDER_SIZE)
+            mPage = savedInstanceState.getInt(PictureConfig.EXTRA_CURRENT_PAGE, mPage)
+            currentPosition = savedInstanceState.getInt(
+                PictureConfig.EXTRA_PREVIEW_CURRENT_POSITION,
+                currentPosition
+            )
+            isDisplayCamera = savedInstanceState.getBoolean(
+                PictureConfig.EXTRA_DISPLAY_CAMERA,
+                selectorConfig.isDisplayCamera
+            )
         } else {
-            isDisplayCamera = selectorConfig.isDisplayCamera;
+            isDisplayCamera = selectorConfig.isDisplayCamera
         }
     }
-
 
     /**
      * 完成按钮
      */
-    private void initComplete() {
+    private fun initComplete() {
         if (selectorConfig.selectionMode == SelectModeConfig.SINGLE && selectorConfig.isDirectReturnSingle) {
-            selectorConfig.selectorStyle.getTitleBarStyle().setHideCancelButton(false);
-            titleBar.getTitleCancelView().setVisibility(View.VISIBLE);
-            completeSelectView.setVisibility(View.GONE);
+            selectorConfig.selectorStyle.titleBarStyle.isHideCancelButton = false
+            titleBar!!.titleCancelView.visibility = View.VISIBLE
+            completeSelectView!!.visibility = View.GONE
         } else {
-            completeSelectView.setCompleteSelectViewStyle();
-            completeSelectView.setSelectedChange(false);
-            SelectMainStyle selectMainStyle = selectorConfig.selectorStyle.getSelectMainStyle();
-            if (selectMainStyle.isCompleteSelectRelativeTop()) {
-                if (completeSelectView.getLayoutParams() instanceof ConstraintLayout.LayoutParams) {
-                    ((ConstraintLayout.LayoutParams)
-                            completeSelectView.getLayoutParams()).topToTop = R.id.title_bar;
-                    ((ConstraintLayout.LayoutParams)
-                            completeSelectView.getLayoutParams()).bottomToBottom = R.id.title_bar;
+            completeSelectView!!.setCompleteSelectViewStyle()
+            completeSelectView!!.setSelectedChange(false)
+            val selectMainStyle = selectorConfig.selectorStyle.selectMainStyle
+            if (selectMainStyle.isCompleteSelectRelativeTop) {
+                if (completeSelectView!!.layoutParams is ConstraintLayout.LayoutParams) {
+                    (completeSelectView!!.layoutParams as ConstraintLayout.LayoutParams).topToTop =
+                        R.id.title_bar
+                    (completeSelectView!!.layoutParams as ConstraintLayout.LayoutParams).bottomToBottom =
+                        R.id.title_bar
                     if (selectorConfig.isPreviewFullScreenMode) {
-                        ((ConstraintLayout.LayoutParams) completeSelectView
-                                .getLayoutParams()).topMargin = DensityUtil.getStatusBarHeight(getContext());
+                        (completeSelectView
+                            .getLayoutParams() as ConstraintLayout.LayoutParams).topMargin =
+                            DensityUtil.getStatusBarHeight(
+                                context
+                            )
                     }
-                } else if (completeSelectView.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+                } else if (completeSelectView!!.layoutParams is RelativeLayout.LayoutParams) {
                     if (selectorConfig.isPreviewFullScreenMode) {
-                        ((RelativeLayout.LayoutParams) completeSelectView
-                                .getLayoutParams()).topMargin = DensityUtil.getStatusBarHeight(getContext());
+                        (completeSelectView
+                            .getLayoutParams() as RelativeLayout.LayoutParams).topMargin =
+                            DensityUtil.getStatusBarHeight(
+                                context
+                            )
                     }
                 }
             }
-            completeSelectView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (selectorConfig.isEmptyResultReturn && selectorConfig.getSelectCount() == 0) {
-                        onExitPictureSelector();
-                    } else {
-                        dispatchTransformResult();
-                    }
-                }
-            });
-        }
-    }
-
-
-    @Override
-    public void onCreateLoader() {
-        if (selectorConfig.loaderFactory != null) {
-            mLoader = selectorConfig.loaderFactory.onCreateLoader();
-            if (mLoader == null) {
-                throw new NullPointerException("No available " + IBridgeMediaLoader.class + " loader found");
-            }
-        } else {
-            mLoader = selectorConfig.isPageStrategy
-                    ? new LocalMediaPageLoader(getAppContext(), selectorConfig)
-                    : new LocalMediaLoader(getAppContext(), selectorConfig);
-        }
-    }
-
-    private void initTitleBar() {
-        if (selectorConfig.selectorStyle.getTitleBarStyle().isHideTitleBar()) {
-            titleBar.setVisibility(View.GONE);
-        }
-        titleBar.setTitleBarStyle();
-        titleBar.setOnTitleBarListener(new TitleBar.OnTitleBarListener() {
-            @Override
-            public void onTitleDoubleClick() {
-                if (selectorConfig.isAutomaticTitleRecyclerTop) {
-                    int intervalTime = 500;
-                    if (SystemClock.uptimeMillis() - intervalClickTime < intervalTime && mAdapter.getItemCount() > 0) {
-                        mRecycler.scrollToPosition(0);
-                    } else {
-                        intervalClickTime = SystemClock.uptimeMillis();
-                    }
-                }
-            }
-
-            @Override
-            public void onBackPressed() {
-                if (albumListPopWindow.isShowing()) {
-                    albumListPopWindow.dismiss();
+            completeSelectView!!.setOnClickListener {
+                if (selectorConfig.isEmptyResultReturn && selectorConfig.selectCount == 0) {
+                    onExitPictureSelector()
                 } else {
-                    onKeyBackFragmentFinish();
+                    dispatchTransformResult()
+                }
+            }
+        }
+    }
+
+    override fun onCreateLoader() {
+        if (selectorConfig.loaderFactory != null) {
+            mLoader = selectorConfig.loaderFactory.onCreateLoader()
+            if (mLoader == null) {
+                throw NullPointerException("No available " + IBridgeMediaLoader::class.java + " loader found")
+            }
+        } else {
+            mLoader = if (selectorConfig.isPageStrategy) LocalMediaPageLoader(
+                appContext, selectorConfig
+            ) else LocalMediaLoader(
+                appContext, selectorConfig
+            )
+        }
+    }
+
+    private fun initTitleBar() {
+        if (selectorConfig.selectorStyle.titleBarStyle.isHideTitleBar) {
+            titleBar!!.visibility = View.GONE
+        }
+        titleBar!!.setTitleBarStyle()
+        titleBar!!.setOnTitleBarListener(object : TitleBar.OnTitleBarListener() {
+            override fun onTitleDoubleClick() {
+                if (selectorConfig.isAutomaticTitleRecyclerTop) {
+                    val intervalTime = 500
+                    if (SystemClock.uptimeMillis() - intervalClickTime < intervalTime && mAdapter!!.itemCount > 0) {
+                        mRecycler!!.scrollToPosition(0)
+                    } else {
+                        intervalClickTime = SystemClock.uptimeMillis()
+                    }
                 }
             }
 
-            @Override
-            public void onShowAlbumPopWindow(View anchor) {
-                albumListPopWindow.showAsDropDown(anchor);
+            override fun onBackPressed() {
+                if (albumListPopWindow!!.isShowing) {
+                    albumListPopWindow!!.dismiss()
+                } else {
+                    onKeyBackFragmentFinish()
+                }
             }
-        });
+
+            override fun onShowAlbumPopWindow(anchor: View) {
+                albumListPopWindow!!.showAsDropDown(anchor)
+            }
+        })
     }
 
     /**
      * initAlbumListPopWindow
      */
-    private void initAlbumListPopWindow() {
-        albumListPopWindow = AlbumListPopWindow.buildPopWindow(getContext(), selectorConfig);
-        albumListPopWindow.setOnPopupWindowStatusListener(new AlbumListPopWindow.OnPopupWindowStatusListener() {
-            @Override
-            public void onShowPopupWindow() {
+    private fun initAlbumListPopWindow() {
+        albumListPopWindow = AlbumListPopWindow.buildPopWindow(context, selectorConfig)
+        albumListPopWindow.setOnPopupWindowStatusListener(object :
+            AlbumListPopWindow.OnPopupWindowStatusListener {
+            override fun onShowPopupWindow() {
                 if (!selectorConfig.isOnlySandboxDir) {
-                    AnimUtils.rotateArrow(titleBar.getImageArrow(), true);
+                    AnimUtils.rotateArrow(titleBar!!.imageArrow, true)
                 }
             }
 
-            @Override
-            public void onDismissPopupWindow() {
+            override fun onDismissPopupWindow() {
                 if (!selectorConfig.isOnlySandboxDir) {
-                    AnimUtils.rotateArrow(titleBar.getImageArrow(), false);
+                    AnimUtils.rotateArrow(titleBar!!.imageArrow, false)
                 }
             }
-        });
-        addAlbumPopWindowAction();
+        })
+        addAlbumPopWindowAction()
     }
 
-    private void recoverSaveInstanceData(){
-        mAdapter.setDisplayCamera(isDisplayCamera);
-        setEnterAnimationDuration(0);
+    private fun recoverSaveInstanceData() {
+        mAdapter!!.isDisplayCamera = isDisplayCamera
+        enterAnimationDuration = 0
         if (selectorConfig.isOnlySandboxDir) {
-            handleInAppDirAllMedia(selectorConfig.currentLocalMediaFolder);
+            handleInAppDirAllMedia(selectorConfig.currentLocalMediaFolder)
         } else {
-            handleRecoverAlbumData(new ArrayList<>(selectorConfig.albumDataSource));
+            handleRecoverAlbumData(ArrayList(selectorConfig.albumDataSource))
         }
     }
 
-
-    private void handleRecoverAlbumData(List<LocalMediaFolder> albumData) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    private fun handleRecoverAlbumData(albumData: List<LocalMediaFolder>) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
-        if (albumData.size() > 0) {
-            LocalMediaFolder firstFolder;
+        if (albumData.size > 0) {
+            val firstFolder: LocalMediaFolder
             if (selectorConfig.currentLocalMediaFolder != null) {
-                firstFolder = selectorConfig.currentLocalMediaFolder;
+                firstFolder = selectorConfig.currentLocalMediaFolder
             } else {
-                firstFolder = albumData.get(0);
-                selectorConfig.currentLocalMediaFolder = firstFolder;
+                firstFolder = albumData[0]
+                selectorConfig.currentLocalMediaFolder = firstFolder
             }
-            titleBar.setTitle(firstFolder.getFolderName());
-            albumListPopWindow.bindAlbumData(albumData);
+            titleBar!!.setTitle(firstFolder.folderName)
+            albumListPopWindow!!.bindAlbumData(albumData)
             if (selectorConfig.isPageStrategy) {
-                handleFirstPageMedia(new ArrayList<>(selectorConfig.dataSource), true);
+                handleFirstPageMedia(ArrayList(selectorConfig.dataSource), true)
             } else {
-                setAdapterData(firstFolder.getData());
+                setAdapterData(firstFolder.data)
             }
         } else {
-            showDataNull();
+            showDataNull()
         }
     }
 
-
-    private void requestLoadData() {
-        mAdapter.setDisplayCamera(isDisplayCamera);
-        if (PermissionChecker.isCheckReadStorage(selectorConfig.chooseMode, getContext())) {
-            beginLoadData();
+    private fun requestLoadData() {
+        mAdapter!!.isDisplayCamera = isDisplayCamera
+        if (PermissionChecker.isCheckReadStorage(selectorConfig.chooseMode, context)) {
+            beginLoadData()
         } else {
-            String[] readPermissionArray = PermissionConfig.getReadPermissionArray(getAppContext(), selectorConfig.chooseMode);
-            onPermissionExplainEvent(true, readPermissionArray);
+            val readPermissionArray: Array<String> = PermissionConfig.getReadPermissionArray(
+                appContext, selectorConfig.chooseMode
+            )
+            onPermissionExplainEvent(true, readPermissionArray)
             if (selectorConfig.onPermissionsEventListener != null) {
-                onApplyPermissionsEvent(PermissionEvent.EVENT_SOURCE_DATA, readPermissionArray);
+                onApplyPermissionsEvent(PermissionEvent.EVENT_SOURCE_DATA, readPermissionArray)
             } else {
-                PermissionChecker.getInstance().requestPermissions(this, readPermissionArray, new PermissionResultCallback() {
-                    @Override
-                    public void onGranted() {
-                        beginLoadData();
-                    }
+                PermissionChecker.getInstance().requestPermissions(
+                    this,
+                    readPermissionArray,
+                    object : PermissionResultCallback() {
+                        fun onGranted() {
+                            beginLoadData()
+                        }
 
-                    @Override
-                    public void onDenied() {
-                        handlePermissionDenied(readPermissionArray);
-                    }
-                });
+                        fun onDenied() {
+                            handlePermissionDenied(readPermissionArray)
+                        }
+                    })
             }
         }
     }
 
-    @Override
-    public void onApplyPermissionsEvent(int event, String[] permissionArray) {
+    override fun onApplyPermissionsEvent(event: Int, permissionArray: Array<String>) {
         if (event != PermissionEvent.EVENT_SOURCE_DATA) {
-            super.onApplyPermissionsEvent(event, permissionArray);
+            super.onApplyPermissionsEvent(event, permissionArray)
         } else {
-            selectorConfig.onPermissionsEventListener.requestPermission(this, permissionArray, new OnRequestPermissionListener() {
-                @Override
-                public void onCall(String[] permissionArray, boolean isResult) {
-                    if (isResult) {
-                        beginLoadData();
-                    } else {
-                        handlePermissionDenied(permissionArray);
-                    }
+            selectorConfig.onPermissionsEventListener.requestPermission(
+                this,
+                permissionArray
+            ) { permissionArray, isResult ->
+                if (isResult) {
+                    beginLoadData()
+                } else {
+                    handlePermissionDenied(permissionArray)
                 }
-            });
+            }
         }
     }
 
     /**
      * 开始获取数据
      */
-    private void beginLoadData() {
-        onPermissionExplainEvent(false, null);
+    private fun beginLoadData() {
+        onPermissionExplainEvent(false, null)
         if (selectorConfig.isOnlySandboxDir) {
-            loadOnlyInAppDirectoryAllMediaData();
+            loadOnlyInAppDirectoryAllMediaData()
         } else {
-            loadAllAlbumData();
+            loadAllAlbumData()
         }
     }
 
-    @Override
-    public void handlePermissionSettingResult(String[] permissions) {
-        if (permissions == null){
-            return;
+    override fun handlePermissionSettingResult(permissions: Array<String>) {
+        if (permissions == null) {
+            return
         }
-        onPermissionExplainEvent(false, null);
-        boolean isHasCamera = permissions.length > 0 && TextUtils.equals(permissions[0], PermissionConfig.CAMERA[0]);
-        boolean isHasPermissions;
-        if (selectorConfig.onPermissionsEventListener != null) {
-            isHasPermissions = selectorConfig.onPermissionsEventListener.hasPermissions(this, permissions);
+        onPermissionExplainEvent(false, null)
+        val isHasCamera =
+            permissions.size > 0 && TextUtils.equals(permissions[0], PermissionConfig.CAMERA.get(0))
+        val isHasPermissions: Boolean
+        isHasPermissions = if (selectorConfig.onPermissionsEventListener != null) {
+            selectorConfig.onPermissionsEventListener.hasPermissions(this, permissions)
         } else {
-            isHasPermissions = PermissionChecker.isCheckSelfPermission(getContext(), permissions);
+            PermissionChecker.isCheckSelfPermission(context, permissions)
         }
         if (isHasPermissions) {
             if (isHasCamera) {
-                openSelectedCamera();
+                openSelectedCamera()
             } else {
-                beginLoadData();
+                beginLoadData()
             }
         } else {
             if (isHasCamera) {
-                ToastUtils.showToast(getContext(), getString(R.string.ps_camera));
+                ToastUtils.showToast(context, getString(R.string.ps_camera))
             } else {
-                ToastUtils.showToast(getContext(), getString(R.string.ps_jurisdiction));
-                onKeyBackFragmentFinish();
+                ToastUtils.showToast(context, getString(R.string.ps_jurisdiction))
+                onKeyBackFragmentFinish()
             }
         }
-        PermissionConfig.CURRENT_REQUEST_PERMISSION = new String[]{};
+        PermissionConfig.CURRENT_REQUEST_PERMISSION = arrayOf<String>()
     }
 
     /**
      * 给AlbumListPopWindow添加事件
      */
-    private void addAlbumPopWindowAction() {
-        albumListPopWindow.setOnIBridgeAlbumWidget(new OnAlbumItemClickListener() {
+    private fun addAlbumPopWindowAction() {
+        albumListPopWindow!!.setOnIBridgeAlbumWidget { position, curFolder ->
+            isDisplayCamera =
+                selectorConfig.isDisplayCamera && curFolder.bucketId == PictureConfig.ALL.toLong()
+            mAdapter!!.isDisplayCamera = isDisplayCamera
+            titleBar!!.setTitle(curFolder.folderName)
+            val lastFolder = selectorConfig.currentLocalMediaFolder
+            val lastBucketId = lastFolder.bucketId
+            if (selectorConfig.isPageStrategy) {
+                if (curFolder.bucketId != lastBucketId) {
+                    // 1、记录一下上一次相册数据加载到哪了，到时候切回来的时候要续上
+                    lastFolder.data = mAdapter!!.data
+                    lastFolder.currentDataPage = mPage
+                    lastFolder.isHasMore = mRecycler!!.isEnabledLoadMore
 
-            @Override
-            public void onItemClick(int position, LocalMediaFolder curFolder) {
-                isDisplayCamera = selectorConfig.isDisplayCamera && curFolder.getBucketId() == PictureConfig.ALL;
-                mAdapter.setDisplayCamera(isDisplayCamera);
-                titleBar.setTitle(curFolder.getFolderName());
-                LocalMediaFolder lastFolder = selectorConfig.currentLocalMediaFolder;
-                long lastBucketId = lastFolder.getBucketId();
-                if (selectorConfig.isPageStrategy) {
-                    if (curFolder.getBucketId() != lastBucketId) {
-                        // 1、记录一下上一次相册数据加载到哪了，到时候切回来的时候要续上
-                        lastFolder.setData(mAdapter.getData());
-                        lastFolder.setCurrentDataPage(mPage);
-                        lastFolder.setHasMore(mRecycler.isEnabledLoadMore());
-
-                        // 2、判断当前相册是否请求过，如果请求过则不从MediaStore去拉取了
-                        if (curFolder.getData().size() > 0 && !curFolder.isHasMore()) {
-                            setAdapterData(curFolder.getData());
-                            mPage = curFolder.getCurrentDataPage();
-                            mRecycler.setEnabledLoadMore(curFolder.isHasMore());
-                            mRecycler.smoothScrollToPosition(0);
+                    // 2、判断当前相册是否请求过，如果请求过则不从MediaStore去拉取了
+                    if (curFolder.data.size > 0 && !curFolder.isHasMore) {
+                        setAdapterData(curFolder.data)
+                        mPage = curFolder.currentDataPage
+                        mRecycler!!.isEnabledLoadMore = curFolder.isHasMore
+                        mRecycler!!.smoothScrollToPosition(0)
+                    } else {
+                        // 3、从MediaStore拉取数据
+                        mPage = 1
+                        if (selectorConfig.loaderDataEngine != null) {
+                            selectorConfig.loaderDataEngine.loadFirstPageMediaData(
+                                context,
+                                curFolder.bucketId, mPage, selectorConfig.pageSize,
+                                object : OnQueryDataResultListener<LocalMedia?>() {
+                                    override fun onComplete(
+                                        result: ArrayList<LocalMedia>,
+                                        isHasMore: Boolean
+                                    ) {
+                                        handleSwitchAlbum(result, isHasMore)
+                                    }
+                                })
                         } else {
-                            // 3、从MediaStore拉取数据
-                            mPage = 1;
-                            if (selectorConfig.loaderDataEngine != null) {
-                                selectorConfig.loaderDataEngine.loadFirstPageMediaData(getContext(),
-                                        curFolder.getBucketId(), mPage, selectorConfig.pageSize,
-                                        new OnQueryDataResultListener<LocalMedia>() {
-                                            public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                                                handleSwitchAlbum(result, isHasMore);
-                                            }
-                                        });
-                            } else {
-                                mLoader.loadPageMediaData(curFolder.getBucketId(), mPage, selectorConfig.pageSize,
-                                        new OnQueryDataResultListener<LocalMedia>() {
-                                            @Override
-                                            public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                                                handleSwitchAlbum(result, isHasMore);
-                                            }
-                                        });
-                            }
+                            mLoader.loadPageMediaData(curFolder.bucketId,
+                                mPage,
+                                selectorConfig.pageSize,
+                                object : OnQueryDataResultListener<LocalMedia?>() {
+                                    override fun onComplete(
+                                        result: ArrayList<LocalMedia>,
+                                        isHasMore: Boolean
+                                    ) {
+                                        handleSwitchAlbum(result, isHasMore)
+                                    }
+                                })
                         }
                     }
-                } else {
-                    // 非分页模式直接导入该相册下的所有资源
-                    if (curFolder.getBucketId() != lastBucketId) {
-                        setAdapterData(curFolder.getData());
-                        mRecycler.smoothScrollToPosition(0);
-                    }
                 }
-                selectorConfig.currentLocalMediaFolder = curFolder;
-                albumListPopWindow.dismiss();
-                if (mDragSelectTouchListener != null && selectorConfig.isFastSlidingSelect) {
-                    mDragSelectTouchListener.setRecyclerViewHeaderCount(mAdapter.isDisplayCamera() ? 1 : 0);
-                }
-            }
-        });
-    }
-
-    private void handleSwitchAlbum(ArrayList<LocalMedia> result, boolean isHasMore) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
-        }
-        mRecycler.setEnabledLoadMore(isHasMore);
-        if (result.size() == 0) {
-            // 如果从MediaStore拉取都没有数据了，adapter里的可能是缓存所以也清除
-            mAdapter.getData().clear();
-        }
-        setAdapterData(result);
-        mRecycler.onScrolled(0, 0);
-        mRecycler.smoothScrollToPosition(0);
-    }
-
-
-    private void initBottomNavBar() {
-        bottomNarBar.setBottomNavBarStyle();
-        bottomNarBar.setOnBottomNavBarListener(new BottomNavBar.OnBottomNavBarListener() {
-            @Override
-            public void onPreview() {
-                onStartPreview(0, true);
-            }
-
-            @Override
-            public void onCheckOriginalChange() {
-                sendSelectedOriginalChangeEvent();
-            }
-        });
-        bottomNarBar.setSelectedChange();
-    }
-
-
-    @Override
-    public void loadAllAlbumData() {
-        if (selectorConfig.loaderDataEngine != null) {
-            selectorConfig.loaderDataEngine.loadAllAlbumData(getContext(),
-                    new OnQueryAllAlbumListener<LocalMediaFolder>() {
-                        @Override
-                        public void onComplete(List<LocalMediaFolder> result) {
-                            handleAllAlbumData(false, result);
-                        }
-                    });
-        } else {
-            boolean isPreload = preloadPageFirstData();
-            mLoader.loadAllAlbum(new OnQueryAllAlbumListener<LocalMediaFolder>() {
-
-                @Override
-                public void onComplete(List<LocalMediaFolder> result) {
-                    handleAllAlbumData(isPreload, result);
-                }
-            });
-        }
-    }
-
-    private boolean preloadPageFirstData() {
-        boolean isPreload = false;
-        if (selectorConfig.isPageStrategy && selectorConfig.isPreloadFirst) {
-            LocalMediaFolder firstFolder = new LocalMediaFolder();
-            firstFolder.setBucketId(PictureConfig.ALL);
-            if (TextUtils.isEmpty(selectorConfig.defaultAlbumName)) {
-                titleBar.setTitle(selectorConfig.chooseMode == SelectMimeType.ofAudio() ? requireContext().getString(R.string.ps_all_audio) : requireContext().getString(R.string.ps_camera_roll));
             } else {
-                titleBar.setTitle(selectorConfig.defaultAlbumName);
+                // 非分页模式直接导入该相册下的所有资源
+                if (curFolder.bucketId != lastBucketId) {
+                    setAdapterData(curFolder.data)
+                    mRecycler!!.smoothScrollToPosition(0)
+                }
             }
-            firstFolder.setFolderName(titleBar.getTitleText());
-            selectorConfig.currentLocalMediaFolder = firstFolder;
-            loadFirstPageMediaData(firstFolder.getBucketId());
-            isPreload = true;
+            selectorConfig.currentLocalMediaFolder = curFolder
+            albumListPopWindow!!.dismiss()
+            if (mDragSelectTouchListener != null && selectorConfig.isFastSlidingSelect) {
+                mDragSelectTouchListener!!.setRecyclerViewHeaderCount(if (mAdapter!!.isDisplayCamera) 1 else 0)
+            }
         }
-        return isPreload;
     }
 
-    private void handleAllAlbumData(boolean isPreload, List<LocalMediaFolder> result) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    private fun handleSwitchAlbum(result: ArrayList<LocalMedia>, isHasMore: Boolean) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
-        if (result.size() > 0) {
-            LocalMediaFolder firstFolder;
+        mRecycler!!.isEnabledLoadMore = isHasMore
+        if (result.size == 0) {
+            // 如果从MediaStore拉取都没有数据了，adapter里的可能是缓存所以也清除
+            mAdapter!!.data.clear()
+        }
+        setAdapterData(result)
+        mRecycler!!.onScrolled(0, 0)
+        mRecycler!!.smoothScrollToPosition(0)
+    }
+
+    private fun initBottomNavBar() {
+        bottomNarBar!!.setBottomNavBarStyle()
+        bottomNarBar!!.setOnBottomNavBarListener(object : BottomNavBar.OnBottomNavBarListener() {
+            override fun onPreview() {
+                onStartPreview(0, true)
+            }
+
+            override fun onCheckOriginalChange() {
+                sendSelectedOriginalChangeEvent()
+            }
+        })
+        bottomNarBar!!.setSelectedChange()
+    }
+
+    override fun loadAllAlbumData() {
+        if (selectorConfig.loaderDataEngine != null) {
+            selectorConfig.loaderDataEngine.loadAllAlbumData(
+                context,
+                object : OnQueryAllAlbumListener<LocalMediaFolder?> {
+                    override fun onComplete(result: List<LocalMediaFolder>) {
+                        handleAllAlbumData(false, result)
+                    }
+                })
+        } else {
+            val isPreload = preloadPageFirstData()
+            mLoader.loadAllAlbum(object : OnQueryAllAlbumListener<LocalMediaFolder?> {
+                override fun onComplete(result: List<LocalMediaFolder>) {
+                    handleAllAlbumData(isPreload, result)
+                }
+            })
+        }
+    }
+
+    private fun preloadPageFirstData(): Boolean {
+        var isPreload = false
+        if (selectorConfig.isPageStrategy && selectorConfig.isPreloadFirst) {
+            val firstFolder = LocalMediaFolder()
+            firstFolder.bucketId = PictureConfig.ALL.toLong()
+            if (TextUtils.isEmpty(selectorConfig.defaultAlbumName)) {
+                titleBar!!.setTitle(
+                    if (selectorConfig.chooseMode == SelectMimeType.ofAudio()) requireContext().getString(
+                        R.string.ps_all_audio
+                    ) else requireContext().getString(R.string.ps_camera_roll)
+                )
+            } else {
+                titleBar!!.setTitle(selectorConfig.defaultAlbumName)
+            }
+            firstFolder.folderName = titleBar!!.titleText
+            selectorConfig.currentLocalMediaFolder = firstFolder
+            loadFirstPageMediaData(firstFolder.bucketId)
+            isPreload = true
+        }
+        return isPreload
+    }
+
+    private fun handleAllAlbumData(isPreload: Boolean, result: List<LocalMediaFolder>) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
+        }
+        if (result.size > 0) {
+            val firstFolder: LocalMediaFolder
             if (isPreload) {
-                firstFolder = result.get(0);
-                selectorConfig.currentLocalMediaFolder = firstFolder;
+                firstFolder = result[0]
+                selectorConfig.currentLocalMediaFolder = firstFolder
             } else {
                 if (selectorConfig.currentLocalMediaFolder != null) {
-                    firstFolder = selectorConfig.currentLocalMediaFolder;
+                    firstFolder = selectorConfig.currentLocalMediaFolder
                 } else {
-                    firstFolder = result.get(0);
-                    selectorConfig.currentLocalMediaFolder = firstFolder;
+                    firstFolder = result[0]
+                    selectorConfig.currentLocalMediaFolder = firstFolder
                 }
             }
-            titleBar.setTitle(firstFolder.getFolderName());
-            albumListPopWindow.bindAlbumData(result);
+            titleBar!!.setTitle(firstFolder.folderName)
+            albumListPopWindow!!.bindAlbumData(result)
             if (selectorConfig.isPageStrategy) {
                 if (selectorConfig.isPreloadFirst) {
-                    mRecycler.setEnabledLoadMore(true);
+                    mRecycler!!.isEnabledLoadMore = true
                 } else {
-                    loadFirstPageMediaData(firstFolder.getBucketId());
+                    loadFirstPageMediaData(firstFolder.bucketId)
                 }
             } else {
-                setAdapterData(firstFolder.getData());
+                setAdapterData(firstFolder.data)
             }
         } else {
-            showDataNull();
+            showDataNull()
         }
     }
 
-    @Override
-    public void loadFirstPageMediaData(long firstBucketId) {
-        mPage = 1;
-        mRecycler.setEnabledLoadMore(true);
+    override fun loadFirstPageMediaData(firstBucketId: Long) {
+        mPage = 1
+        mRecycler!!.isEnabledLoadMore = true
         if (selectorConfig.loaderDataEngine != null) {
-            selectorConfig.loaderDataEngine.loadFirstPageMediaData(getContext(), firstBucketId,
-                    mPage, mPage * selectorConfig.pageSize, new OnQueryDataResultListener<LocalMedia>() {
-
-                        @Override
-                        public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                            handleFirstPageMedia(result, isHasMore);
-                        }
-                    });
+            selectorConfig.loaderDataEngine.loadFirstPageMediaData(
+                context,
+                firstBucketId,
+                mPage,
+                mPage * selectorConfig.pageSize,
+                object : OnQueryDataResultListener<LocalMedia?>() {
+                    override fun onComplete(result: ArrayList<LocalMedia>, isHasMore: Boolean) {
+                        handleFirstPageMedia(result, isHasMore)
+                    }
+                })
         } else {
             mLoader.loadPageMediaData(firstBucketId, mPage, mPage * selectorConfig.pageSize,
-                    new OnQueryDataResultListener<LocalMedia>() {
-                        @Override
-                        public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                            handleFirstPageMedia(result, isHasMore);
-                        }
-                    });
+                object : OnQueryDataResultListener<LocalMedia?>() {
+                    override fun onComplete(result: ArrayList<LocalMedia>, isHasMore: Boolean) {
+                        handleFirstPageMedia(result, isHasMore)
+                    }
+                })
         }
     }
 
-    private void handleFirstPageMedia(ArrayList<LocalMedia> result, boolean isHasMore) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    private fun handleFirstPageMedia(result: ArrayList<LocalMedia>, isHasMore: Boolean) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
-        mRecycler.setEnabledLoadMore(isHasMore);
-        if (mRecycler.isEnabledLoadMore() && result.size() == 0) {
+        mRecycler!!.isEnabledLoadMore = isHasMore
+        if (mRecycler!!.isEnabledLoadMore && result.size == 0) {
             // 如果isHasMore为true但result.size() = 0;
             // 那么有可能是开启了某些条件过滤，实际上是还有更多资源的再强制请求
-            onRecyclerViewPreloadMore();
+            onRecyclerViewPreloadMore()
         } else {
-            setAdapterData(result);
+            setAdapterData(result)
         }
     }
 
-    @Override
-    public void loadOnlyInAppDirectoryAllMediaData() {
+    override fun loadOnlyInAppDirectoryAllMediaData() {
         if (selectorConfig.loaderDataEngine != null) {
-            selectorConfig.loaderDataEngine.loadOnlyInAppDirAllMediaData(getContext(),
-                    new OnQueryAlbumListener<LocalMediaFolder>() {
-                        @Override
-                        public void onComplete(LocalMediaFolder folder) {
-                            handleInAppDirAllMedia(folder);
-                        }
-                    });
+            selectorConfig.loaderDataEngine.loadOnlyInAppDirAllMediaData(
+                context,
+                object : OnQueryAlbumListener<LocalMediaFolder?> {
+                    override fun onComplete(folder: LocalMediaFolder) {
+                        handleInAppDirAllMedia(folder)
+                    }
+                })
         } else {
-            mLoader.loadOnlyInAppDirAllMedia(new OnQueryAlbumListener<LocalMediaFolder>() {
-                @Override
-                public void onComplete(LocalMediaFolder folder) {
-                    handleInAppDirAllMedia(folder);
+            mLoader.loadOnlyInAppDirAllMedia(object : OnQueryAlbumListener<LocalMediaFolder?> {
+                override fun onComplete(folder: LocalMediaFolder) {
+                    handleInAppDirAllMedia(folder)
                 }
-            });
+            })
         }
     }
 
-    private void handleInAppDirAllMedia(LocalMediaFolder folder) {
-        if (!ActivityCompatHelper.isDestroy(getActivity())) {
-            String sandboxDir = selectorConfig.sandboxDir;
-            boolean isNonNull = folder != null;
-            String folderName = isNonNull ? folder.getFolderName() : new File(sandboxDir).getName();
-            titleBar.setTitle(folderName);
+    private fun handleInAppDirAllMedia(folder: LocalMediaFolder?) {
+        if (!ActivityCompatHelper.isDestroy(activity)) {
+            val sandboxDir = selectorConfig.sandboxDir
+            val isNonNull = folder != null
+            val folderName = if (isNonNull) folder!!.folderName else File(sandboxDir).name
+            titleBar!!.setTitle(folderName)
             if (isNonNull) {
-                selectorConfig.currentLocalMediaFolder = folder;
-                setAdapterData(folder.getData());
+                selectorConfig.currentLocalMediaFolder = folder
+                setAdapterData(folder!!.data)
             } else {
-                showDataNull();
+                showDataNull()
             }
         }
     }
@@ -748,195 +694,202 @@ public class PictureSelectorFragment extends PictureCommonFragment
     /**
      * 内存不足时，恢复RecyclerView定位位置
      */
-    private void recoveryRecyclerPosition() {
+    private fun recoveryRecyclerPosition() {
         if (currentPosition > 0) {
-            mRecycler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mRecycler.scrollToPosition(currentPosition);
-                    mRecycler.setLastVisiblePosition(currentPosition);
-                }
-            });
+            mRecycler!!.post {
+                mRecycler!!.scrollToPosition(currentPosition)
+                mRecycler!!.lastVisiblePosition = currentPosition
+            }
         }
     }
 
-    private void initRecycler(View view) {
-        mRecycler = view.findViewById(R.id.recycler);
-        PictureSelectorStyle selectorStyle = selectorConfig.selectorStyle;
-        SelectMainStyle selectMainStyle = selectorStyle.getSelectMainStyle();
-        int listBackgroundColor = selectMainStyle.getMainListBackgroundColor();
+    private fun initRecycler(view: View) {
+        mRecycler = view.findViewById(R.id.recycler)
+        val selectorStyle = selectorConfig.selectorStyle
+        val selectMainStyle = selectorStyle.selectMainStyle
+        val listBackgroundColor = selectMainStyle.mainListBackgroundColor
         if (StyleUtils.checkStyleValidity(listBackgroundColor)) {
-            mRecycler.setBackgroundColor(listBackgroundColor);
+            mRecycler.setBackgroundColor(listBackgroundColor)
         } else {
-            mRecycler.setBackgroundColor(ContextCompat.getColor(getAppContext(), R.color.ps_color_black));
+            mRecycler.setBackgroundColor(ContextCompat.getColor(appContext, R.color.ps_color_black))
         }
-        int imageSpanCount = selectorConfig.imageSpanCount <= 0 ? PictureConfig.DEFAULT_SPAN_COUNT : selectorConfig.imageSpanCount;
+        val imageSpanCount =
+            if (selectorConfig.imageSpanCount <= 0) PictureConfig.DEFAULT_SPAN_COUNT else selectorConfig.imageSpanCount
         if (mRecycler.getItemDecorationCount() == 0) {
-            if (StyleUtils.checkSizeValidity(selectMainStyle.getAdapterItemSpacingSize())) {
-                mRecycler.addItemDecoration(new GridSpacingItemDecoration(imageSpanCount,
-                        selectMainStyle.getAdapterItemSpacingSize(), selectMainStyle.isAdapterItemIncludeEdge()));
+            if (StyleUtils.checkSizeValidity(selectMainStyle.adapterItemSpacingSize)) {
+                mRecycler.addItemDecoration(
+                    GridSpacingItemDecoration(
+                        imageSpanCount,
+                        selectMainStyle.adapterItemSpacingSize,
+                        selectMainStyle.isAdapterItemIncludeEdge
+                    )
+                )
             } else {
-                mRecycler.addItemDecoration(new GridSpacingItemDecoration(imageSpanCount,
-                        DensityUtil.dip2px(view.getContext(), 1), selectMainStyle.isAdapterItemIncludeEdge()));
+                mRecycler.addItemDecoration(
+                    GridSpacingItemDecoration(
+                        imageSpanCount,
+                        DensityUtil.dip2px(view.context, 1f),
+                        selectMainStyle.isAdapterItemIncludeEdge
+                    )
+                )
             }
         }
-        mRecycler.setLayoutManager(new GridLayoutManager(getContext(), imageSpanCount));
-        RecyclerView.ItemAnimator itemAnimator = mRecycler.getItemAnimator();
+        mRecycler.setLayoutManager(GridLayoutManager(context, imageSpanCount))
+        val itemAnimator = mRecycler.getItemAnimator()
         if (itemAnimator != null) {
-            ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
-            mRecycler.setItemAnimator(null);
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations =
+                false
+            mRecycler.setItemAnimator(null)
         }
         if (selectorConfig.isPageStrategy) {
-            mRecycler.setReachBottomRow(RecyclerPreloadView.BOTTOM_PRELOAD);
-            mRecycler.setOnRecyclerViewPreloadListener(this);
+            mRecycler.setReachBottomRow(RecyclerPreloadView.BOTTOM_PRELOAD)
+            mRecycler.setOnRecyclerViewPreloadListener(this)
         } else {
-            mRecycler.setHasFixedSize(true);
+            mRecycler.setHasFixedSize(true)
         }
-        mAdapter = new PictureImageGridAdapter(getContext(), selectorConfig);
-        mAdapter.setDisplayCamera(isDisplayCamera);
-        switch (selectorConfig.animationMode) {
-            case AnimationType.ALPHA_IN_ANIMATION:
-                mRecycler.setAdapter(new AlphaInAnimationAdapter(mAdapter));
-                break;
-            case AnimationType.SLIDE_IN_BOTTOM_ANIMATION:
-                mRecycler.setAdapter(new SlideInBottomAnimationAdapter(mAdapter));
-                break;
-            default:
-                mRecycler.setAdapter(mAdapter);
-                break;
+        mAdapter = PictureImageGridAdapter(context, selectorConfig)
+        mAdapter!!.isDisplayCamera = isDisplayCamera
+        when (selectorConfig.animationMode) {
+            AnimationType.ALPHA_IN_ANIMATION -> mRecycler.setAdapter(
+                AlphaInAnimationAdapter(
+                    mAdapter
+                )
+            )
+            AnimationType.SLIDE_IN_BOTTOM_ANIMATION -> mRecycler.setAdapter(
+                SlideInBottomAnimationAdapter(mAdapter)
+            )
+            else -> mRecycler.setAdapter(mAdapter)
         }
-
-        addRecyclerAction();
+        addRecyclerAction()
     }
 
-
-    private void addRecyclerAction() {
-        mAdapter.setOnItemClickListener(new PictureImageGridAdapter.OnItemClickListener() {
-
-            @Override
-            public void openCameraClick() {
+    private fun addRecyclerAction() {
+        mAdapter!!.setOnItemClickListener(object : PictureImageGridAdapter.OnItemClickListener {
+            override fun openCameraClick() {
                 if (DoubleUtils.isFastDoubleClick()) {
-                    return;
+                    return
                 }
-                openSelectedCamera();
+                openSelectedCamera()
             }
 
-            @Override
-            public int onSelected(View selectedView, int position, LocalMedia media) {
-                int selectResultCode = confirmSelect(media, selectedView.isSelected());
+            override fun onSelected(selectedView: View, position: Int, media: LocalMedia): Int {
+                val selectResultCode = confirmSelect(media, selectedView.isSelected)
                 if (selectResultCode == SelectedManager.ADD_SUCCESS) {
                     if (selectorConfig.onSelectAnimListener != null) {
-                        long duration = selectorConfig.onSelectAnimListener.onSelectAnim(selectedView);
+                        val duration =
+                            selectorConfig.onSelectAnimListener.onSelectAnim(selectedView)
                         if (duration > 0) {
-                            SELECT_ANIM_DURATION = (int) duration;
+                            SELECT_ANIM_DURATION = duration.toInt()
                         }
                     } else {
-                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.ps_anim_modal_in);
-                        SELECT_ANIM_DURATION = (int) animation.getDuration();
-                        selectedView.startAnimation(animation);
+                        val animation = AnimationUtils.loadAnimation(
+                            context, R.anim.ps_anim_modal_in
+                        )
+                        SELECT_ANIM_DURATION = animation.duration.toInt()
+                        selectedView.startAnimation(animation)
                     }
                 }
-                return selectResultCode;
+                return selectResultCode
             }
 
-            @Override
-            public void onItemClick(View selectedView, int position, LocalMedia media) {
+            override fun onItemClick(selectedView: View, position: Int, media: LocalMedia) {
                 if (selectorConfig.selectionMode == SelectModeConfig.SINGLE && selectorConfig.isDirectReturnSingle) {
-                    selectorConfig.selectedResult.clear();
-                    int selectResultCode = confirmSelect(media, false);
+                    selectorConfig.selectedResult.clear()
+                    val selectResultCode = confirmSelect(media, false)
                     if (selectResultCode == SelectedManager.ADD_SUCCESS) {
-                        dispatchTransformResult();
+                        dispatchTransformResult()
                     }
                 } else {
                     if (DoubleUtils.isFastDoubleClick()) {
-                        return;
+                        return
                     }
-                    onStartPreview(position, false);
+                    onStartPreview(position, false)
                 }
             }
 
-            @Override
-            public void onItemLongClick(View itemView, int position) {
+            override fun onItemLongClick(itemView: View, position: Int) {
                 if (mDragSelectTouchListener != null && selectorConfig.isFastSlidingSelect) {
-                    Vibrator vibrator = (Vibrator) getActivity().getSystemService(Service.VIBRATOR_SERVICE);
-                    vibrator.vibrate(50);
-                    mDragSelectTouchListener.startSlideSelection(position);
+                    val vibrator = activity!!.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
+                    vibrator.vibrate(50)
+                    mDragSelectTouchListener!!.startSlideSelection(position)
                 }
             }
-        });
-
-        mRecycler.setOnRecyclerViewScrollStateListener(new OnRecyclerViewScrollStateListener() {
-            @Override
-            public void onScrollFast() {
+        })
+        mRecycler!!.setOnRecyclerViewScrollStateListener(object :
+            OnRecyclerViewScrollStateListener {
+            override fun onScrollFast() {
                 if (selectorConfig.imageEngine != null) {
-                    selectorConfig.imageEngine.pauseRequests(getContext());
+                    selectorConfig.imageEngine.pauseRequests(context)
                 }
             }
 
-            @Override
-            public void onScrollSlow() {
+            override fun onScrollSlow() {
                 if (selectorConfig.imageEngine != null) {
-                    selectorConfig.imageEngine.resumeRequests(getContext());
+                    selectorConfig.imageEngine.resumeRequests(context)
                 }
             }
-        });
-        mRecycler.setOnRecyclerViewScrollListener(new OnRecyclerViewScrollListener() {
-            @Override
-            public void onScrolled(int dx, int dy) {
-                setCurrentMediaCreateTimeText();
+        })
+        mRecycler!!.setOnRecyclerViewScrollListener(object : OnRecyclerViewScrollListener {
+            override fun onScrolled(dx: Int, dy: Int) {
+                setCurrentMediaCreateTimeText()
             }
 
-            @Override
-            public void onScrollStateChanged(int state) {
+            override fun onScrollStateChanged(state: Int) {
                 if (state == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    showCurrentMediaCreateTimeUI();
+                    showCurrentMediaCreateTimeUI()
                 } else if (state == RecyclerView.SCROLL_STATE_IDLE) {
-                    hideCurrentMediaCreateTimeUI();
+                    hideCurrentMediaCreateTimeUI()
                 }
             }
-        });
-
+        })
         if (selectorConfig.isFastSlidingSelect) {
-            HashSet<Integer> selectedPosition = new HashSet<>();
-            SlideSelectionHandler slideSelectionHandler = new SlideSelectionHandler(new SlideSelectionHandler.ISelectionHandler() {
-                @Override
-                public HashSet<Integer> getSelection() {
-                    for (int i = 0; i < selectorConfig.getSelectCount(); i++) {
-                        LocalMedia media = selectorConfig.getSelectedResult().get(i);
-                        selectedPosition.add(media.position);
+            val selectedPosition = HashSet<Int>()
+            val slideSelectionHandler =
+                SlideSelectionHandler(object : SlideSelectionHandler.ISelectionHandler {
+                    override fun getSelection(): HashSet<Int> {
+                        for (i in 0 until selectorConfig.selectCount) {
+                            val media = selectorConfig.selectedResult[i]
+                            selectedPosition.add(media.position)
+                        }
+                        return selectedPosition
                     }
-                    return selectedPosition;
-                }
 
-                @Override
-                public void changeSelection(int start, int end, boolean isSelected, boolean calledFromOnStart) {
-                    ArrayList<LocalMedia> adapterData = mAdapter.getData();
-                    if (adapterData.size() == 0 || start > adapterData.size()) {
-                        return;
+                    override fun changeSelection(
+                        start: Int,
+                        end: Int,
+                        isSelected: Boolean,
+                        calledFromOnStart: Boolean
+                    ) {
+                        val adapterData = mAdapter!!.data
+                        if (adapterData.size == 0 || start > adapterData.size) {
+                            return
+                        }
+                        val media = adapterData[start]
+                        val selectResultCode =
+                            confirmSelect(media, selectorConfig.selectedResult.contains(media))
+                        mDragSelectTouchListener!!.setActive(selectResultCode != SelectedManager.INVALID)
                     }
-                    LocalMedia media = adapterData.get(start);
-                    int selectResultCode = confirmSelect(media, selectorConfig.getSelectedResult().contains(media));
-                    mDragSelectTouchListener.setActive(selectResultCode != SelectedManager.INVALID);
-                }
-            });
-            mDragSelectTouchListener = new SlideSelectTouchListener()
-                    .setRecyclerViewHeaderCount(mAdapter.isDisplayCamera() ? 1 : 0)
-                    .withSelectListener(slideSelectionHandler);
-            mRecycler.addOnItemTouchListener(mDragSelectTouchListener);
+                })
+            mDragSelectTouchListener = SlideSelectTouchListener()
+                .setRecyclerViewHeaderCount(if (mAdapter!!.isDisplayCamera) 1 else 0)
+                .withSelectListener(slideSelectionHandler)
+            mRecycler!!.addOnItemTouchListener(mDragSelectTouchListener)
         }
     }
 
     /**
      * 显示当前资源时间轴
      */
-    private void setCurrentMediaCreateTimeText() {
+    private fun setCurrentMediaCreateTimeText() {
         if (selectorConfig.isDisplayTimeAxis) {
-            int position = mRecycler.getFirstVisiblePosition();
+            val position = mRecycler!!.firstVisiblePosition
             if (position != RecyclerView.NO_POSITION) {
-                ArrayList<LocalMedia> data = mAdapter.getData();
-                if (data.size() > position && data.get(position).getDateAddedTime() > 0) {
-                    tvCurrentDataTime.setText(DateUtils.getDataFormat(getContext(),
-                            data.get(position).getDateAddedTime()));
+                val data = mAdapter!!.data
+                if (data.size > position && data[position].dateAddedTime > 0) {
+                    tvCurrentDataTime!!.text = DateUtils.getDataFormat(
+                        context,
+                        data[position].dateAddedTime
+                    )
                 }
             }
         }
@@ -945,10 +898,10 @@ public class PictureSelectorFragment extends PictureCommonFragment
     /**
      * 显示当前资源时间轴
      */
-    private void showCurrentMediaCreateTimeUI() {
-        if (selectorConfig.isDisplayTimeAxis && mAdapter.getData().size() > 0) {
-            if (tvCurrentDataTime.getAlpha() == 0F) {
-                tvCurrentDataTime.animate().setDuration(150).alphaBy(1.0F).start();
+    private fun showCurrentMediaCreateTimeUI() {
+        if (selectorConfig.isDisplayTimeAxis && mAdapter!!.data.size > 0) {
+            if (tvCurrentDataTime!!.alpha == 0f) {
+                tvCurrentDataTime!!.animate().setDuration(150).alphaBy(1.0f).start()
             }
         }
     }
@@ -956,9 +909,9 @@ public class PictureSelectorFragment extends PictureCommonFragment
     /**
      * 隐藏当前资源时间轴
      */
-    private void hideCurrentMediaCreateTimeUI() {
-        if (selectorConfig.isDisplayTimeAxis && mAdapter.getData().size() > 0) {
-            tvCurrentDataTime.animate().setDuration(250).alpha(0.0F).start();
+    private fun hideCurrentMediaCreateTimeUI() {
+        if (selectorConfig.isDisplayTimeAxis && mAdapter!!.data.size > 0) {
+            tvCurrentDataTime!!.animate().setDuration(250).alpha(0.0f).start()
         }
     }
 
@@ -968,203 +921,217 @@ public class PictureSelectorFragment extends PictureCommonFragment
      * @param position        预览图片下标
      * @param isBottomPreview true 底部预览模式 false列表预览模式
      */
-    private void onStartPreview(int position, boolean isBottomPreview) {
-        if (ActivityCompatHelper.checkFragmentNonExits(getActivity(), PictureSelectorPreviewFragment.TAG)) {
-            ArrayList<LocalMedia> data;
-            int totalNum;
-            long currentBucketId = 0;
+    private fun onStartPreview(position: Int, isBottomPreview: Boolean) {
+        if (ActivityCompatHelper.checkFragmentNonExits(
+                activity,
+                PictureSelectorPreviewFragment.Companion.TAG
+            )
+        ) {
+            val data: ArrayList<LocalMedia>
+            val totalNum: Int
+            var currentBucketId: Long = 0
             if (isBottomPreview) {
-                data = new ArrayList<>(selectorConfig.getSelectedResult());
-                totalNum = data.size();
+                data = ArrayList(selectorConfig.selectedResult)
+                totalNum = data.size
             } else {
-                data = new ArrayList<>(mAdapter.getData());
-                LocalMediaFolder currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder;
+                data = ArrayList(mAdapter!!.data)
+                val currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder
                 if (currentLocalMediaFolder != null) {
-                    totalNum = currentLocalMediaFolder.getFolderTotalNum();
-                    currentBucketId = currentLocalMediaFolder.getBucketId();
+                    totalNum = currentLocalMediaFolder.folderTotalNum
+                    currentBucketId = currentLocalMediaFolder.bucketId
                 } else {
-                    totalNum = data.size();
-                    currentBucketId = data.size() > 0 ? data.get(0).getBucketId() : PictureConfig.ALL;
+                    totalNum = data.size
+                    currentBucketId =
+                        if (data.size > 0) data[0].bucketId else PictureConfig.ALL.toLong()
                 }
             }
             if (!isBottomPreview && selectorConfig.isPreviewZoomEffect) {
-                BuildRecycleItemViewParams.generateViewParams(mRecycler,
-                        selectorConfig.isPreviewFullScreenMode ? 0 : DensityUtil.getStatusBarHeight(getContext()));
+                BuildRecycleItemViewParams.generateViewParams(
+                    mRecycler,
+                    if (selectorConfig.isPreviewFullScreenMode) 0 else DensityUtil.getStatusBarHeight(
+                        context
+                    )
+                )
             }
             if (selectorConfig.onPreviewInterceptListener != null) {
                 selectorConfig.onPreviewInterceptListener
-                        .onPreview(getContext(), position, totalNum, mPage, currentBucketId, titleBar.getTitleText(),
-                                mAdapter.isDisplayCamera(), data, isBottomPreview);
+                    .onPreview(
+                        context, position, totalNum, mPage, currentBucketId, titleBar!!.titleText,
+                        mAdapter!!.isDisplayCamera, data, isBottomPreview
+                    )
             } else {
-                if (ActivityCompatHelper.checkFragmentNonExits(getActivity(), PictureSelectorPreviewFragment.TAG)) {
-                    PictureSelectorPreviewFragment previewFragment = PictureSelectorPreviewFragment.newInstance();
-                    previewFragment.setInternalPreviewData(isBottomPreview, titleBar.getTitleText(), mAdapter.isDisplayCamera(),
-                            position, totalNum, mPage, currentBucketId, data);
-                    FragmentInjectManager.injectFragment(getActivity(), PictureSelectorPreviewFragment.TAG, previewFragment);
+                if (ActivityCompatHelper.checkFragmentNonExits(
+                        activity,
+                        PictureSelectorPreviewFragment.Companion.TAG
+                    )
+                ) {
+                    val previewFragment: PictureSelectorPreviewFragment =
+                        PictureSelectorPreviewFragment.Companion.newInstance()
+                    previewFragment.setInternalPreviewData(
+                        isBottomPreview, titleBar!!.titleText, mAdapter!!.isDisplayCamera,
+                        position, totalNum, mPage, currentBucketId, data
+                    )
+                    FragmentInjectManager.injectFragment(
+                        activity,
+                        PictureSelectorPreviewFragment.Companion.TAG,
+                        previewFragment
+                    )
                 }
             }
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void setAdapterData(ArrayList<LocalMedia> result) {
+    private fun setAdapterData(result: ArrayList<LocalMedia>) {
         // 这个地方有个时间差，主要是解决进场动画和查询数据同时进行导致动画有点卡顿问题，
         // 主要是针对添加PictureSelectorFragment方式下
-        long enterAnimationDuration = getEnterAnimationDuration();
+        val enterAnimationDuration = enterAnimationDuration
         if (enterAnimationDuration > 0) {
-            requireView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setAdapterDataComplete(result);
-                }
-            }, enterAnimationDuration);
+            requireView().postDelayed({ setAdapterDataComplete(result) }, enterAnimationDuration)
         } else {
-            setAdapterDataComplete(result);
+            setAdapterDataComplete(result)
         }
     }
 
-    private void setAdapterDataComplete(ArrayList<LocalMedia> result) {
-        setEnterAnimationDuration(0);
-        sendChangeSubSelectPositionEvent(false);
-        mAdapter.setDataAndDataSetChanged(result);
-        selectorConfig.dataSource.clear();
-        selectorConfig.albumDataSource.clear();
-        recoveryRecyclerPosition();
-        if (mAdapter.isDataEmpty()) {
-            showDataNull();
+    private fun setAdapterDataComplete(result: ArrayList<LocalMedia>) {
+        enterAnimationDuration = 0
+        sendChangeSubSelectPositionEvent(false)
+        mAdapter!!.setDataAndDataSetChanged(result)
+        selectorConfig.dataSource.clear()
+        selectorConfig.albumDataSource.clear()
+        recoveryRecyclerPosition()
+        if (mAdapter!!.isDataEmpty) {
+            showDataNull()
         } else {
-            hideDataNull();
+            hideDataNull()
         }
     }
 
-    @Override
-    public void onRecyclerViewPreloadMore() {
+    override fun onRecyclerViewPreloadMore() {
         if (isMemoryRecycling) {
             // 这里延迟是拍照导致的页面被回收，Fragment的重创会快于相机的onActivityResult的
-            requireView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    loadMoreMediaData();
-                }
-            }, 350);
+            requireView().postDelayed({ loadMoreMediaData() }, 350)
         } else {
-            loadMoreMediaData();
+            loadMoreMediaData()
         }
     }
 
     /**
      * 加载更多
      */
-    @Override
-    public void loadMoreMediaData() {
-        if (mRecycler.isEnabledLoadMore()) {
-            mPage++;
-            LocalMediaFolder localMediaFolder = selectorConfig.currentLocalMediaFolder;
-            long bucketId = localMediaFolder != null ? localMediaFolder.getBucketId() : 0;
+    override fun loadMoreMediaData() {
+        if (mRecycler!!.isEnabledLoadMore) {
+            mPage++
+            val localMediaFolder = selectorConfig.currentLocalMediaFolder
+            val bucketId = localMediaFolder?.bucketId ?: 0
             if (selectorConfig.loaderDataEngine != null) {
-                selectorConfig.loaderDataEngine.loadMoreMediaData(getContext(), bucketId, mPage,
-                        selectorConfig.pageSize, selectorConfig.pageSize, new OnQueryDataResultListener<LocalMedia>() {
-                            @Override
-                            public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                                handleMoreMediaData(result, isHasMore);
-                            }
-                        });
+                selectorConfig.loaderDataEngine.loadMoreMediaData(
+                    context,
+                    bucketId,
+                    mPage,
+                    selectorConfig.pageSize,
+                    selectorConfig.pageSize,
+                    object : OnQueryDataResultListener<LocalMedia?>() {
+                        override fun onComplete(result: ArrayList<LocalMedia>, isHasMore: Boolean) {
+                            handleMoreMediaData(result, isHasMore)
+                        }
+                    })
             } else {
                 mLoader.loadPageMediaData(bucketId, mPage, selectorConfig.pageSize,
-                        new OnQueryDataResultListener<LocalMedia>() {
-                            @Override
-                            public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                                handleMoreMediaData(result, isHasMore);
-                            }
-                        });
+                    object : OnQueryDataResultListener<LocalMedia?>() {
+                        override fun onComplete(result: ArrayList<LocalMedia>, isHasMore: Boolean) {
+                            handleMoreMediaData(result, isHasMore)
+                        }
+                    })
             }
         }
     }
 
-    private void handleMoreMediaData(List<LocalMedia> result, boolean isHasMore) {
-        if (ActivityCompatHelper.isDestroy(getActivity())) {
-            return;
+    private fun handleMoreMediaData(result: MutableList<LocalMedia>, isHasMore: Boolean) {
+        if (ActivityCompatHelper.isDestroy(activity)) {
+            return
         }
-        mRecycler.setEnabledLoadMore(isHasMore);
-        if (mRecycler.isEnabledLoadMore()) {
-            removePageCameraRepeatData(result);
-            if (result.size() > 0) {
-                int positionStart = mAdapter.getData().size();
-                mAdapter.getData().addAll(result);
-                mAdapter.notifyItemRangeChanged(positionStart, mAdapter.getItemCount());
-                hideDataNull();
+        mRecycler!!.isEnabledLoadMore = isHasMore
+        if (mRecycler!!.isEnabledLoadMore) {
+            removePageCameraRepeatData(result)
+            if (result.size > 0) {
+                val positionStart = mAdapter!!.data.size
+                mAdapter!!.data.addAll(result)
+                mAdapter!!.notifyItemRangeChanged(positionStart, mAdapter!!.itemCount)
+                hideDataNull()
             } else {
                 // 如果没数据这里在强制调用一下上拉加载更多，防止是因为某些条件过滤导致的假为0的情况
-                onRecyclerViewPreloadMore();
+                onRecyclerViewPreloadMore()
             }
-            if (result.size() < PictureConfig.MIN_PAGE_SIZE) {
+            if (result.size < PictureConfig.MIN_PAGE_SIZE) {
                 // 当数据量过少时强制触发一下上拉加载更多，防止没有自动触发加载更多
-                mRecycler.onScrolled(mRecycler.getScrollX(), mRecycler.getScrollY());
+                mRecycler!!.onScrolled(mRecycler!!.scrollX, mRecycler!!.scrollY)
             }
         }
     }
 
-    private void removePageCameraRepeatData(List<LocalMedia> result) {
+    private fun removePageCameraRepeatData(result: MutableList<LocalMedia>) {
         try {
             if (selectorConfig.isPageStrategy && isCameraCallback) {
-                synchronized (LOCK) {
-                    Iterator<LocalMedia> iterator = result.iterator();
+                synchronized(LOCK) {
+                    val iterator = result.iterator()
                     while (iterator.hasNext()) {
-                        if (mAdapter.getData().contains(iterator.next())) {
-                            iterator.remove();
+                        if (mAdapter!!.data.contains(iterator.next())) {
+                            iterator.remove()
                         }
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
-            isCameraCallback = false;
+            isCameraCallback = false
         }
     }
 
-
-    @Override
-    public void dispatchCameraMediaResult(LocalMedia media) {
-        int exitsTotalNum = albumListPopWindow.getFirstAlbumImageCount();
+    override fun dispatchCameraMediaResult(media: LocalMedia) {
+        val exitsTotalNum = albumListPopWindow!!.firstAlbumImageCount
         if (!isAddSameImp(exitsTotalNum)) {
-            mAdapter.getData().add(0, media);
-            isCameraCallback = true;
+            mAdapter!!.data.add(0, media)
+            isCameraCallback = true
         }
         if (selectorConfig.selectionMode == SelectModeConfig.SINGLE && selectorConfig.isDirectReturnSingle) {
-            selectorConfig.selectedResult.clear();
-            int selectResultCode = confirmSelect(media, false);
+            selectorConfig.selectedResult.clear()
+            val selectResultCode = confirmSelect(media, false)
             if (selectResultCode == SelectedManager.ADD_SUCCESS) {
-                dispatchTransformResult();
+                dispatchTransformResult()
             }
         } else {
-            confirmSelect(media, false);
+            confirmSelect(media, false)
         }
-        mAdapter.notifyItemInserted(selectorConfig.isDisplayCamera ? 1 : 0);
-        mAdapter.notifyItemRangeChanged(selectorConfig.isDisplayCamera ? 1 : 0, mAdapter.getData().size());
+        mAdapter!!.notifyItemInserted(if (selectorConfig.isDisplayCamera) 1 else 0)
+        mAdapter!!.notifyItemRangeChanged(
+            if (selectorConfig.isDisplayCamera) 1 else 0,
+            mAdapter!!.data.size
+        )
         if (selectorConfig.isOnlySandboxDir) {
-            LocalMediaFolder currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder;
+            var currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder
             if (currentLocalMediaFolder == null) {
-                currentLocalMediaFolder = new LocalMediaFolder();
+                currentLocalMediaFolder = LocalMediaFolder()
             }
-            currentLocalMediaFolder.setBucketId(ValueOf.toLong(media.getParentFolderName().hashCode()));
-            currentLocalMediaFolder.setFolderName(media.getParentFolderName());
-            currentLocalMediaFolder.setFirstMimeType(media.getMimeType());
-            currentLocalMediaFolder.setFirstImagePath(media.getPath());
-            currentLocalMediaFolder.setFolderTotalNum(mAdapter.getData().size());
-            currentLocalMediaFolder.setCurrentDataPage(mPage);
-            currentLocalMediaFolder.setHasMore(false);
-            currentLocalMediaFolder.setData(mAdapter.getData());
-            mRecycler.setEnabledLoadMore(false);
-            selectorConfig.currentLocalMediaFolder = currentLocalMediaFolder;
+            currentLocalMediaFolder.bucketId = ValueOf.toLong(media.parentFolderName.hashCode())
+            currentLocalMediaFolder.folderName = media.parentFolderName
+            currentLocalMediaFolder.firstMimeType = media.mimeType
+            currentLocalMediaFolder.firstImagePath = media.path
+            currentLocalMediaFolder.folderTotalNum = mAdapter!!.data.size
+            currentLocalMediaFolder.currentDataPage = mPage
+            currentLocalMediaFolder.isHasMore = false
+            currentLocalMediaFolder.data = mAdapter!!.data
+            mRecycler!!.isEnabledLoadMore = false
+            selectorConfig.currentLocalMediaFolder = currentLocalMediaFolder
         } else {
-            mergeFolder(media);
+            mergeFolder(media)
         }
-        allFolderSize = 0;
-        if (mAdapter.getData().size() > 0 || selectorConfig.isDirectReturnSingle) {
-            hideDataNull();
+        allFolderSize = 0
+        if (mAdapter!!.data.size > 0 || selectorConfig.isDirectReturnSingle) {
+            hideDataNull()
         } else {
-            showDataNull();
+            showDataNull()
         }
     }
 
@@ -1173,111 +1140,138 @@ public class PictureSelectorFragment extends PictureCommonFragment
      *
      * @param media
      */
-    private void mergeFolder(LocalMedia media) {
-        LocalMediaFolder allFolder;
-        List<LocalMediaFolder> albumList = albumListPopWindow.getAlbumList();
-        if (albumListPopWindow.getFolderCount() == 0) {
+    private fun mergeFolder(media: LocalMedia) {
+        val allFolder: LocalMediaFolder
+        val albumList = albumListPopWindow!!.albumList
+        if (albumListPopWindow!!.folderCount == 0) {
             // 1、没有相册时需要手动创建相机胶卷
-            allFolder = new LocalMediaFolder();
-            String folderName;
-            if (TextUtils.isEmpty(selectorConfig.defaultAlbumName)) {
-                folderName = selectorConfig.chooseMode == SelectMimeType.ofAudio() ? getString(R.string.ps_all_audio) : getString(R.string.ps_camera_roll);
+            allFolder = LocalMediaFolder()
+            val folderName: String
+            folderName = if (TextUtils.isEmpty(selectorConfig.defaultAlbumName)) {
+                if (selectorConfig.chooseMode == SelectMimeType.ofAudio()) getString(
+                    R.string.ps_all_audio
+                ) else getString(R.string.ps_camera_roll)
             } else {
-                folderName = selectorConfig.defaultAlbumName;
+                selectorConfig.defaultAlbumName
             }
-            allFolder.setFolderName(folderName);
-            allFolder.setFirstImagePath("");
-            allFolder.setBucketId(PictureConfig.ALL);
-            albumList.add(0, allFolder);
+            allFolder.folderName = folderName
+            allFolder.firstImagePath = ""
+            allFolder.bucketId = PictureConfig.ALL.toLong()
+            albumList.add(0, allFolder)
         } else {
             // 2、有相册就找到对应的相册把数据加进去
-            allFolder = albumListPopWindow.getFolder(0);
+            allFolder = albumListPopWindow!!.getFolder(0)
         }
-        allFolder.setFirstImagePath(media.getPath());
-        allFolder.setFirstMimeType(media.getMimeType());
-        allFolder.setData(mAdapter.getData());
-        allFolder.setBucketId(PictureConfig.ALL);
-        allFolder.setFolderTotalNum(isAddSameImp(allFolder.getFolderTotalNum()) ? allFolder.getFolderTotalNum() : allFolder.getFolderTotalNum() + 1);
-        LocalMediaFolder currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder;
-        if (currentLocalMediaFolder == null || currentLocalMediaFolder.getFolderTotalNum() == 0) {
-            selectorConfig.currentLocalMediaFolder = allFolder;
+        allFolder.firstImagePath = media.path
+        allFolder.firstMimeType = media.mimeType
+        allFolder.data = mAdapter!!.data
+        allFolder.bucketId = PictureConfig.ALL.toLong()
+        allFolder.folderTotalNum =
+            if (isAddSameImp(allFolder.folderTotalNum)) allFolder.folderTotalNum else allFolder.folderTotalNum + 1
+        val currentLocalMediaFolder = selectorConfig.currentLocalMediaFolder
+        if (currentLocalMediaFolder == null || currentLocalMediaFolder.folderTotalNum == 0) {
+            selectorConfig.currentLocalMediaFolder = allFolder
         }
         // 先查找Camera目录，没有找到则创建一个Camera目录
-        LocalMediaFolder cameraFolder = null;
-        for (int i = 0; i < albumList.size(); i++) {
-            LocalMediaFolder exitsFolder = albumList.get(i);
-            if (TextUtils.equals(exitsFolder.getFolderName(), media.getParentFolderName())) {
-                cameraFolder = exitsFolder;
-                break;
+        var cameraFolder: LocalMediaFolder? = null
+        for (i in albumList.indices) {
+            val exitsFolder = albumList[i]
+            if (TextUtils.equals(exitsFolder.folderName, media.parentFolderName)) {
+                cameraFolder = exitsFolder
+                break
             }
         }
         if (cameraFolder == null) {
             // 还没有这个目录，创建一个
-            cameraFolder = new LocalMediaFolder();
-            albumList.add(cameraFolder);
+            cameraFolder = LocalMediaFolder()
+            albumList.add(cameraFolder)
         }
-        cameraFolder.setFolderName(media.getParentFolderName());
-        if (cameraFolder.getBucketId() == -1 || cameraFolder.getBucketId() == 0) {
-            cameraFolder.setBucketId(media.getBucketId());
+        cameraFolder.folderName = media.parentFolderName
+        if (cameraFolder.bucketId == -1L || cameraFolder.bucketId == 0L) {
+            cameraFolder.bucketId = media.bucketId
         }
         // 分页模式下，切换到Camera目录下时，会直接从MediaStore拉取
         if (selectorConfig.isPageStrategy) {
-            cameraFolder.setHasMore(true);
+            cameraFolder.isHasMore = true
         } else {
             // 非分页模式数据都是存在目录的data下，所以直接添加进去就行
-            if (!isAddSameImp(allFolder.getFolderTotalNum())
-                    || !TextUtils.isEmpty(selectorConfig.outPutCameraDir)
-                    || !TextUtils.isEmpty(selectorConfig.outPutAudioDir)) {
-                cameraFolder.getData().add(0, media);
+            if (!isAddSameImp(allFolder.folderTotalNum)
+                || !TextUtils.isEmpty(selectorConfig.outPutCameraDir)
+                || !TextUtils.isEmpty(selectorConfig.outPutAudioDir)
+            ) {
+                cameraFolder.data.add(0, media)
             }
         }
-        cameraFolder.setFolderTotalNum(isAddSameImp(allFolder.getFolderTotalNum())
-                ? cameraFolder.getFolderTotalNum() : cameraFolder.getFolderTotalNum() + 1);
-        cameraFolder.setFirstImagePath(selectorConfig.cameraPath);
-        cameraFolder.setFirstMimeType(media.getMimeType());
-        albumListPopWindow.bindAlbumData(albumList);
+        cameraFolder.folderTotalNum =
+            if (isAddSameImp(allFolder.folderTotalNum)) cameraFolder.folderTotalNum else cameraFolder.folderTotalNum + 1
+        cameraFolder.firstImagePath = selectorConfig.cameraPath
+        cameraFolder.firstMimeType = media.mimeType
+        albumListPopWindow!!.bindAlbumData(albumList)
     }
 
     /**
      * 数量是否一致
      */
-    private boolean isAddSameImp(int totalNum) {
-        if (totalNum == 0) {
-            return false;
-        }
-        return allFolderSize > 0 && allFolderSize < totalNum;
+    private fun isAddSameImp(totalNum: Int): Boolean {
+        return if (totalNum == 0) {
+            false
+        } else allFolderSize > 0 && allFolderSize < totalNum
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    override fun onDestroyView() {
+        super.onDestroyView()
         if (mDragSelectTouchListener != null) {
-            mDragSelectTouchListener.stopAutoScroll();
+            mDragSelectTouchListener!!.stopAutoScroll()
         }
     }
 
     /**
      * 显示数据为空提示
      */
-    private void showDataNull() {
+    private fun showDataNull() {
         if (selectorConfig.currentLocalMediaFolder == null
-                || selectorConfig.currentLocalMediaFolder.getBucketId() == PictureConfig.ALL) {
-            if (tvDataEmpty.getVisibility() == View.GONE) {
-                tvDataEmpty.setVisibility(View.VISIBLE);
+            || selectorConfig.currentLocalMediaFolder.bucketId == PictureConfig.ALL.toLong()
+        ) {
+            if (tvDataEmpty!!.visibility == View.GONE) {
+                tvDataEmpty!!.visibility = View.VISIBLE
             }
-            tvDataEmpty.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.drawable.ps_ic_no_data, 0, 0);
-            String tips = selectorConfig.chooseMode == SelectMimeType.ofAudio() ? getString(R.string.ps_audio_empty) : getString(R.string.ps_empty);
-            tvDataEmpty.setText(tips);
+            tvDataEmpty!!.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0,
+                R.drawable.ps_ic_no_data,
+                0,
+                0
+            )
+            val tips =
+                if (selectorConfig.chooseMode == SelectMimeType.ofAudio()) getString(R.string.ps_audio_empty) else getString(
+                    R.string.ps_empty
+                )
+            tvDataEmpty!!.text = tips
         }
     }
 
     /**
      * 隐藏数据为空提示
      */
-    private void hideDataNull() {
-        if (tvDataEmpty.getVisibility() == View.VISIBLE) {
-            tvDataEmpty.setVisibility(View.GONE);
+    private fun hideDataNull() {
+        if (tvDataEmpty!!.visibility == View.VISIBLE) {
+            tvDataEmpty!!.visibility = View.GONE
+        }
+    }
+
+    companion object {
+        @JvmField
+        val TAG = PictureSelectorFragment::class.java.simpleName
+        private val LOCK = Any()
+
+        /**
+         * 这个时间对应的是R.anim.ps_anim_modal_in里面的
+         */
+        private var SELECT_ANIM_DURATION = 135
+        @JvmStatic
+        fun newInstance(): PictureSelectorFragment {
+            val fragment = PictureSelectorFragment()
+            fragment.arguments = Bundle()
+            return fragment
         }
     }
 }

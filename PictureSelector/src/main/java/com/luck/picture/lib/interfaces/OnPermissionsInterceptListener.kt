@@ -1,13 +1,14 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
+import com.luck.picture.lib.config.SelectorConfig
 
 /**
  * @author：luck
  * @date：2021/12/1 8:48 下午
  * @describe：OnPermissionsInterceptListener
  */
-public interface OnPermissionsInterceptListener {
+interface OnPermissionsInterceptListener {
     /**
      * Custom Permissions management
      *
@@ -15,7 +16,11 @@ public interface OnPermissionsInterceptListener {
      * @param permissionArray Permissions array
      * @param call
      */
-    void requestPermission(Fragment fragment, String[] permissionArray, OnRequestPermissionListener call);
+    fun requestPermission(
+        fragment: Fragment?,
+        permissionArray: Array<String?>?,
+        call: OnRequestPermissionListener?
+    )
 
     /**
      * Verify permission application status
@@ -24,5 +29,5 @@ public interface OnPermissionsInterceptListener {
      * @param permissionArray
      * @return
      */
-    boolean hasPermissions(Fragment fragment, String[] permissionArray);
+    fun hasPermissions(fragment: Fragment?, permissionArray: Array<String?>?): Boolean
 }

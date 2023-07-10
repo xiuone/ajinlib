@@ -1,142 +1,141 @@
-package com.luck.picture.lib.utils;
+package com.luck.picture.lib.utils
+
+import com.luck.picture.lib.config.PictureMimeType.isContent
+import com.luck.picture.lib.basic.PictureContentResolver.openInputStream
+import com.luck.picture.lib.basic.PictureContentResolver.openOutputStream
+import com.luck.picture.lib.immersive.RomUtils.isSamsung
+import com.luck.picture.lib.thread.PictureThreadUtils.executeByIo
+import com.luck.picture.lib.config.PictureMimeType.isHasAudio
+import com.luck.picture.lib.config.PictureMimeType.isHasVideo
+import com.luck.picture.lib.config.PictureMimeType.isHasGif
+import com.luck.picture.lib.config.PictureMimeType.isUrlHasGif
+import com.luck.picture.lib.config.PictureMimeType.isHasHttp
+import com.luck.picture.lib.thread.PictureThreadUtils.cancel
+import com.luck.picture.lib.interfaces.OnCallbackListener.onCall
+import com.luck.picture.lib.config.PictureMimeType.isHasImage
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.config.SelectMimeType.ofImage
+import com.luck.picture.lib.config.PictureMimeType.getLastSourceSuffix
+import com.luck.picture.lib.thread.PictureThreadUtils.isInUiThread
+import com.luck.picture.lib.thread.PictureThreadUtils.runOnUiThread
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.utils.FileDirMap
+import com.luck.picture.lib.config.SelectorConfig
+import androidx.core.content.FileProvider
+import kotlin.jvm.JvmOverloads
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeCompat
+import java.lang.Exception
 
 /**
  * @author：luck
  * @date：2019-11-12 14:27
  * @describe：类型转换工具类
  */
-public class ValueOf {
-    public static String toString(Object o) {
-        String value = "";
+object ValueOf {
+    @kotlin.jvm.JvmStatic
+    fun toString(o: Any): String {
+        var value = ""
         try {
-            value = o.toString();
-        } catch (Exception e) {
+            value = o.toString()
+        } catch (e: Exception) {
         }
-
-        return value;
+        return value
     }
 
-
-    public static double toDouble(Object o) {
-
-        return toDouble(o, 0);
-    }
-
-    public static double toDouble(Object o, int defaultValue) {
+    @JvmOverloads
+    fun toDouble(o: Any?, defaultValue: Int = 0): Double {
         if (o == null) {
-            return defaultValue;
+            return defaultValue.toDouble()
         }
-
-        double value;
-        try {
-            value = Double.parseDouble(o.toString().trim());
-        } catch (Exception e) {
-            value = defaultValue;
+        val value: Double
+        value = try {
+            o.toString().trim { it <= ' ' }.toDouble()
+        } catch (e: Exception) {
+            defaultValue.toDouble()
         }
-
-        return value;
+        return value
     }
 
-    public static long toLong(Object o, long defaultValue) {
+    @JvmOverloads
+    fun toLong(o: Any?, defaultValue: Long = 0): Long {
         if (o == null) {
-            return defaultValue;
+            return defaultValue
         }
-        long value = 0;
-        try {
-            String s = o.toString().trim();
+        var value: Long = 0
+        value = try {
+            val s = o.toString().trim { it <= ' ' }
             if (s.contains(".")) {
-                value = Long.parseLong(s.substring(0, s.lastIndexOf(".")));
+                s.substring(0, s.lastIndexOf(".")).toLong()
             } else {
-                value = Long.parseLong(s);
+                s.toLong()
             }
-        } catch (Exception e) {
-            value = defaultValue;
+        } catch (e: Exception) {
+            defaultValue
         }
-
-
-        return value;
+        return value
     }
 
-    public static long toLong(Object o) {
-        return toLong(o, 0);
-    }
-
-
-    public static float toFloat(Object o, long defaultValue) {
+    @JvmOverloads
+    fun toFloat(o: Any?, defaultValue: Long = 0): Float {
         if (o == null) {
-            return defaultValue;
+            return defaultValue.toFloat()
         }
-        float value = 0;
-        try {
-            String s = o.toString().trim();
-            value = Float.parseFloat(s);
-        } catch (Exception e) {
-            value = defaultValue;
+        var value = 0f
+        value = try {
+            val s = o.toString().trim { it <= ' ' }
+            s.toFloat()
+        } catch (e: Exception) {
+            defaultValue.toFloat()
         }
-
-
-        return value;
+        return value
     }
 
-    public static float toFloat(Object o) {
-        return toFloat(o, 0);
-    }
-
-
-    public static int toInt(Object o, int defaultValue) {
+    @JvmOverloads
+    fun toInt(o: Any?, defaultValue: Int = 0): Int {
         if (o == null) {
-            return defaultValue;
+            return defaultValue
         }
-        int value;
-        try {
-            String s = o.toString().trim();
+        val value: Int
+        value = try {
+            val s = o.toString().trim { it <= ' ' }
             if (s.contains(".")) {
-                value = Integer.parseInt(s.substring(0, s.lastIndexOf(".")));
+                s.substring(0, s.lastIndexOf(".")).toInt()
             } else {
-                value = Integer.parseInt(s);
+                s.toInt()
             }
-        } catch (Exception e) {
-            value = defaultValue;
+        } catch (e: Exception) {
+            defaultValue
         }
-
-        return value;
+        return value
     }
 
-    public static int toInt(Object o) {
-        return toInt(o, 0);
-    }
-
-    public static boolean toBoolean(Object o) {
-        return toBoolean(o, false);
-
-    }
-
-
-    public static boolean toBoolean(Object o, boolean defaultValue) {
+    @JvmOverloads
+    fun toBoolean(o: Any?, defaultValue: Boolean = false): Boolean {
         if (o == null) {
-            return false;
+            return false
         }
-        boolean value;
-        try {
-            String s = o.toString().trim();
-            if ("false".equals(s.trim())) {
-                value =  false;
+        val value: Boolean
+        value = try {
+            val s = o.toString().trim { it <= ' ' }
+            if ("false" == s.trim { it <= ' ' }) {
+                false
             } else {
-                value =  true;
+                true
             }
-        } catch (Exception e) {
-            value = defaultValue;
+        } catch (e: Exception) {
+            defaultValue
         }
-
-        return value;
+        return value
     }
 
-
-    public static <T> T to(Object o, T defaultValue) {
+    fun <T> to(o: Any?, defaultValue: T): T {
         if (o == null) {
-            return defaultValue;
+            return defaultValue
         }
-        T value = (T)o;
-        return (T) value;
+        val value = o as T
+        return value
     }
 }

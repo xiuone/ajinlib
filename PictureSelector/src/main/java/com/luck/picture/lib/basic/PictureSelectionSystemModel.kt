@@ -1,101 +1,84 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import android.app.Activity;
-import android.content.Intent;
-
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-
-import com.luck.picture.lib.PictureSelectorSystemFragment;
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.FileSizeUnit;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.config.SelectModeConfig;
-import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.engine.CompressEngine;
-import com.luck.picture.lib.engine.CompressFileEngine;
-import com.luck.picture.lib.engine.CropEngine;
-import com.luck.picture.lib.engine.CropFileEngine;
-import com.luck.picture.lib.engine.SandboxFileEngine;
-import com.luck.picture.lib.engine.UriToFileTransformEngine;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnBitmapWatermarkEventListener;
-import com.luck.picture.lib.interfaces.OnCustomLoadingListener;
-import com.luck.picture.lib.interfaces.OnPermissionDeniedListener;
-import com.luck.picture.lib.interfaces.OnPermissionDescriptionListener;
-import com.luck.picture.lib.interfaces.OnPermissionsInterceptListener;
-import com.luck.picture.lib.interfaces.OnResultCallbackListener;
-import com.luck.picture.lib.interfaces.OnSelectFilterListener;
-import com.luck.picture.lib.interfaces.OnSelectLimitTipsListener;
-import com.luck.picture.lib.interfaces.OnVideoThumbnailEventListener;
-import com.luck.picture.lib.utils.DoubleUtils;
-import com.luck.picture.lib.utils.SdkVersionUtils;
-
-import java.util.Arrays;
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.utils.FileDirMap
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
+import com.luck.picture.lib.PictureSelectorSystemFragment
+import com.luck.picture.lib.R
+import com.luck.picture.lib.config.*
+import com.luck.picture.lib.engine.*
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.*
+import com.luck.picture.lib.utils.DoubleUtils
+import com.luck.picture.lib.utils.SdkVersionUtils
+import java.lang.NullPointerException
+import java.util.*
 
 /**
  * @author：luck
  * @date：2022/1/17 5:52 下午
  * @describe：PictureSelectionSystemModel
  */
-public final class PictureSelectionSystemModel {
-    private final SelectorConfig selectionConfig;
-    private final PictureSelector selector;
-
-    public PictureSelectionSystemModel(PictureSelector selector, int chooseMode) {
-        this.selector = selector;
-        selectionConfig = new SelectorConfig();
-        SelectorProviders.getInstance().addSelectorConfigQueue(selectionConfig);
-        selectionConfig.chooseMode = chooseMode;
-        selectionConfig.isPreviewFullScreenMode = false;
-        selectionConfig.isPreviewZoomEffect = false;
-    }
+class PictureSelectionSystemModel(private val selector: PictureSelector, chooseMode: Int) {
+    private val selectionConfig: SelectorConfig
 
     /**
      * @param selectionMode PictureSelector Selection model
-     *                      and {@link SelectModeConfig.MULTIPLE} or {@link SelectModeConfig.SINGLE}
-     *                      <p>
-     *                      Use {@link SelectModeConfig}
-     *                      </p>
+     * and [SelectModeConfig.MULTIPLE] or [SelectModeConfig.SINGLE]
+     *
+     *
+     * Use [SelectModeConfig]
+     *
      * @return
      */
-    public PictureSelectionSystemModel setSelectionMode(int selectionMode) {
-        selectionConfig.selectionMode = selectionMode;
-        return this;
+    fun setSelectionMode(selectionMode: Int): PictureSelectionSystemModel {
+        selectionConfig.selectionMode = selectionMode
+        return this
     }
 
     /**
      * Do you need to display the original controller
-     * <p>
+     *
+     *
      * It needs to be used with setSandboxFileEngine
-     * {@link LocalMedia .setOriginalPath()}
-     * </p>
+     * [.setOriginalPath()][LocalMedia]
+     *
      *
      * @param isOriginalControl
      * @return
      */
-    public PictureSelectionSystemModel isOriginalControl(boolean isOriginalControl) {
-        selectionConfig.isCheckOriginalImage = isOriginalControl;
-        return this;
+    fun isOriginalControl(isOriginalControl: Boolean): PictureSelectionSystemModel {
+        selectionConfig.isCheckOriginalImage = isOriginalControl
+        return this
     }
 
     /**
      * Skip crop mimeType
      *
-     * @param mimeTypes Use example {@link { image/gift or image/webp ... }}
+     * @param mimeTypes Use example [{]
      * @return
      */
-    public PictureSelectionSystemModel setSkipCropMimeType(String... mimeTypes) {
-        if (mimeTypes != null && mimeTypes.length > 0) {
-            selectionConfig.skipCropList.addAll(Arrays.asList(mimeTypes));
+    fun setSkipCropMimeType(vararg mimeTypes: String?): PictureSelectionSystemModel {
+        if (mimeTypes != null && mimeTypes.size > 0) {
+            selectionConfig.skipCropList.addAll(Arrays.asList(*mimeTypes))
         }
-        return this;
+        return this
     }
 
     /**
@@ -104,25 +87,24 @@ public final class PictureSelectionSystemModel {
      * @param isOriginalSkipCompress
      * @return
      */
-    public PictureSelectionSystemModel isOriginalSkipCompress(boolean isOriginalSkipCompress) {
-        selectionConfig.isOriginalSkipCompress = isOriginalSkipCompress;
-        return this;
+    fun isOriginalSkipCompress(isOriginalSkipCompress: Boolean): PictureSelectionSystemModel {
+        selectionConfig.isOriginalSkipCompress = isOriginalSkipCompress
+        return this
     }
 
     /**
      * Image Compress the engine
      *
      * @param engine Image Compress the engine
-     * Please use {@link CompressFileEngine}
+     * Please use [CompressFileEngine]
      * @return
      */
-    @Deprecated
-    public PictureSelectionSystemModel setCompressEngine(CompressEngine engine) {
-        selectionConfig.compressEngine = engine;
-        selectionConfig.isCompressEngine = true;
-        return this;
+    @Deprecated("")
+    fun setCompressEngine(engine: CompressEngine?): PictureSelectionSystemModel {
+        selectionConfig.compressEngine = engine
+        selectionConfig.isCompressEngine = true
+        return this
     }
-
 
     /**
      * Image Compress the engine
@@ -130,23 +112,23 @@ public final class PictureSelectionSystemModel {
      * @param engine Image Compress the engine
      * @return
      */
-    public PictureSelectionSystemModel setCompressEngine(CompressFileEngine engine) {
-        selectionConfig.compressFileEngine = engine;
-        selectionConfig.isCompressEngine = true;
-        return this;
+    fun setCompressEngine(engine: CompressFileEngine?): PictureSelectionSystemModel {
+        selectionConfig.compressFileEngine = engine
+        selectionConfig.isCompressEngine = true
+        return this
     }
 
     /**
      * Image Crop the engine
      *
      * @param engine Image Crop the engine
-     * Please Use {@link CropFileEngine}
+     * Please Use [CropFileEngine]
      * @return
      */
-    @Deprecated
-    public PictureSelectionSystemModel setCropEngine(CropEngine engine) {
-        selectionConfig.cropEngine = engine;
-        return this;
+    @Deprecated("")
+    fun setCropEngine(engine: CropEngine?): PictureSelectionSystemModel {
+        selectionConfig.cropEngine = engine
+        return this
     }
 
     /**
@@ -155,27 +137,27 @@ public final class PictureSelectionSystemModel {
      * @param engine Image Crop the engine
      * @return
      */
-    public PictureSelectionSystemModel setCropEngine(CropFileEngine engine) {
-        selectionConfig.cropFileEngine = engine;
-        return this;
+    fun setCropEngine(engine: CropFileEngine?): PictureSelectionSystemModel {
+        selectionConfig.cropFileEngine = engine
+        return this
     }
 
     /**
      * App Sandbox file path transform
      *
      * @param engine App Sandbox path transform
-     * Please Use {@link UriToFileTransformEngine}
+     * Please Use [UriToFileTransformEngine]
      * @return
      */
-    @Deprecated
-    public PictureSelectionSystemModel setSandboxFileEngine(SandboxFileEngine engine) {
+    @Deprecated("")
+    fun setSandboxFileEngine(engine: SandboxFileEngine?): PictureSelectionSystemModel {
         if (SdkVersionUtils.isQ()) {
-            selectionConfig.sandboxFileEngine = engine;
-            selectionConfig.isSandboxFileEngine = true;
+            selectionConfig.sandboxFileEngine = engine
+            selectionConfig.isSandboxFileEngine = true
         } else {
-            selectionConfig.isSandboxFileEngine = false;
+            selectionConfig.isSandboxFileEngine = false
         }
-        return this;
+        return this
     }
 
     /**
@@ -184,16 +166,15 @@ public final class PictureSelectionSystemModel {
      * @param engine App Sandbox path transform
      * @return
      */
-    public PictureSelectionSystemModel setSandboxFileEngine(UriToFileTransformEngine engine) {
+    fun setSandboxFileEngine(engine: UriToFileTransformEngine?): PictureSelectionSystemModel {
         if (SdkVersionUtils.isQ()) {
-            selectionConfig.uriToFileTransformEngine = engine;
-            selectionConfig.isSandboxFileEngine = true;
+            selectionConfig.uriToFileTransformEngine = engine
+            selectionConfig.isSandboxFileEngine = true
         } else {
-            selectionConfig.isSandboxFileEngine = false;
+            selectionConfig.isSandboxFileEngine = false
         }
-        return this;
+        return this
     }
-
 
     /**
      * # file size The unit is KB
@@ -201,13 +182,13 @@ public final class PictureSelectionSystemModel {
      * @param fileKbSize Filter max file size
      * @return
      */
-    public PictureSelectionSystemModel setSelectMaxFileSize(long fileKbSize) {
+    fun setSelectMaxFileSize(fileKbSize: Long): PictureSelectionSystemModel {
         if (fileKbSize >= FileSizeUnit.MB) {
-            selectionConfig.selectMaxFileSize = fileKbSize;
+            selectionConfig.selectMaxFileSize = fileKbSize
         } else {
-            selectionConfig.selectMaxFileSize = fileKbSize * FileSizeUnit.KB;
+            selectionConfig.selectMaxFileSize = fileKbSize * FileSizeUnit.KB
         }
-        return this;
+        return this
     }
 
     /**
@@ -216,13 +197,13 @@ public final class PictureSelectionSystemModel {
      * @param fileKbSize Filter min file size
      * @return
      */
-    public PictureSelectionSystemModel setSelectMinFileSize(long fileKbSize) {
+    fun setSelectMinFileSize(fileKbSize: Long): PictureSelectionSystemModel {
         if (fileKbSize >= FileSizeUnit.MB) {
-            selectionConfig.selectMinFileSize = fileKbSize;
+            selectionConfig.selectMinFileSize = fileKbSize
         } else {
-            selectionConfig.selectMinFileSize = fileKbSize * FileSizeUnit.KB;
+            selectionConfig.selectMinFileSize = fileKbSize * FileSizeUnit.KB
         }
-        return this;
+        return this
     }
 
     /**
@@ -231,9 +212,9 @@ public final class PictureSelectionSystemModel {
      * @param maxDurationSecond select video max second
      * @return
      */
-    public PictureSelectionSystemModel setSelectMaxDurationSecond(int maxDurationSecond) {
-        selectionConfig.selectMaxDurationSecond = maxDurationSecond * 1000;
-        return this;
+    fun setSelectMaxDurationSecond(maxDurationSecond: Int): PictureSelectionSystemModel {
+        selectionConfig.selectMaxDurationSecond = maxDurationSecond * 1000
+        return this
     }
 
     /**
@@ -242,9 +223,9 @@ public final class PictureSelectionSystemModel {
      * @param minDurationSecond select video min second
      * @return
      */
-    public PictureSelectionSystemModel setSelectMinDurationSecond(int minDurationSecond) {
-        selectionConfig.selectMinDurationSecond = minDurationSecond * 1000;
-        return this;
+    fun setSelectMinDurationSecond(minDurationSecond: Int): PictureSelectionSystemModel {
+        selectionConfig.selectMinDurationSecond = minDurationSecond * 1000
+        return this
     }
 
     /**
@@ -253,9 +234,9 @@ public final class PictureSelectionSystemModel {
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setPermissionsInterceptListener(OnPermissionsInterceptListener listener) {
-        selectionConfig.onPermissionsEventListener = listener;
-        return this;
+    fun setPermissionsInterceptListener(listener: OnPermissionsInterceptListener?): PictureSelectionSystemModel {
+        selectionConfig.onPermissionsEventListener = listener
+        return this
     }
 
     /**
@@ -264,20 +245,20 @@ public final class PictureSelectionSystemModel {
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setPermissionDescriptionListener(OnPermissionDescriptionListener listener) {
-        selectionConfig.onPermissionDescriptionListener = listener;
-        return this;
+    fun setPermissionDescriptionListener(listener: OnPermissionDescriptionListener?): PictureSelectionSystemModel {
+        selectionConfig.onPermissionDescriptionListener = listener
+        return this
     }
 
     /**
-     *  Permission denied
+     * Permission denied
      *
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setPermissionDeniedListener(OnPermissionDeniedListener listener) {
-        selectionConfig.onPermissionDeniedListener = listener;
-        return this;
+    fun setPermissionDeniedListener(listener: OnPermissionDeniedListener?): PictureSelectionSystemModel {
+        selectionConfig.onPermissionDeniedListener = listener
+        return this
     }
 
     /**
@@ -285,9 +266,9 @@ public final class PictureSelectionSystemModel {
      *
      * @param listener
      */
-    public PictureSelectionSystemModel setSelectLimitTipsListener(OnSelectLimitTipsListener listener) {
-        selectionConfig.onSelectLimitTipsListener = listener;
-        return this;
+    fun setSelectLimitTipsListener(listener: OnSelectLimitTipsListener?): PictureSelectionSystemModel {
+        selectionConfig.onSelectLimitTipsListener = listener
+        return this
     }
 
     /**
@@ -296,9 +277,9 @@ public final class PictureSelectionSystemModel {
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setSelectFilterListener(OnSelectFilterListener listener) {
-        selectionConfig.onSelectFilterListener = listener;
-        return this;
+    fun setSelectFilterListener(listener: OnSelectFilterListener?): PictureSelectionSystemModel {
+        selectionConfig.onSelectFilterListener = listener
+        return this
     }
 
     /**
@@ -307,11 +288,11 @@ public final class PictureSelectionSystemModel {
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setAddBitmapWatermarkListener(OnBitmapWatermarkEventListener listener) {
+    fun setAddBitmapWatermarkListener(listener: OnBitmapWatermarkEventListener?): PictureSelectionSystemModel {
         if (selectionConfig.chooseMode != SelectMimeType.ofAudio()) {
-            selectionConfig.onBitmapWatermarkListener = listener;
+            selectionConfig.onBitmapWatermarkListener = listener
         }
-        return this;
+        return this
     }
 
     /**
@@ -320,11 +301,11 @@ public final class PictureSelectionSystemModel {
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setVideoThumbnailListener(OnVideoThumbnailEventListener listener) {
+    fun setVideoThumbnailListener(listener: OnVideoThumbnailEventListener?): PictureSelectionSystemModel {
         if (selectionConfig.chooseMode != SelectMimeType.ofAudio()) {
-            selectionConfig.onVideoThumbnailEventListener = listener;
+            selectionConfig.onVideoThumbnailEventListener = listener
         }
-        return this;
+        return this
     }
 
     /**
@@ -333,134 +314,138 @@ public final class PictureSelectionSystemModel {
      * @param listener
      * @return
      */
-    public PictureSelectionSystemModel setCustomLoadingListener(OnCustomLoadingListener listener) {
-        selectionConfig.onCustomLoadingListener = listener;
-        return this;
+    fun setCustomLoadingListener(listener: OnCustomLoadingListener?): PictureSelectionSystemModel {
+        selectionConfig.onCustomLoadingListener = listener
+        return this
     }
 
     /**
      * Call the system library to obtain resources
-     * <p>
+     *
+     *
      * Using the system gallery library, some API functions will not be supported
-     * </p>
+     *
      *
      * @param call
      */
-    public void forSystemResult(OnResultCallbackListener<LocalMedia> call) {
+    fun forSystemResult(call: OnResultCallbackListener<LocalMedia?>?) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
             if (call == null) {
-                throw new NullPointerException("OnResultCallbackListener cannot be null");
+                throw NullPointerException("OnResultCallbackListener cannot be null")
             }
-            selectionConfig.onResultCallListener = call;
-            selectionConfig.isResultListenerBack = true;
-            selectionConfig.isActivityResultBack = false;
-            FragmentManager fragmentManager = null;
-            if (activity instanceof FragmentActivity) {
-                fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+            selectionConfig.onResultCallListener = call
+            selectionConfig.isResultListenerBack = true
+            selectionConfig.isActivityResultBack = false
+            var fragmentManager: FragmentManager? = null
+            if (activity is FragmentActivity) {
+                fragmentManager = activity.supportFragmentManager
             }
             if (fragmentManager == null) {
-                throw new NullPointerException("FragmentManager cannot be null");
+                throw NullPointerException("FragmentManager cannot be null")
             }
-            Fragment fragment = fragmentManager.findFragmentByTag(PictureSelectorSystemFragment.TAG);
+            val fragment = fragmentManager.findFragmentByTag(PictureSelectorSystemFragment.TAG)
             if (fragment != null) {
-                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
-            FragmentInjectManager.injectSystemRoomFragment(fragmentManager,
-                    PictureSelectorSystemFragment.TAG, PictureSelectorSystemFragment.newInstance());
+            FragmentInjectManager.injectSystemRoomFragment(
+                fragmentManager,
+                PictureSelectorSystemFragment.TAG, PictureSelectorSystemFragment.newInstance()
+            )
         }
     }
-
 
     /**
      * Call the system library to obtain resources
-     * <p>
+     *
+     *
      * Using the system gallery library, some API functions will not be supported
-     * </p>
-     * <p>
-     * The {@link IBridgePictureBehavior} interface needs to be
+     *
+     *
+     *
+     * The [IBridgePictureBehavior] interface needs to be
      * implemented in the activity or fragment you call to receive the returned results
-     * </p>
+     *
      */
-    public void forSystemResult() {
+    fun forSystemResult() {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
+            if (activity !is IBridgePictureBehavior) {
+                throw NullPointerException(
+                    "Use only forSystemResult();," +
+                            "Activity or Fragment interface needs to be implemented " + IBridgePictureBehavior::class.java
+                )
             }
-            if (!(activity instanceof IBridgePictureBehavior)) {
-                throw new NullPointerException("Use only forSystemResult();," +
-                        "Activity or Fragment interface needs to be implemented " + IBridgePictureBehavior.class);
-            }
-            selectionConfig.isActivityResultBack = true;
-            selectionConfig.onResultCallListener = null;
-            selectionConfig.isResultListenerBack = false;
-
-            FragmentManager fragmentManager = null;
-            if (activity instanceof FragmentActivity) {
-                fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+            selectionConfig.isActivityResultBack = true
+            selectionConfig.onResultCallListener = null
+            selectionConfig.isResultListenerBack = false
+            var fragmentManager: FragmentManager? = null
+            if (activity is FragmentActivity) {
+                fragmentManager = (activity as FragmentActivity).supportFragmentManager
             }
             if (fragmentManager == null) {
-                throw new NullPointerException("FragmentManager cannot be null");
+                throw NullPointerException("FragmentManager cannot be null")
             }
-            Fragment fragment = fragmentManager.findFragmentByTag(PictureSelectorSystemFragment.TAG);
+            val fragment = fragmentManager.findFragmentByTag(PictureSelectorSystemFragment.TAG)
             if (fragment != null) {
-                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+                fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
-            FragmentInjectManager.injectSystemRoomFragment(fragmentManager,
-                    PictureSelectorSystemFragment.TAG, PictureSelectorSystemFragment.newInstance());
+            FragmentInjectManager.injectSystemRoomFragment(
+                fragmentManager,
+                PictureSelectorSystemFragment.TAG, PictureSelectorSystemFragment.newInstance()
+            )
         }
     }
-
 
     /**
      * Start PictureSelector
      *
      * @param requestCode
      */
-    public void forSystemResultActivity(int requestCode) {
+    fun forSystemResultActivity(requestCode: Int) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
-            selectionConfig.isResultListenerBack = false;
-            selectionConfig.isActivityResultBack = true;
-            Intent intent = new Intent(activity, PictureSelectorTransparentActivity.class);
-            intent.putExtra(PictureConfig.EXTRA_MODE_TYPE_SOURCE, PictureConfig.MODE_TYPE_SYSTEM_SOURCE);
-            Fragment fragment = selector.getFragment();
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
+            selectionConfig.isResultListenerBack = false
+            selectionConfig.isActivityResultBack = true
+            val intent = Intent(activity, PictureSelectorTransparentActivity::class.java)
+            intent.putExtra(
+                PictureConfig.EXTRA_MODE_TYPE_SOURCE,
+                PictureConfig.MODE_TYPE_SYSTEM_SOURCE
+            )
+            val fragment = selector.fragment
             if (fragment != null) {
-                fragment.startActivityForResult(intent, requestCode);
+                fragment.startActivityForResult(intent, requestCode)
             } else {
-                activity.startActivityForResult(intent, requestCode);
+                activity.startActivityForResult(intent, requestCode)
             }
-            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0);
+            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0)
         }
     }
 
     /**
      * ActivityResultLauncher PictureSelector
      *
-     * @param launcher use {@link Activity.registerForActivityResult( ActivityResultContract , ActivityResultCallback )}
+     * @param launcher use []
      */
-    public void forSystemResultActivity(ActivityResultLauncher<Intent> launcher) {
+    fun forSystemResultActivity(launcher: ActivityResultLauncher<Intent?>?) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
             if (launcher == null) {
-                throw new NullPointerException("ActivityResultLauncher cannot be null");
+                throw NullPointerException("ActivityResultLauncher cannot be null")
             }
-            selectionConfig.isResultListenerBack = false;
-            selectionConfig.isActivityResultBack = true;
-            Intent intent = new Intent(activity, PictureSelectorTransparentActivity.class);
-            intent.putExtra(PictureConfig.EXTRA_MODE_TYPE_SOURCE, PictureConfig.MODE_TYPE_SYSTEM_SOURCE);
-            launcher.launch(intent);
-            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0);
+            selectionConfig.isResultListenerBack = false
+            selectionConfig.isActivityResultBack = true
+            val intent = Intent(activity, PictureSelectorTransparentActivity::class.java)
+            intent.putExtra(
+                PictureConfig.EXTRA_MODE_TYPE_SOURCE,
+                PictureConfig.MODE_TYPE_SYSTEM_SOURCE
+            )
+            launcher.launch(intent)
+            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0)
         }
     }
 
@@ -469,23 +454,32 @@ public final class PictureSelectionSystemModel {
      *
      * @param call
      */
-    public void forSystemResultActivity(OnResultCallbackListener<LocalMedia> call) {
+    fun forSystemResultActivity(call: OnResultCallbackListener<LocalMedia?>?) {
         if (!DoubleUtils.isFastDoubleClick()) {
-            Activity activity = selector.getActivity();
-            if (activity == null) {
-                throw new NullPointerException("Activity cannot be null");
-            }
+            val activity = selector.activity
+                ?: throw NullPointerException("Activity cannot be null")
             if (call == null) {
-                throw new NullPointerException("OnResultCallbackListener cannot be null");
+                throw NullPointerException("OnResultCallbackListener cannot be null")
             }
             // 绑定回调监听
-            selectionConfig.isResultListenerBack = true;
-            selectionConfig.isActivityResultBack = false;
-            selectionConfig.onResultCallListener = call;
-            Intent intent = new Intent(activity, PictureSelectorTransparentActivity.class);
-            intent.putExtra(PictureConfig.EXTRA_MODE_TYPE_SOURCE, PictureConfig.MODE_TYPE_SYSTEM_SOURCE);
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0);
+            selectionConfig.isResultListenerBack = true
+            selectionConfig.isActivityResultBack = false
+            selectionConfig.onResultCallListener = call
+            val intent = Intent(activity, PictureSelectorTransparentActivity::class.java)
+            intent.putExtra(
+                PictureConfig.EXTRA_MODE_TYPE_SOURCE,
+                PictureConfig.MODE_TYPE_SYSTEM_SOURCE
+            )
+            activity.startActivity(intent)
+            activity.overridePendingTransition(R.anim.ps_anim_fade_in, 0)
         }
+    }
+
+    init {
+        selectionConfig = SelectorConfig()
+        SelectorProviders.instance.addSelectorConfigQueue(selectionConfig)
+        selectionConfig.chooseMode = chooseMode
+        selectionConfig.isPreviewFullScreenMode = false
+        selectionConfig.isPreviewZoomEffect = false
     }
 }

@@ -1,32 +1,41 @@
-package com.yalantis.ucrop.util;
+package com.yalantis.ucrop.util
 
-import android.content.Context;
-import android.content.res.Resources;
+import android.content.Context
+import android.content.res.Resources
+import com.yalantis.ucrop.callback.BitmapLoadCallback
+import com.yalantis.ucrop.task.BitmapLoadTask
+import com.yalantis.ucrop.util.BitmapLoadUtils
+import com.yalantis.ucrop.util.EglUtils
+import kotlin.Throws
+import androidx.annotation.RequiresApi
+import com.yalantis.ucrop.util.RotationGestureDetector.OnRotationGestureListener
+import com.yalantis.ucrop.util.RotationGestureDetector
 
 /**
  * @author：luck
  * @date：2021/11/17 11:48 上午
  * @describe：DensityUtil
  */
-public class DensityUtil {
+object DensityUtil {
     /**
      * dp2px
      */
-    public static int dip2px(Context context, float dpValue) {
-        final float scale = context.getApplicationContext().getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    @JvmStatic
+    fun dip2px(context: Context, dpValue: Float): Int {
+        val scale = context.applicationContext.resources.displayMetrics.density
+        return (dpValue * scale + 0.5f).toInt()
     }
 
     /**
      * 获取状态栏高度
      */
-    public static int getStatusBarHeight(Context context) {
-        int result = 0;
-        int resourceId = Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android");
+    fun getStatusBarHeight(context: Context): Int {
+        var result = 0
+        val resourceId =
+            Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {
-            result = context.getResources().getDimensionPixelSize(resourceId);
+            result = context.resources.getDimensionPixelSize(resourceId)
         }
-        return result == 0 ? dip2px(context, 26) : result;
+        return if (result == 0) dip2px(context, 26f) else result
     }
-
 }

@@ -1,14 +1,15 @@
+package com.luck.picture.lib.photoview
 
-package com.luck.picture.lib.photoview;
+import kotlin.jvm.JvmOverloads
+import androidx.appcompat.widget.AppCompatImageView
 
-interface OnGestureListener {
+internal interface OnGestureListener {
+    fun onDrag(dx: Float, dy: Float)
+    fun onFling(
+        startX: Float, startY: Float, velocityX: Float,
+        velocityY: Float
+    )
 
-    void onDrag(float dx, float dy);
-
-    void onFling(float startX, float startY, float velocityX,
-                 float velocityY);
-
-    void onScale(float scaleFactor, float focusX, float focusY);
-
-    void onScale(float scaleFactor, float focusX, float focusY, float dx, float dy);
+    fun onScale(scaleFactor: Float, focusX: Float, focusY: Float)
+    fun onScale(scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float)
 }

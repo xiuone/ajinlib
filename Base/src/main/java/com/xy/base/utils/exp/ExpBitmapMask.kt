@@ -1,9 +1,7 @@
 package com.xy.base.utils.exp
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import com.luck.picture.lib.utils.DensityUtil
 
 /**
  * 设置水印图片在左上角

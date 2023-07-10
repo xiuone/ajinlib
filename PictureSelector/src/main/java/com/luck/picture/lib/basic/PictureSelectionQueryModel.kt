@@ -1,41 +1,45 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import android.app.Activity;
-import android.provider.MediaStore;
-import android.text.TextUtils;
-
-import com.luck.picture.lib.config.FileSizeUnit;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.entity.LocalMediaFolder;
-import com.luck.picture.lib.interfaces.OnQueryAllAlbumListener;
-import com.luck.picture.lib.interfaces.OnQueryDataResultListener;
-import com.luck.picture.lib.interfaces.OnQueryDataSourceListener;
-import com.luck.picture.lib.interfaces.OnQueryFilterListener;
-import com.luck.picture.lib.loader.IBridgeMediaLoader;
-import com.luck.picture.lib.loader.LocalMediaLoader;
-import com.luck.picture.lib.loader.LocalMediaPageLoader;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.text.TextUtils
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.FileDirMap
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.luck.picture.lib.config.FileSizeUnit
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.entity.LocalMediaFolder
+import com.luck.picture.lib.interfaces.OnQueryAllAlbumListener
+import com.luck.picture.lib.interfaces.OnQueryDataResultListener
+import com.luck.picture.lib.interfaces.OnQueryDataSourceListener
+import com.luck.picture.lib.interfaces.OnQueryFilterListener
+import com.luck.picture.lib.loader.IBridgeMediaLoader
+import com.luck.picture.lib.loader.LocalMediaLoader
+import com.luck.picture.lib.loader.LocalMediaPageLoader
+import java.lang.NullPointerException
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2022/2/17 22:12 晚上
  * @describe：PictureSelectionQueryModel
  */
-public class PictureSelectionQueryModel {
-    private final SelectorConfig selectionConfig;
-    private final PictureSelector selector;
-
-    public PictureSelectionQueryModel(PictureSelector selector, int selectMimeType) {
-        this.selector = selector;
-        selectionConfig = new SelectorConfig();
-        SelectorProviders.getInstance().addSelectorConfigQueue(selectionConfig);
-        selectionConfig.chooseMode = selectMimeType;
-    }
+class PictureSelectionQueryModel(private val selector: PictureSelector, selectMimeType: Int) {
+    private val selectionConfig: SelectorConfig
 
     /**
      * Whether to turn on paging mode
@@ -43,37 +47,43 @@ public class PictureSelectionQueryModel {
      * @param isPageStrategy
      * @return
      */
-    public PictureSelectionQueryModel isPageStrategy(boolean isPageStrategy) {
-        selectionConfig.isPageStrategy = isPageStrategy;
-        return this;
+    fun isPageStrategy(isPageStrategy: Boolean): PictureSelectionQueryModel {
+        selectionConfig.isPageStrategy = isPageStrategy
+        return this
     }
 
     /**
      * Whether to turn on paging mode
      *
      * @param isPageStrategy
-     * @param pageSize       Maximum number of pages {@link PageSize is preferably no less than 20}
+     * @param pageSize       Maximum number of pages [is preferably no less than 20][PageSize]
      * @return
      */
-    public PictureSelectionQueryModel isPageStrategy(boolean isPageStrategy, int pageSize) {
-        selectionConfig.isPageStrategy = isPageStrategy;
-        selectionConfig.pageSize = pageSize < PictureConfig.MIN_PAGE_SIZE ? PictureConfig.MAX_PAGE_SIZE : pageSize;
-        return this;
+    fun isPageStrategy(isPageStrategy: Boolean, pageSize: Int): PictureSelectionQueryModel {
+        selectionConfig.isPageStrategy = isPageStrategy
+        selectionConfig.pageSize =
+            if (pageSize < PictureConfig.MIN_PAGE_SIZE) PictureConfig.MAX_PAGE_SIZE else pageSize
+        return this
     }
 
     /**
      * Whether to turn on paging mode
      *
      * @param isPageStrategy
-     * @param pageSize            Maximum number of pages {@link  PageSize is preferably no less than 20}
-     * @param isFilterInvalidFile Whether to filter invalid files {@link Some of the query performance is consumed,Especially on the Q version}
+     * @param pageSize            Maximum number of pages [is preferably no less than 20][PageSize]
+     * @param isFilterInvalidFile Whether to filter invalid files [of the query performance is consumed,Especially on the Q version][Some]
      * @return
      */
-    public PictureSelectionQueryModel isPageStrategy(boolean isPageStrategy, int pageSize, boolean isFilterInvalidFile) {
-        selectionConfig.isPageStrategy = isPageStrategy;
-        selectionConfig.pageSize = pageSize < PictureConfig.MIN_PAGE_SIZE ? PictureConfig.MAX_PAGE_SIZE : pageSize;
-        selectionConfig.isFilterInvalidFile = isFilterInvalidFile;
-        return this;
+    fun isPageStrategy(
+        isPageStrategy: Boolean,
+        pageSize: Int,
+        isFilterInvalidFile: Boolean
+    ): PictureSelectionQueryModel {
+        selectionConfig.isPageStrategy = isPageStrategy
+        selectionConfig.pageSize =
+            if (pageSize < PictureConfig.MIN_PAGE_SIZE) PictureConfig.MAX_PAGE_SIZE else pageSize
+        selectionConfig.isFilterInvalidFile = isFilterInvalidFile
+        return this
     }
 
     /**
@@ -82,56 +92,56 @@ public class PictureSelectionQueryModel {
      * @param listener
      * @return
      */
-    public PictureSelectionQueryModel setQueryFilterListener(OnQueryFilterListener listener) {
-        selectionConfig.onQueryFilterListener = listener;
-        return this;
+    fun setQueryFilterListener(listener: OnQueryFilterListener?): PictureSelectionQueryModel {
+        selectionConfig.onQueryFilterListener = listener
+        return this
     }
 
     /**
      * query local data source sort
-     * {@link MediaStore.MediaColumns.DATE_MODIFIED # DATE_ADDED # _ID}
-     * <p>
+     * [# DATE_ADDED # _ID][MediaStore.MediaColumns.DATE_MODIFIED]
+     *
+     *
      * example:
      * MediaStore.MediaColumns.DATE_MODIFIED + " DESC";  or MediaStore.MediaColumns.DATE_MODIFIED + " ASC";
-     * </p>
+     *
      *
      * @param sortOrder
      * @return
      */
-    public PictureSelectionQueryModel setQuerySortOrder(String sortOrder) {
+    fun setQuerySortOrder(sortOrder: String?): PictureSelectionQueryModel {
         if (!TextUtils.isEmpty(sortOrder)) {
-            selectionConfig.sortOrder = sortOrder;
+            selectionConfig.sortOrder = sortOrder
         }
-        return this;
+        return this
     }
 
     /**
      * @param isGif Whether to open gif
      * @return
      */
-    public PictureSelectionQueryModel isGif(boolean isGif) {
-        selectionConfig.isGif = isGif;
-        return this;
+    fun isGif(isGif: Boolean): PictureSelectionQueryModel {
+        selectionConfig.isGif = isGif
+        return this
     }
 
     /**
      * @param isWebp Whether to open .webp
      * @return
      */
-    public PictureSelectionQueryModel isWebp(boolean isWebp) {
-        selectionConfig.isWebp = isWebp;
-        return this;
+    fun isWebp(isWebp: Boolean): PictureSelectionQueryModel {
+        selectionConfig.isWebp = isWebp
+        return this
     }
 
     /**
      * @param isBmp Whether to open .isBmp
      * @return
      */
-    public PictureSelectionQueryModel isBmp(boolean isBmp) {
-        selectionConfig.isBmp = isBmp;
-        return this;
+    fun isBmp(isBmp: Boolean): PictureSelectionQueryModel {
+        selectionConfig.isBmp = isBmp
+        return this
     }
-
 
     /**
      * # file size The unit is KB
@@ -139,13 +149,13 @@ public class PictureSelectionQueryModel {
      * @param fileKbSize Filter max file size
      * @return
      */
-    public PictureSelectionQueryModel setFilterMaxFileSize(long fileKbSize) {
+    fun setFilterMaxFileSize(fileKbSize: Long): PictureSelectionQueryModel {
         if (fileKbSize >= FileSizeUnit.MB) {
-            selectionConfig.filterMaxFileSize = fileKbSize;
+            selectionConfig.filterMaxFileSize = fileKbSize
         } else {
-            selectionConfig.filterMaxFileSize = fileKbSize * FileSizeUnit.KB;
+            selectionConfig.filterMaxFileSize = fileKbSize * FileSizeUnit.KB
         }
-        return this;
+        return this
     }
 
     /**
@@ -154,13 +164,13 @@ public class PictureSelectionQueryModel {
      * @param fileKbSize Filter min file size
      * @return
      */
-    public PictureSelectionQueryModel setFilterMinFileSize(long fileKbSize) {
+    fun setFilterMinFileSize(fileKbSize: Long): PictureSelectionQueryModel {
         if (fileKbSize >= FileSizeUnit.MB) {
-            selectionConfig.filterMinFileSize = fileKbSize;
+            selectionConfig.filterMinFileSize = fileKbSize
         } else {
-            selectionConfig.filterMinFileSize = fileKbSize * FileSizeUnit.KB;
+            selectionConfig.filterMinFileSize = fileKbSize * FileSizeUnit.KB
         }
-        return this;
+        return this
     }
 
     /**
@@ -169,9 +179,9 @@ public class PictureSelectionQueryModel {
      * @param videoMaxSecond filter video max second
      * @return
      */
-    public PictureSelectionQueryModel setFilterVideoMaxSecond(int videoMaxSecond) {
-        selectionConfig.filterVideoMaxSecond = videoMaxSecond * 1000;
-        return this;
+    fun setFilterVideoMaxSecond(videoMaxSecond: Int): PictureSelectionQueryModel {
+        selectionConfig.filterVideoMaxSecond = videoMaxSecond * 1000
+        return this
     }
 
     /**
@@ -180,86 +190,86 @@ public class PictureSelectionQueryModel {
      * @param videoMinSecond filter video min second
      * @return
      */
-    public PictureSelectionQueryModel setFilterVideoMinSecond(int videoMinSecond) {
-        selectionConfig.filterVideoMinSecond = videoMinSecond * 1000;
-        return this;
+    fun setFilterVideoMinSecond(videoMinSecond: Int): PictureSelectionQueryModel {
+        selectionConfig.filterVideoMinSecond = videoMinSecond * 1000
+        return this
     }
-
 
     /**
      * build local media Loader
      */
-    public IBridgeMediaLoader buildMediaLoader() {
-        Activity activity = selector.getActivity();
-        if (activity == null) {
-            throw new NullPointerException("Activity cannot be null");
-        }
-        return selectionConfig.isPageStrategy
-                ? new LocalMediaPageLoader(activity, selectionConfig)
-                : new LocalMediaLoader(activity, selectionConfig);
+    fun buildMediaLoader(): IBridgeMediaLoader {
+        val activity = selector.activity
+            ?: throw NullPointerException("Activity cannot be null")
+        return if (selectionConfig.isPageStrategy) LocalMediaPageLoader(
+            activity,
+            selectionConfig
+        ) else LocalMediaLoader(activity, selectionConfig)
     }
-
 
     /**
      * obtain album data source
      *
      * @param call
      */
-    public void obtainAlbumData(OnQueryDataSourceListener<LocalMediaFolder> call) {
-        Activity activity = selector.getActivity();
-        if (activity == null) {
-            throw new NullPointerException("Activity cannot be null");
-        }
+    fun obtainAlbumData(call: OnQueryDataSourceListener<LocalMediaFolder>?) {
+        val activity = selector.activity
+            ?: throw NullPointerException("Activity cannot be null")
         if (call == null) {
-            throw new NullPointerException("OnQueryDataSourceListener cannot be null");
+            throw NullPointerException("OnQueryDataSourceListener cannot be null")
         }
-        IBridgeMediaLoader loader = selectionConfig.isPageStrategy
-                ? new LocalMediaPageLoader(activity, selectionConfig)
-                : new LocalMediaLoader(activity, selectionConfig);
-        loader.loadAllAlbum(new OnQueryAllAlbumListener<LocalMediaFolder>() {
-            @Override
-            public void onComplete(List<LocalMediaFolder> result) {
-                call.onComplete(result);
+        val loader = if (selectionConfig.isPageStrategy) LocalMediaPageLoader(
+            activity,
+            selectionConfig
+        ) else LocalMediaLoader(activity, selectionConfig)
+        loader.loadAllAlbum(object : OnQueryAllAlbumListener<LocalMediaFolder?> {
+            override fun onComplete(result: List<LocalMediaFolder>) {
+                call.onComplete(result)
             }
-        });
+        })
     }
-
 
     /**
      * obtain data source
      *
      * @param call
      */
-    public void obtainMediaData(OnQueryDataSourceListener<LocalMedia> call) {
-        Activity activity = selector.getActivity();
-        if (activity == null) {
-            throw new NullPointerException("Activity cannot be null");
-        }
+    fun obtainMediaData(call: OnQueryDataSourceListener<LocalMedia>?) {
+        val activity = selector.activity
+            ?: throw NullPointerException("Activity cannot be null")
         if (call == null) {
-            throw new NullPointerException("OnQueryDataSourceListener cannot be null");
+            throw NullPointerException("OnQueryDataSourceListener cannot be null")
         }
-        IBridgeMediaLoader loader = selectionConfig.isPageStrategy
-                ? new LocalMediaPageLoader(activity, selectionConfig)
-                : new LocalMediaLoader(activity, selectionConfig);
-        loader.loadAllAlbum(new OnQueryAllAlbumListener<LocalMediaFolder>() {
-            @Override
-            public void onComplete(List<LocalMediaFolder> result) {
-                if (result != null && result.size() > 0) {
-                    LocalMediaFolder all = result.get(0);
+        val loader = if (selectionConfig.isPageStrategy) LocalMediaPageLoader(
+            activity,
+            selectionConfig
+        ) else LocalMediaLoader(activity, selectionConfig)
+        loader.loadAllAlbum(object : OnQueryAllAlbumListener<LocalMediaFolder?> {
+            override fun onComplete(result: List<LocalMediaFolder>) {
+                if (result != null && result.size > 0) {
+                    val all = result[0]
                     if (selectionConfig.isPageStrategy) {
-                        loader.loadPageMediaData(all.getBucketId(), 1, selectionConfig.pageSize,
-                                new OnQueryDataResultListener<LocalMedia>() {
-                                    @Override
-                                    public void onComplete(ArrayList<LocalMedia> result, boolean isHasMore) {
-                                        call.onComplete(result);
-                                    }
-                                });
+                        loader.loadPageMediaData(all.bucketId, 1, selectionConfig.pageSize,
+                            object : OnQueryDataResultListener<LocalMedia?>() {
+                                override fun onComplete(
+                                    result: ArrayList<LocalMedia>,
+                                    isHasMore: Boolean
+                                ) {
+                                    call.onComplete(result)
+                                }
+                            })
                     } else {
-                        ArrayList<LocalMedia> data = all.getData();
-                        call.onComplete(data);
+                        val data = all.data
+                        call.onComplete(data)
                     }
                 }
             }
-        });
+        })
+    }
+
+    init {
+        selectionConfig = SelectorConfig()
+        SelectorProviders.instance.addSelectorConfigQueue(selectionConfig)
+        selectionConfig.chooseMode = selectMimeType
     }
 }

@@ -1,31 +1,32 @@
-package com.zibin.luban.io;
+package com.zibin.luban.io
+
+import com.zibin.luban.io.BufferedInputStreamWrap
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.io.PoolAble
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
+import kotlin.Throws
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/8/26 3:21 下午
  * @describe：IntegerArrayAdapter
  */
-public final class IntegerArrayAdapter implements ArrayAdapterInterface<int[]> {
-    private static final String TAG = "IntegerArrayPool";
-
-    @Override
-    public String getTag() {
-        return TAG;
+class IntegerArrayAdapter : ArrayAdapterInterface<IntArray> {
+    override fun getArrayLength(array: IntArray): Int {
+        return array.size
     }
 
-    @Override
-    public int getArrayLength(int[] array) {
-        return array.length;
+    override fun newArray(length: Int): IntArray {
+        return IntArray(length)
     }
 
-    @Override
-    public int[] newArray(int length) {
-        return new int[length];
-    }
+    override val elementSizeInBytes: Int
+        get() = 4
 
-    @Override
-    public int getElementSizeInBytes() {
-        return 4;
+    companion object {
+        val tag = "IntegerArrayPool"
+            get() = Companion.field
     }
 }
-

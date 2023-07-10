@@ -1,42 +1,49 @@
-package com.zibin.luban.io;
+package com.zibin.luban.io
 
-import android.content.ContentResolver;
-import android.net.Uri;
-
-import java.io.Closeable;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import android.content.ContentResolver
+import android.net.Uri
+import com.zibin.luban.io.BufferedInputStreamWrap
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.io.PoolAble
+import java.io.Closeable
+import java.io.FileInputStream
+import java.io.InputStream
+import java.lang.Exception
+import java.util.HashSet
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.jvm.Volatile
+import kotlin.jvm.Synchronized
+import kotlin.Throws
+import kotlin.jvm.JvmOverloads
 
 /**
  * @author：luck
  * @date：2021/8/26 4:07 下午
  * @describe：ArrayPoolProvide
  */
-public class ArrayPoolProvide {
+class ArrayPoolProvide {
     /**
      * Uri对应的BufferedInputStreamWrap缓存Key
      */
-    private final HashSet<String> keyCache = new HashSet<>();
+    private val keyCache = HashSet<String>()
 
     /**
      * Uri对应的BufferedInputStreamWrap缓存数据
      */
-    private final ConcurrentHashMap<String, BufferedInputStreamWrap> bufferedLruCache = new ConcurrentHashMap<>();
+    private val bufferedLruCache = ConcurrentHashMap<String, BufferedInputStreamWrap>()
 
     /**
      * byte[]数组的缓存队列
      */
-    private final LruArrayPool arrayPool = new LruArrayPool(LruArrayPool.DEFAULT_SIZE);
+    private val arrayPool = LruArrayPool(LruArrayPool.Companion.DEFAULT_SIZE)
 
     /**
      * 获取相应的byte数组
      *
      * @param bufferSize
      */
-    public byte[] get(int bufferSize) {
-        return arrayPool.get(bufferSize, byte[].class);
+    operator fun get(bufferSize: Int): ByteArray? {
+        return arrayPool.get(bufferSize, ByteArray::class.java)
     }
 
     /**
@@ -44,8 +51,8 @@ public class ArrayPoolProvide {
      *
      * @param buffer
      */
-    public void put(byte[] buffer) {
-        arrayPool.put(buffer);
+    fun put(buffer: ByteArray?) {
+        arrayPool.put(buffer)
     }
 
     /**
@@ -55,24 +62,24 @@ public class ArrayPoolProvide {
      * @param uri      data
      * @return
      */
-    public InputStream openInputStream(ContentResolver resolver, Uri uri) {
-        BufferedInputStreamWrap bufferedInputStreamWrap;
+    fun openInputStream(resolver: ContentResolver, uri: Uri): InputStream? {
+        var bufferedInputStreamWrap: BufferedInputStreamWrap?
         try {
-            bufferedInputStreamWrap = bufferedLruCache.get(uri.toString());
+            bufferedInputStreamWrap = bufferedLruCache[uri.toString()]
             if (bufferedInputStreamWrap != null) {
-                bufferedInputStreamWrap.reset();
+                bufferedInputStreamWrap.reset()
             } else {
-                bufferedInputStreamWrap = wrapInputStream(resolver, uri);
+                bufferedInputStreamWrap = wrapInputStream(resolver, uri)
             }
-        } catch (Exception e) {
-            try {
-                return resolver.openInputStream(uri);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                bufferedInputStreamWrap = wrapInputStream(resolver, uri);
+        } catch (e: Exception) {
+            bufferedInputStreamWrap = try {
+                return resolver.openInputStream(uri)
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+                wrapInputStream(resolver, uri)
             }
         }
-        return bufferedInputStreamWrap;
+        return bufferedInputStreamWrap
     }
 
     /**
@@ -81,19 +88,19 @@ public class ArrayPoolProvide {
      * @param path data
      * @return
      */
-    public InputStream openInputStream(String path) {
-        BufferedInputStreamWrap bufferedInputStreamWrap;
+    fun openInputStream(path: String): InputStream? {
+        var bufferedInputStreamWrap: BufferedInputStreamWrap?
         try {
-            bufferedInputStreamWrap = bufferedLruCache.get(path);
+            bufferedInputStreamWrap = bufferedLruCache[path]
             if (bufferedInputStreamWrap != null) {
-                bufferedInputStreamWrap.reset();
+                bufferedInputStreamWrap.reset()
             } else {
-                bufferedInputStreamWrap = wrapInputStream(path);
+                bufferedInputStreamWrap = wrapInputStream(path)
             }
-        } catch (Exception e) {
-            bufferedInputStreamWrap = wrapInputStream(path);
+        } catch (e: Exception) {
+            bufferedInputStreamWrap = wrapInputStream(path)
         }
-        return bufferedInputStreamWrap;
+        return bufferedInputStreamWrap
     }
 
     /**
@@ -102,18 +109,18 @@ public class ArrayPoolProvide {
      * @param resolver ContentResolver
      * @param uri      data
      */
-    private BufferedInputStreamWrap wrapInputStream(ContentResolver resolver, Uri uri) {
-        BufferedInputStreamWrap bufferedInputStreamWrap = null;
+    private fun wrapInputStream(resolver: ContentResolver, uri: Uri): BufferedInputStreamWrap? {
+        var bufferedInputStreamWrap: BufferedInputStreamWrap? = null
         try {
-            bufferedInputStreamWrap = new BufferedInputStreamWrap(resolver.openInputStream(uri));
-            int available = bufferedInputStreamWrap.available();
-            bufferedInputStreamWrap.mark(available > 0 ? available : BufferedInputStreamWrap.DEFAULT_MARK_READ_LIMIT);
-            bufferedLruCache.put(uri.toString(), bufferedInputStreamWrap);
-            keyCache.add(uri.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+            bufferedInputStreamWrap = BufferedInputStreamWrap(resolver.openInputStream(uri))
+            val available = bufferedInputStreamWrap.available()
+            bufferedInputStreamWrap.mark(if (available > 0) available else BufferedInputStreamWrap.Companion.DEFAULT_MARK_READ_LIMIT)
+            bufferedLruCache[uri.toString()] = bufferedInputStreamWrap
+            keyCache.add(uri.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return bufferedInputStreamWrap;
+        return bufferedInputStreamWrap
     }
 
     /**
@@ -121,55 +128,56 @@ public class ArrayPoolProvide {
      *
      * @param path data
      */
-    private BufferedInputStreamWrap wrapInputStream(String path) {
-        BufferedInputStreamWrap bufferedInputStreamWrap = null;
+    private fun wrapInputStream(path: String): BufferedInputStreamWrap? {
+        var bufferedInputStreamWrap: BufferedInputStreamWrap? = null
         try {
-            bufferedInputStreamWrap = new BufferedInputStreamWrap(new FileInputStream(path));
-            int available = bufferedInputStreamWrap.available();
-            bufferedInputStreamWrap.mark(available > 0 ? available : BufferedInputStreamWrap.DEFAULT_MARK_READ_LIMIT);
-            bufferedLruCache.put(path, bufferedInputStreamWrap);
-            keyCache.add(path);
-        } catch (Exception e) {
-            e.printStackTrace();
+            bufferedInputStreamWrap = BufferedInputStreamWrap(FileInputStream(path))
+            val available = bufferedInputStreamWrap.available()
+            bufferedInputStreamWrap.mark(if (available > 0) available else BufferedInputStreamWrap.Companion.DEFAULT_MARK_READ_LIMIT)
+            bufferedLruCache[path] = bufferedInputStreamWrap
+            keyCache.add(path)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return bufferedInputStreamWrap;
+        return bufferedInputStreamWrap
     }
-
 
     /**
      * 清空内存占用
      */
-    public void clearMemory() {
-        for (String key : keyCache) {
-            BufferedInputStreamWrap inputStreamWrap = bufferedLruCache.get(key);
-            close(inputStreamWrap);
-            bufferedLruCache.remove(key);
+    fun clearMemory() {
+        for (key in keyCache) {
+            val inputStreamWrap = bufferedLruCache[key]
+            close(inputStreamWrap)
+            bufferedLruCache.remove(key)
         }
-        keyCache.clear();
-        arrayPool.clearMemory();
+        keyCache.clear()
+        arrayPool.clearMemory()
     }
 
-    private static ArrayPoolProvide mInstance;
-
-    public static ArrayPoolProvide getInstance() {
-        if (mInstance == null) {
-            synchronized (ArrayPoolProvide.class) {
+    companion object {
+        private var mInstance: ArrayPoolProvide? = null
+        @JvmStatic
+        val instance: ArrayPoolProvide?
+            get() {
                 if (mInstance == null) {
-                    mInstance = new ArrayPoolProvide();
+                    synchronized(ArrayPoolProvide::class.java) {
+                        if (mInstance == null) {
+                            mInstance = ArrayPoolProvide()
+                        }
+                    }
                 }
+                return mInstance
             }
-        }
-        return mInstance;
-    }
 
-    @SuppressWarnings("ConstantConditions")
-    public static void close(Closeable c) {
-        // java.lang.IncompatibleClassChangeError: interface not implemented
-        if (c instanceof Closeable) {
-            try {
-                c.close();
-            } catch (Exception e) {
-                // silence
+        fun close(c: Closeable?) {
+            // java.lang.IncompatibleClassChangeError: interface not implemented
+            if (c is Closeable) {
+                try {
+                    c.close()
+                } catch (e: Exception) {
+                    // silence
+                }
             }
         }
     }

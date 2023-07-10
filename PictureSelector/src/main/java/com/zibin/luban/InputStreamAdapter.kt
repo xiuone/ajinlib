@@ -1,26 +1,34 @@
-package com.zibin.luban;
+package com.zibin.luban
 
-import com.zibin.luban.io.ArrayPoolProvide;
-
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.zibin.luban.io.ArrayPoolProvide.Companion.instance
+import com.zibin.luban.io.ArrayPoolProvide.clearMemory
+import com.zibin.luban.io.ArrayPoolProvide.openInputStream
+import com.zibin.luban.InputStreamProvider
+import kotlin.Throws
+import com.zibin.luban.io.ArrayPoolProvide
+import com.zibin.luban.OnRenameListener
+import com.zibin.luban.OnCompressListener
+import com.zibin.luban.OnNewCompressListener
+import com.zibin.luban.CompressionPredicate
+import com.zibin.luban.Luban
+import com.zibin.luban.LubanUtils
+import java.io.IOException
+import java.io.InputStream
+import kotlin.jvm.JvmOverloads
 
 /**
  * Automatically close the previous InputStream when opening a new InputStream,
- * and finally need to manually call {@link #close()} to release the resource.
+ * and finally need to manually call [.close] to release the resource.
  */
-public abstract class InputStreamAdapter implements InputStreamProvider {
-
-    @Override
-    public InputStream open() throws IOException {
-        return openInternal();
+abstract class InputStreamAdapter : InputStreamProvider {
+    @Throws(IOException::class)
+    override fun open(): InputStream? {
+        return openInternal()
     }
 
-    public abstract InputStream openInternal() throws IOException;
-
-    @Override
-    public void close() {
-        ArrayPoolProvide.getInstance().clearMemory();
+    @Throws(IOException::class)
+    abstract fun openInternal(): InputStream?
+    override fun close() {
+        instance!!.clearMemory()
     }
 }

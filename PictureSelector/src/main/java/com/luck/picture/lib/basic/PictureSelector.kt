@@ -1,125 +1,85 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.FileDirMap
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.entity.LocalMedia
+import java.lang.ref.SoftReference
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2017-5-24 22:30
  * @describe：PictureSelector
  */
+class PictureSelector private constructor(activity: Activity?, fragment: Fragment? = null) {
+    private val mActivity: SoftReference<Activity?>
+    private val mFragment: SoftReference<Fragment?>?
 
-public final class PictureSelector {
-
-    private final SoftReference<Activity> mActivity;
-    private final SoftReference<Fragment> mFragment;
-
-    private PictureSelector(Activity activity) {
-        this(activity, null);
-    }
-
-    private PictureSelector(Fragment fragment) {
-        this(fragment.getActivity(), fragment);
-    }
-
-    private PictureSelector(Activity activity, Fragment fragment) {
-        mActivity = new SoftReference<>(activity);
-        mFragment = new SoftReference<>(fragment);
-    }
-
-    /**
-     * Start PictureSelector for context.
-     *
-     * @param context
-     * @return PictureSelector instance.
-     */
-    public static PictureSelector create(Context context) {
-        return new PictureSelector((Activity) context);
-    }
-
-    /**
-     * Start PictureSelector for Activity.
-     *
-     * @param activity
-     * @return PictureSelector instance.
-     */
-    public static PictureSelector create(AppCompatActivity activity) {
-        return new PictureSelector(activity);
-    }
-
-    /**
-     * Start PictureSelector for Activity.
-     *
-     * @param activity
-     * @return PictureSelector instance.
-     */
-    public static PictureSelector create(FragmentActivity activity) {
-        return new PictureSelector(activity);
-    }
-
-    /**
-     * Start PictureSelector for Fragment.
-     *
-     * @param fragment
-     * @return PictureSelector instance.
-     */
-    public static PictureSelector create(Fragment fragment) {
-        return new PictureSelector(fragment);
-    }
+    private constructor(fragment: Fragment) : this(fragment.activity, fragment) {}
 
     /**
      * @param chooseMode Select the type of images you want，all or images or video or audio
      * @return LocalMedia PictureSelectionModel
-     * Use {@link SelectMimeType}
+     * Use [SelectMimeType]
      */
-    public PictureSelectionModel openGallery(int chooseMode) {
-        return new PictureSelectionModel(this, chooseMode);
+    fun openGallery(chooseMode: Int): PictureSelectionModel {
+        return PictureSelectionModel(this, chooseMode)
     }
 
     /**
      * @param chooseMode only use camera，images or video or audio
      * @return LocalMedia PictureSelectionModel
-     * Use {@link SelectMimeType}
+     * Use [SelectMimeType]
      */
-    public PictureSelectionCameraModel openCamera(int chooseMode) {
-        return new PictureSelectionCameraModel(this, chooseMode);
+    fun openCamera(chooseMode: Int): PictureSelectionCameraModel {
+        return PictureSelectionCameraModel(this, chooseMode)
     }
 
     /**
      * @param chooseMode Select the type of images you want，all or images or video or audio
      * @return LocalMedia PictureSelectionSystemModel
-     * Use {@link SelectMimeType}
-     * <p>
+     * Use [SelectMimeType]
+     *
+     *
      * openSystemGallery mode only supports some APIs
-     * </p>
+     *
      */
-    public PictureSelectionSystemModel openSystemGallery(int chooseMode) {
-        return new PictureSelectionSystemModel(this, chooseMode);
+    fun openSystemGallery(chooseMode: Int): PictureSelectionSystemModel {
+        return PictureSelectionSystemModel(this, chooseMode)
     }
 
     /**
      * @param selectMimeType query the type of images you want，all or images or video or audio
      * @return LocalMedia PictureSelectionQueryModel
-     * Use {@link SelectMimeType}
-     * <p>
-     * only query {@link LocalMedia} data source
-     * </p>
+     * Use [SelectMimeType]
+     *
+     *
+     * only query [LocalMedia] data source
+     *
      */
-    public PictureSelectionQueryModel dataSource(int selectMimeType) {
-        return new PictureSelectionQueryModel(this, selectMimeType);
+    fun dataSource(selectMimeType: Int): PictureSelectionQueryModel {
+        return PictureSelectionQueryModel(this, selectMimeType)
     }
 
     /**
@@ -127,46 +87,89 @@ public final class PictureSelector {
      *
      * @return
      */
-    public PictureSelectionPreviewModel openPreview() {
-        return new PictureSelectionPreviewModel(this);
-    }
-
-    /**
-     * set result
-     *
-     * @param data result
-     * @return
-     */
-    public static Intent putIntentResult(ArrayList<LocalMedia> data) {
-        return new Intent().putParcelableArrayListExtra(PictureConfig.EXTRA_RESULT_SELECTION, data);
-    }
-
-    /**
-     * @param intent
-     * @return get Selector  LocalMedia
-     */
-    public static ArrayList<LocalMedia> obtainSelectorList(Intent intent) {
-        if (intent == null) {
-            return new ArrayList<>();
-        }
-        ArrayList<LocalMedia> result = intent.getParcelableArrayListExtra(PictureConfig.EXTRA_RESULT_SELECTION);
-        return result != null ? result : new ArrayList<>();
+    fun openPreview(): PictureSelectionPreviewModel {
+        return PictureSelectionPreviewModel(this)
     }
 
     /**
      * @return Activity.
      */
-    @Nullable
-    Activity getActivity() {
-        return mActivity.get();
-    }
+    val activity: Activity?
+        get() = mActivity.get()
 
     /**
      * @return Fragment.
      */
-    @Nullable
-    Fragment getFragment() {
-        return mFragment != null ? mFragment.get() : null;
+    val fragment: Fragment?
+        get() = mFragment?.get()
+
+    companion object {
+        /**
+         * Start PictureSelector for context.
+         *
+         * @param context
+         * @return PictureSelector instance.
+         */
+        fun create(context: Context?): PictureSelector {
+            return PictureSelector(context as Activity?)
+        }
+
+        /**
+         * Start PictureSelector for Activity.
+         *
+         * @param activity
+         * @return PictureSelector instance.
+         */
+        fun create(activity: AppCompatActivity?): PictureSelector {
+            return PictureSelector(activity)
+        }
+
+        /**
+         * Start PictureSelector for Activity.
+         *
+         * @param activity
+         * @return PictureSelector instance.
+         */
+        fun create(activity: FragmentActivity?): PictureSelector {
+            return PictureSelector(activity)
+        }
+
+        /**
+         * Start PictureSelector for Fragment.
+         *
+         * @param fragment
+         * @return PictureSelector instance.
+         */
+        fun create(fragment: Fragment): PictureSelector {
+            return PictureSelector(fragment)
+        }
+
+        /**
+         * set result
+         *
+         * @param data result
+         * @return
+         */
+        fun putIntentResult(data: ArrayList<LocalMedia>?): Intent {
+            return Intent().putParcelableArrayListExtra(PictureConfig.EXTRA_RESULT_SELECTION, data)
+        }
+
+        /**
+         * @param intent
+         * @return get Selector  LocalMedia
+         */
+        fun obtainSelectorList(intent: Intent?): ArrayList<LocalMedia> {
+            if (intent == null) {
+                return ArrayList()
+            }
+            val result =
+                intent.getParcelableArrayListExtra<LocalMedia>(PictureConfig.EXTRA_RESULT_SELECTION)
+            return result ?: ArrayList()
+        }
     }
 
+    init {
+        mActivity = SoftReference(activity)
+        mFragment = SoftReference(fragment)
+    }
 }

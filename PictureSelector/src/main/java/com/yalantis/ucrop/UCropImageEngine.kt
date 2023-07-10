@@ -1,16 +1,16 @@
-package com.yalantis.ucrop;
+package com.yalantis.ucrop
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.widget.ImageView;
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.widget.ImageView
 
 /**
  * @author：luck
  * @date：2021/12/1 9:53 下午
  * @describe：UCropImageEngine
  */
-public interface UCropImageEngine {
+open interface UCropImageEngine {
     /**
      * load image source
      *
@@ -18,7 +18,7 @@ public interface UCropImageEngine {
      * @param url
      * @param imageView
      */
-    void loadImage(Context context, String url, ImageView imageView);
+    fun loadImage(context: Context?, url: String?, imageView: ImageView?)
 
     /**
      * load image source
@@ -29,13 +29,18 @@ public interface UCropImageEngine {
      * @param maxHeight
      * @param call
      */
-    void loadImage(Context context, Uri url, int maxWidth, int maxHeight, OnCallbackListener<Bitmap> call);
+    fun loadImage(
+        context: Context?,
+        url: Uri?,
+        maxWidth: Int,
+        maxHeight: Int,
+        call: OnCallbackListener<Bitmap?>?
+    )
 
-
-    interface OnCallbackListener<T> {
+    open interface OnCallbackListener<T> {
         /**
          * @param data
          */
-        void onCall(T data);
+        fun onCall(data: T)
     }
 }

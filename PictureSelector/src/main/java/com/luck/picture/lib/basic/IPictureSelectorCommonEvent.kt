@@ -1,94 +1,107 @@
-package com.luck.picture.lib.basic;
+package com.luck.picture.lib.basic
 
-import android.content.Intent;
-import android.os.Bundle;
-
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-
-import java.util.ArrayList;
+import android.content.Intent
+import android.os.Bundle
+import com.luck.picture.lib.app.PictureAppMaster.Companion.instance
+import com.luck.picture.lib.app.PictureAppMaster.appContext
+import com.luck.picture.lib.app.PictureAppMaster.pictureSelectorEngine
+import com.luck.picture.lib.PictureOnlyCameraFragment.Companion.newInstance
+import com.luck.picture.lib.PictureOnlyCameraFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.getFragmentTag
+import com.luck.picture.lib.PictureSelectorPreviewFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorPreviewFragment.setExternalPreviewData
+import com.luck.picture.lib.PictureSelectorSystemFragment.Companion.newInstance
+import com.luck.picture.lib.PictureSelectorFragment.Companion.newInstance
+import androidx.fragment.app.FragmentActivity
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.FileDirMap
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.luck.picture.lib.entity.LocalMedia
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2021/11/24 10:11 上午
  * @describe：IPictureSelectorCommonEvent
  */
-public interface IPictureSelectorCommonEvent {
-
+interface IPictureSelectorCommonEvent {
     /**
      * 创建数据查询器
      */
-    void onCreateLoader();
+    fun onCreateLoader()
 
     /**
      * View Layout
      *
      * @return resource Id
      */
-    int getResourceId();
+    val resourceId: Int
 
     /**
      * onKey back fragment or finish
      */
-    void onKeyBackFragmentFinish();
+    fun onKeyBackFragmentFinish()
 
     /**
      * fragment onResume
      */
-    void onFragmentResume();
+    fun onFragmentResume()
 
     /**
      * 权限被拒
      */
-    void handlePermissionDenied(String[] permissionArray);
+    fun handlePermissionDenied(permissionArray: Array<String>)
 
     /**
      * onSavedInstance
      *
      * @param savedInstanceState
      */
-    void reStartSavedInstance(Bundle savedInstanceState);
+    fun reStartSavedInstance(savedInstanceState: Bundle?)
 
     /**
      * 权限设置结果
      */
-    void handlePermissionSettingResult(String[] permissions);
+    fun handlePermissionSettingResult(permissions: Array<String?>?)
 
     /**
      * 设置app语言
      */
-    void initAppLanguage();
+    fun initAppLanguage()
 
     /**
      * 重新创建所需引擎
      */
-    void onRecreateEngine();
+    fun onRecreateEngine()
 
     /**
      * 选择拍照或拍视频
      */
-    void onSelectedOnlyCamera();
+    fun onSelectedOnlyCamera()
 
     /**
      * 选择相机类型；拍照、视频、或录音
      */
-    void openSelectedCamera();
+    fun openSelectedCamera()
 
     /**
      * 拍照
      */
-    void openImageCamera();
+    fun openImageCamera()
 
     /**
      * 拍视频
      */
-    void openVideoCamera();
+    fun openVideoCamera()
 
     /**
      * 录音
      */
-    void openSoundRecording();
+    fun openSoundRecording()
 
     /**
      * 选择结果
@@ -97,7 +110,7 @@ public interface IPictureSelectorCommonEvent {
      * @param isSelected   选中状态
      * @return 返回当前选择的状态
      */
-    int confirmSelect(LocalMedia currentMedia, boolean isSelected);
+    fun confirmSelect(currentMedia: LocalMedia, isSelected: Boolean): Int
 
     /**
      * 验证共选类型模式可选条件
@@ -110,7 +123,14 @@ public interface IPictureSelectorCommonEvent {
      * @param duration        视频时长
      * @return
      */
-    boolean checkWithMimeTypeValidity(LocalMedia media, boolean isSelected, String curMimeType, int selectVideoSize, long fileSize, long duration);
+    fun checkWithMimeTypeValidity(
+        media: LocalMedia?,
+        isSelected: Boolean,
+        curMimeType: String,
+        selectVideoSize: Int,
+        fileSize: Long,
+        duration: Long
+    ): Boolean
 
     /**
      * 验证单一类型模式可选条件
@@ -123,7 +143,14 @@ public interface IPictureSelectorCommonEvent {
      * @param duration      视频时长
      * @return
      */
-    boolean checkOnlyMimeTypeValidity(LocalMedia media, boolean isSelected, String curMimeType, String existMimeType, long fileSize, long duration);
+    fun checkOnlyMimeTypeValidity(
+        media: LocalMedia?,
+        isSelected: Boolean,
+        curMimeType: String,
+        existMimeType: String?,
+        fileSize: Long,
+        duration: Long
+    ): Boolean
 
     /**
      * 选择结果数据发生改变
@@ -131,20 +158,19 @@ public interface IPictureSelectorCommonEvent {
      * @param isAddRemove  isAddRemove  添加还是移除操作
      * @param currentMedia 当前操作的对象
      */
-    void onSelectedChange(boolean isAddRemove, LocalMedia currentMedia);
+    fun onSelectedChange(isAddRemove: Boolean, currentMedia: LocalMedia?)
 
     /**
      * 刷新指定数据
      */
-    void onFixedSelectedChange(LocalMedia oldLocalMedia);
-
+    fun onFixedSelectedChange(oldLocalMedia: LocalMedia?)
 
     /**
      * 分发拍照后生成的LocalMedia
      *
      * @param media
      */
-    void dispatchCameraMediaResult(LocalMedia media);
+    fun dispatchCameraMediaResult(media: LocalMedia?)
 
     /**
      * 发送选择数据发生变化的通知
@@ -152,133 +178,134 @@ public interface IPictureSelectorCommonEvent {
      * @param isAddRemove  添加还是移除操作
      * @param currentMedia 当前操作的对象
      */
-    void sendSelectedChangeEvent(boolean isAddRemove, LocalMedia currentMedia);
+    fun sendSelectedChangeEvent(isAddRemove: Boolean, currentMedia: LocalMedia?)
 
     /**
      * 刷新指定数据
      */
-    void sendFixedSelectedChangeEvent(LocalMedia currentMedia);
+    fun sendFixedSelectedChangeEvent(currentMedia: LocalMedia?)
 
     /**
-     * {@link SelectorConfig.selectorStyle.getSelectMainStyle().isSelectNumberStyle}
-     * <p>
+     * []
+     *
+     *
      * isSelectNumberStyle模式下对选择结果编号进行排序
-     * </p>
+     *
      */
-    void sendChangeSubSelectPositionEvent(boolean adapterChange);
+    fun sendChangeSubSelectPositionEvent(adapterChange: Boolean)
 
     /**
      * 原图选项发生变化
      */
-    void sendSelectedOriginalChangeEvent();
+    fun sendSelectedOriginalChangeEvent()
 
     /**
      * 原图选项发生变化
      */
-    void onCheckOriginalChange();
+    fun onCheckOriginalChange()
 
     /**
      * 编辑资源
      */
-    void onEditMedia(Intent intent);
+    fun onEditMedia(intent: Intent?)
 
     /**
      * 选择结果回调
      *
      * @param result
      */
-    void onResultEvent(ArrayList<LocalMedia> result);
+    fun onResultEvent(result: ArrayList<LocalMedia>)
 
     /**
      * 裁剪
      * @param result
      */
-    void onCrop(ArrayList<LocalMedia> result);
+    fun onCrop(result: ArrayList<LocalMedia>)
 
     /**
      * 裁剪
      * @param result
      */
-    void onOldCrop(ArrayList<LocalMedia> result);
+    fun onOldCrop(result: ArrayList<LocalMedia>)
 
     /**
      * 压缩
      *
      * @param result
      */
-    void onCompress(ArrayList<LocalMedia> result);
+    fun onCompress(result: ArrayList<LocalMedia>)
 
     /**
      * 压缩
      *
      * @param result
      */
-    @Deprecated
-    void onOldCompress(ArrayList<LocalMedia> result);
+    @Deprecated("")
+    fun onOldCompress(result: ArrayList<LocalMedia>)
 
     /**
      * 验证是否需要裁剪
      *
      * @return
      */
-    boolean checkCropValidity();
+    fun checkCropValidity(): Boolean
 
     /**
      * 验证是否需要裁剪
      *
      * @return
      */
-    @Deprecated
-    boolean checkOldCropValidity();
+    @Deprecated("")
+    fun checkOldCropValidity(): Boolean
 
     /**
      * 验证是否需要压缩
      *
      * @return
      */
-    boolean checkCompressValidity();
+    fun checkCompressValidity(): Boolean
 
     /**
      * 验证是否需要压缩
      *
      * @return
      */
-    @Deprecated
-    boolean checkOldCompressValidity();
+    @Deprecated("")
+    fun checkOldCompressValidity(): Boolean
 
     /**
      * 验证是否需要做沙盒转换处理
      *
      * @return
      */
-    boolean checkTransformSandboxFile();
+    fun checkTransformSandboxFile(): Boolean
 
     /**
      * 验证是否需要做沙盒转换处理
      *
      * @return
      */
-    @Deprecated
-    boolean checkOldTransformSandboxFile();
+    @Deprecated("")
+    fun checkOldTransformSandboxFile(): Boolean
 
     /**
      * 验证是否需要添加水印
      *
      * @return
      */
-    boolean checkAddBitmapWatermark();
+    fun checkAddBitmapWatermark(): Boolean
 
     /**
      * 验证是否需要处理视频缩略图
      */
-    boolean checkVideoThumbnail();
+    fun checkVideoThumbnail(): Boolean
 
     /**
      * 权限申请
      *
      * @param permissionArray
      */
-    void onApplyPermissionsEvent(int event, String[] permissionArray);
+    fun onApplyPermissionsEvent(event: Int, permissionArray: Array<String?>?)
 
     /**
      * 权限说明
@@ -286,32 +313,32 @@ public interface IPictureSelectorCommonEvent {
      * @param isDisplayExplain  是否显示权限说明
      * @param permissionArray   权限组
      */
-    void onPermissionExplainEvent(boolean isDisplayExplain, String[] permissionArray);
+    fun onPermissionExplainEvent(isDisplayExplain: Boolean, permissionArray: Array<String?>?)
 
     /**
      * 拦截相机事件
      *
-     * @param cameraMode {@link SelectMimeType}
+     * @param cameraMode [SelectMimeType]
      */
-    void onInterceptCameraEvent(int cameraMode);
+    fun onInterceptCameraEvent(cameraMode: Int)
 
     /**
      * 进入Fragment
      */
-    void onEnterFragment();
+    fun onEnterFragment()
 
     /**
      * 退出Fragment
      */
-    void onExitFragment();
+    fun onExitFragment()
 
     /**
      * show loading
      */
-    void showLoading();
+    fun showLoading()
 
     /**
      * dismiss loading
      */
-    void dismissLoading();
+    fun dismissLoading()
 }

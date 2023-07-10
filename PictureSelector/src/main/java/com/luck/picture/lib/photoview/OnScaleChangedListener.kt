@@ -1,11 +1,12 @@
-package com.luck.picture.lib.photoview;
+package com.luck.picture.lib.photoview
 
+import kotlin.jvm.JvmOverloads
+import androidx.appcompat.widget.AppCompatImageView
 
 /**
  * Interface definition for callback to be invoked when attached ImageView scale changes
  */
-public interface OnScaleChangedListener {
-
+interface OnScaleChangedListener {
     /**
      * Callback for when the scale changes
      *
@@ -13,5 +14,5 @@ public interface OnScaleChangedListener {
      * @param focusX      focal point X position
      * @param focusY      focal point Y position
      */
-    void onScaleChange(float scaleFactor, float focusX, float focusY);
+    fun onScaleChange(scaleFactor: Float, focusX: Float, focusY: Float)
 }

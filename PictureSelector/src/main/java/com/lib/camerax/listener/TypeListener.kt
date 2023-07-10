@@ -1,12 +1,14 @@
-package com.lib.camerax.listener;
+package com.lib.camerax.listener
+
+import com.lib.camerax.listener.CameraXOrientationEventListener.OnOrientationChangedListener
+import com.lib.camerax.listener.CameraXPreviewViewTouchListener.CustomTouchListener
 
 /**
  * @author：luck
  * @date：2020-01-04 13:38
  * @describe：TypeListener
  */
-public interface TypeListener {
-    void cancel();
-
-    void confirm();
+interface TypeListener {
+    fun cancel()
+    fun confirm()
 }

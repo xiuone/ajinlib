@@ -1,62 +1,58 @@
-package com.luck.picture.lib.adapter.holder;
+package com.luck.picture.lib.adapter.holder
 
-import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.style.SelectMainStyle;
-import com.luck.picture.lib.utils.DateUtils;
-import com.luck.picture.lib.utils.StyleUtils;
+import android.view.View
+import android.widget.RelativeLayout
+import android.widget.TextView
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.IntentUtils
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import com.luck.picture.lib.R
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.utils.DateUtils
+import com.luck.picture.lib.utils.StyleUtils
 
 /**
  * @author：luck
  * @date：2021/11/20 3:59 下午
  * @describe：VideoViewHolder
  */
-public class VideoViewHolder extends BaseRecyclerMediaHolder {
-    private final TextView tvDuration;
+class VideoViewHolder(itemView: View, config: SelectorConfig) :
+    BaseRecyclerMediaHolder(itemView, config) {
+    private val tvDuration: TextView
+    override fun bindData(media: LocalMedia, position: Int) {
+        super.bindData(media, position)
+        tvDuration.text = DateUtils.formatDurationTime(media.duration)
+    }
 
-    public VideoViewHolder(@NonNull View itemView, SelectorConfig config) {
-        super(itemView, config);
-        tvDuration = itemView.findViewById(R.id.tv_duration);
-        SelectMainStyle adapterStyle = selectorConfig.selectorStyle.getSelectMainStyle();
-        int drawableLeft = adapterStyle.getAdapterDurationDrawableLeft();
+    init {
+        tvDuration = itemView.findViewById(R.id.tv_duration)
+        val adapterStyle = selectorConfig!!.selectorStyle.selectMainStyle
+        val drawableLeft = adapterStyle.adapterDurationDrawableLeft
         if (StyleUtils.checkStyleValidity(drawableLeft)) {
-            tvDuration.setCompoundDrawablesRelativeWithIntrinsicBounds(drawableLeft, 0, 0, 0);
+            tvDuration.setCompoundDrawablesRelativeWithIntrinsicBounds(drawableLeft, 0, 0, 0)
         }
-        int textSize = adapterStyle.getAdapterDurationTextSize();
+        val textSize = adapterStyle.adapterDurationTextSize
         if (StyleUtils.checkSizeValidity(textSize)) {
-            tvDuration.setTextSize(textSize);
+            tvDuration.textSize = textSize.toFloat()
         }
-        int textColor = adapterStyle.getAdapterDurationTextColor();
+        val textColor = adapterStyle.adapterDurationTextColor
         if (StyleUtils.checkStyleValidity(textColor)) {
-            tvDuration.setTextColor(textColor);
+            tvDuration.setTextColor(textColor)
         }
-
-        int shadowBackground = adapterStyle.getAdapterDurationBackgroundResources();
+        val shadowBackground = adapterStyle.adapterDurationBackgroundResources
         if (StyleUtils.checkStyleValidity(shadowBackground)) {
-            tvDuration.setBackgroundResource(shadowBackground);
+            tvDuration.setBackgroundResource(shadowBackground)
         }
-
-        int[] durationGravity = adapterStyle.getAdapterDurationGravity();
+        val durationGravity = adapterStyle.adapterDurationGravity
         if (StyleUtils.checkArrayValidity(durationGravity)) {
-            if (tvDuration.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-                ((RelativeLayout.LayoutParams) tvDuration.getLayoutParams()).removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                for (int i : durationGravity) {
-                    ((RelativeLayout.LayoutParams) tvDuration.getLayoutParams()).addRule(i);
+            if (tvDuration.layoutParams is RelativeLayout.LayoutParams) {
+                (tvDuration.layoutParams as RelativeLayout.LayoutParams).removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                for (i in durationGravity) {
+                    (tvDuration.layoutParams as RelativeLayout.LayoutParams).addRule(i)
                 }
             }
         }
-    }
-
-    @Override
-    public void bindData(LocalMedia media, int position) {
-        super.bindData(media, position);
-        tvDuration.setText(DateUtils.formatDurationTime(media.getDuration()));
     }
 }

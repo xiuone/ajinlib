@@ -1,87 +1,54 @@
-package com.zibin.luban;
+package com.zibin.luban
 
-import android.content.Context;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
+import android.content.Context
+import android.net.Uri
+import android.os.*
+import android.text.TextUtils
+import android.util.Log
+import com.zibin.luban.io.ArrayPoolProvide.Companion.instance
+import kotlin.Throws
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.lang.Exception
+import java.lang.IllegalArgumentException
+import java.lang.NullPointerException
+import java.util.ArrayList
+import kotlin.jvm.JvmOverloads
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import com.zibin.luban.io.ArrayPoolProvide;
-
-@SuppressWarnings("unused")
-public class Luban implements Handler.Callback {
-    private static final String TAG = "Luban";
-    private static final String DEFAULT_DISK_CACHE_DIR = "luban_disk_cache";
-    private static final int MSG_COMPRESS_SUCCESS = 0;
-    private static final int MSG_COMPRESS_START = 1;
-    private static final int MSG_COMPRESS_ERROR = 2;
-    private static final String KEY_SOURCE = "source";
-    private String mTargetDir;
-    private boolean focusAlpha;
-    private boolean isUseIOBufferPool;
-    private int mLeastCompressSize;
-    private OnRenameListener mRenameListener;
-    private OnCompressListener mCompressListener;
-    private OnNewCompressListener mNewCompressListener;
-    private CompressionPredicate mCompressionPredicate;
-    private List<InputStreamProvider> mStreamProviders;
-
-    private Handler mHandler;
-
-    private Luban(Builder builder) {
-        this.mTargetDir = builder.mTargetDir;
-        this.focusAlpha = builder.focusAlpha;
-        this.isUseIOBufferPool = builder.isUseBufferPool;
-        this.mRenameListener = builder.mRenameListener;
-        this.mStreamProviders = builder.mStreamProviders;
-        this.mCompressListener = builder.mCompressListener;
-        this.mNewCompressListener = builder.mNewCompressListener;
-        this.mLeastCompressSize = builder.mLeastCompressSize;
-        this.mCompressionPredicate = builder.mCompressionPredicate;
-        mHandler = new Handler(Looper.getMainLooper(), this);
-    }
-
-    public static Builder with(Context context) {
-        return new Builder(context);
-    }
+class Luban private constructor(builder: Builder) : Handler.Callback {
+    private var mTargetDir: String?
+    private val focusAlpha: Boolean
+    private val isUseIOBufferPool: Boolean
+    private val mLeastCompressSize: Int
+    private val mRenameListener: OnRenameListener?
+    private val mCompressListener: OnCompressListener?
+    private val mNewCompressListener: OnNewCompressListener?
+    private val mCompressionPredicate: CompressionPredicate?
+    private val mStreamProviders: MutableList<InputStreamProvider>?
+    private val mHandler: Handler
 
     /**
      * Returns a file with a cache image name in the private cache directory.
      *
      * @param context A context.
      */
-    private File getImageCacheFile(Context context, String suffix) {
+    private fun getImageCacheFile(context: Context, suffix: String?): File {
         if (TextUtils.isEmpty(mTargetDir)) {
-            mTargetDir = getImageCacheDir(context).getAbsolutePath();
+            mTargetDir = getImageCacheDir(context)!!.absolutePath
         }
-
-        String cacheBuilder = mTargetDir + "/" +
-                System.currentTimeMillis() +
-                (int) (Math.random() * 1000) +
-                (TextUtils.isEmpty(suffix) ? ".jpg" : suffix);
-
-        return new File(cacheBuilder);
+        val cacheBuilder = mTargetDir + "/" +
+                System.currentTimeMillis() + (Math.random() * 1000).toInt() +
+                if (TextUtils.isEmpty(suffix)) ".jpg" else suffix
+        return File(cacheBuilder)
     }
 
-    private File getImageCustomFile(Context context, String filename) {
+    private fun getImageCustomFile(context: Context, filename: String?): File {
         if (TextUtils.isEmpty(mTargetDir)) {
-            mTargetDir = getImageCacheDir(context).getAbsolutePath();
+            mTargetDir = getImageCacheDir(context)!!.absolutePath
         }
-
-        String cacheBuilder = mTargetDir + "/" + filename;
-
-        return new File(cacheBuilder);
+        val cacheBuilder = "$mTargetDir/$filename"
+        return File(cacheBuilder)
     }
 
     /**
@@ -89,333 +56,268 @@ public class Luban implements Handler.Callback {
      * use to store retrieved audio.
      *
      * @param context A context.
-     * @see #getImageCacheDir(Context, String)
+     * @see .getImageCacheDir
      */
-    private File getImageCacheDir(Context context) {
-        return getImageCacheDir(context, DEFAULT_DISK_CACHE_DIR);
-    }
-
-    /**
-     * Returns a directory with the given name in the private cache directory of the application to
-     * use to store retrieved media and thumbnails.
-     *
-     * @param context   A context.
-     * @param cacheName The name of the subdirectory in which to store the cache.
-     * @see #getImageCacheDir(Context)
-     */
-    private static File getImageCacheDir(Context context, String cacheName) {
-        File cacheDir = context.getExternalCacheDir();
-        if (cacheDir != null) {
-            File result = new File(cacheDir, cacheName);
-            if (!result.mkdirs() && (!result.exists() || !result.isDirectory())) {
-                // File wasn't able to create a directory, or the result exists but not a directory
-                return null;
-            }
-            return result;
-        }
-        if (Log.isLoggable(TAG, Log.ERROR)) {
-            Log.e(TAG, "default disk cache dir is null");
-        }
-        return null;
+    private fun getImageCacheDir(context: Context): File? {
+        return getImageCacheDir(context, DEFAULT_DISK_CACHE_DIR)
     }
 
     /**
      * start asynchronous compress thread
      */
-    private void launch(final Context context) {
-        if (mStreamProviders == null || mStreamProviders.size() == 0) {
-            if (mCompressListener != null) {
-                mCompressListener.onError(-1, new NullPointerException("image file cannot be null"));
-            }
-            if (mNewCompressListener != null) {
-                mNewCompressListener.onError("", new NullPointerException("image file cannot be null"));
-            }
-            return;
+    private fun launch(context: Context) {
+        if (mStreamProviders == null || mStreamProviders.size == 0) {
+            mCompressListener?.onError(-1, NullPointerException("image file cannot be null"))
+            mNewCompressListener?.onError("", NullPointerException("image file cannot be null"))
+            return
         }
-
-        Iterator<InputStreamProvider> iterator = mStreamProviders.iterator();
-
+        val iterator = mStreamProviders.iterator()
         while (iterator.hasNext()) {
-            final InputStreamProvider path = iterator.next();
-
-            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_START));
-                        File result = compress(context, path);
-                        Message message = mHandler.obtainMessage(MSG_COMPRESS_SUCCESS);
-                        message.arg1 = path.getIndex();
-                        message.obj = result;
-                        Bundle bundle = new Bundle();
-                        bundle.putString(KEY_SOURCE, path.getPath());
-                        message.setData(bundle);
-                        mHandler.sendMessage(message);
-                    } catch (Exception e) {
-                        Message message = mHandler.obtainMessage(MSG_COMPRESS_ERROR);
-                        message.arg1 = path.getIndex();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(KEY_SOURCE, path.getPath());
-                        message.setData(bundle);
-                        mHandler.sendMessage(message);
-                    }
+            val path = iterator.next()
+            AsyncTask.SERIAL_EXECUTOR.execute {
+                try {
+                    mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_START))
+                    val result = compress(context, path)
+                    val message = mHandler.obtainMessage(MSG_COMPRESS_SUCCESS)
+                    message.arg1 = path.index
+                    message.obj = result
+                    val bundle = Bundle()
+                    bundle.putString(KEY_SOURCE, path.path)
+                    message.data = bundle
+                    mHandler.sendMessage(message)
+                } catch (e: Exception) {
+                    val message = mHandler.obtainMessage(MSG_COMPRESS_ERROR)
+                    message.arg1 = path.index
+                    val bundle = Bundle()
+                    bundle.putString(KEY_SOURCE, path.path)
+                    message.data = bundle
+                    mHandler.sendMessage(message)
                 }
-            });
-
-            iterator.remove();
+            }
+            iterator.remove()
         }
     }
 
     /**
      * start compress and return the file
      */
-    private File get(InputStreamProvider input, Context context) throws IOException {
-        try {
-            return new Engine(input, getImageCacheFile(context, Checker.SINGLE.extSuffix(input)), focusAlpha).compress();
+    @Throws(IOException::class)
+    private operator fun get(input: InputStreamProvider, context: Context): File? {
+        return try {
+            Engine(
+                input,
+                getImageCacheFile(context, Checker.SINGLE.extSuffix(input)),
+                focusAlpha
+            ).compress()
         } finally {
-            input.close();
+            input.close()
         }
     }
 
-    private List<File> get(Context context) throws IOException {
-        List<File> results = new ArrayList<>();
-        Iterator<InputStreamProvider> iterator = mStreamProviders.iterator();
-
+    @Throws(IOException::class)
+    private operator fun get(context: Context): List<File?> {
+        val results: MutableList<File?> = ArrayList()
+        val iterator = mStreamProviders!!.iterator()
         while (iterator.hasNext()) {
-            results.add(compress(context, iterator.next()));
-            iterator.remove();
+            results.add(compress(context, iterator.next()))
+            iterator.remove()
         }
-
-        return results;
+        return results
     }
 
-    private File compress(Context context, InputStreamProvider path) throws IOException {
-        try {
-            return compressReal(context, path);
+    @Throws(IOException::class)
+    private fun compress(context: Context, path: InputStreamProvider): File? {
+        return try {
+            compressReal(context, path)
         } finally {
-            path.close();
+            path.close()
         }
     }
 
-    private File compressReal(Context context, InputStreamProvider path) throws IOException {
-        File result;
-
-        File outFile = getImageCacheFile(context, Checker.SINGLE.extSuffix(path));
-        String source = Checker.isContent(path.getPath()) ? LubanUtils.getPath(context, Uri.parse(path.getPath())) : path.getPath();
+    @Throws(IOException::class)
+    private fun compressReal(context: Context, path: InputStreamProvider): File? {
+        val result: File?
+        var outFile = getImageCacheFile(context, Checker.SINGLE.extSuffix(path))
+        val source = if (Checker.Companion.isContent(path.path)) LubanUtils.getPath(
+            context,
+            Uri.parse(path.path)
+        ) else path.path
         if (mRenameListener != null) {
-            String filename = mRenameListener.rename(source);
-            outFile = getImageCustomFile(context, filename);
+            val filename = mRenameListener.rename(source)
+            outFile = getImageCustomFile(context, filename)
         }
-
-        if (mCompressionPredicate != null) {
+        result = if (mCompressionPredicate != null) {
             if (mCompressionPredicate.apply(source)
-                    && Checker.SINGLE.needCompress(mLeastCompressSize, source)) {
-                result = new Engine(path, outFile, focusAlpha).compress();
+                && Checker.SINGLE.needCompress(mLeastCompressSize, source)
+            ) {
+                Engine(path, outFile, focusAlpha).compress()
             } else {
                 // Ignore compression
-                result = new File(source);
+                File(source)
             }
         } else {
             if (Checker.SINGLE.needCompress(mLeastCompressSize, source)) {
-                result = new Engine(path, outFile, focusAlpha).compress();
+                Engine(path, outFile, focusAlpha).compress()
             } else {
                 // Ignore compression
-                result = new File(source);
+                File(source)
             }
         }
-
-        return result;
+        return result
     }
 
-    @Override
-    public boolean handleMessage(Message msg) {
-
-        switch (msg.what) {
-            case MSG_COMPRESS_START:
-                if (mCompressListener != null) {
-                    mCompressListener.onStart();
-                }
-                if (mNewCompressListener != null) {
-                    mNewCompressListener.onStart();
-                }
-                break;
-            case MSG_COMPRESS_SUCCESS:
-                if (mCompressListener != null) {
-                    mCompressListener.onSuccess(msg.arg1, (File) msg.obj);
-                }
-                if (mNewCompressListener !=null) {
-                    mNewCompressListener.onSuccess(msg.getData().getString(KEY_SOURCE), (File) msg.obj);
-                }
-                break;
-            case MSG_COMPRESS_ERROR:
-                if (mCompressListener != null) {
-                    mCompressListener.onError(msg.arg1, (Throwable) msg.obj);
-                }
-                if (mNewCompressListener != null) {
-                    mNewCompressListener.onError(msg.getData().getString(KEY_SOURCE), (Throwable) msg.obj);
-                }
-                break;
+    override fun handleMessage(msg: Message): Boolean {
+        when (msg.what) {
+            MSG_COMPRESS_START -> {
+                mCompressListener?.onStart()
+                mNewCompressListener?.onStart()
+            }
+            MSG_COMPRESS_SUCCESS -> {
+                mCompressListener?.onSuccess(msg.arg1, msg.obj as File)
+                mNewCompressListener?.onSuccess(msg.data.getString(KEY_SOURCE), msg.obj as File)
+            }
+            MSG_COMPRESS_ERROR -> {
+                mCompressListener?.onError(msg.arg1, msg.obj as Throwable)
+                mNewCompressListener?.onError(msg.data.getString(KEY_SOURCE), msg.obj as Throwable)
+            }
         }
-        return false;
+        return false
     }
 
-    public static class Builder {
-        private Context context;
-        private String mTargetDir;
-        private boolean focusAlpha;
-        private boolean isUseBufferPool = true;
-        private int mLeastCompressSize = 100;
-        private OnRenameListener mRenameListener;
-        private OnCompressListener mCompressListener;
-        private OnNewCompressListener mNewCompressListener;
-        private CompressionPredicate mCompressionPredicate;
-        private List<InputStreamProvider> mStreamProviders;
-
-        Builder(Context context) {
-            this.context = context;
-            this.mStreamProviders = new ArrayList<>();
+    class Builder internal constructor(private val context: Context) {
+        var mTargetDir: String? = null
+        var focusAlpha = false
+        var isUseBufferPool = true
+        var mLeastCompressSize = 100
+        var mRenameListener: OnRenameListener? = null
+        var mCompressListener: OnCompressListener? = null
+        var mNewCompressListener: OnNewCompressListener? = null
+        var mCompressionPredicate: CompressionPredicate? = null
+        val mStreamProviders: MutableList<InputStreamProvider>
+        private fun build(): Luban {
+            return Luban(this)
         }
 
-        private Luban build() {
-            return new Luban(this);
+        fun load(inputStreamProvider: InputStreamProvider): Builder {
+            mStreamProviders.add(inputStreamProvider)
+            return this
         }
 
-        public Builder load(InputStreamProvider inputStreamProvider) {
-            mStreamProviders.add(inputStreamProvider);
-            return this;
-        }
-
-        public <T> Builder load(List<T> list) {
-            int index = -1;
-            for (T src : list) {
-                index++;
-                if (src instanceof String) {
-                    load((String) src, index);
-                } else if (src instanceof File) {
-                    load((File) src, index);
-                } else if (src instanceof Uri) {
-                    load((Uri) src, index);
+        fun <T> load(list: List<T>): Builder {
+            var index = -1
+            for (src in list) {
+                index++
+                if (src is String) {
+                    load(src as String, index)
+                } else if (src is File) {
+                    load(src as File, index)
+                } else if (src is Uri) {
+                    load(src as Uri, index)
                 } else {
-                    throw new IllegalArgumentException("Incoming data type exception, it must be String, File, Uri or Bitmap");
+                    throw IllegalArgumentException("Incoming data type exception, it must be String, File, Uri or Bitmap")
                 }
             }
-            return this;
+            return this
         }
 
-        public Builder load(final File file) {
-            load(file,0);
-            return this;
+        fun load(file: File): Builder {
+            load(file, 0)
+            return this
         }
 
-        private Builder load(final File file, int index) {
-            mStreamProviders.add(new InputStreamAdapter() {
-                @Override
-                public InputStream openInternal() {
-                    return ArrayPoolProvide.getInstance().openInputStream(file.getAbsolutePath());
+        private fun load(file: File, index: Int): Builder {
+            mStreamProviders.add(object : InputStreamAdapter() {
+                override fun openInternal(): InputStream? {
+                    return instance!!.openInputStream(file.absolutePath)
                 }
 
-                @Override
-                public int getIndex() {
-                    return index;
+                override val index: Int
+                    get() = index
+                override val path: String
+                    get() = file.absolutePath
+            })
+            return this
+        }
+
+        fun load(string: String): Builder {
+            load(string, 0)
+            return this
+        }
+
+        private fun load(string: String, index: Int): Builder {
+            mStreamProviders.add(object : InputStreamAdapter() {
+                override fun openInternal(): InputStream? {
+                    return instance!!.openInputStream(string)
                 }
 
-
-                @Override
-                public String getPath() {
-                    return file.getAbsolutePath();
-                }
-            });
-            return this;
+                override val index: Int
+                    get() = index
+                override val path: String
+                    get() = string
+            })
+            return this
         }
 
-        public Builder load(final String string) {
-            load(string, 0);
-            return this;
+        fun load(uri: Uri): Builder {
+            load(uri, 0)
+            return this
         }
 
-        private Builder load(final String string, int index) {
-            mStreamProviders.add(new InputStreamAdapter() {
-                @Override
-                public InputStream openInternal() {
-                    return ArrayPoolProvide.getInstance().openInputStream(string);
-                }
-
-                @Override
-                public int getIndex() {
-                    return index;
+        private fun load(uri: Uri, index: Int): Builder {
+            mStreamProviders.add(object : InputStreamAdapter() {
+                @Throws(IOException::class)
+                override fun openInternal(): InputStream? {
+                    return if (isUseBufferPool) {
+                        instance!!.openInputStream(context.contentResolver, uri)
+                    } else context.contentResolver.openInputStream(uri)
                 }
 
-                @Override
-                public String getPath() {
-                    return string;
-                }
-            });
-            return this;
+                override val index: Int
+                    get() = index
+                override val path: String
+                    get() = if (Checker.Companion.isContent(uri.toString())) uri.toString() else uri.path!!
+            })
+            return this
         }
 
-        public Builder load(final Uri uri) {
-            load(uri, 0);
-            return this;
+        @Deprecated("")
+        fun putGear(gear: Int): Builder {
+            return this
         }
 
-        private Builder load(final Uri uri, int index) {
-            mStreamProviders.add(new InputStreamAdapter() {
-                @Override
-                public InputStream openInternal() throws IOException {
-                    if (isUseBufferPool) {
-                        return ArrayPoolProvide.getInstance().openInputStream(context.getContentResolver(), uri);
-                    }
-                    return context.getContentResolver().openInputStream(uri);
-                }
-
-                @Override
-                public int getIndex() {
-                    return index;
-                }
-
-                @Override
-                public String getPath() {
-                    return Checker.isContent(uri.toString()) ? uri.toString() : uri.getPath();
-                }
-            });
-            return this;
+        fun setRenameListener(listener: OnRenameListener?): Builder {
+            mRenameListener = listener
+            return this
         }
 
-        @Deprecated
-        public Builder putGear(int gear) {
-            return this;
+        fun setCompressListener(listener: OnCompressListener?): Builder {
+            mCompressListener = listener
+            return this
         }
 
-        public Builder setRenameListener(OnRenameListener listener) {
-            this.mRenameListener = listener;
-            return this;
+        fun setCompressListener(listener: OnNewCompressListener?): Builder {
+            mNewCompressListener = listener
+            return this
         }
 
-        public Builder setCompressListener(OnCompressListener listener) {
-            this.mCompressListener = listener;
-            return this;
-        }
-
-        public Builder setCompressListener(OnNewCompressListener listener) {
-            this.mNewCompressListener = listener;
-            return this;
-        }
-
-        public Builder setTargetDir(String targetDir) {
-            this.mTargetDir = targetDir;
-            return this;
+        fun setTargetDir(targetDir: String?): Builder {
+            mTargetDir = targetDir
+            return this
         }
 
         /**
          * Do I need to keep the image's alpha channel
          *
-         * @param focusAlpha <p> true - to keep alpha channel, the compress speed will be slow. </p>
-         *                   <p> false - don't keep alpha channel, it might have a black background.</p>
+         * @param focusAlpha
+         *
+         * true - to keep alpha channel, the compress speed will be slow.
+         *
+         *  false - don't keep alpha channel, it might have a black background.
          */
-        @Deprecated
-        public Builder setFocusAlpha(boolean focusAlpha) {
-            this.focusAlpha = focusAlpha;
-            return this;
+        @Deprecated("")
+        fun setFocusAlpha(focusAlpha: Boolean): Builder {
+            this.focusAlpha = focusAlpha
+            return this
         }
 
         /**
@@ -424,9 +326,9 @@ public class Luban implements Handler.Callback {
          * @param isUseBufferPool
          * @return
          */
-        public Builder isUseIOBufferPool(boolean isUseBufferPool) {
-            this.isUseBufferPool = isUseBufferPool;
-            return this;
+        fun isUseIOBufferPool(isUseBufferPool: Boolean): Builder {
+            this.isUseBufferPool = isUseBufferPool
+            return this
         }
 
         /**
@@ -434,9 +336,9 @@ public class Luban implements Handler.Callback {
          *
          * @param size the value of file size, unit KB, default 100K
          */
-        public Builder ignoreBy(int size) {
-            this.mLeastCompressSize = size;
-            return this;
+        fun ignoreBy(size: Int): Builder {
+            mLeastCompressSize = size
+            return this
         }
 
         /**
@@ -444,40 +346,31 @@ public class Luban implements Handler.Callback {
          *
          * @param compressionPredicate A predicate callback that returns true or false for the given input path should be compressed.
          */
-        public Builder filter(CompressionPredicate compressionPredicate) {
-            this.mCompressionPredicate = compressionPredicate;
-            return this;
+        fun filter(compressionPredicate: CompressionPredicate?): Builder {
+            mCompressionPredicate = compressionPredicate
+            return this
         }
-
 
         /**
          * begin compress image with asynchronous
          */
-        public void launch() {
-            build().launch(context);
+        fun launch() {
+            build().launch(context)
         }
 
-        public File get(final String path) throws IOException {
-            return get(path, 0);
-        }
-
-        public File get(final String path,int index) throws IOException {
-            return build().get(new InputStreamAdapter() {
-                @Override
-                public InputStream openInternal() {
-                    return ArrayPoolProvide.getInstance().openInputStream(path);
+        @JvmOverloads
+        @Throws(IOException::class)
+        operator fun get(path: String, index: Int = 0): File? {
+            return build()[object : InputStreamAdapter() {
+                override fun openInternal(): InputStream? {
+                    return instance!!.openInputStream(path)
                 }
 
-                @Override
-                public int getIndex() {
-                    return index;
-                }
-
-                @Override
-                public String getPath() {
-                    return path;
-                }
-            }, context);
+                override val index: Int
+                    get() = index
+                override val path: String
+                    get() = path
+            }, context]
         }
 
         /**
@@ -485,8 +378,61 @@ public class Luban implements Handler.Callback {
          *
          * @return the thumb image file list
          */
-        public List<File> get() throws IOException {
-            return build().get(context);
+        @Throws(IOException::class)
+        fun get(): List<File?> {
+            return build()[context]
         }
+
+        init {
+            mStreamProviders = ArrayList()
+        }
+    }
+
+    companion object {
+        private const val TAG = "Luban"
+        private const val DEFAULT_DISK_CACHE_DIR = "luban_disk_cache"
+        private const val MSG_COMPRESS_SUCCESS = 0
+        private const val MSG_COMPRESS_START = 1
+        private const val MSG_COMPRESS_ERROR = 2
+        private const val KEY_SOURCE = "source"
+        fun with(context: Context): Builder {
+            return Builder(context)
+        }
+
+        /**
+         * Returns a directory with the given name in the private cache directory of the application to
+         * use to store retrieved media and thumbnails.
+         *
+         * @param context   A context.
+         * @param cacheName The name of the subdirectory in which to store the cache.
+         * @see .getImageCacheDir
+         */
+        private fun getImageCacheDir(context: Context, cacheName: String): File? {
+            val cacheDir = context.externalCacheDir
+            if (cacheDir != null) {
+                val result = File(cacheDir, cacheName)
+                return if (!result.mkdirs() && (!result.exists() || !result.isDirectory)) {
+                    // File wasn't able to create a directory, or the result exists but not a directory
+                    null
+                } else result
+            }
+            if (Log.isLoggable(TAG, Log.ERROR)) {
+                Log.e(TAG, "default disk cache dir is null")
+            }
+            return null
+        }
+    }
+
+    init {
+        mTargetDir = builder.mTargetDir
+        focusAlpha = builder.focusAlpha
+        isUseIOBufferPool = builder.isUseBufferPool
+        mRenameListener = builder.mRenameListener
+        mStreamProviders = builder.mStreamProviders
+        mCompressListener = builder.mCompressListener
+        mNewCompressListener = builder.mNewCompressListener
+        mLeastCompressSize = builder.mLeastCompressSize
+        mCompressionPredicate = builder.mCompressionPredicate
+        mHandler = Handler(Looper.getMainLooper(), this)
     }
 }

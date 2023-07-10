@@ -1,78 +1,49 @@
-package com.luck.picture.lib.magical;
+package com.luck.picture.lib.magical
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Parcel
+import android.os.Parcelable
+import com.luck.picture.lib.config.SelectorProviders.Companion.instance
+import com.luck.picture.lib.config.SelectorProviders.selectorConfig
+import com.luck.picture.lib.basic.InterpolatorFactory.newInterpolator
+import kotlin.jvm.JvmOverloads
+import com.luck.picture.lib.config.SelectorConfig
+import androidx.annotation.RequiresApi
+import androidx.viewpager2.widget.ViewPager2
+import com.luck.picture.lib.config.SelectorProviders
 
-public class ViewParams implements Parcelable {
-    public int left;
-    public int top;
-    public int width;
-    public int height;
-
-    public int getLeft() {
-        return left;
+class ViewParams : Parcelable {
+    var left = 0
+    var top = 0
+    var width = 0
+    var height = 0
+    override fun describeContents(): Int {
+        return 0
     }
 
-    public void setLeft(int left) {
-        this.left = left;
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(left)
+        dest.writeInt(top)
+        dest.writeInt(width)
+        dest.writeInt(height)
     }
 
-    public int getTop() {
-        return top;
+    constructor() {}
+    protected constructor(`in`: Parcel) {
+        left = `in`.readInt()
+        top = `in`.readInt()
+        width = `in`.readInt()
+        height = `in`.readInt()
     }
 
-    public void setTop(int top) {
-        this.top = top;
-    }
+    companion object {
+        val CREATOR: Parcelable.Creator<ViewParams> = object : Parcelable.Creator<ViewParams?> {
+            override fun createFromParcel(source: Parcel): ViewParams? {
+                return ViewParams(source)
+            }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.left);
-        dest.writeInt(this.top);
-        dest.writeInt(this.width);
-        dest.writeInt(this.height);
-    }
-
-    public ViewParams() {
-    }
-
-    protected ViewParams(Parcel in) {
-        this.left = in.readInt();
-        this.top = in.readInt();
-        this.width = in.readInt();
-        this.height = in.readInt();
-    }
-
-    public static final Creator<ViewParams> CREATOR = new Creator<ViewParams>() {
-        @Override
-        public ViewParams createFromParcel(Parcel source) {
-            return new ViewParams(source);
+            override fun newArray(size: Int): Array<ViewParams?> {
+                return arrayOfNulls(size)
+            }
         }
-
-        @Override
-        public ViewParams[] newArray(int size) {
-            return new ViewParams[size];
-        }
-    };
+    }
 }

@@ -1,225 +1,227 @@
-package com.yalantis.ucrop.view;
+package com.yalantis.ucrop.view
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.RectF;
-import android.graphics.Region;
-import android.os.Build;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.animation.OvershootInterpolator;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.IntDef;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-
-import com.luck.picture.lib.R;
-import com.yalantis.ucrop.callback.OverlayViewChangeListener;
-import com.yalantis.ucrop.util.DensityUtil;
-import com.yalantis.ucrop.util.RectUtils;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.*
+import android.os.Build
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.animation.OvershootInterpolator
+import com.yalantis.ucrop.model.AspectRatio.aspectRatioTitle
+import com.yalantis.ucrop.model.AspectRatio.aspectRatioX
+import com.yalantis.ucrop.model.AspectRatio.aspectRatioY
+import com.yalantis.ucrop.util.RectUtils.trapToRect
+import com.yalantis.ucrop.model.CropParameters.contentImageInputUri
+import com.yalantis.ucrop.model.CropParameters.contentImageOutputUri
+import com.yalantis.ucrop.callback.CropBoundsChangeListener.onCropAspectRatioChanged
+import com.yalantis.ucrop.util.RectUtils.getRectSidesFromCorners
+import com.yalantis.ucrop.util.RectUtils.getCornersFromRect
+import com.yalantis.ucrop.util.CubicEasing.easeOut
+import com.yalantis.ucrop.util.CubicEasing.easeInOut
+import com.yalantis.ucrop.util.RotationGestureDetector.onTouchEvent
+import com.yalantis.ucrop.util.RotationGestureDetector.angle
+import com.yalantis.ucrop.callback.OverlayViewChangeListener.onCropRectUpdated
+import com.yalantis.ucrop.util.RectUtils.getCenterFromRect
+import com.yalantis.ucrop.util.DensityUtil.dip2px
+import com.yalantis.ucrop.callback.OverlayViewChangeListener.postTranslate
+import com.yalantis.ucrop.util.BitmapLoadUtils.calculateMaxBitmapSize
+import com.yalantis.ucrop.util.BitmapLoadUtils.getMaxImageSize
+import com.yalantis.ucrop.UCropImageEngine.loadImage
+import com.yalantis.ucrop.util.BitmapLoadUtils.decodeBitmapInBackground
+import com.yalantis.ucrop.util.FileUtils.isContent
+import com.yalantis.ucrop.util.FastBitmapDrawable.bitmap
+import androidx.appcompat.widget.AppCompatTextView
+import kotlin.jvm.JvmOverloads
+import androidx.annotation.ColorInt
+import com.yalantis.ucrop.view.CropImageView
+import androidx.core.content.ContextCompat
+import com.yalantis.ucrop.view.widget.HorizontalProgressWheelView.ScrollingListener
+import com.yalantis.ucrop.view.TransformImageView
+import com.yalantis.ucrop.callback.CropBoundsChangeListener
+import com.yalantis.ucrop.callback.BitmapCropCallback
+import com.yalantis.ucrop.model.ImageState
+import com.yalantis.ucrop.util.RectUtils
+import com.yalantis.ucrop.model.CropParameters
+import com.yalantis.ucrop.task.BitmapCropTask
+import com.yalantis.ucrop.view.CropImageView.WrapCropBoundsRunnable
+import com.yalantis.ucrop.view.CropImageView.ZoomImageToPosition
+import com.yalantis.ucrop.util.CubicEasing
+import com.yalantis.ucrop.util.RotationGestureDetector
+import com.yalantis.ucrop.view.GestureCropImageView.GestureListener
+import com.yalantis.ucrop.view.GestureCropImageView.ScaleListener
+import com.yalantis.ucrop.view.GestureCropImageView.RotateListener
+import com.yalantis.ucrop.view.GestureCropImageView
+import com.yalantis.ucrop.util.RotationGestureDetector.SimpleOnRotationGestureListener
+import com.yalantis.ucrop.view.OverlayView.FreestyleMode
+import com.yalantis.ucrop.view.OverlayView
+import com.yalantis.ucrop.callback.OverlayViewChangeListener
+import androidx.annotation.IntDef
+import androidx.annotation.IntRange
+import androidx.appcompat.widget.AppCompatImageView
+import com.luck.picture.lib.R
+import com.yalantis.ucrop.view.TransformImageView.TransformImageListener
+import com.yalantis.ucrop.model.ExifInfo
+import com.yalantis.ucrop.util.BitmapLoadUtils
+import com.yalantis.ucrop.util.FastBitmapDrawable
+import com.yalantis.ucrop.UCropDevelopConfig
+import com.yalantis.ucrop.callback.BitmapLoadCallback
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
- * <p/>
+ *
+ *
  * This view is used for drawing the overlay on top of the image. It may have frame, crop guidelines and dimmed area.
  * This must have LAYER_TYPE_SOFTWARE to draw itself properly.
  */
-public class OverlayView extends View {
-    private static final long SMOOTH_CENTER_DURATION = 1000;
-    public static final int FREESTYLE_CROP_MODE_DISABLE = 0;
-    public static final int FREESTYLE_CROP_MODE_ENABLE = 1;
-    public static final int FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH = 2;
+class OverlayView @JvmOverloads constructor(
+    context: Context?,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
+) : View(context, attrs, defStyle) {
+    val cropViewRect = RectF()
+    private val mTempRect = RectF()
+    protected var mThisWidth = 0
+    protected var mThisHeight = 0
+    protected var mCropGridCorners: FloatArray
+    protected var mCropGridCenter: FloatArray
+    private var mCropGridRowCount = 0
+    private var mCropGridColumnCount = 0
+    private var mTargetAspectRatio = 0f
+    private var mGridPoints: FloatArray? = null
+    private var mShowCropFrame = false
+    private var mShowCropGrid = false
+    private var mCircleDimmedLayer = false
+    private var mDimmedColor = 0
+    private val mCircularPath = Path()
+    private val mDimmedStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mCropGridPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mCropFramePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mCropFrameCornersPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    public static final boolean DEFAULT_SHOW_CROP_FRAME = true;
-    public static final boolean DEFAULT_SHOW_CROP_GRID = true;
-    public static final boolean DEFAULT_CIRCLE_DIMMED_LAYER = false;
-    public static final int DEFAULT_FREESTYLE_CROP_MODE = FREESTYLE_CROP_MODE_DISABLE;
-    public static final int DEFAULT_CROP_GRID_ROW_COUNT = 2;
-    public static final int DEFAULT_CROP_GRID_COLUMN_COUNT = 2;
-
-    private final RectF mCropViewRect = new RectF();
-    private final RectF mTempRect = new RectF();
-
-    protected int mThisWidth, mThisHeight;
-    protected float[] mCropGridCorners;
-    protected float[] mCropGridCenter;
-
-    private int mCropGridRowCount, mCropGridColumnCount;
-    private float mTargetAspectRatio;
-    private float[] mGridPoints = null;
-    private boolean mShowCropFrame, mShowCropGrid;
-    private boolean mCircleDimmedLayer;
-    private int mDimmedColor;
-    private Path mCircularPath = new Path();
-    private Paint mDimmedStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mCropGridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mCropFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mCropFrameCornersPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     @FreestyleMode
-    private int mFreestyleCropMode = DEFAULT_FREESTYLE_CROP_MODE;
-    private float mPreviousTouchX = -1, mPreviousTouchY = -1;
-    private int mCurrentTouchCornerIndex = -1;
-    private int mTouchPointThreshold;
-    private int mCropRectMinSize;
-    private int mCropRectCornerTouchAreaLineLength;
-    private boolean isDragCenter;
-    private OverlayViewChangeListener mCallback;
-    private ValueAnimator smoothAnimator;
-    private boolean mShouldSetupCropBounds;
-
-    {
-        mTouchPointThreshold = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_corner_touch_threshold);
-        mCropRectMinSize = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_min_size);
-        mCropRectCornerTouchAreaLineLength = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_corner_touch_area_line_length);
-    }
-
-    public OverlayView(Context context) {
-        this(context, null);
-    }
-
-    public OverlayView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public OverlayView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
-    }
-
-    public OverlayViewChangeListener getOverlayViewChangeListener() {
-        return mCallback;
-    }
-
-    public void setOverlayViewChangeListener(OverlayViewChangeListener callback) {
-        mCallback = callback;
-    }
-
-    @NonNull
-    public RectF getCropViewRect() {
-        return mCropViewRect;
-    }
-
-    @Deprecated
+    private var mFreestyleCropMode = DEFAULT_FREESTYLE_CROP_MODE
+    private var mPreviousTouchX = -1f
+    private var mPreviousTouchY = -1f
+    private var mCurrentTouchCornerIndex = -1
+    private var mTouchPointThreshold = 0
+    private var mCropRectMinSize = 0
+    private var mCropRectCornerTouchAreaLineLength = 0
+    private var isDragCenter = false
+    var overlayViewChangeListener: OverlayViewChangeListener? = null
+    private var smoothAnimator: ValueAnimator? = null
+    private var mShouldSetupCropBounds = false
     /***
-     * Please use the new method {@link #getFreestyleCropMode() getFreestyleCropMode} method as we have more than 1 freestyle crop mode.
+     * Please use the new method [getFreestyleCropMode][.getFreestyleCropMode] method as we have more than 1 freestyle crop mode.
      */
-    public boolean isFreestyleCropEnabled() {
-        return mFreestyleCropMode == FREESTYLE_CROP_MODE_ENABLE;
-    }
+    /***
+     * Please use the new method [setFreestyleCropMode][.setFreestyleCropMode] method as we have more than 1 freestyle crop mode.
+     */
+    @get:Deprecated("")
+    @set:Deprecated("")
+    var isFreestyleCropEnabled: Boolean
+        get() = mFreestyleCropMode == FREESTYLE_CROP_MODE_ENABLE
+        set(freestyleCropEnabled) {
+            mFreestyleCropMode =
+                if (freestyleCropEnabled) FREESTYLE_CROP_MODE_ENABLE else FREESTYLE_CROP_MODE_DISABLE
+        }
 
     /**
      * Crop and drag automatically center
      *
      * @param isDragCenter
      */
-    public void setDragSmoothToCenter(boolean isDragCenter) {
-        this.isDragCenter = isDragCenter;
+    fun setDragSmoothToCenter(isDragCenter: Boolean) {
+        this.isDragCenter = isDragCenter
     }
 
-    @Deprecated
-    /***
-     * Please use the new method {@link #setFreestyleCropMode setFreestyleCropMode} method as we have more than 1 freestyle crop mode.
-     */
-    public void setFreestyleCropEnabled(boolean freestyleCropEnabled) {
-        mFreestyleCropMode = freestyleCropEnabled ? FREESTYLE_CROP_MODE_ENABLE : FREESTYLE_CROP_MODE_DISABLE;
-    }
-
-    @FreestyleMode
-    public int getFreestyleCropMode() {
-        return mFreestyleCropMode;
-    }
-
-    public void setFreestyleCropMode(@FreestyleMode int mFreestyleCropMode) {
-        this.mFreestyleCropMode = mFreestyleCropMode;
-        postInvalidate();
-    }
+    @get:FreestyleMode
+    var freestyleCropMode: Int
+        get() = mFreestyleCropMode
+        set(mFreestyleCropMode) {
+            this.mFreestyleCropMode = mFreestyleCropMode
+            postInvalidate()
+        }
 
     /**
-     * Setter for {@link #mCircleDimmedLayer} variable.
+     * Setter for [.mCircleDimmedLayer] variable.
      *
      * @param circleDimmedLayer - set it to true if you want dimmed layer to be an circle
      */
-    public void setCircleDimmedLayer(boolean circleDimmedLayer) {
-        mCircleDimmedLayer = circleDimmedLayer;
+    fun setCircleDimmedLayer(circleDimmedLayer: Boolean) {
+        mCircleDimmedLayer = circleDimmedLayer
     }
 
     /**
      * Setter for crop grid rows count.
-     * Resets {@link #mGridPoints} variable because it is not valid anymore.
+     * Resets [.mGridPoints] variable because it is not valid anymore.
      */
-    public void setCropGridRowCount(@IntRange(from = 0) int cropGridRowCount) {
-        mCropGridRowCount = cropGridRowCount;
-        mGridPoints = null;
+    fun setCropGridRowCount(@IntRange(from = 0) cropGridRowCount: Int) {
+        mCropGridRowCount = cropGridRowCount
+        mGridPoints = null
     }
 
     /**
      * Setter for crop grid columns count.
-     * Resets {@link #mGridPoints} variable because it is not valid anymore.
+     * Resets [.mGridPoints] variable because it is not valid anymore.
      */
-    public void setCropGridColumnCount(@IntRange(from = 0) int cropGridColumnCount) {
-        mCropGridColumnCount = cropGridColumnCount;
-        mGridPoints = null;
+    fun setCropGridColumnCount(@IntRange(from = 0) cropGridColumnCount: Int) {
+        mCropGridColumnCount = cropGridColumnCount
+        mGridPoints = null
     }
 
     /**
-     * Setter for {@link #mShowCropFrame} variable.
+     * Setter for [.mShowCropFrame] variable.
      *
      * @param showCropFrame - set to true if you want to see a crop frame rectangle on top of an image
      */
-    public void setShowCropFrame(boolean showCropFrame) {
-        mShowCropFrame = showCropFrame;
+    fun setShowCropFrame(showCropFrame: Boolean) {
+        mShowCropFrame = showCropFrame
     }
 
     /**
-     * Setter for {@link #mShowCropGrid} variable.
+     * Setter for [.mShowCropGrid] variable.
      *
      * @param showCropGrid - set to true if you want to see a crop grid on top of an image
      */
-    public void setShowCropGrid(boolean showCropGrid) {
-        mShowCropGrid = showCropGrid;
+    fun setShowCropGrid(showCropGrid: Boolean) {
+        mShowCropGrid = showCropGrid
     }
 
     /**
-     * Setter for {@link #mDimmedColor} variable.
+     * Setter for [.mDimmedColor] variable.
      *
      * @param dimmedColor - desired color of dimmed area around the crop bounds
      */
-    public void setDimmedColor(@ColorInt int dimmedColor) {
-        mDimmedColor = dimmedColor;
+    fun setDimmedColor(@ColorInt dimmedColor: Int) {
+        mDimmedColor = dimmedColor
     }
 
     /**
      *
      * @param circleStrokeColor - desired color of dimmed area around the crop bounds
      */
-    public void setCircleStrokeColor(@ColorInt int circleStrokeColor) {
-        mDimmedStrokePaint.setColor(circleStrokeColor);
+    fun setCircleStrokeColor(@ColorInt circleStrokeColor: Int) {
+        mDimmedStrokePaint.color = circleStrokeColor
     }
 
     /**
      * Setter for crop frame stroke width
      */
-    public void setCropFrameStrokeWidth(@IntRange(from = 0) int width) {
-        mCropFramePaint.setStrokeWidth(width);
+    fun setCropFrameStrokeWidth(@IntRange(from = 0) width: Int) {
+        mCropFramePaint.strokeWidth = width.toFloat()
     }
 
     /**
      * Setter for crop grid stroke width
      */
-    public void setCropGridStrokeWidth(@IntRange(from = 0) int width) {
-        mCropGridPaint.setStrokeWidth(width);
+    fun setCropGridStrokeWidth(@IntRange(from = 0) width: Int) {
+        mCropGridPaint.strokeWidth = width.toFloat()
     }
 
     /**
@@ -227,22 +229,22 @@ public class OverlayView extends View {
      *
      * @param width
      */
-    public void setDimmedStrokeWidth(@IntRange(from = 0) int width) {
-        mDimmedStrokePaint.setStrokeWidth(width);
+    fun setDimmedStrokeWidth(@IntRange(from = 0) width: Int) {
+        mDimmedStrokePaint.strokeWidth = width.toFloat()
     }
 
     /**
      * Setter for crop frame color
      */
-    public void setCropFrameColor(@ColorInt int color) {
-        mCropFramePaint.setColor(color);
+    fun setCropFrameColor(@ColorInt color: Int) {
+        mCropFramePaint.color = color
     }
 
     /**
      * Setter for crop grid color
      */
-    public void setCropGridColor(@ColorInt int color) {
-        mCropGridPaint.setColor(color);
+    fun setCropGridColor(@ColorInt color: Int) {
+        mCropGridPaint.color = color
     }
 
     /**
@@ -250,70 +252,73 @@ public class OverlayView extends View {
      *
      * @param targetAspectRatio - aspect ratio for image crop (e.g. 1.77(7) for 16:9)
      */
-    public void setTargetAspectRatio(final float targetAspectRatio) {
-        mTargetAspectRatio = targetAspectRatio;
+    fun setTargetAspectRatio(targetAspectRatio: Float) {
+        mTargetAspectRatio = targetAspectRatio
         if (mThisWidth > 0) {
-            setupCropBounds();
-            postInvalidate();
+            setupCropBounds()
+            postInvalidate()
         } else {
-            mShouldSetupCropBounds = true;
+            mShouldSetupCropBounds = true
         }
     }
 
     /**
      * This method setups crop bounds rectangles for given aspect ratio and view size.
-     * {@link #mCropViewRect} is used to draw crop bounds - uses padding.
+     * [.mCropViewRect] is used to draw crop bounds - uses padding.
      */
-    public void setupCropBounds() {
-        int height = (int) (mThisWidth / mTargetAspectRatio);
+    fun setupCropBounds() {
+        val height = (mThisWidth / mTargetAspectRatio).toInt()
         if (height > mThisHeight) {
-            int width = (int) (mThisHeight * mTargetAspectRatio);
-            int halfDiff = (mThisWidth - width) / 2;
-            mCropViewRect.set(getPaddingLeft() + halfDiff, getPaddingTop(),
-                    getPaddingLeft() + width + halfDiff, getPaddingTop() + mThisHeight);
+            val width = (mThisHeight * mTargetAspectRatio).toInt()
+            val halfDiff = (mThisWidth - width) / 2
+            cropViewRect[(paddingLeft + halfDiff).toFloat(), paddingTop.toFloat(), (
+                    paddingLeft + width + halfDiff).toFloat()] =
+                (paddingTop + mThisHeight).toFloat()
         } else {
-            int halfDiff = (mThisHeight - height) / 2;
-            mCropViewRect.set(getPaddingLeft(), getPaddingTop() + halfDiff,
-                    getPaddingLeft() + mThisWidth, getPaddingTop() + height + halfDiff);
+            val halfDiff = (mThisHeight - height) / 2
+            cropViewRect[paddingLeft.toFloat(), (paddingTop + halfDiff).toFloat(), (
+                    paddingLeft + mThisWidth).toFloat()] =
+                (paddingTop + height + halfDiff).toFloat()
         }
-
-        if (mCallback != null) {
-            mCallback.onCropRectUpdated(mCropViewRect);
+        if (overlayViewChangeListener != null) {
+            overlayViewChangeListener!!.onCropRectUpdated(cropViewRect)
         }
-
-        updateGridPoints();
+        updateGridPoints()
     }
 
-    private void updateGridPoints() {
-        mCropGridCorners = RectUtils.getCornersFromRect(mCropViewRect);
-        mCropGridCenter = RectUtils.getCenterFromRect(mCropViewRect);
-
-        mGridPoints = null;
-        mCircularPath.reset();
-        mCircularPath.addCircle(mCropViewRect.centerX(), mCropViewRect.centerY(),
-                Math.min(mCropViewRect.width(), mCropViewRect.height()) / 2.f, Path.Direction.CW);
+    private fun updateGridPoints() {
+        mCropGridCorners = getCornersFromRect(cropViewRect)
+        mCropGridCenter = getCenterFromRect(cropViewRect)
+        mGridPoints = null
+        mCircularPath.reset()
+        mCircularPath.addCircle(
+            cropViewRect.centerX(), cropViewRect.centerY(),
+            Math.min(cropViewRect.width(), cropViewRect.height()) / 2f, Path.Direction.CW
+        )
     }
 
-    protected void init() {
+    protected fun init() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            setLayerType(LAYER_TYPE_SOFTWARE, null);
+            setLayerType(LAYER_TYPE_SOFTWARE, null)
         }
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        var left = left
+        var top = top
+        var right = right
+        var bottom = bottom
+        super.onLayout(changed, left, top, right, bottom)
         if (changed) {
-            left = getPaddingLeft();
-            top = getPaddingTop();
-            right = getWidth() - getPaddingRight();
-            bottom = getHeight() - getPaddingBottom();
-            mThisWidth = right - left;
-            mThisHeight = bottom - top;
-
+            left = paddingLeft
+            top = paddingTop
+            right = width - paddingRight
+            bottom = height - paddingBottom
+            mThisWidth = right - left
+            mThisHeight = bottom - top
             if (mShouldSetupCropBounds) {
-                mShouldSetupCropBounds = false;
-                setTargetAspectRatio(mTargetAspectRatio);
+                mShouldSetupCropBounds = false
+                setTargetAspectRatio(mTargetAspectRatio)
             }
         }
     }
@@ -321,65 +326,52 @@ public class OverlayView extends View {
     /**
      * Along with image there are dimmed layer, crop bounds and crop guidelines that must be drawn.
      */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        drawDimmedLayer(canvas);
-        drawCropGrid(canvas);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        drawDimmedLayer(canvas)
+        drawCropGrid(canvas)
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (mCropViewRect.isEmpty() || mFreestyleCropMode == FREESTYLE_CROP_MODE_DISABLE) {
-            return false;
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (cropViewRect.isEmpty || mFreestyleCropMode == FREESTYLE_CROP_MODE_DISABLE) {
+            return false
         }
-
-        float x = event.getX();
-        float y = event.getY();
-
-        if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
-            mCurrentTouchCornerIndex = getCurrentTouchIndex(x, y);
-            boolean shouldHandle = mCurrentTouchCornerIndex != -1;
+        var x = event.x
+        var y = event.y
+        if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_DOWN) {
+            mCurrentTouchCornerIndex = getCurrentTouchIndex(x, y)
+            val shouldHandle = mCurrentTouchCornerIndex != -1
             if (!shouldHandle) {
-                mPreviousTouchX = -1;
-                mPreviousTouchY = -1;
+                mPreviousTouchX = -1f
+                mPreviousTouchY = -1f
             } else if (mPreviousTouchX < 0) {
-                mPreviousTouchX = x;
-                mPreviousTouchY = y;
+                mPreviousTouchX = x
+                mPreviousTouchY = y
             }
-            return shouldHandle;
+            return shouldHandle
         }
-
-        if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_MOVE) {
-            if (event.getPointerCount() == 1 && mCurrentTouchCornerIndex != -1) {
-
-                x = Math.min(Math.max(x, getPaddingLeft()), getWidth() - getPaddingRight());
-                y = Math.min(Math.max(y, getPaddingTop()), getHeight() - getPaddingBottom());
-
-                updateCropViewRect(x, y);
-
-                mPreviousTouchX = x;
-                mPreviousTouchY = y;
-
-                return true;
+        if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_MOVE) {
+            if (event.pointerCount == 1 && mCurrentTouchCornerIndex != -1) {
+                x = Math.min(Math.max(x, paddingLeft.toFloat()), (width - paddingRight).toFloat())
+                y = Math.min(Math.max(y, paddingTop.toFloat()), (height - paddingBottom).toFloat())
+                updateCropViewRect(x, y)
+                mPreviousTouchX = x
+                mPreviousTouchY = y
+                return true
             }
         }
-
-        if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            mPreviousTouchX = -1;
-            mPreviousTouchY = -1;
-            mCurrentTouchCornerIndex = -1;
-
-            if (mCallback != null) {
-                mCallback.onCropRectUpdated(mCropViewRect);
+        if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
+            mPreviousTouchX = -1f
+            mPreviousTouchY = -1f
+            mCurrentTouchCornerIndex = -1
+            if (overlayViewChangeListener != null) {
+                overlayViewChangeListener!!.onCropRectUpdated(cropViewRect)
             }
-
             if (isDragCenter) {
-                smoothToCenter();
+                smoothToCenter()
             }
         }
-
-        return false;
+        return false
     }
 
     /**
@@ -390,46 +382,30 @@ public class OverlayView extends View {
      * |        v
      * 3<-------2
      */
-    private void updateCropViewRect(float touchX, float touchY) {
-        mTempRect.set(mCropViewRect);
-
-        switch (mCurrentTouchCornerIndex) {
-            // resize rectangle
-            case 0:
-                mTempRect.set(touchX, touchY, mCropViewRect.right, mCropViewRect.bottom);
-                break;
-            case 1:
-                mTempRect.set(mCropViewRect.left, touchY, touchX, mCropViewRect.bottom);
-                break;
-            case 2:
-                mTempRect.set(mCropViewRect.left, mCropViewRect.top, touchX, touchY);
-                break;
-            case 3:
-                mTempRect.set(touchX, mCropViewRect.top, mCropViewRect.right, touchY);
-                break;
-            // move rectangle
-            case 4:
-                mTempRect.offset(touchX - mPreviousTouchX, touchY - mPreviousTouchY);
-                if (mTempRect.left > getLeft() && mTempRect.top > getTop()
-                        && mTempRect.right < getRight() && mTempRect.bottom < getBottom()) {
-                    mCropViewRect.set(mTempRect);
-                    updateGridPoints();
-                    postInvalidate();
+    private fun updateCropViewRect(touchX: Float, touchY: Float) {
+        mTempRect.set(cropViewRect)
+        when (mCurrentTouchCornerIndex) {
+            0 -> mTempRect[touchX, touchY, cropViewRect.right] = cropViewRect.bottom
+            1 -> mTempRect[cropViewRect.left, touchY, touchX] = cropViewRect.bottom
+            2 -> mTempRect[cropViewRect.left, cropViewRect.top, touchX] = touchY
+            3 -> mTempRect[touchX, cropViewRect.top, cropViewRect.right] = touchY
+            4 -> {
+                mTempRect.offset(touchX - mPreviousTouchX, touchY - mPreviousTouchY)
+                if (mTempRect.left > left && mTempRect.top > top && mTempRect.right < right && mTempRect.bottom < bottom) {
+                    cropViewRect.set(mTempRect)
+                    updateGridPoints()
+                    postInvalidate()
                 }
-                return;
+                return
+            }
         }
-
-        boolean changeHeight = mTempRect.height() >= mCropRectMinSize;
-        boolean changeWidth = mTempRect.width() >= mCropRectMinSize;
-        mCropViewRect.set(
-                changeWidth ? mTempRect.left : mCropViewRect.left,
-                changeHeight ? mTempRect.top : mCropViewRect.top,
-                changeWidth ? mTempRect.right : mCropViewRect.right,
-                changeHeight ? mTempRect.bottom : mCropViewRect.bottom);
-
+        val changeHeight = mTempRect.height() >= mCropRectMinSize
+        val changeWidth = mTempRect.width() >= mCropRectMinSize
+        cropViewRect[if (changeWidth) mTempRect.left else cropViewRect.left, if (changeHeight) mTempRect.top else cropViewRect.top, if (changeWidth) mTempRect.right else cropViewRect.right] =
+            if (changeHeight) mTempRect.bottom else cropViewRect.bottom
         if (changeHeight || changeWidth) {
-            updateGridPoints();
-            postInvalidate();
+            updateGridPoints()
+            postInvalidate()
         }
     }
 
@@ -443,21 +419,28 @@ public class OverlayView extends View {
      *
      * @return - index of corner that is being dragged
      */
-    private int getCurrentTouchIndex(float touchX, float touchY) {
-        int closestPointIndex = -1;
-        double closestPointDistance = mTouchPointThreshold;
-        for (int i = 0; i < 8; i += 2) {
-            double distanceToCorner = Math.sqrt(Math.pow(touchX - mCropGridCorners[i], 2)
-                    + Math.pow(touchY - mCropGridCorners[i + 1], 2));
+    private fun getCurrentTouchIndex(touchX: Float, touchY: Float): Int {
+        var closestPointIndex = -1
+        var closestPointDistance = mTouchPointThreshold.toDouble()
+        var i = 0
+        while (i < 8) {
+            val distanceToCorner = Math.sqrt(
+                Math.pow((touchX - mCropGridCorners[i]).toDouble(), 2.0)
+                        + Math.pow((touchY - mCropGridCorners[i + 1]).toDouble(), 2.0)
+            )
             if (distanceToCorner < closestPointDistance) {
-                closestPointDistance = distanceToCorner;
-                closestPointIndex = i / 2;
+                closestPointDistance = distanceToCorner
+                closestPointIndex = i / 2
             }
+            i += 2
         }
-
-        if (mFreestyleCropMode == FREESTYLE_CROP_MODE_ENABLE && closestPointIndex < 0 && mCropViewRect.contains(touchX, touchY)) {
-            return 4;
-        }
+        return if (mFreestyleCropMode == FREESTYLE_CROP_MODE_ENABLE && closestPointIndex < 0 && cropViewRect.contains(
+                touchX,
+                touchY
+            )
+        ) {
+            4
+        } else closestPointIndex
 
 //        for (int i = 0; i <= 8; i += 2) {
 //
@@ -474,7 +457,6 @@ public class OverlayView extends View {
 //                closestPointIndex = i / 2;
 //            }
 //        }
-        return closestPointIndex;
     }
 
     /**
@@ -482,19 +464,20 @@ public class OverlayView extends View {
      *
      * @param canvas - valid canvas object
      */
-    protected void drawDimmedLayer(@NonNull Canvas canvas) {
-        canvas.save();
+    protected fun drawDimmedLayer(canvas: Canvas) {
+        canvas.save()
         if (mCircleDimmedLayer) {
-            canvas.clipPath(mCircularPath, Region.Op.DIFFERENCE);
+            canvas.clipPath(mCircularPath, Region.Op.DIFFERENCE)
         } else {
-            canvas.clipRect(mCropViewRect, Region.Op.DIFFERENCE);
+            canvas.clipRect(cropViewRect, Region.Op.DIFFERENCE)
         }
-        canvas.drawColor(mDimmedColor);
-        canvas.restore();
-
+        canvas.drawColor(mDimmedColor)
+        canvas.restore()
         if (mCircleDimmedLayer) { // Draw 1px stroke to fix antialias
-            canvas.drawCircle(mCropViewRect.centerX(), mCropViewRect.centerY(),
-                    Math.min(mCropViewRect.width(), mCropViewRect.height()) / 2.f, mDimmedStrokePaint);
+            canvas.drawCircle(
+                cropViewRect.centerX(), cropViewRect.centerY(),
+                Math.min(cropViewRect.width(), cropViewRect.height()) / 2f, mDimmedStrokePaint
+            )
         }
     }
 
@@ -504,51 +487,51 @@ public class OverlayView extends View {
      *
      * @param canvas - valid canvas object
      */
-    protected void drawCropGrid(@NonNull Canvas canvas) {
+    protected fun drawCropGrid(canvas: Canvas) {
         if (mShowCropGrid) {
-            if (mGridPoints == null && !mCropViewRect.isEmpty()) {
-
-                mGridPoints = new float[(mCropGridRowCount) * 4 + (mCropGridColumnCount) * 4];
-
-                int index = 0;
-                for (int i = 0; i < mCropGridRowCount; i++) {
-                    mGridPoints[index++] = mCropViewRect.left;
-                    mGridPoints[index++] = (mCropViewRect.height() * (((float) i + 1.0f) / (float) (mCropGridRowCount + 1))) + mCropViewRect.top;
-                    mGridPoints[index++] = mCropViewRect.right;
-                    mGridPoints[index++] = (mCropViewRect.height() * (((float) i + 1.0f) / (float) (mCropGridRowCount + 1))) + mCropViewRect.top;
+            if (mGridPoints == null && !cropViewRect.isEmpty) {
+                mGridPoints = FloatArray(mCropGridRowCount * 4 + mCropGridColumnCount * 4)
+                var index = 0
+                for (i in 0 until mCropGridRowCount) {
+                    mGridPoints!![index++] = cropViewRect.left
+                    mGridPoints!![index++] =
+                        cropViewRect.height() * ((i.toFloat() + 1.0f) / (mCropGridRowCount + 1).toFloat()) + cropViewRect.top
+                    mGridPoints!![index++] = cropViewRect.right
+                    mGridPoints!![index++] =
+                        cropViewRect.height() * ((i.toFloat() + 1.0f) / (mCropGridRowCount + 1).toFloat()) + cropViewRect.top
                 }
-
-                for (int i = 0; i < mCropGridColumnCount; i++) {
-                    mGridPoints[index++] = (mCropViewRect.width() * (((float) i + 1.0f) / (float) (mCropGridColumnCount + 1))) + mCropViewRect.left;
-                    mGridPoints[index++] = mCropViewRect.top;
-                    mGridPoints[index++] = (mCropViewRect.width() * (((float) i + 1.0f) / (float) (mCropGridColumnCount + 1))) + mCropViewRect.left;
-                    mGridPoints[index++] = mCropViewRect.bottom;
+                for (i in 0 until mCropGridColumnCount) {
+                    mGridPoints!![index++] =
+                        cropViewRect.width() * ((i.toFloat() + 1.0f) / (mCropGridColumnCount + 1).toFloat()) + cropViewRect.left
+                    mGridPoints!![index++] = cropViewRect.top
+                    mGridPoints!![index++] =
+                        cropViewRect.width() * ((i.toFloat() + 1.0f) / (mCropGridColumnCount + 1).toFloat()) + cropViewRect.left
+                    mGridPoints!![index++] = cropViewRect.bottom
                 }
             }
-
             if (mGridPoints != null) {
-                canvas.drawLines(mGridPoints, mCropGridPaint);
+                canvas.drawLines(mGridPoints!!, mCropGridPaint)
             }
         }
-
         if (mShowCropFrame) {
-            canvas.drawRect(mCropViewRect, mCropFramePaint);
+            canvas.drawRect(cropViewRect, mCropFramePaint)
         }
-
         if (mFreestyleCropMode != FREESTYLE_CROP_MODE_DISABLE) {
-            canvas.save();
-
-            mTempRect.set(mCropViewRect);
-            mTempRect.inset(mCropRectCornerTouchAreaLineLength, -mCropRectCornerTouchAreaLineLength);
-            canvas.clipRect(mTempRect, Region.Op.DIFFERENCE);
-
-            mTempRect.set(mCropViewRect);
-            mTempRect.inset(-mCropRectCornerTouchAreaLineLength, mCropRectCornerTouchAreaLineLength);
-            canvas.clipRect(mTempRect, Region.Op.DIFFERENCE);
-
-            canvas.drawRect(mCropViewRect, mCropFrameCornersPaint);
-
-            canvas.restore();
+            canvas.save()
+            mTempRect.set(cropViewRect)
+            mTempRect.inset(
+                mCropRectCornerTouchAreaLineLength.toFloat(),
+                -mCropRectCornerTouchAreaLineLength.toFloat()
+            )
+            canvas.clipRect(mTempRect, Region.Op.DIFFERENCE)
+            mTempRect.set(cropViewRect)
+            mTempRect.inset(
+                -mCropRectCornerTouchAreaLineLength.toFloat(),
+                mCropRectCornerTouchAreaLineLength.toFloat()
+            )
+            canvas.clipRect(mTempRect, Region.Op.DIFFERENCE)
+            canvas.drawRect(cropViewRect, mCropFrameCornersPaint)
+            canvas.restore()
         }
     }
 
@@ -556,111 +539,149 @@ public class OverlayView extends View {
      * This method extracts all needed values from the styled attributes.
      * Those are used to configure the view.
      */
-    @SuppressWarnings("deprecation")
-    protected void processStyledAttributes(@NonNull TypedArray a) {
-        mCircleDimmedLayer = a.getBoolean(R.styleable.ucrop_UCropView_ucrop_circle_dimmed_layer, DEFAULT_CIRCLE_DIMMED_LAYER);
-        mDimmedColor = a.getColor(R.styleable.ucrop_UCropView_ucrop_dimmed_color,
-                getResources().getColor(R.color.ucrop_color_default_dimmed));
-        mDimmedStrokePaint.setColor(mDimmedColor);
-        mDimmedStrokePaint.setStyle(Paint.Style.STROKE);
-        mDimmedStrokePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 1));
-
-        initCropFrameStyle(a);
-        mShowCropFrame = a.getBoolean(R.styleable.ucrop_UCropView_ucrop_show_frame, DEFAULT_SHOW_CROP_FRAME);
-
-        initCropGridStyle(a);
-        mShowCropGrid = a.getBoolean(R.styleable.ucrop_UCropView_ucrop_show_grid, DEFAULT_SHOW_CROP_GRID);
+    fun processStyledAttributes(a: TypedArray) {
+        mCircleDimmedLayer = a.getBoolean(
+            R.styleable.ucrop_UCropView_ucrop_circle_dimmed_layer,
+            DEFAULT_CIRCLE_DIMMED_LAYER
+        )
+        mDimmedColor = a.getColor(
+            R.styleable.ucrop_UCropView_ucrop_dimmed_color,
+            resources.getColor(R.color.ucrop_color_default_dimmed)
+        )
+        mDimmedStrokePaint.color = mDimmedColor
+        mDimmedStrokePaint.style = Paint.Style.STROKE
+        mDimmedStrokePaint.strokeWidth =
+            dip2px(context, 1f).toFloat()
+        initCropFrameStyle(a)
+        mShowCropFrame =
+            a.getBoolean(R.styleable.ucrop_UCropView_ucrop_show_frame, DEFAULT_SHOW_CROP_FRAME)
+        initCropGridStyle(a)
+        mShowCropGrid =
+            a.getBoolean(R.styleable.ucrop_UCropView_ucrop_show_grid, DEFAULT_SHOW_CROP_GRID)
     }
 
     /**
      * This method setups Paint object for the crop bounds.
      */
-    @SuppressWarnings("deprecation")
-    private void initCropFrameStyle(@NonNull TypedArray a) {
-        int cropFrameStrokeSize = a.getDimensionPixelSize(R.styleable.ucrop_UCropView_ucrop_frame_stroke_size,
-                getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_frame_stoke_width));
-        int cropFrameColor = a.getColor(R.styleable.ucrop_UCropView_ucrop_frame_color,
-                getResources().getColor(R.color.ucrop_color_default_crop_frame));
-        mCropFramePaint.setStrokeWidth(cropFrameStrokeSize);
-        mCropFramePaint.setColor(cropFrameColor);
-        mCropFramePaint.setStyle(Paint.Style.STROKE);
-
-        mCropFrameCornersPaint.setStrokeWidth(cropFrameStrokeSize * 3);
-        mCropFrameCornersPaint.setColor(cropFrameColor);
-        mCropFrameCornersPaint.setStyle(Paint.Style.STROKE);
+    private fun initCropFrameStyle(a: TypedArray) {
+        val cropFrameStrokeSize = a.getDimensionPixelSize(
+            R.styleable.ucrop_UCropView_ucrop_frame_stroke_size,
+            resources.getDimensionPixelSize(R.dimen.ucrop_default_crop_frame_stoke_width)
+        )
+        val cropFrameColor = a.getColor(
+            R.styleable.ucrop_UCropView_ucrop_frame_color,
+            resources.getColor(R.color.ucrop_color_default_crop_frame)
+        )
+        mCropFramePaint.strokeWidth = cropFrameStrokeSize.toFloat()
+        mCropFramePaint.color = cropFrameColor
+        mCropFramePaint.style = Paint.Style.STROKE
+        mCropFrameCornersPaint.strokeWidth = (cropFrameStrokeSize * 3).toFloat()
+        mCropFrameCornersPaint.color = cropFrameColor
+        mCropFrameCornersPaint.style = Paint.Style.STROKE
     }
 
     /**
      * This method setups Paint object for the crop guidelines.
      */
-    @SuppressWarnings("deprecation")
-    private void initCropGridStyle(@NonNull TypedArray a) {
-        int cropGridStrokeSize = a.getDimensionPixelSize(R.styleable.ucrop_UCropView_ucrop_grid_stroke_size,
-                getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_grid_stoke_width));
-        int cropGridColor = a.getColor(R.styleable.ucrop_UCropView_ucrop_grid_color,
-                getResources().getColor(R.color.ucrop_color_default_crop_grid));
-        mCropGridPaint.setStrokeWidth(cropGridStrokeSize);
-        mCropGridPaint.setColor(cropGridColor);
-
-        mCropGridRowCount = a.getInt(R.styleable.ucrop_UCropView_ucrop_grid_row_count, DEFAULT_CROP_GRID_ROW_COUNT);
-        mCropGridColumnCount = a.getInt(R.styleable.ucrop_UCropView_ucrop_grid_column_count, DEFAULT_CROP_GRID_COLUMN_COUNT);
+    private fun initCropGridStyle(a: TypedArray) {
+        val cropGridStrokeSize = a.getDimensionPixelSize(
+            R.styleable.ucrop_UCropView_ucrop_grid_stroke_size,
+            resources.getDimensionPixelSize(R.dimen.ucrop_default_crop_grid_stoke_width)
+        )
+        val cropGridColor = a.getColor(
+            R.styleable.ucrop_UCropView_ucrop_grid_color,
+            resources.getColor(R.color.ucrop_color_default_crop_grid)
+        )
+        mCropGridPaint.strokeWidth = cropGridStrokeSize.toFloat()
+        mCropGridPaint.color = cropGridColor
+        mCropGridRowCount =
+            a.getInt(R.styleable.ucrop_UCropView_ucrop_grid_row_count, DEFAULT_CROP_GRID_ROW_COUNT)
+        mCropGridColumnCount = a.getInt(
+            R.styleable.ucrop_UCropView_ucrop_grid_column_count,
+            DEFAULT_CROP_GRID_COLUMN_COUNT
+        )
     }
-
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({FREESTYLE_CROP_MODE_DISABLE, FREESTYLE_CROP_MODE_ENABLE, FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH})
-    public @interface FreestyleMode {
-    }
+    @IntDef(
+        FREESTYLE_CROP_MODE_DISABLE,
+        FREESTYLE_CROP_MODE_ENABLE,
+        FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH
+    )
+    annotation class FreestyleMode
 
     /**
      * 平滑移动至中心
      */
-    private void smoothToCenter() {
-        Point centerPoint = new Point((getRight() + getLeft()) / 2, (getTop() + getBottom()) / 2);
-        final int offsetY = (int) (centerPoint.y - mCropViewRect.centerY());
-        final int offsetX = (int) (centerPoint.x - mCropViewRect.centerX());
-        final RectF before = new RectF(mCropViewRect);
-        RectF after = new RectF(mCropViewRect);
-        after.offset(offsetX, offsetY);
+    private fun smoothToCenter() {
+        val centerPoint = Point((right + left) / 2, (top + bottom) / 2)
+        val offsetY = (centerPoint.y - cropViewRect.centerY()).toInt()
+        val offsetX = (centerPoint.x - cropViewRect.centerX()).toInt()
+        val before = RectF(cropViewRect)
+        val after = RectF(cropViewRect)
+        after.offset(offsetX.toFloat(), offsetY.toFloat())
         if (smoothAnimator != null) {
-            smoothAnimator.cancel();
+            smoothAnimator!!.cancel()
         }
-        smoothAnimator = ValueAnimator.ofFloat(0, 1);
-        smoothAnimator.setDuration(SMOOTH_CENTER_DURATION);
-        smoothAnimator.setInterpolator(new OvershootInterpolator(1.0F));
-        smoothAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (mCallback != null) {
-                    mCallback.onCropRectUpdated(mCropViewRect);
+        smoothAnimator = ValueAnimator.ofFloat(0f, 1f)
+        smoothAnimator.setDuration(SMOOTH_CENTER_DURATION)
+        smoothAnimator.setInterpolator(OvershootInterpolator(1.0f))
+        smoothAnimator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                if (overlayViewChangeListener != null) {
+                    overlayViewChangeListener!!.onCropRectUpdated(cropViewRect)
                 }
             }
-        });
-
-        smoothAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            float lastAnimationValue = 0f;
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float x = offsetX * (float) animation.getAnimatedValue();
-                float y = offsetY * (float) animation.getAnimatedValue();
-                mCropViewRect.set(new RectF(
+        })
+        smoothAnimator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
+            var lastAnimationValue = 0f
+            override fun onAnimationUpdate(animation: ValueAnimator) {
+                val x = offsetX * animation.animatedValue as Float
+                val y = offsetY * animation.animatedValue as Float
+                cropViewRect.set(
+                    RectF(
                         before.left + x,
                         before.top + y,
                         before.right + x,
                         before.bottom + y
-                ));
-                updateGridPoints();
-                postInvalidate();
-                if (mCallback != null) {
-                    mCallback.postTranslate(
-                            offsetX * ((float) animation.getAnimatedValue() - lastAnimationValue),
-                            offsetY * ((float) animation.getAnimatedValue() - lastAnimationValue)
-                    );
+                    )
+                )
+                updateGridPoints()
+                postInvalidate()
+                if (overlayViewChangeListener != null) {
+                    overlayViewChangeListener!!.postTranslate(
+                        offsetX * (animation.animatedValue as Float - lastAnimationValue),
+                        offsetY * (animation.animatedValue as Float - lastAnimationValue)
+                    )
                 }
-                lastAnimationValue = (float) animation.getAnimatedValue();
+                lastAnimationValue = animation.animatedValue as Float
             }
-        });
-        smoothAnimator.start();
+        })
+        smoothAnimator.start()
+    }
+
+    companion object {
+        private const val SMOOTH_CENTER_DURATION: Long = 1000
+        const val FREESTYLE_CROP_MODE_DISABLE = 0
+        const val FREESTYLE_CROP_MODE_ENABLE = 1
+        const val FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH = 2
+        const val DEFAULT_SHOW_CROP_FRAME = true
+        const val DEFAULT_SHOW_CROP_GRID = true
+        const val DEFAULT_CIRCLE_DIMMED_LAYER = false
+        const val DEFAULT_FREESTYLE_CROP_MODE = FREESTYLE_CROP_MODE_DISABLE
+        const val DEFAULT_CROP_GRID_ROW_COUNT = 2
+        const val DEFAULT_CROP_GRID_COLUMN_COUNT = 2
+    }
+
+    init {
+        mTouchPointThreshold =
+            resources.getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_corner_touch_threshold)
+        mCropRectMinSize = resources.getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_min_size)
+        mCropRectCornerTouchAreaLineLength =
+            resources.getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_corner_touch_area_line_length)
+    }
+
+    init {
+        init()
     }
 }

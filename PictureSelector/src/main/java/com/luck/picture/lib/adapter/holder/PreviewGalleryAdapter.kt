@@ -1,65 +1,53 @@
-package com.luck.picture.lib.adapter.holder;
+package com.luck.picture.lib.adapter.holder
 
-import android.graphics.ColorFilter;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.luck.picture.lib.R;
-import com.luck.picture.lib.config.InjectResourceSource;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.config.SelectorConfig;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.style.SelectMainStyle;
-import com.luck.picture.lib.utils.StyleUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.utils.IntentUtils
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.recyclerview.widget.RecyclerView
+import com.luck.picture.lib.R
+import com.luck.picture.lib.config.InjectResourceSource
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.utils.StyleUtils
+import java.util.ArrayList
 
 /**
  * @author：luck
  * @date：2019-11-30 20:50
  * @describe：preview gallery
  */
-public class PreviewGalleryAdapter extends RecyclerView.Adapter<PreviewGalleryAdapter.ViewHolder> {
-    private final List<LocalMedia> mData;
-    private final boolean isBottomPreview;
-    private final SelectorConfig selectorConfig;
-
-    public PreviewGalleryAdapter(SelectorConfig config, boolean isBottomPreview) {
-        this.selectorConfig = config;
-        this.isBottomPreview = isBottomPreview;
-        this.mData = new ArrayList<>(selectorConfig.getSelectedResult());
-        for (int i = 0; i < this.mData.size(); i++) {
-            LocalMedia media = mData.get(i);
-            media.setGalleryEnabledMask(false);
-            media.setChecked(false);
-        }
+class PreviewGalleryAdapter(
+    private val selectorConfig: SelectorConfig,
+    private val isBottomPreview: Boolean
+) : RecyclerView.Adapter<PreviewGalleryAdapter.ViewHolder>() {
+    private val mData: MutableList<LocalMedia>
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutResourceId = InjectResourceSource.getLayoutResource(
+            parent.context,
+            InjectResourceSource.PREVIEW_GALLERY_ITEM_LAYOUT_RESOURCE, selectorConfig
+        )
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(
+                if (layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE) layoutResourceId else R.layout.ps_preview_gallery_item,
+                parent,
+                false
+            )
+        return ViewHolder(itemView)
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutResourceId = InjectResourceSource.getLayoutResource(parent.getContext(),
-                InjectResourceSource.PREVIEW_GALLERY_ITEM_LAYOUT_RESOURCE, selectorConfig);
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(layoutResourceId != InjectResourceSource.DEFAULT_LAYOUT_RESOURCE ? layoutResourceId
-                        : R.layout.ps_preview_gallery_item, parent, false);
-        return new ViewHolder(itemView);
-    }
+    val data: List<LocalMedia>
+        get() = mData
 
-    public List<LocalMedia> getData() {
-        return mData;
-    }
-
-    public void clear() {
-        mData.clear();
+    fun clear() {
+        mData.clear()
     }
 
     /**
@@ -67,23 +55,23 @@ public class PreviewGalleryAdapter extends RecyclerView.Adapter<PreviewGalleryAd
      *
      * @param currentMedia
      */
-    public void addGalleryData(LocalMedia currentMedia) {
-        int lastCheckPosition = getLastCheckPosition();
+    fun addGalleryData(currentMedia: LocalMedia) {
+        val lastCheckPosition = lastCheckPosition
         if (lastCheckPosition != RecyclerView.NO_POSITION) {
-            LocalMedia lastSelectedMedia = mData.get(lastCheckPosition);
-            lastSelectedMedia.setChecked(false);
-            notifyItemChanged(lastCheckPosition);
+            val lastSelectedMedia = mData[lastCheckPosition]
+            lastSelectedMedia.isChecked = false
+            notifyItemChanged(lastCheckPosition)
         }
         if (isBottomPreview && mData.contains(currentMedia)) {
-            int currentPosition = getCurrentPosition(currentMedia);
-            LocalMedia media = mData.get(currentPosition);
-            media.setGalleryEnabledMask(false);
-            media.setChecked(true);
-            notifyItemChanged(currentPosition);
+            val currentPosition = getCurrentPosition(currentMedia)
+            val media = mData[currentPosition]
+            media.isGalleryEnabledMask = false
+            media.isChecked = true
+            notifyItemChanged(currentPosition)
         } else {
-            currentMedia.setChecked(true);
-            mData.add(currentMedia);
-            notifyItemChanged(mData.size() - 1);
+            currentMedia.isChecked = true
+            mData.add(currentMedia)
+            notifyItemChanged(mData.size - 1)
         }
     }
 
@@ -92,16 +80,16 @@ public class PreviewGalleryAdapter extends RecyclerView.Adapter<PreviewGalleryAd
      *
      * @param currentMedia
      */
-    public void removeGalleryData(LocalMedia currentMedia) {
-        int currentPosition = getCurrentPosition(currentMedia);
+    fun removeGalleryData(currentMedia: LocalMedia) {
+        val currentPosition = getCurrentPosition(currentMedia)
         if (currentPosition != RecyclerView.NO_POSITION) {
             if (isBottomPreview) {
-                LocalMedia media = mData.get(currentPosition);
-                media.setGalleryEnabledMask(true);
-                notifyItemChanged(currentPosition);
+                val media = mData[currentPosition]
+                media.isGalleryEnabledMask = true
+                notifyItemChanged(currentPosition)
             } else {
-                mData.remove(currentPosition);
-                notifyItemRemoved(currentPosition);
+                mData.removeAt(currentPosition)
+                notifyItemRemoved(currentPosition)
             }
         }
     }
@@ -111,19 +99,18 @@ public class PreviewGalleryAdapter extends RecyclerView.Adapter<PreviewGalleryAd
      *
      * @param currentMedia
      */
-    public void isSelectMedia(LocalMedia currentMedia) {
-        int lastCheckPosition = getLastCheckPosition();
+    fun isSelectMedia(currentMedia: LocalMedia) {
+        val lastCheckPosition = lastCheckPosition
         if (lastCheckPosition != RecyclerView.NO_POSITION) {
-            LocalMedia lastSelectedMedia = mData.get(lastCheckPosition);
-            lastSelectedMedia.setChecked(false);
-            notifyItemChanged(lastCheckPosition);
+            val lastSelectedMedia = mData[lastCheckPosition]
+            lastSelectedMedia.isChecked = false
+            notifyItemChanged(lastCheckPosition)
         }
-
-        int currentPosition = getCurrentPosition(currentMedia);
+        val currentPosition = getCurrentPosition(currentMedia)
         if (currentPosition != RecyclerView.NO_POSITION) {
-            LocalMedia media = mData.get(currentPosition);
-            media.setChecked(true);
-            notifyItemChanged(currentPosition);
+            val media = mData[currentPosition]
+            media.isChecked = true
+            notifyItemChanged(currentPosition)
         }
     }
 
@@ -132,15 +119,16 @@ public class PreviewGalleryAdapter extends RecyclerView.Adapter<PreviewGalleryAd
      *
      * @return
      */
-    public int getLastCheckPosition() {
-        for (int i = 0; i < mData.size(); i++) {
-            LocalMedia media = mData.get(i);
-            if (media.isChecked()) {
-                return i;
+    val lastCheckPosition: Int
+        get() {
+            for (i in mData.indices) {
+                val media = mData[i]
+                if (media.isChecked) {
+                    return i
+                }
             }
+            return RecyclerView.NO_POSITION
         }
-        return RecyclerView.NO_POSITION;
-    }
 
     /**
      * 获取当前画廊LocalMedia的位置
@@ -148,111 +136,113 @@ public class PreviewGalleryAdapter extends RecyclerView.Adapter<PreviewGalleryAd
      * @param currentMedia
      * @return
      */
-    private int getCurrentPosition(LocalMedia currentMedia) {
-        for (int i = 0; i < mData.size(); i++) {
-            LocalMedia media = mData.get(i);
-            if (TextUtils.equals(media.getPath(), currentMedia.getPath())
-                    || media.getId() == currentMedia.getId()) {
-                return i;
+    private fun getCurrentPosition(currentMedia: LocalMedia): Int {
+        for (i in mData.indices) {
+            val media = mData[i]
+            if (TextUtils.equals(media.path, currentMedia.path)
+                || media.id == currentMedia.id
+            ) {
+                return i
             }
         }
-        return RecyclerView.NO_POSITION;
+        return RecyclerView.NO_POSITION
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LocalMedia item = mData.get(position);
-        ColorFilter colorFilter = StyleUtils.getColorFilter(holder.itemView.getContext(), item.isGalleryEnabledMask()
-                ? R.color.ps_color_half_white : R.color.ps_color_transparent);
-        if (item.isChecked() && item.isGalleryEnabledMask()) {
-            holder.viewBorder.setVisibility(View.VISIBLE);
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = mData[position]
+        val colorFilter = StyleUtils.getColorFilter(
+            holder.itemView.context,
+            if (item.isGalleryEnabledMask) R.color.ps_color_half_white else R.color.ps_color_transparent
+        )
+        if (item.isChecked && item.isGalleryEnabledMask) {
+            holder.viewBorder.visibility = View.VISIBLE
         } else {
-            holder.viewBorder.setVisibility(item.isChecked() ? View.VISIBLE : View.GONE);
+            holder.viewBorder.visibility = if (item.isChecked) View.VISIBLE else View.GONE
         }
-        String path = item.getPath();
-        if (item.isEditorImage() && !TextUtils.isEmpty(item.getCutPath())) {
-            path = item.getCutPath();
-            holder.ivEditor.setVisibility(View.VISIBLE);
+        var path = item.path
+        if (item.isEditorImage && !TextUtils.isEmpty(item.cutPath)) {
+            path = item.cutPath
+            holder.ivEditor.visibility = View.VISIBLE
         } else {
-            holder.ivEditor.setVisibility(View.GONE);
+            holder.ivEditor.visibility = View.GONE
         }
-        holder.ivImage.setColorFilter(colorFilter);
+        holder.ivImage.colorFilter = colorFilter
         if (selectorConfig.imageEngine != null) {
-            selectorConfig.imageEngine.loadGridImage(holder.itemView.getContext(), path, holder.ivImage);
+            selectorConfig.imageEngine.loadGridImage(holder.itemView.context, path, holder.ivImage)
         }
-        holder.ivPlay.setVisibility(PictureMimeType.isHasVideo(item.getMimeType()) ? View.VISIBLE : View.GONE);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    listener.onItemClick(holder.getAbsoluteAdapterPosition(), item, view);
-                }
+        holder.ivPlay.visibility =
+            if (PictureMimeType.isHasVideo(item.mimeType)) View.VISIBLE else View.GONE
+        holder.itemView.setOnClickListener { view ->
+            if (listener != null) {
+                listener!!.onItemClick(holder.adapterPosition, item, view)
             }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (mItemLongClickListener != null) {
-                    int adapterPosition = holder.getAbsoluteAdapterPosition();
-                    mItemLongClickListener.onItemLongClick(holder, adapterPosition, v);
-                }
-                return true;
+        }
+        holder.itemView.setOnLongClickListener { v ->
+            if (mItemLongClickListener != null) {
+                val adapterPosition = holder.adapterPosition
+                mItemLongClickListener!!.onItemLongClick(holder, adapterPosition, v)
             }
-        });
+            true
+        }
     }
 
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var ivImage: ImageView
+        var ivPlay: ImageView
+        var ivEditor: ImageView
+        var viewBorder: View
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivImage;
-        ImageView ivPlay;
-        ImageView ivEditor;
-        View viewBorder;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ivImage = itemView.findViewById(R.id.ivImage);
-            ivPlay = itemView.findViewById(R.id.ivPlay);
-            ivEditor = itemView.findViewById(R.id.ivEditor);
-            viewBorder = itemView.findViewById(R.id.viewBorder);
-            SelectMainStyle selectMainStyle = selectorConfig.selectorStyle.getSelectMainStyle();
-            if (StyleUtils.checkStyleValidity(selectMainStyle.getAdapterImageEditorResources())) {
-                ivEditor.setImageResource(selectMainStyle.getAdapterImageEditorResources());
+        init {
+            ivImage = itemView.findViewById(R.id.ivImage)
+            ivPlay = itemView.findViewById(R.id.ivPlay)
+            ivEditor = itemView.findViewById(R.id.ivEditor)
+            viewBorder = itemView.findViewById(R.id.viewBorder)
+            val selectMainStyle = selectorConfig.selectorStyle.selectMainStyle
+            if (StyleUtils.checkStyleValidity(selectMainStyle.adapterImageEditorResources)) {
+                ivEditor.setImageResource(selectMainStyle.adapterImageEditorResources)
             }
-            if (StyleUtils.checkStyleValidity(selectMainStyle.getAdapterPreviewGalleryFrameResource())) {
-                viewBorder.setBackgroundResource(selectMainStyle.getAdapterPreviewGalleryFrameResource());
+            if (StyleUtils.checkStyleValidity(selectMainStyle.adapterPreviewGalleryFrameResource)) {
+                viewBorder.setBackgroundResource(selectMainStyle.adapterPreviewGalleryFrameResource)
             }
-
-            int adapterPreviewGalleryItemSize = selectMainStyle.getAdapterPreviewGalleryItemSize();
+            val adapterPreviewGalleryItemSize = selectMainStyle.adapterPreviewGalleryItemSize
             if (StyleUtils.checkSizeValidity(adapterPreviewGalleryItemSize)) {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
-                        (adapterPreviewGalleryItemSize, adapterPreviewGalleryItemSize);
-                itemView.setLayoutParams(params);
+                val params = RelativeLayout.LayoutParams(
+                    adapterPreviewGalleryItemSize,
+                    adapterPreviewGalleryItemSize
+                )
+                itemView.layoutParams = params
             }
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return mData.size();
+    override fun getItemCount(): Int {
+        return mData.size
     }
 
-    private OnItemClickListener listener;
-
-    public void setItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+    private var listener: OnItemClickListener? = null
+    fun setItemClickListener(listener: OnItemClickListener?) {
+        this.listener = listener
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(int position, LocalMedia media, View v);
+    interface OnItemClickListener {
+        fun onItemClick(position: Int, media: LocalMedia?, v: View?)
     }
 
-    private OnItemLongClickListener mItemLongClickListener;
-
-    public void setItemLongClickListener(OnItemLongClickListener listener) {
-        this.mItemLongClickListener = listener;
+    private var mItemLongClickListener: OnItemLongClickListener? = null
+    fun setItemLongClickListener(listener: OnItemLongClickListener?) {
+        mItemLongClickListener = listener
     }
 
-    public interface OnItemLongClickListener {
-        void onItemLongClick(RecyclerView.ViewHolder holder, int position, View v);
+    interface OnItemLongClickListener {
+        fun onItemLongClick(holder: RecyclerView.ViewHolder?, position: Int, v: View?)
+    }
+
+    init {
+        mData = ArrayList(selectorConfig.selectedResult)
+        for (i in mData.indices) {
+            val media = mData[i]
+            media.isGalleryEnabledMask = false
+            media.isChecked = false
+        }
     }
 }

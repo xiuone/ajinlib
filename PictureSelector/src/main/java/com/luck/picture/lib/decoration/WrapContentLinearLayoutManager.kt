@@ -3,41 +3,42 @@
  * Author：Zhao
  * Email：joeyzhao1005@gmail.com
  */
+package com.luck.picture.lib.decoration
 
-package com.luck.picture.lib.decoration;
-
-import android.content.Context;
-import android.util.AttributeSet;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.content.Context
+import android.util.AttributeSet
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import java.lang.IndexOutOfBoundsException
 
 /**
  * Created by luck on 2017/12/4.
- * <p>
+ *
+ *
  * RecyclerView Bug：IndexOutOfBoundsException: Inconsistency detected. Invalid view holder adapter的解决方案
  */
-
-public class WrapContentLinearLayoutManager extends LinearLayoutManager {
-    public WrapContentLinearLayoutManager(Context context) {
-        super(context);
+open class WrapContentLinearLayoutManager : LinearLayoutManager {
+    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?, orientation: Int, reverseLayout: Boolean) : super(
+        context,
+        orientation,
+        reverseLayout
+    ) {
     }
 
-    public WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
-        super(context, orientation, reverseLayout);
+    constructor(
+        context: Context?,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes) {
     }
 
-    public WrapContentLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    @Override
-    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         try {
-            super.onLayoutChildren(recycler, state);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+            super.onLayoutChildren(recycler, state)
+        } catch (e: IndexOutOfBoundsException) {
+            e.printStackTrace()
         }
     }
-
 }

@@ -1,14 +1,14 @@
-package com.lib.camerax;
+package com.lib.camerax
 
-import android.content.Context;
-import android.widget.ImageView;
+import android.content.Context
+import android.widget.ImageView
 
 /**
  * @author：luck
  * @date：2021/12/1 9:53 下午
  * @describe：CameraImageEngine
  */
-public interface CameraImageEngine {
+interface CameraImageEngine {
     /**
      * load image source
      *
@@ -16,5 +16,5 @@ public interface CameraImageEngine {
      * @param url
      * @param imageView
      */
-    void loadImage(Context context, String url, ImageView imageView);
+    fun loadImage(context: Context?, url: String?, imageView: ImageView?)
 }

@@ -13,59 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.yalantis.ucrop.util
 
-package com.yalantis.ucrop.util;
-
-import static com.yalantis.ucrop.util.BitmapLoadUtils.close;
-
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.text.TextUtils;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
-
-import androidx.annotation.NonNull;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.MediaStore
+import android.text.TextUtils
+import android.util.Log
+import android.webkit.MimeTypeMap
+import com.yalantis.ucrop.callback.BitmapLoadCallback
+import com.yalantis.ucrop.task.BitmapLoadTask
+import com.yalantis.ucrop.util.BitmapLoadUtils
+import com.yalantis.ucrop.util.EglUtils
+import kotlin.Throws
+import androidx.annotation.RequiresApi
+import com.yalantis.ucrop.util.RotationGestureDetector.OnRotationGestureListener
+import com.yalantis.ucrop.util.RotationGestureDetector
+import java.io.*
+import java.lang.Exception
+import java.lang.IllegalArgumentException
+import java.lang.NumberFormatException
+import java.nio.channels.FileChannel
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * @author Peli
  * @author paulburke (ipaulpro)
  * @version 2013-12-11
  */
-public class FileUtils {
-
+object FileUtils {
     /**
      * TAG for log messages.
      */
-    private static final String TAG = "FileUtils";
-
-    public static final String GIF = ".gif";
-
-    public static final String WEBP = ".webp";
-
-    public static final String JPEG = ".jpeg";
-
-    private FileUtils() {
-    }
+    private const val TAG = "FileUtils"
+    const val GIF = ".gif"
+    const val WEBP = ".webp"
+    const val JPEG = ".jpeg"
 
     /**
      * is content://
@@ -73,11 +64,11 @@ public class FileUtils {
      * @param url
      * @return
      */
-    public static boolean isContent(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return false;
-        }
-        return url.startsWith("content://");
+    @JvmStatic
+    fun isContent(url: String): Boolean {
+        return if (TextUtils.isEmpty(url)) {
+            false
+        } else url.startsWith("content://")
     }
 
     /**
@@ -89,21 +80,31 @@ public class FileUtils {
      * @param outputUri       裁剪输出目录
      * @return
      */
-    public static Uri replaceOutputUri(Context context, boolean isForbidGifWebp, Uri inputUri, Uri outputUri) {
+    @JvmStatic
+    fun replaceOutputUri(
+        context: Context,
+        isForbidGifWebp: Boolean,
+        inputUri: Uri,
+        outputUri: Uri
+    ): Uri {
+        var outputUri = outputUri
         try {
-            String postfix = FileUtils.getPostfixDefaultEmpty(context, isForbidGifWebp, inputUri);
+            val postfix = getPostfixDefaultEmpty(context, isForbidGifWebp, inputUri)
             if (TextUtils.isEmpty(postfix)) {
-                return outputUri;
+                return outputUri
             } else {
-                String outputPath = FileUtils.isContent(outputUri.toString()) ? outputUri.toString() : outputUri.getPath();
-                int lastIndexOf = outputPath.lastIndexOf(".");
-                outputPath = outputPath.replace(outputPath.substring(lastIndexOf), postfix);
-                outputUri = FileUtils.isContent(outputPath) ? Uri.parse(outputPath) : Uri.fromFile(new File(outputPath));
+                var outputPath =
+                    if (isContent(outputUri.toString())) outputUri.toString() else outputUri.path!!
+                val lastIndexOf = outputPath.lastIndexOf(".")
+                outputPath = outputPath.replace(outputPath.substring(lastIndexOf), postfix)
+                outputUri = if (isContent(outputPath)) Uri.parse(outputPath) else Uri.fromFile(
+                    File(outputPath)
+                )
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return outputUri;
+        return outputUri
     }
 
     /**
@@ -114,17 +115,18 @@ public class FileUtils {
      * @param inputUri        裁剪源文件
      * @return
      */
-    public static String getPostfixDefaultJPEG(Context context, boolean isForbidGifWebp, Uri inputUri) {
-        String postfix = FileUtils.JPEG;
+    @JvmStatic
+    fun getPostfixDefaultJPEG(context: Context, isForbidGifWebp: Boolean, inputUri: Uri): String {
+        var postfix = JPEG
         if (isForbidGifWebp) {
-            String mimeType = FileUtils.getMimeTypeFromMediaContentUri(context, inputUri);
-            if (FileUtils.isGif(mimeType)) {
-                postfix = FileUtils.GIF;
-            } else if (FileUtils.isWebp(mimeType)) {
-                postfix = FileUtils.WEBP;
+            val mimeType = getMimeTypeFromMediaContentUri(context, inputUri)
+            if (isGif(mimeType)) {
+                postfix = GIF
+            } else if (isWebp(mimeType)) {
+                postfix = WEBP
             }
         }
-        return postfix;
+        return postfix
     }
 
     /**
@@ -135,17 +137,17 @@ public class FileUtils {
      * @param inputUri        裁剪源
      * @return
      */
-    public static String getPostfixDefaultEmpty(Context context, boolean isForbidGifWebp, Uri inputUri) {
-        String postfix = "";
+    fun getPostfixDefaultEmpty(context: Context, isForbidGifWebp: Boolean, inputUri: Uri): String {
+        var postfix = ""
         if (isForbidGifWebp) {
-            String mimeType = FileUtils.getMimeTypeFromMediaContentUri(context, inputUri);
-            if (FileUtils.isGif(mimeType)) {
-                postfix = FileUtils.GIF;
-            } else if (FileUtils.isWebp(mimeType)) {
-                postfix = FileUtils.WEBP;
+            val mimeType = getMimeTypeFromMediaContentUri(context, inputUri)
+            if (isGif(mimeType)) {
+                postfix = GIF
+            } else if (isWebp(mimeType)) {
+                postfix = WEBP
             }
         }
-        return postfix;
+        return postfix
     }
 
     /**
@@ -154,9 +156,11 @@ public class FileUtils {
      * @param inputUri
      * @return
      */
-    public static String getInputPath(Uri inputUri) {
-        return FileUtils.isContent(inputUri.toString())
-                || isHasHttp(inputUri.toString()) ? inputUri.toString() : inputUri.getPath();
+    @JvmStatic
+    fun getInputPath(inputUri: Uri): String {
+        return if (isContent(inputUri.toString())
+            || isHasHttp(inputUri.toString())
+        ) inputUri.toString() else inputUri.path!!
     }
 
     /**
@@ -165,8 +169,9 @@ public class FileUtils {
      * @param url
      * @return
      */
-    public static boolean isUrlHasVideo(String url) {
-        return !TextUtils.isEmpty(url) && url.toLowerCase().endsWith(".mp4");
+    @JvmStatic
+    fun isUrlHasVideo(url: String): Boolean {
+        return !TextUtils.isEmpty(url) && url.lowercase(Locale.getDefault()).endsWith(".mp4")
     }
 
     /**
@@ -175,8 +180,9 @@ public class FileUtils {
      * @param mimeType
      * @return
      */
-    public static boolean isHasVideo(String mimeType) {
-        return mimeType != null && mimeType.startsWith("video");
+    @JvmStatic
+    fun isHasVideo(mimeType: String?): Boolean {
+        return mimeType != null && mimeType.startsWith("video")
     }
 
     /**
@@ -185,8 +191,9 @@ public class FileUtils {
      * @param mimeType
      * @return
      */
-    public static boolean isHasAudio(String mimeType) {
-        return mimeType != null && mimeType.startsWith("audio");
+    @JvmStatic
+    fun isHasAudio(mimeType: String?): Boolean {
+        return mimeType != null && mimeType.startsWith("audio")
     }
 
     /**
@@ -195,11 +202,13 @@ public class FileUtils {
      * @param path
      * @return
      */
-    public static boolean isHasHttp(String path) {
-        if (TextUtils.isEmpty(path)) {
-            return false;
-        }
-        return path.startsWith("http") || path.startsWith("https") || path.startsWith("/http") || path.startsWith("/https");
+    @JvmStatic
+    fun isHasHttp(path: String): Boolean {
+        return if (TextUtils.isEmpty(path)) {
+            false
+        } else path.startsWith("http") || path.startsWith("https") || path.startsWith(
+            "/http"
+        ) || path.startsWith("/https")
     }
 
     /**
@@ -208,8 +217,9 @@ public class FileUtils {
      * @param mimeType
      * @return
      */
-    public static boolean isGif(String mimeType) {
-        return mimeType != null && (mimeType.equals("image/gif") || mimeType.equals("image/GIF"));
+    @JvmStatic
+    fun isGif(mimeType: String?): Boolean {
+        return mimeType != null && (mimeType == "image/gif" || mimeType == "image/GIF")
     }
 
     /**
@@ -218,10 +228,10 @@ public class FileUtils {
      * @param mimeType
      * @return
      */
-    public static boolean isWebp(String mimeType) {
-        return mimeType != null && (mimeType.equals("image/webp") || mimeType.equals("image/WEBP"));
+    @JvmStatic
+    fun isWebp(mimeType: String?): Boolean {
+        return mimeType != null && (mimeType == "image/webp" || mimeType == "image/WEBP")
     }
-
 
     /**
      * 获取mimeType
@@ -230,26 +240,28 @@ public class FileUtils {
      * @param uri
      * @return
      */
-    public static String getMimeTypeFromMediaContentUri(Context context, Uri uri) {
-        String mimeType;
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver cr = context.getContentResolver();
-            mimeType = cr.getType(uri);
+    @JvmStatic
+    fun getMimeTypeFromMediaContentUri(context: Context, uri: Uri): String? {
+        val mimeType: String?
+        mimeType = if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            val cr = context.contentResolver
+            cr.getType(uri)
         } else {
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                    .toString());
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase());
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
+                uri
+                    .toString()
+            )
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                fileExtension.lowercase(Locale.getDefault())
+            )
         }
-        return mimeType;
+        return mimeType
     }
 
-
-    private static final SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-
-    public static String getCreateFileName(String prefix) {
-        long millis = System.currentTimeMillis();
-        return prefix + sf.format(millis);
+    private val sf = SimpleDateFormat("yyyyMMddHHmmssSSS")
+    fun getCreateFileName(prefix: String): String {
+        val millis = System.currentTimeMillis()
+        return prefix + sf.format(millis)
     }
 
     /**
@@ -258,18 +270,20 @@ public class FileUtils {
      * @param prefix 前缀名
      * @return
      */
-    public static String getCreateFileName() {
-        long millis = System.currentTimeMillis();
-        return sf.format(millis);
-    }
+    @JvmStatic
+    val createFileName: String
+        get() {
+            val millis = System.currentTimeMillis()
+            return sf.format(millis)
+        }
 
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
      * @author paulburke
      */
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    fun isExternalStorageDocument(uri: Uri): Boolean {
+        return "com.android.externalstorage.documents" == uri.authority
     }
 
     /**
@@ -277,8 +291,8 @@ public class FileUtils {
      * @return Whether the Uri authority is DownloadsProvider.
      * @author paulburke
      */
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    fun isDownloadsDocument(uri: Uri): Boolean {
+        return "com.android.providers.downloads.documents" == uri.authority
     }
 
     /**
@@ -286,16 +300,16 @@ public class FileUtils {
      * @return Whether the Uri authority is MediaProvider.
      * @author paulburke
      */
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    fun isMediaDocument(uri: Uri): Boolean {
+        return "com.android.providers.media.documents" == uri.authority
     }
 
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is Google Photos.
      */
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    fun isGooglePhotosUri(uri: Uri): Boolean {
+        return "com.google.android.apps.photos.content" == uri.authority
     }
 
     /**
@@ -309,37 +323,40 @@ public class FileUtils {
      * @return The value of the _data column, which is typically a file path.
      * @author paulburke
      */
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
-
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {
-                column
-        };
-
+    fun getDataColumn(
+        context: Context, uri: Uri?, selection: String?,
+        selectionArgs: Array<String>?
+    ): String? {
+        var cursor: Cursor? = null
+        val column = "_data"
+        val projection = arrayOf(
+            column
+        )
         try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
+            cursor = context.contentResolver.query(
+                uri!!, projection, selection, selectionArgs,
+                null
+            )
             if (cursor != null && cursor.moveToFirst()) {
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
+                val column_index = cursor.getColumnIndexOrThrow(column)
+                return cursor.getString(column_index)
             }
-        } catch (IllegalArgumentException ex) {
-            Log.i(TAG, String.format(Locale.getDefault(), "getDataColumn: _data - [%s]", ex.getMessage()));
+        } catch (ex: IllegalArgumentException) {
+            Log.i(
+                TAG,
+                String.format(Locale.getDefault(), "getDataColumn: _data - [%s]", ex.message)
+            )
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            cursor?.close()
         }
-        return null;
+        return null
     }
 
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
      * Framework Documents, as well as the _data field for the MediaStore and
-     * other file-based ContentProviders.<br>
-     * <br>
+     * other file-based ContentProviders.<br></br>
+     * <br></br>
      * Callers should check whether the path is local before assuming it
      * represents a local file.
      *
@@ -347,78 +364,64 @@ public class FileUtils {
      * @param uri     The Uri to query.
      * @author paulburke
      */
+    @JvmStatic
     @SuppressLint("NewApi")
-    public static String getPath(final Context context, final Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    fun getPath(context: Context, uri: Uri): String? {
+        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
 
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                val docId = DocumentsContract.getDocumentId(uri)
+                val split = docId.split(":").toTypedArray()
+                val type = split[0]
+                if ("primary".equals(type, ignoreCase = true)) {
+                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
                 }
 
                 // TODO handle non-primary volumes
-            }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-
-                final String id = DocumentsContract.getDocumentId(uri);
+            } else if (isDownloadsDocument(uri)) {
+                val id = DocumentsContract.getDocumentId(uri)
                 if (!TextUtils.isEmpty(id)) {
-                    try {
-                        final Uri contentUri = ContentUris.withAppendedId(
-                                Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                        return getDataColumn(context, contentUri, null, null);
-                    } catch (NumberFormatException e) {
-                        Log.i(TAG, e.getMessage());
-                        return null;
+                    return try {
+                        val contentUri = ContentUris.withAppendedId(
+                            Uri.parse("content://downloads/public_downloads"),
+                            java.lang.Long.valueOf(id)
+                        )
+                        getDataColumn(context, contentUri, null, null)
+                    } catch (e: NumberFormatException) {
+                        Log.i(TAG, e.message!!)
+                        null
                     }
                 }
-
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            } else if (isMediaDocument(uri)) {
+                val docId = DocumentsContract.getDocumentId(uri)
+                val split = docId.split(":").toTypedArray()
+                val type = split[0]
+                var contentUri: Uri? = null
+                if ("image" == type) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                } else if ("video" == type) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                } else if ("audio" == type) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{
-                        split[1]
-                };
-
-                return getDataColumn(context, contentUri, selection, selectionArgs);
+                val selection = "_id=?"
+                val selectionArgs = arrayOf(
+                    split[1]
+                )
+                return getDataColumn(context, contentUri, selection, selectionArgs)
             }
-        }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
 
             // Return the remote address
-            if (isGooglePhotosUri(uri)) {
-                return uri.getLastPathSegment();
-            }
-
-            return getDataColumn(context, uri, null, null);
+            return if (isGooglePhotosUri(uri)) {
+                uri.lastPathSegment
+            } else getDataColumn(context, uri, null, null)
+        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
+            return uri.path
         }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
+        return null
     }
 
     /**
@@ -430,20 +433,20 @@ public class FileUtils {
      * @param pathFrom Represents the source file
      * @param pathTo   Represents the destination file
      */
-    public static void copyFile(@NonNull String pathFrom, @NonNull String pathTo) throws IOException {
-        if (pathFrom.equalsIgnoreCase(pathTo)) {
-            return;
+    @Throws(IOException::class)
+    fun copyFile(pathFrom: String, pathTo: String) {
+        if (pathFrom.equals(pathTo, ignoreCase = true)) {
+            return
         }
-
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
+        var outputChannel: FileChannel? = null
+        var inputChannel: FileChannel? = null
         try {
-            inputChannel = new FileInputStream(new File(pathFrom)).getChannel();
-            outputChannel = new FileOutputStream(new File(pathTo)).getChannel();
-            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel = FileInputStream(File(pathFrom)).channel
+            outputChannel = FileOutputStream(File(pathTo)).channel
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel)
         } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
+            inputChannel?.close()
+            outputChannel?.close()
         }
     }
 
@@ -453,32 +456,33 @@ public class FileUtils {
      * will cause both files to become null.
      * Simply skipping this step if the paths are identical.
      *
-     * @param context The context from which to require the {@link ContentResolver}
+     * @param context The context from which to require the [ContentResolver]
      * @param uriFrom Represents the source file
      * @param uriTo   Represents the destination file
      */
-    public static void copyFile(@NonNull Context context, @NonNull Uri uriFrom, @NonNull Uri uriTo) throws IOException {
-        if (uriFrom.equals(uriTo)) {
-            return;
+    @Throws(IOException::class)
+    fun copyFile(context: Context, uriFrom: Uri, uriTo: Uri) {
+        if (uriFrom == uriTo) {
+            return
         }
-
-        InputStream isFrom = null;
-        OutputStream osTo = null;
+        var isFrom: InputStream? = null
+        var osTo: OutputStream? = null
         try {
-            isFrom = context.getContentResolver().openInputStream(uriFrom);
-            osTo = context.getContentResolver().openOutputStream(uriTo);
-
-            if (isFrom instanceof FileInputStream && osTo instanceof FileOutputStream) {
-                FileChannel inputChannel = ((FileInputStream) isFrom).getChannel();
-                FileChannel outputChannel = ((FileOutputStream) osTo).getChannel();
-                inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            isFrom = context.contentResolver.openInputStream(uriFrom)
+            osTo = context.contentResolver.openOutputStream(uriTo)
+            if (isFrom is FileInputStream && osTo is FileOutputStream) {
+                val inputChannel = isFrom.channel
+                val outputChannel = osTo.channel
+                inputChannel.transferTo(0, inputChannel.size(), outputChannel)
             } else {
-                throw new IllegalArgumentException("The input or output URI don't represent a file. " +
-                        "uCrop requires then to represent files in order to work properly.");
+                throw IllegalArgumentException(
+                    "The input or output URI don't represent a file. " +
+                            "uCrop requires then to represent files in order to work properly."
+                )
             }
         } finally {
-            if (isFrom != null) isFrom.close();
-            if (osTo != null) osTo.close();
+            isFrom?.close()
+            osTo?.close()
         }
     }
 
@@ -489,25 +493,25 @@ public class FileUtils {
      * @param os 文件输出流
      * @return
      */
-    public static boolean writeFileFromIS(final InputStream is, final OutputStream os) {
-        OutputStream osBuffer = null;
-        BufferedInputStream isBuffer = null;
-        try {
-            isBuffer = new BufferedInputStream(is);
-            osBuffer = new BufferedOutputStream(os);
-            byte[] data = new byte[1024];
-            for (int len; (len = isBuffer.read(data)) != -1; ) {
-                os.write(data, 0, len);
+    fun writeFileFromIS(`is`: InputStream?, os: OutputStream): Boolean {
+        var osBuffer: OutputStream? = null
+        var isBuffer: BufferedInputStream? = null
+        return try {
+            isBuffer = BufferedInputStream(`is`)
+            osBuffer = BufferedOutputStream(os)
+            val data = ByteArray(1024)
+            var len: Int
+            while (isBuffer.read(data).also { len = it } != -1) {
+                os.write(data, 0, len)
             }
-            os.flush();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            os.flush()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         } finally {
-            close(isBuffer);
-            close(osBuffer);
+            BitmapLoadUtils.close(isBuffer)
+            BitmapLoadUtils.close(osBuffer)
         }
     }
-
 }

@@ -1,18 +1,23 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
 
-import android.content.Context;
+import android.content.Context
+import com.luck.picture.lib.config.SelectorConfig
 
 /**
  * @author：luck
  * @date：2022/4/3 5:37 下午
  * @describe：OnVideoThumbnailEventListener
  */
-public interface OnVideoThumbnailEventListener {
+interface OnVideoThumbnailEventListener {
     /**
      * video thumbnail
      *
      * @param context
      * @param videoPath
      */
-    void onVideoThumbnail(Context context, String videoPath, OnKeyValueResultCallbackListener call);
+    fun onVideoThumbnail(
+        context: Context?,
+        videoPath: String?,
+        call: OnKeyValueResultCallbackListener?
+    )
 }

@@ -1,37 +1,35 @@
-package com.luck.picture.lib.photoview;
+package com.luck.picture.lib.photoview
 
-import android.view.MotionEvent;
-import android.widget.ImageView;
+import android.view.MotionEvent
+import android.widget.ImageView
+import kotlin.jvm.JvmOverloads
+import androidx.appcompat.widget.AppCompatImageView
+import java.lang.IllegalStateException
 
-class Util {
-
-    static void checkZoomLevels(float minZoom, float midZoom,
-                                float maxZoom) {
-        if (minZoom >= midZoom) {
-            throw new IllegalArgumentException(
-                    "Minimum zoom has to be less than Medium zoom. Call setMinimumZoom() with a more appropriate value");
-        } else if (midZoom >= maxZoom) {
-            throw new IllegalArgumentException(
-                    "Medium zoom has to be less than Maximum zoom. Call setMaximumZoom() with a more appropriate value");
-        }
+internal object Util {
+    fun checkZoomLevels(
+        minZoom: Float, midZoom: Float,
+        maxZoom: Float
+    ) {
+        require(minZoom < midZoom) { "Minimum zoom has to be less than Medium zoom. Call setMinimumZoom() with a more appropriate value" }
+        require(midZoom < maxZoom) { "Medium zoom has to be less than Maximum zoom. Call setMaximumZoom() with a more appropriate value" }
     }
 
-    static boolean hasDrawable(ImageView imageView) {
-        return imageView.getDrawable() != null;
+    fun hasDrawable(imageView: ImageView): Boolean {
+        return imageView.drawable != null
     }
 
-    static boolean isSupportedScaleType(final ImageView.ScaleType scaleType) {
+    fun isSupportedScaleType(scaleType: ImageView.ScaleType?): Boolean {
         if (scaleType == null) {
-            return false;
+            return false
         }
-        switch (scaleType) {
-            case MATRIX:
-                throw new IllegalStateException("Matrix scale type is not supported");
+        when (scaleType) {
+            ImageView.ScaleType.MATRIX -> throw IllegalStateException("Matrix scale type is not supported")
         }
-        return true;
+        return true
     }
 
-    static int getPointerIndex(int action) {
-        return (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+    fun getPointerIndex(action: Int): Int {
+        return action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
     }
 }

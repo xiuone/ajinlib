@@ -7,6 +7,7 @@ import android.os.Environment
 import android.util.Log
 import java.io.*
 import java.math.BigDecimal
+import java.text.SimpleDateFormat
 
 
 private const val TAG = "FileUtils"
@@ -355,5 +356,18 @@ fun String.compressImageByPath( savePath: String?, aimSize: Int): String? {
         System.gc() //提醒系统及时回收
     }
     return saveSucPath
+}
+
+
+/**
+ * 根据时间戳创建文件名
+ *
+ * @param prefix 前缀名
+ * @return
+ */
+private val sf by lazy { SimpleDateFormat("yyyyMMddHHmmssSSS") }
+fun String.getCreateFileName(): String {
+    val millis = System.currentTimeMillis()
+    return this + sf.format(millis)
 }
 

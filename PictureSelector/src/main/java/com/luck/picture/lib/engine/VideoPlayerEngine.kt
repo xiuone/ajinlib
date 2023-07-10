@@ -1,24 +1,27 @@
-package com.luck.picture.lib.engine;
+package com.luck.picture.lib.engine
 
-import android.content.Context;
-import android.view.View;
-
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnPlayerListener;
+import android.content.Context
+import android.view.View
+import com.luck.picture.lib.config.PictureMimeType.isHasHttp
+import com.luck.picture.lib.config.SelectorProviders.Companion.instance
+import com.luck.picture.lib.config.SelectorProviders.selectorConfig
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.config.SelectorProviders
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnPlayerListener
 
 /**
  * @author：luck
  * @date：2022/7/1 22:25 下午
  * @describe：VideoPlayerEngine
  */
-public interface VideoPlayerEngine<T> {
-
+interface VideoPlayerEngine<T> {
     /**
      * Create player instance
      *
      * @param context
      */
-    View onCreateVideoPlayer(Context context);
+    fun onCreateVideoPlayer(context: Context?): View
 
     /**
      * Start playing video
@@ -26,60 +29,61 @@ public interface VideoPlayerEngine<T> {
      * @param player
      * @param media
      */
-    void onStarPlayer(T player, LocalMedia media);
+    fun onStarPlayer(player: T, media: LocalMedia)
 
     /**
      * 恢复播放
      */
-    void onResume(T player);
+    fun onResume(player: T)
 
     /**
      * 暂停播放
      */
-    void onPause(T player);
+    fun onPause(player: T)
 
     /**
      * Video Playing status
      *
      * @param player
      */
-    boolean isPlaying(T player);
+    fun isPlaying(player: T): Boolean
 
     /**
      * addPlayListener
-     * {@link OnPlayerListener}
+     * [OnPlayerListener]
      *
      * @param playerListener
      */
-    void addPlayListener(OnPlayerListener playerListener);
+    fun addPlayListener(playerListener: OnPlayerListener)
 
     /**
      * removePlayListener
-     * <p>
-     * {@link OnPlayerListener}
+     *
+     *
+     * [OnPlayerListener]
      *
      * @param playerListener
      */
-    void removePlayListener(OnPlayerListener playerListener);
+    fun removePlayListener(playerListener: OnPlayerListener?)
 
     /**
      * Player attached to window
      *
      * @param player
      */
-    void onPlayerAttachedToWindow(T player);
+    fun onPlayerAttachedToWindow(player: T)
 
     /**
      * Player detached to window
      *
      * @param player
      */
-    void onPlayerDetachedFromWindow(T player);
+    fun onPlayerDetachedFromWindow(player: T)
 
     /**
      * destroy release player
      *
      * @param player
      */
-    void destroy(T player);
+    fun destroy(player: T)
 }

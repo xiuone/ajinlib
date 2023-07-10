@@ -1,23 +1,24 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
+import com.luck.picture.lib.config.SelectorConfig
 
 /**
  * @author：luck
  * @date：2021/12/1 8:48 下午
  * @describe：OnPermissionDescriptionListener
  */
-public interface OnPermissionDescriptionListener {
+interface OnPermissionDescriptionListener {
     /**
      * Permission description
      *
      * @param fragment
      * @param permissionArray
      */
-    void onPermissionDescription(Fragment fragment, String[] permissionArray);
+    fun onPermissionDescription(fragment: Fragment?, permissionArray: Array<String?>?)
 
     /**
      * onDismiss
      */
-    void onDismiss(Fragment fragment);
+    fun onDismiss(fragment: Fragment?)
 }

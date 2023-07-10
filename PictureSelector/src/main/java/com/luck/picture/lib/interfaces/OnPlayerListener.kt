@@ -1,28 +1,28 @@
-package com.luck.picture.lib.interfaces;
+package com.luck.picture.lib.interfaces
 
 /**
  * @author：luck
  * @date：2022/7/1 23:25 下午
  * @describe：OnPlayerListener
  */
-public interface OnPlayerListener {
+interface OnPlayerListener {
     /**
      * player error
      */
-    void onPlayerError();
+    fun onPlayerError()
 
     /**
      * playing
      */
-    void onPlayerReady();
+    fun onPlayerReady()
 
     /**
      * preparing to play
      */
-    void onPlayerLoading();
+    fun onPlayerLoading()
 
     /**
      * end of playback
      */
-    void onPlayerEnd();
+    fun onPlayerEnd()
 }
