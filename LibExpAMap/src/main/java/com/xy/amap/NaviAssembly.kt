@@ -3,7 +3,7 @@ package com.xy.amap
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import com.amap.api.maps2d.model.LatLng
+import com.amap.api.maps.model.LatLng
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 import xy.xy.base.dialog.base.BaseDialog

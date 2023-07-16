@@ -38,8 +38,7 @@ android {
 dependencies {
     implementation project(path: ':Base')
 
-    api 'com.amap.api:location:latest.integration'
-    api 'com.amap.api:map2d:latest.integration'
+    api 'com.amap.api:3dmap:latest.integration'
     api 'com.amap.api:search:latest.integration'
 }
 

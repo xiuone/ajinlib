@@ -5,13 +5,25 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--  一般来说，允许用户自定义头像的app都需要这个权限  -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+        android:minSdkVersion = "33"/>
+    <!--  如果你想开发音乐播放器之类需要获取音频的app，加上这个权限  -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"
+        android:minSdkVersion = "33"/>
+    <!--  如果你想开发视频编辑器之类需要获取视频的app，加上这个权限  -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"
+        android:minSdkVersion = "33"/>
+    <!--  向前兼容  -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <queries package="${applicationId}">
         <intent>
@@ -76,12 +88,12 @@
             android:foregroundServiceType="location" />
 
         <activity
-            android:name=".PictureSelectorSupporterActivity"
+            android:name="picture.luck.picture.lib.basic.PictureSelectorSupporterActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Base.Theme.NoActionBar"/>
 
         <activity
-            android:name=".basic.PictureSelectorTransparentActivity"
+            android:name="picture.luck.picture.lib.basic.PictureSelectorTransparentActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Picture.Theme.Translucent"/>
         <activity
@@ -100,5 +112,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
     </application>
 </manifest>

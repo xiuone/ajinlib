@@ -9,8 +9,7 @@ import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
 import xy.xy.base.utils.ContextHolder
-import xy.xy.base.utils.exp.getSpInt
-import xy.xy.base.utils.exp.setSpInt
+import xy.xy.base.utils.Logger
 import java.io.File
 
 /**
@@ -45,12 +44,12 @@ object AudioPlayer{
                         }
                     } catch (e: Throwable) {
                         e.printStackTrace()
-                        xy.xy.base.utils.Logger.d(  " error:${e.message}")
+                        Logger.d(  " error:${e.message}")
                     }
                     sendEmptyMessageDelayed(WHAT_COUNT_PLAY, mIntervalTime)
                 }
                 WHAT_DECODE_FAILED -> {
-                    xy.xy.base.utils.Logger.d( "convert() error: $playFile")
+                    Logger.d( "convert() error: $playFile")
                 }
                 WHAT_DECODE_SUCCEED -> startInner()
             }
@@ -63,41 +62,22 @@ object AudioPlayer{
         return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
-    fun getCurrentVoiceCall() =
-        ContextHolder.getContext()?.getSpInt(audioPlayCallStatus,AudioManager.STREAM_VOICE_CALL)?:AudioManager.STREAM_VOICE_CALL
-
-    private fun setCurrentVoiceCall(voiceCall:Int) =
-        ContextHolder.getContext()?.setSpInt(audioPlayCallStatus,voiceCall)
-
-    fun setRelativeCurrentVoiceCall() = if (isMicroPhone()) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
-
-    fun isMicroPhone() = getCurrentVoiceCall() == AudioManager.STREAM_VOICE_CALL
+    /**
+     * 设置音频来源
+     *
+     * @param audioFile 待播放音频的文件路径
+     */
+    fun setDataMusicSource(audioFile: String,vararg listener: OnPlayListener) =
+        setOnlyDataSource(audioFile, AudioManager.STREAM_MUSIC,*listener)
 
     /**
      * 设置音频来源
      *
      * @param audioFile 待播放音频的文件路径
      */
-    fun setDataSource(audioFile: String,vararg listener: OnPlayListener) = setDataSource(audioFile, getCurrentVoiceCall(),*listener)
-
-    /**
-     * 设置音频来源
-     *
-     * @param audioFile 待播放音频的文件路径
-     */
-    fun setDataMusicSource(audioFile: String,vararg listener: OnPlayListener) = setOnlyDataSource(audioFile, AudioManager.STREAM_MUSIC,*listener)
-
-    /**
-     * 设置音频来源
-     *
-     * @param audioFile 待播放音频的文件路径
-     */
-    fun setDataSource(audioFile: String,voiceCall:Int,vararg listener: OnPlayListener) {
+    fun setDataSource(audioFile: String,isMicroPhone:Boolean,vararg listener: OnPlayListener) {
         if (!TextUtils.equals(audioFile, playFile)) {
-            if (voiceCall != getCurrentVoiceCall()){
-                setCurrentVoiceCall(voiceCall)
-            }
-            setOnlyDataSource(audioFile, voiceCall, *listener)
+            setOnlyDataSource(audioFile, if (isMicroPhone)AudioManager.STREAM_MUSIC else AudioManager.STREAM_VOICE_CALL, *listener)
         }
     }
 
@@ -110,9 +90,9 @@ object AudioPlayer{
         synchronized(this){
             if (!TextUtils.equals(audioFile, playFile)) {
                 currentVoiceCall = voiceCall
-                xy.xy.base.utils.Logger.d("start play audio file$audioFile voiceCall:$voiceCall")
+                Logger.d("start play audio file$audioFile voiceCall:$voiceCall")
                 playFile = audioFile
-                xy.xy.base.utils.Logger.d("start() called")
+                Logger.d("start() called")
                 stop()
                 mListenerList.clear()
                 mListenerList.addAll(listener)
@@ -144,7 +124,7 @@ object AudioPlayer{
         try {
             return mPlayer != null && mPlayer?.isPlaying == true
         }catch (e: Throwable){
-            xy.xy.base.utils.Logger.e("isPlaying error : ${e.message}")
+            Logger.e("isPlaying error : ${e.message}")
         }
         return false
     }
@@ -158,7 +138,7 @@ object AudioPlayer{
             return mPlayer?.duration?.toLong()?:0L
         } catch (e: Throwable) {
             e.printStackTrace()
-            xy.xy.base.utils.Logger.e("getDuration error : ${e.message}")
+            Logger.e("getDuration error : ${e.message}")
         }
         return 0L
     }
@@ -173,7 +153,7 @@ object AudioPlayer{
             return mPlayer?.currentPosition?.toLong()?:0L
         } catch (e: Throwable) {
             e.printStackTrace()
-            xy.xy.base.utils.Logger.e("getCurrentPosition error :${e.message}")
+            Logger.e("getCurrentPosition error :${e.message}")
         }
         return 0L
     }
@@ -188,7 +168,7 @@ object AudioPlayer{
             mPlayer!!.seekTo(msec)
         } catch (e: Throwable) {
             e.printStackTrace()
-            xy.xy.base.utils.Logger.e("seekTo error :${e.message}")
+            Logger.e("seekTo error :${e.message}")
         }
     }
 
@@ -197,7 +177,7 @@ object AudioPlayer{
             mPlayer?.setVolume(leftVolume, rightVolume)
         } catch (e: Throwable) {
             e.printStackTrace()
-            xy.xy.base.utils.Logger.e("setVolume error :${e.message}")
+            Logger.e("setVolume error :${e.message}")
         }
     }
 
@@ -208,17 +188,18 @@ object AudioPlayer{
                 mPlayer?.stop()
             } catch (e: Throwable) {
                 e.printStackTrace()
-                xy.xy.base.utils.Logger.e("endPlay error${e.message}")
+                Logger.e("endPlay error${e.message}")
             }
             try {
                 mPlayer?.release()
             } catch (e: Throwable) {
                 e.printStackTrace()
-                xy.xy.base.utils.Logger.e("release error${e.message}")
+                Logger.e("release error${e.message}")
             }
             mPlayer = null
             mHandler.removeMessages(WHAT_COUNT_PLAY)
         }
+        playFile = null
     }
 
 
@@ -230,7 +211,7 @@ object AudioPlayer{
             getAudioManager()?.isSpeakerphoneOn = currentVoiceCall == AudioManager.STREAM_MUSIC
             getAudioManager()?.requestAudioFocus(onAudioFocusChangeListener, currentVoiceCall, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
             mPlayer?.setOnPreparedListener {
-                xy.xy.base.utils.Logger.d( "player:onPrepared")
+                Logger.d( "player:onPrepared")
                 mHandler.sendEmptyMessage(WHAT_COUNT_PLAY)
                 synchronized(this){
                     for (item in mListenerList){
@@ -239,7 +220,7 @@ object AudioPlayer{
                 }
             }
             mPlayer?.setOnCompletionListener {
-                xy.xy.base.utils.Logger.d(  "player:onCompletion")
+                Logger.d(  "player:onCompletion")
                 endPlay()
                 synchronized(this){
                     for (item in mListenerList){
@@ -248,7 +229,7 @@ object AudioPlayer{
                 }
             }
             mPlayer?.setOnErrorListener { mp, what, extra ->
-                xy.xy.base.utils.Logger.e(String.format("player:onOnError what:%d extra:%d", what, extra))
+                Logger.e(String.format("player:onOnError what:%d extra:%d", what, extra))
                 endPlay()
                 synchronized(this){
                     for (item in mListenerList){
@@ -269,10 +250,10 @@ object AudioPlayer{
             }
             mPlayer?.prepare()
             mPlayer?.start()
-            xy.xy.base.utils.Logger.d("player:start ok---->$playFile")
+            Logger.d("player:start ok---->$playFile")
         } catch (e: Throwable) {
             e.printStackTrace()
-            xy.xy.base.utils.Logger.d( "player:onOnError Exception\n$e")
+            Logger.d( "player:onOnError Exception\n$e")
             endPlay()
             synchronized(this){
                 for (item in mListenerList){

@@ -1,11 +1,11 @@
 package com.xy.amap
 
 import android.graphics.Bitmap
-import com.amap.api.maps2d.AMap
-import com.amap.api.maps2d.model.BitmapDescriptorFactory
-import com.amap.api.maps2d.model.LatLng
-import com.amap.api.maps2d.model.Marker
-import com.amap.api.maps2d.model.MarkerOptions
+import com.amap.api.maps.AMap
+import com.amap.api.maps.model.BitmapDescriptorFactory
+import com.amap.api.maps.model.LatLng
+import com.amap.api.maps.model.Marker
+import com.amap.api.maps.model.MarkerOptions
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 

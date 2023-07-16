@@ -10,7 +10,7 @@ import xy.xy.base.widget.swipe.SwipeDrawHelper
 import xy.xy.base.widget.swipe.SwipeTouchHelper
 import xy.xy.base.widget.swipe.listener.SwipeHelperListener
 
-class SwipeBackRelativeLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : RelativeLayout(context, attrs, defStyleAttr),
+open class SwipeBackRelativeLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : RelativeLayout(context, attrs, defStyleAttr),
     SwipeHelperListener {
     private val mSwipeBackHelper by lazy { SwipeTouchHelper(this) }
 

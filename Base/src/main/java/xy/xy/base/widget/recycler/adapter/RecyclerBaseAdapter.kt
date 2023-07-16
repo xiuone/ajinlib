@@ -93,6 +93,22 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
         }
     }
 
+    fun addData(data: MutableList<T>?,position: Int){
+        synchronized(this){
+            if (data == null)return
+            if (this.data.size<=0) {
+                setNewData(data)
+            }else if (position >= data.size){
+                val start: Int = this.data.size+getHeadSize()
+                this@RecyclerBaseAdapter.data.addAll(data)
+                notifyItemRangeChanged(start, this.data.size+getHeadSize())
+            }else{
+                this@RecyclerBaseAdapter.data.addAll(position,data)
+                notifyItemRangeChanged(getHeadSize()+position, getHeadSize()+this.data.size)
+            }
+        }
+    }
+
 
 
     fun addItem(data: T){
@@ -144,6 +160,8 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
             }
         }
     }
+
+    fun notifyItemChangedWithHead(index: Int) = notifyItemChanged(index+getHeadSize())
 
 
     override fun onItemContentCount(): Int = data.size

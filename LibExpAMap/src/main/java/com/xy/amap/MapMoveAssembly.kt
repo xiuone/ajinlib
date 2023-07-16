@@ -1,7 +1,7 @@
 package com.xy.amap
 
-import com.amap.api.maps2d.AMap
-import com.amap.api.maps2d.model.CameraPosition
+import com.amap.api.maps.AMap
+import com.amap.api.maps.model.CameraPosition
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.geocoder.*
 

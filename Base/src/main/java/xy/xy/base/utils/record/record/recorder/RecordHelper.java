@@ -334,7 +334,6 @@ public class RecordHelper {
         private void startMp3Recorder() {
             state = RecordState.RECORDING;
             notifyState();
-
             try {
                 audioRecord.startRecording();
                 short[] byteBuffer = new short[bufferSize];

@@ -11,7 +11,7 @@ import xy.xy.base.utils.exp.addAppTextChangedListener
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-private val SMALL_SCALE by lazy { 0.45f }
+private val SMALL_SCALE by lazy { 1F }
 private val pattern by lazy { Pattern.compile("\\[[^\\[]{1,10}\\]") }
 
 fun TextView?.replaceEmoticons( str: String?) {

@@ -1,5 +1,6 @@
 package xy.xy.base.utils.exp
 
+import xy.xy.base.utils.Logger
 import java.util.*
 import kotlin.math.abs
 
@@ -29,7 +30,7 @@ private fun ByteArray.toStringStr():String{
         return String(this)
     } catch (ex: Exception) {
         ex.printStackTrace()
-        xy.xy.base.utils.Logger.e("=======ByteArray 转String失败${ex.message}")
+        Logger.e("=======ByteArray 转String失败${ex.message}")
     }
     return ""
 }

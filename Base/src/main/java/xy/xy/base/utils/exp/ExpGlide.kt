@@ -35,7 +35,10 @@ fun ImageView.loadImageWithCenter(any: Any?,res:Int,requestListener:RequestListe
 
 fun ImageView.loadImage(any: Any?, vararg transformations: Transformation<Bitmap>, ){
     if (any == null)return
-    Glide.with(context.applicationContext).load(any).apply(getRequestOptions(*transformations)).into(this)
+    Glide.with(context.applicationContext)
+        .load(any)
+        .apply(getRequestOptions(*transformations))
+        .into(this)
 }
 
 fun ImageView.loadImage(any: Any?,res:Int?, vararg transformations: Transformation<Bitmap>, ){

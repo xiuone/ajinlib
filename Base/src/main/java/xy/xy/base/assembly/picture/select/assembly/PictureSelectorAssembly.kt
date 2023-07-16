@@ -72,6 +72,7 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
     fun openSelectHeadIcon(callBack: PictureSelectCallBack){
         getPictureSelector()
             ?.openGallery(SelectType.IMAGE.type)
+            ?.requestBase()
             ?.setOfAllCameraType(SelectType.IMAGE.type)
             ?.setSelectionMode(SelectModeConfig.SINGLE)
             ?.setMaxSelectNum(1)
@@ -79,7 +80,6 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
             ?.setOutputAudioDir(getOutPath(SelectType.IMAGE))
             ?.setQuerySandboxDir(getOutPath(SelectType.IMAGE))
             ?.setPermissionsInterceptListener(intercept)
-            ?.requestBase()
             ?.request(callBack)
 
     }
@@ -90,6 +90,7 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
     fun openCommonIcon(callBack: PictureSelectCallBack){
         getPictureSelector()
             ?.openGallery(getSelectMimeType())
+            ?.requestBase()
             ?.setOfAllCameraType(SelectType.IMAGE.type)
             ?.request(callBack)
     }

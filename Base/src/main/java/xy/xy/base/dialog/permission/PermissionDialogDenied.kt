@@ -24,13 +24,13 @@ class PermissionDialogDenied(context: Context,private val uiListener:DeniedUiLis
     override fun initView() {
         super.initView()
         cancelButton?.setOnClick{
-            activity?.run {
-                uiListener.onCreateDeniedAction(this,permissionList,callback)
-            }
             dismiss()
         }
         sureButton?.setOnClick{
             dismiss()
+            activity?.run {
+                uiListener.onCreateDeniedAction(this,permissionList,callback)
+            }
         }
     }
 

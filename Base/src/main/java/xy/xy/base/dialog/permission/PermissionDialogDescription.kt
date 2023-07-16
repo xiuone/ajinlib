@@ -30,13 +30,13 @@ class PermissionDialogDescription(context: Context, private val uiListener: Reas
     override fun initView() {
         super.initView()
         cancelButton?.setOnClick{
-            activity?.run {
-                uiListener.onCreateReasonDescription(this, permissionList, callback)
-            }
             dismiss()
         }
         sureButton?.setOnClick{
             dismiss()
+            activity?.run {
+                uiListener.onCreateReasonDescription(this, permissionList, callback)
+            }
         }
     }
 

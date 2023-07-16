@@ -2,7 +2,7 @@ package com.xy.amap
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amap.api.maps2d.model.LatLng
+import com.amap.api.maps.model.LatLng
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.core.PoiItem
 import com.amap.api.services.poisearch.PoiResult

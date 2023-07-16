@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -21,7 +22,8 @@ abstract class BaseAssemblyImpl(protected val rootView:View,
                                 private val contentView:View?=null,
                                 private val statusView:ViewGroup?=null,
                                 protected val loadDialog: LoadProgressDialog? = null,
-                                protected val activity:Activity?=null) : BaseAssemblyViewWithContext, DialogCancelSureView,
+                                protected val activity:Activity?=null,
+                                protected val fragment: Fragment?=null) : BaseAssemblyViewWithContext, DialogCancelSureView,
     LoadViewListener, LoadDialogView,LifecycleObserver {
 
     protected val TAG by lazy { this::class.java.name }
@@ -34,12 +36,12 @@ abstract class BaseAssemblyImpl(protected val rootView:View,
     protected val emptyView by lazy { LayoutInflater.from(context).inflate(emptyRes(),null) }
 
 
-
     open fun onCreate(){}
 
 
     override fun getPageContext(): Context  = context
     override fun getCurrentAct(): Activity? = activity
+    override fun getCurrentFragment(): Fragment? = fragment
 
     /**
      * 提示框  取消  确定

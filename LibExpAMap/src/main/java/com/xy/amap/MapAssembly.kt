@@ -4,25 +4,25 @@ import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationListener
-import com.amap.api.maps2d.CameraUpdateFactory
-import com.amap.api.maps2d.LocationSource
-import com.amap.api.maps2d.LocationSource.OnLocationChangedListener
-import com.amap.api.maps2d.model.*
-import com.amap.api.maps2d.model.MyLocationStyle.LOCATION_TYPE_LOCATE
-import com.hjq.permissions.IPermissionInterceptor
+import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.LocationSource
+import com.amap.api.maps.model.CameraPosition
+import com.amap.api.maps.model.LatLng
+import com.amap.api.maps.model.MyLocationStyle
+import com.amap.api.maps.model.MyLocationStyle.LOCATION_TYPE_LOCATE
 import com.xy.amap.location.LocationNotify
 import xy.xy.base.permission.IPermissionInterceptorCreateListener
 
 
 class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemblyView>(view),
-    LocationSource , AMapLocationListener{
+    LocationSource, AMapLocationListener{
 
     private val locationAssembly by lazy { this.view?.onCreateLocationAssembly() }
 
-    private var latLng:LatLng?=null
+    private var latLng: LatLng?=null
 
     private val zoomNumber = 12F
-    private var mListener: OnLocationChangedListener? = null
+    private var mListener: LocationSource.OnLocationChangedListener? = null
 
 
     override fun onCreateInit(savedInstanceState: Bundle?) {
@@ -55,7 +55,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
     /**
      * 激活定位
      */
-    override fun activate(onLocationChangedListener: OnLocationChangedListener?) {
+    override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener
         LocationNotify.instance.addNotify(TAG,this)
         locationAssembly?.startLocation()

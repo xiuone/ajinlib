@@ -1,6 +1,6 @@
 package com.xy.amap
 
-import com.amap.api.maps2d.MapView
+import com.amap.api.maps.MapView
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 
