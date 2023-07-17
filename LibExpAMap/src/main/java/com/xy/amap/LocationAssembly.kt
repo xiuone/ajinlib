@@ -53,20 +53,6 @@ class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<Loca
                     }
                 })
         }
-//        getContext()?.requestPermission(reasonDialog,deniedDialog,object :PermissionCallBack{
-//            override fun onGranted() {
-//                val lastLocation = LocationConfig.lastLocation
-//                if (lastLocation != null && showOld){
-//                    this@LocationAssembly.view?.onLocationChanged(lastLocation)
-//                }
-//                aMapLocationClient?.startLocation()
-//            }
-//
-//            override fun onDenied() {
-//                super.onDenied()
-//                this@LocationAssembly.view?.onLocationPermissionError()
-//            }
-//        },*permissions)
     }
 
 

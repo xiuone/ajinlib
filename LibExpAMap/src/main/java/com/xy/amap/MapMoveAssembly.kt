@@ -2,11 +2,14 @@ package com.xy.amap
 
 import com.amap.api.maps.AMap
 import com.amap.api.maps.model.CameraPosition
+import com.amap.api.services.core.AMapException
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.geocoder.*
 
+
 class MapMoveAssembly(view: MapMoveAssemblyView) :MapBaseAssembly<MapMoveAssembly.MapMoveAssemblyView>(view) ,
     AMap.OnCameraChangeListener,GeocodeSearch.OnGeocodeSearchListener{
+    private var query :RegeocodeQuery?=null
     private val geocoderSearch by lazy { GeocodeSearch(getContext()) }
     private var latLng :LatLonPoint?=null
     private var address :RegeocodeAddress?=null
@@ -23,17 +26,16 @@ class MapMoveAssembly(view: MapMoveAssemblyView) :MapBaseAssembly<MapMoveAssembl
         cameraPosition?.run {
             val latLng = LatLonPoint(target.latitude,target.longitude)
             this@MapMoveAssembly.latLng = latLng
-            this@MapMoveAssembly.view?.onMapMoveCallBack(latLng,null)
+            query = RegeocodeQuery(latLng, 200f, GeocodeSearch.AMAP)
+            geocoderSearch.getFromLocationAsyn(query)
         }
     }
 
 
-    override fun onRegeocodeSearched(result: RegeocodeResult?, p1: Int) {
-        val query = result?.regeocodeQuery?.point?:return
-        address = result.regeocodeAddress
-        latLng = query
-        if (query.latitude == latLng?.latitude && query.longitude == latLng?.longitude){
-            this.view?.onMapMoveCallBack(query,result.regeocodeAddress)
+    override fun onRegeocodeSearched(result: RegeocodeResult?, resultCode: Int) {
+        address = result?.regeocodeAddress
+        if (result?.regeocodeQuery == query && resultCode == AMapException.CODE_AMAP_SUCCESS){
+            this.view?.onMapMoveCallBack(latLng?:LatLonPoint(0.0,0.0),address)
         }
     }
 

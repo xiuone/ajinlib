@@ -44,6 +44,8 @@ class NaviAssembly(view: NaviAssemblyView) :BaseAssemblyWithContext<NaviAssembly
         }
     }
 
+    override fun dialogProportion(): Double = 1.0
+
     override fun dialogLayoutRes(): Int? = view?.dialogLayoutRes()
 
     override fun dialogInitView(dialog: BaseDialog) {

@@ -144,6 +144,7 @@
     <dimen name="dp_300">300dp</dimen>
     <dimen name="dp_315">315dp</dimen>
     <dimen name="dp_375">375dp</dimen>
+    <dimen name="dp_450">450dp</dimen>
 
 
     <dimen name="sp_4">4sp</dimen>
