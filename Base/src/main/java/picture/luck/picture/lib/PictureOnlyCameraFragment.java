@@ -93,20 +93,12 @@ public class PictureOnlyCameraFragment extends PictureCommonFragment {
                     .hasPermissions(this, permissions);
         } else {
             isHasPermissions = PermissionChecker.isCheckCamera(getContext());
-            if (SdkVersionUtils.isQ()) {
-            } else {
-                isHasPermissions = PermissionChecker.isCheckWriteExternalStorage(getContext());
-            }
         }
         if (isHasPermissions) {
             openSelectedCamera();
         } else {
             if (!PermissionChecker.isCheckCamera(getContext())) {
                 ToastUtils.showToast(getContext(), getString(R.string.ps_camera));
-            } else {
-                if (!PermissionChecker.isCheckWriteExternalStorage(getContext())) {
-                    ToastUtils.showToast(getContext(), getString(R.string.ps_jurisdiction));
-                }
             }
             onKeyBackFragmentFinish();
         }

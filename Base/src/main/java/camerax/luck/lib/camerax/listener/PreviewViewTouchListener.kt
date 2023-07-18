@@ -1,100 +1,69 @@
-package camerax.luck.lib.camerax.listener;
+package camerax.luck.lib.camerax.listener
 
-import android.content.Context;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.view.View;
+import android.content.Context
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
+import android.view.View
+import android.view.View.OnTouchListener
 
 /**
  * @author：luck
  * @date：2022/2/16 9:41 上午
  * @describe：CameraXPreviewViewTouchListener
  */
-public class CameraXPreviewViewTouchListener implements View.OnTouchListener {
+class PreviewViewTouchListener(context: Context, val mCustomTouchListener: CustomTouchListener?) : OnTouchListener {
 
-    private final GestureDetector mGestureDetector;
+    private val mGestureDetector by lazy { GestureDetector(context, object : SimpleOnGestureListener() {
+        override fun onLongPress(e: MotionEvent) {}
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+            return true
+        }
 
-    private final ScaleGestureDetector mScaleGestureDetector;
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            mCustomTouchListener?.click(e.x, e.y)
+            return true
+        }
 
-    public CameraXPreviewViewTouchListener(Context context) {
-        mGestureDetector = new GestureDetector(context, onGestureListener);
-        mScaleGestureDetector = new ScaleGestureDetector(context, onScaleGestureListener);
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            mCustomTouchListener?.doubleClick(e.x, e.y)
+            return true
+        }
+    }) }
+
+    private val mScaleGestureDetector by lazy { ScaleGestureDetector(context, object : SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val delta = detector.scaleFactor
+            mCustomTouchListener?.zoom(delta)
+            return true
+        }
+    }) }
+
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        mScaleGestureDetector.onTouchEvent(event)
+        if (!mScaleGestureDetector.isInProgress) {
+            mGestureDetector.onTouchEvent(event)
+        }
+        return true
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        mScaleGestureDetector.onTouchEvent(event);
-        if (!mScaleGestureDetector.isInProgress()) {
-            mGestureDetector.onTouchEvent(event);
-        }
-        return true;
-    }
 
-    /**
-     * 缩放监听
-     */
-    ScaleGestureDetector.OnScaleGestureListener onScaleGestureListener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            float delta = detector.getScaleFactor();
-            if (mCustomTouchListener != null) {
-                mCustomTouchListener.zoom(delta);
-            }
-            return true;
-        }
-    };
-
-
-    GestureDetector.SimpleOnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (mCustomTouchListener != null) {
-                mCustomTouchListener.click(e.getX(), e.getY());
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            if (mCustomTouchListener != null) {
-                mCustomTouchListener.doubleClick(e.getX(), e.getY());
-            }
-            return true;
-        }
-    };
-
-
-    private CustomTouchListener mCustomTouchListener;
-
-    public interface CustomTouchListener {
+    interface CustomTouchListener {
         /**
          * 放大
          */
-        void zoom(float delta);
+        fun zoom(delta: Float)
 
         /**
          * 点击
          */
-        void click(float x, float y);
+        fun click(x: Float, y: Float)
 
         /**
          * 双击
          */
-        void doubleClick(float x, float y);
-    }
-
-    public void setCustomTouchListener(CustomTouchListener customTouchListener) {
-        mCustomTouchListener = customTouchListener;
+        fun doubleClick(x: Float, y: Float)
     }
 }

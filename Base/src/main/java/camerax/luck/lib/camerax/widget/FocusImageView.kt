@@ -1,108 +1,84 @@
-package camerax.luck.lib.camerax.widget;
+package camerax.luck.lib.camerax.widget
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Point;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
-
-import androidx.annotation.DrawableRes;
-import androidx.appcompat.widget.AppCompatImageView;
-
-import xy.xy.base.R;
+import android.content.Context
+import android.graphics.Point
+import android.os.Handler
+import android.os.Looper
+import android.util.AttributeSet
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.RelativeLayout
+import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.AppCompatImageView
+import xy.xy.base.R
 
 /**
  * @author：luck
  * @date：2022-02-12 13:41
  * @describe：FocusImageView
  */
-public class FocusImageView extends AppCompatImageView {
-    private static final long DELAY_MILLIS = 1000;
-    private int mFocusImg;
-    private int mFocusSucceedImg;
-    private int mFocusFailedImg;
-    private Animation mAnimation;
-    private Handler mHandler;
-    private volatile boolean isDisappear;
+class FocusImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+    : AppCompatImageView(context, attrs, defStyleAttr) {
+    private val DELAY_MILLIS by lazy { 1000L }
+    private var mFocusImg = 0
+    private var mFocusSucceedImg = 0
+    private var mFocusFailedImg = 0
+    private val mAnimation by lazy { AnimationUtils.loadAnimation(context, R.anim.focusview_show) }
+    private val mHandler by lazy { Handler(Looper.getMainLooper()) }
 
-    public FocusImageView(Context context) {
-        super(context);
-        init();
+    private var isDisappear = false
+
+    init {
+        visibility = GONE
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FocusImageView)
+        mFocusImg = typedArray.getResourceId(R.styleable.FocusImageView_focus_focusing, R.drawable.focus_focusing)
+        mFocusSucceedImg = typedArray.getResourceId(R.styleable.FocusImageView_focus_success, R.drawable.focus_focused)
+        mFocusFailedImg = typedArray.getResourceId(R.styleable.FocusImageView_focus_error, R.drawable.focus_failed)
+        typedArray.recycle()
     }
 
-    public FocusImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FocusImageView);
-        mFocusImg = typedArray.getResourceId(R.styleable.FocusImageView_focus_focusing, R.drawable.focus_focusing);
-        mFocusSucceedImg = typedArray.getResourceId(R.styleable.FocusImageView_focus_success, R.drawable.focus_focused);
-        mFocusFailedImg = typedArray.getResourceId(R.styleable.FocusImageView_focus_error, R.drawable.focus_failed);
-        typedArray.recycle();
+    fun setDisappear(disappear: Boolean) {
+        isDisappear = disappear
     }
 
-    private void init() {
-        setVisibility(GONE);
-        mAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.focusview_show);
-        mHandler = new Handler(Looper.getMainLooper());
+    fun startFocus(point: Point) {
+        val params = layoutParams as RelativeLayout.LayoutParams
+        params.topMargin = point.y - measuredHeight / 2
+        params.leftMargin = point.x - measuredWidth / 2
+        layoutParams = params
+        visibility = VISIBLE
+        setFocusResource(mFocusImg)
+        startAnimation(mAnimation)
     }
 
-    public void setDisappear(boolean disappear) {
-        isDisappear = disappear;
-    }
-
-    public void startFocus(Point point) {
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
-        params.topMargin = point.y - getMeasuredHeight() / 2;
-        params.leftMargin = point.x - getMeasuredWidth() / 2;
-        setLayoutParams(params);
-        setVisibility(VISIBLE);
-        setFocusResource(mFocusImg);
-        startAnimation(mAnimation);
-    }
-
-    public void onFocusSuccess() {
+    fun onFocusSuccess() {
         if (isDisappear) {
-            setFocusResource(mFocusSucceedImg);
+            setFocusResource(mFocusSucceedImg)
         }
-        mHandler.removeCallbacks(null, null);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setFocusGone();
-            }
-        }, DELAY_MILLIS);
+        mHandler.removeCallbacksAndMessages(null)
+        mHandler.postDelayed({ setFocusGone() }, DELAY_MILLIS)
     }
 
-    public void onFocusFailed() {
+    fun onFocusFailed() {
         if (isDisappear) {
-            setFocusResource(mFocusFailedImg);
+            setFocusResource(mFocusFailedImg)
         }
-        mHandler.removeCallbacks(null, null);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setFocusGone();
-            }
-        }, DELAY_MILLIS);
+        mHandler.removeCallbacksAndMessages(null)
+        mHandler.postDelayed({ setFocusGone() }, DELAY_MILLIS)
     }
 
-    private void setFocusResource(@DrawableRes int resId) {
-        setImageResource(resId);
+    private fun setFocusResource(@DrawableRes resId: Int) {
+        setImageResource(resId)
     }
 
-    private void setFocusGone() {
+    private fun setFocusGone() {
         if (isDisappear) {
-            setVisibility(GONE);
+            visibility = GONE
         }
     }
 
-    public void destroy() {
-        mHandler.removeCallbacks(null, null);
-        setVisibility(GONE);
+    fun destroy() {
+        mHandler.removeCallbacksAndMessages(null)
+        visibility = GONE
     }
 }

@@ -62,7 +62,7 @@
         android:scaleType="centerInside"
         app:srcCompat="@drawable/picture_ic_camera" />
 
-    <ImageView
+    <camerax.luck.lib.camerax.widget.FlashImageView
         android:id="@+id/image_flash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

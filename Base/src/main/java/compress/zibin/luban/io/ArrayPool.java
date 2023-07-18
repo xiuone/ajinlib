@@ -31,7 +31,7 @@ public interface ArrayPool {
      *
      * <p>This class makes no guarantees about the contents of the returned array.
      *
-     * @see #getExact(int, Class)
+     * @see #get(int, Class)
      */
     <T> T get(int size, Class<T> arrayClass);
 

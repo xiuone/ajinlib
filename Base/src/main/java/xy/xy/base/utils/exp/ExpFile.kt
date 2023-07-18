@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
+import android.text.TextUtils
 import android.util.Log
 import java.io.*
 import java.math.BigDecimal
@@ -11,6 +12,14 @@ import java.text.SimpleDateFormat
 
 
 private const val TAG = "FileUtils"
+
+/**
+ * is content://
+ *
+ * @param url
+ * @return
+ */
+fun String?.isContent(): Boolean = if (isNullOrEmpty()) false else startsWith("content://")
 
 //修改文件权限
 fun String.setPermission() {

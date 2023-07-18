@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import compress.zibin.luban.io.ArrayPoolProvide;
+import xy.xy.base.utils.Logger;
 
 @SuppressWarnings("unused")
 public class Luban implements Handler.Callback {
@@ -31,10 +32,7 @@ public class Luban implements Handler.Callback {
     private boolean focusAlpha;
     private boolean isUseIOBufferPool;
     private int mLeastCompressSize;
-    private OnRenameListener mRenameListener;
-    private OnCompressListener mCompressListener;
-    private OnNewCompressListener mNewCompressListener;
-    private CompressionPredicate mCompressionPredicate;
+    private OnCompressListener mNewCompressListener;
     private List<InputStreamProvider> mStreamProviders;
 
     private Handler mHandler;
@@ -43,12 +41,9 @@ public class Luban implements Handler.Callback {
         this.mTargetDir = builder.mTargetDir;
         this.focusAlpha = builder.focusAlpha;
         this.isUseIOBufferPool = builder.isUseBufferPool;
-        this.mRenameListener = builder.mRenameListener;
         this.mStreamProviders = builder.mStreamProviders;
-        this.mCompressListener = builder.mCompressListener;
         this.mNewCompressListener = builder.mNewCompressListener;
         this.mLeastCompressSize = builder.mLeastCompressSize;
-        this.mCompressionPredicate = builder.mCompressionPredicate;
         mHandler = new Handler(Looper.getMainLooper(), this);
     }
 
@@ -124,9 +119,6 @@ public class Luban implements Handler.Callback {
      */
     private void launch(final Context context) {
         if (mStreamProviders == null || mStreamProviders.size() == 0) {
-            if (mCompressListener != null) {
-                mCompressListener.onError(-1, new NullPointerException("image file cannot be null"));
-            }
             if (mNewCompressListener != null) {
                 mNewCompressListener.onError("", new NullPointerException("image file cannot be null"));
             }
@@ -202,55 +194,26 @@ public class Luban implements Handler.Callback {
 
         File outFile = getImageCacheFile(context, Checker.SINGLE.extSuffix(path));
         String source = Checker.isContent(path.getPath()) ? LubanUtils.getPath(context, Uri.parse(path.getPath())) : path.getPath();
-        if (mRenameListener != null) {
-            String filename = mRenameListener.rename(source);
-            outFile = getImageCustomFile(context, filename);
-        }
-
-        if (mCompressionPredicate != null) {
-            if (mCompressionPredicate.apply(source)
-                    && Checker.SINGLE.needCompress(mLeastCompressSize, source)) {
-                result = new Engine(path, outFile, focusAlpha).compress();
-            } else {
-                // Ignore compression
-                result = new File(source);
-            }
+        if (Checker.SINGLE.needCompress(mLeastCompressSize, source)) {
+            result = new Engine(path, outFile, focusAlpha).compress();
         } else {
-            if (Checker.SINGLE.needCompress(mLeastCompressSize, source)) {
-                result = new Engine(path, outFile, focusAlpha).compress();
-            } else {
-                // Ignore compression
-                result = new File(source);
-            }
+            result = new File(source);
         }
-
         return result;
     }
 
     @Override
     public boolean handleMessage(Message msg) {
-
         switch (msg.what) {
             case MSG_COMPRESS_START:
-                if (mCompressListener != null) {
-                    mCompressListener.onStart();
-                }
-                if (mNewCompressListener != null) {
-                    mNewCompressListener.onStart();
-                }
+                Logger.INSTANCE.d("MSG_COMPRESS_START===onStart===");
                 break;
             case MSG_COMPRESS_SUCCESS:
-                if (mCompressListener != null) {
-                    mCompressListener.onSuccess(msg.arg1, (File) msg.obj);
-                }
                 if (mNewCompressListener !=null) {
                     mNewCompressListener.onSuccess(msg.getData().getString(KEY_SOURCE), (File) msg.obj);
                 }
                 break;
             case MSG_COMPRESS_ERROR:
-                if (mCompressListener != null) {
-                    mCompressListener.onError(msg.arg1, (Throwable) msg.obj);
-                }
                 if (mNewCompressListener != null) {
                     mNewCompressListener.onError(msg.getData().getString(KEY_SOURCE), (Throwable) msg.obj);
                 }
@@ -265,10 +228,7 @@ public class Luban implements Handler.Callback {
         private boolean focusAlpha;
         private boolean isUseBufferPool = true;
         private int mLeastCompressSize = 100;
-        private OnRenameListener mRenameListener;
-        private OnCompressListener mCompressListener;
-        private OnNewCompressListener mNewCompressListener;
-        private CompressionPredicate mCompressionPredicate;
+        private OnCompressListener mNewCompressListener;
         private List<InputStreamProvider> mStreamProviders;
 
         Builder(Context context) {
@@ -386,17 +346,7 @@ public class Luban implements Handler.Callback {
             return this;
         }
 
-        public Builder setRenameListener(OnRenameListener listener) {
-            this.mRenameListener = listener;
-            return this;
-        }
-
         public Builder setCompressListener(OnCompressListener listener) {
-            this.mCompressListener = listener;
-            return this;
-        }
-
-        public Builder setCompressListener(OnNewCompressListener listener) {
             this.mNewCompressListener = listener;
             return this;
         }
@@ -438,17 +388,6 @@ public class Luban implements Handler.Callback {
             this.mLeastCompressSize = size;
             return this;
         }
-
-        /**
-         * do compress image when return value was true, otherwise, do not compress the image file
-         *
-         * @param compressionPredicate A predicate callback that returns true or false for the given input path should be compressed.
-         */
-        public Builder filter(CompressionPredicate compressionPredicate) {
-            this.mCompressionPredicate = compressionPredicate;
-            return this;
-        }
-
 
         /**
          * begin compress image with asynchronous

@@ -29,7 +29,7 @@ public class LubanUtils {
      * Callers should check whether the path is local before assuming it
      * represents a local file.
      *
-     * @param context The context.
+     * @param ctx The context.
      * @param uri     The Uri to query.
      * @author paulburke
      */

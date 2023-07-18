@@ -1,460 +1,252 @@
-package camerax.luck.lib.camerax.widget;
+package camerax.luck.lib.camerax.widget
 
-import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.os.CountDownTimer;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-
-import camerax.luck.lib.camerax.CustomCameraConfig;
-import camerax.luck.lib.camerax.listener.CaptureListener;
-import camerax.luck.lib.camerax.listener.IObtainCameraView;
-import camerax.luck.lib.camerax.permissions.PermissionChecker;
-import camerax.luck.lib.camerax.permissions.PermissionResultCallback;
-import camerax.luck.lib.camerax.permissions.SimpleXPermissionUtil;
-import camerax.luck.lib.camerax.utils.DoubleUtils;
-import camerax.luck.lib.camerax.utils.SimpleXSpUtils;
+import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
+import android.os.CountDownTimer
+import android.os.SystemClock
+import android.view.MotionEvent
+import android.view.View
+import camerax.luck.lib.camerax.CustomCameraConfig
+import camerax.luck.lib.camerax.CustomCameraType
+import camerax.luck.lib.camerax.listener.CaptureListener
+import com.hjq.permissions.XXPermissions
+import xy.xy.base.permission.IPermissionInterceptorCreateListener
 
 /**
  * @author：luck
  * @date：2019-01-04 13:41
  * @describe：CaptureLayout
  */
-public class CaptureButton extends View {
+class CaptureButton(context: Context?,private val buttonSize: Int) : View(context) {
+    var interceptor: IPermissionInterceptorCreateListener? = null
+    private val animatorAdapter by lazy { AnimatorAdapter() }
 
-    /**
-     * 当前按钮状态
-     */
-    private int state;
-    /**
-     * 按钮可执行的功能状态（拍照,录制,两者）
-     */
-    private int buttonState;
+    var buttonFeatures = CustomCameraType.BUTTON_STATE_BOTH//按钮可执行的功能状态（拍照,录制,两者）
 
-    /**
-     * 空闲状态
-     */
-    public static final int STATE_IDLE = 0x001;
-    /**
-     * 按下状态
-     */
-    public static final int STATE_PRESS = 0x002;
-    /**
-     * 长按状态
-     */
-    public static final int STATE_LONG_PRESS = 0x003;
-    /**
-     * 录制状态
-     */
-    public static final int STATE_RECORDER_ING = 0x004;
-    /**
-     * 禁止状态
-     */
-    public static final int STATE_BAN = 0x005;
-    /**
-     * 录制进度外圈色值
-     */
-    private int progressColor = 0xEE16AE16;
+    private var state = Status.STATE_IDLE//当前按钮状态
+    private var progress = 0f//录制视频的进度
+    private var currentRecordedTime = 0//记录当前录制的时间
+    var maxDuration = CustomCameraConfig.DEFAULT_MAX_RECORD_VIDEO//录制视频最大时间长度
+    var minDuration = CustomCameraConfig.DEFAULT_MIN_RECORD_VIDEO//最短录制时间限制
 
-    private float event_Y;
+    private var eventY = 0f
 
-    private Paint mPaint;
+    private val mPaint by lazy { Paint() }
 
-    /**
-     * 进度条宽度
-     */
-    private float strokeWidth;
-    /**
-     * 长按外圆半径变大的Size
-     */
-    private int outside_add_size;
-    /**
-     * 长安内圆缩小的Size
-     */
-    private int inside_reduce_size;
+    private val strokeWidth by lazy { (buttonSize / 15).toFloat() } //进度条宽度
+    private val outSideAddSize by lazy { buttonSize / 8 }//长按外圆半径变大的Size
+    private val insideReduceSize by lazy { buttonSize / 8 }//长安内圆缩小的Size
+    private val centerX by lazy {  ((buttonSize + outSideAddSize * 2) / 2).toFloat() }
+    private val centerY by lazy {  ((buttonSize + outSideAddSize * 2) / 2).toFloat() }
 
-    private float center_X;
-    private float center_Y;
+    private val buttonRadius by lazy { buttonSize / 2.0f }//按钮半径
+    private var outSideRadius = buttonRadius//外圆半径
+    private var inSideRadius = buttonRadius * 0.75f //内圆半径
 
-    /**
-     * 按钮半径
-     */
-    private float button_radius;
-    /**
-     * 外圆半径
-     */
-    private float button_outside_radius;
-    /**
-     * 内圆半径
-     */
-    private float button_inside_radius;
-    /**
-     * 按钮大小
-     */
-    private int button_size;
+    private val rectF by lazy { RectF(
+        centerX - (buttonRadius + outSideAddSize - strokeWidth / 2),
+        centerY - (buttonRadius + outSideAddSize - strokeWidth / 2),
+        centerX + (buttonRadius + outSideAddSize - strokeWidth / 2),
+        centerY + (buttonRadius + outSideAddSize - strokeWidth / 2)
+    ) }
 
-    /**
-     * 录制视频的进度
-     */
-    private float progress;
-    /**
-     * 录制视频最大时间长度
-     */
-    private int maxDuration;
-    /**
-     * 最短录制时间限制
-     */
-    private int minDuration;
-    /**
-     * 记录当前录制的时间
-     */
-    private int currentRecordedTime;
+    var progressColor = -0x11e951ea
+    private val longPressRunnable by lazy { LongPressRunnable() }
 
-    private RectF rectF;
+    //按钮回调接口
+    var captureListener: CaptureListener? = null
+    //计时器
+    private val timer by lazy { RecordCountDownTimer(maxDuration.toLong(), (maxDuration / 360).toLong()) }
+    var isTakeCamera = true
 
-    private LongPressRunnable longPressRunnable;
-    /**
-     * 按钮回调接口
-     */
-    private CaptureListener captureListener;
-    /**
-     * 计时器
-     */
-    private RecordCountDownTimer timer;
-    private boolean isTakeCamera = true;
-    private final Activity activity;
-
-    public CaptureButton(Context context) {
-        super(context);
-        activity = (Activity) context;
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        setMeasuredDimension(buttonSize + outSideAddSize * 2, buttonSize + outSideAddSize * 2)
     }
 
-    public CaptureButton(Context context, int size) {
-        super(context);
-        activity = (Activity) context;
-        this.button_size = size;
-        button_radius = size / 2.0f;
-
-        button_outside_radius = button_radius;
-        button_inside_radius = button_radius * 0.75f;
-
-        strokeWidth = size / 15;
-        outside_add_size = size / 8;
-        inside_reduce_size = size / 8;
-
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-
-        progress = 0;
-        longPressRunnable = new LongPressRunnable();
-
-        state = STATE_IDLE;
-        buttonState = CustomCameraConfig.BUTTON_STATE_BOTH;
-        maxDuration = CustomCameraConfig.DEFAULT_MAX_RECORD_VIDEO;
-        minDuration = CustomCameraConfig.DEFAULT_MIN_RECORD_VIDEO;
-
-        center_X = (button_size + outside_add_size * 2) / 2;
-        center_Y = (button_size + outside_add_size * 2) / 2;
-
-        rectF = new RectF(
-                center_X - (button_radius + outside_add_size - strokeWidth / 2),
-                center_Y - (button_radius + outside_add_size - strokeWidth / 2),
-                center_X + (button_radius + outside_add_size - strokeWidth / 2),
-                center_Y + (button_radius + outside_add_size - strokeWidth / 2));
-
-        timer = new RecordCountDownTimer(maxDuration, maxDuration / 360);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(button_size + outside_add_size * 2, button_size + outside_add_size * 2);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        mPaint.setStyle(Paint.Style.FILL);
-
-        int outside_color = 0xEEDCDCDC;
-        mPaint.setColor(outside_color);
-        canvas.drawCircle(center_X, center_Y, button_outside_radius, mPaint);
-
-        int inside_color = 0xFFFFFFFF;
-        mPaint.setColor(inside_color);
-        canvas.drawCircle(center_X, center_Y, button_inside_radius, mPaint);
-
-        if (state == STATE_RECORDER_ING) {
-            mPaint.setColor(progressColor);
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(strokeWidth);
-            canvas.drawArc(rectF, -90, progress, false, mPaint);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        mPaint.isAntiAlias = true
+        mPaint.style = Paint.Style.FILL
+        mPaint.color = -0x11232324
+        canvas.drawCircle(centerX, centerY, outSideRadius, mPaint)
+        mPaint.color = -0x1
+        canvas.drawCircle(centerX, centerY, inSideRadius, mPaint)
+        if (state == Status.STATE_RECORDER_ING) {
+            mPaint.color = progressColor
+            mPaint.style = Paint.Style.STROKE
+            mPaint.strokeWidth = strokeWidth
+            canvas.drawArc(rectF, -90f, progress, false, mPaint)
         }
     }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isTakeCamera) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (event.getPointerCount() > 1 || state != STATE_IDLE)
-                        break;
-                    event_Y = event.getY();
-                    state = STATE_PRESS;
-                    if (buttonState != CustomCameraConfig.BUTTON_STATE_ONLY_CAPTURE) {
-                        postDelayed(longPressRunnable, 500);
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (event.pointerCount > 1 || state != Status.STATE_IDLE)
+                    eventY = event.y
+                    state = Status.STATE_PRESS
+                    if (buttonFeatures != CustomCameraType.BUTTON_STATE_ONLY_CAPTURE) {
+                        postDelayed(longPressRunnable, 500)
                     }
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    if (captureListener != null
-                            && state == STATE_RECORDER_ING
-                            && (buttonState == CustomCameraConfig.BUTTON_STATE_ONLY_RECORDER
-                            || buttonState == CustomCameraConfig.BUTTON_STATE_BOTH)) {
-                        captureListener.recordZoom(event_Y - event.getY());
+                }
+
+                MotionEvent.ACTION_MOVE ->{
+                    if (state == Status.STATE_RECORDER_ING &&
+                        (buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_RECORDER
+                                || buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH)) {
+                        captureListener?.recordZoom(eventY - event.y)
                     }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    handlerPressByState();
-                    break;
-            }
-        }
-        return true;
-    }
-
-    private ViewGroup getCustomCameraView() {
-        if (activity instanceof IObtainCameraView) {
-            IObtainCameraView cameraView = (IObtainCameraView) activity;
-            return cameraView.getCustomCameraView();
-        }
-        return null;
-    }
-
-    private void handlerPressByState() {
-        removeCallbacks(longPressRunnable);
-        switch (state) {
-            case STATE_PRESS:
-                if (captureListener != null && (buttonState == CustomCameraConfig.BUTTON_STATE_ONLY_CAPTURE || buttonState ==
-                        CustomCameraConfig.BUTTON_STATE_BOTH)) {
-                    startCaptureAnimation(button_inside_radius);
-                } else {
-                    state = STATE_IDLE;
                 }
-                break;
-            case STATE_LONG_PRESS:
-            case STATE_RECORDER_ING:
-                if (PermissionChecker.checkSelfPermission(getContext(), new String[]{Manifest.permission.RECORD_AUDIO})) {
-                    timer.cancel();
-                    recordEnd();
-                }
-                break;
-        }
-        state = STATE_IDLE;
-    }
-
-    public void recordEnd() {
-        if (captureListener != null) {
-            if (currentRecordedTime < minDuration) {
-                captureListener.recordShort(currentRecordedTime);
-            } else {
-                captureListener.recordEnd(currentRecordedTime);
+                MotionEvent.ACTION_UP -> handlerPressByState()
             }
         }
-        resetRecordAnim();
+        return true
     }
 
-    private void resetRecordAnim() {
-        state = STATE_BAN;
-        progress = 0;
-        invalidate();
-        startRecordAnimation(
-                button_outside_radius,
-                button_radius,
-                button_inside_radius,
-                button_radius * 0.75f
-        );
-    }
-
-    private void startCaptureAnimation(float inside_start) {
-        ValueAnimator inside_anim = ValueAnimator.ofFloat(inside_start, inside_start * 0.75f, inside_start);
-        inside_anim.addUpdateListener(animation -> {
-            button_inside_radius = (float) animation.getAnimatedValue();
-            invalidate();
-        });
-        inside_anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                if (captureListener != null) {
-                    captureListener.takePictures();
+    private fun handlerPressByState() {
+        removeCallbacks(longPressRunnable)
+        when (state) {
+            Status.STATE_PRESS ->{
+                if (captureListener != null &&
+                    (buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE ||
+                            buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH)) {
+                    startCaptureAnimation(inSideRadius)
                 }
-                state = STATE_BAN;
             }
-        });
-        inside_anim.setDuration(50);
-        inside_anim.start();
+            Status.STATE_LONG_PRESS, Status.STATE_RECORDER_ING -> {
+                if (XXPermissions.isGranted(context, Manifest.permission.RECORD_AUDIO)) {
+                    timer.cancel()
+                    recordEnd()
+                }
+            }
+        }
+        state = Status.STATE_IDLE
     }
 
-    private void startRecordAnimation(float outside_start, float outside_end, float inside_start, float inside_end) {
-        ValueAnimator outside_anim = ValueAnimator.ofFloat(outside_start, outside_end);
-        ValueAnimator inside_anim = ValueAnimator.ofFloat(inside_start, inside_end);
+    fun recordEnd() {
+        if (currentRecordedTime < minDuration) {
+            captureListener?.recordShort(currentRecordedTime.toLong())
+        } else {
+            captureListener?.recordEnd(currentRecordedTime.toLong())
+        }
+        resetRecordAnim()
+    }
+
+    private fun resetRecordAnim() {
+        state = Status.STATE_BAN
+        progress = 0f
+        invalidate()
+        startRecordAnimation(outSideRadius, buttonRadius, inSideRadius, buttonRadius * 0.75f)
+    }
+
+    private fun startCaptureAnimation(inSideStart: Float) {
+        val inSideAnim = ValueAnimator.ofFloat(inSideStart, inSideStart * 0.75f, inSideStart)
+        inSideAnim.addUpdateListener { animation: ValueAnimator ->
+            inSideRadius = animation.animatedValue as Float
+            invalidate()
+        }
+        inSideAnim.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator) {
+                super.onAnimationStart(animation)
+                captureListener?.takePictures()
+                state = Status.STATE_BAN
+            }
+        })
+        inSideAnim.duration = 50
+        inSideAnim.start()
+    }
+
+    private fun startRecordAnimation(outsideStart: Float, outsideEnd: Float,
+                                     inSideStart: Float, inSideEnd: Float) {
+
+        val outSideAnim = ValueAnimator.ofFloat(outsideStart, outsideEnd)
+        val inSideAnim = ValueAnimator.ofFloat(inSideStart, inSideEnd)
         //外圆动画监听
-        outside_anim.addUpdateListener(animation -> {
-            button_outside_radius = (float) animation.getAnimatedValue();
-            invalidate();
-        });
-        inside_anim.addUpdateListener(animation -> {
-            button_inside_radius = (float) animation.getAnimatedValue();
-            invalidate();
-        });
-        AnimatorSet set = new AnimatorSet();
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (DoubleUtils.isFastDoubleClick()) {
-                    return;
-                }
-                //设置为录制状态
-                if (state == STATE_LONG_PRESS) {
-                    if (captureListener != null)
-                        captureListener.recordStart();
-                    state = STATE_RECORDER_ING;
-                    timer.start();
-                } else {
-                    state = STATE_IDLE;
-                }
+        outSideAnim.addUpdateListener { animation: ValueAnimator ->
+            outSideRadius = animation.animatedValue as Float
+            invalidate()
+        }
+        inSideAnim.addUpdateListener { animation: ValueAnimator ->
+            inSideRadius = animation.animatedValue as Float
+            invalidate()
+        }
+        val set = AnimatorSet()
+        set.addListener(animatorAdapter)
+        set.playTogether(outSideAnim, inSideAnim)
+        set.duration = 100
+        set.start()
+    }
+
+    private fun updateProgress(millisUntilFinished: Long) {
+        currentRecordedTime = (maxDuration - millisUntilFinished).toInt()
+        progress = 360f - millisUntilFinished / maxDuration.toFloat() * 360f
+        invalidate()
+        captureListener?.changeTime(millisUntilFinished)
+    }
+
+    fun resetState() {
+        state = Status.STATE_IDLE
+    }
+
+    private inner class AnimatorAdapter :AnimatorListenerAdapter(){
+        private val lastClickTime: Long = 0
+        private val TIME: Long = 800
+        override fun onAnimationEnd(animation: Animator) {
+            super.onAnimationEnd(animation)
+            val time = SystemClock.elapsedRealtime()
+            if (time - lastClickTime < TIME) {
+                return 
             }
-        });
-        set.playTogether(outside_anim, inside_anim);
-        set.setDuration(100);
-        set.start();
-    }
-
-
-    private void updateProgress(long millisUntilFinished) {
-        currentRecordedTime = (int) (maxDuration - millisUntilFinished);
-        progress = 360f - millisUntilFinished / (float) maxDuration * 360f;
-        invalidate();
-        if (captureListener != null) {
-            captureListener.changeTime(millisUntilFinished);
-        }
-    }
-
-    private class RecordCountDownTimer extends CountDownTimer {
-        RecordCountDownTimer(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-        }
-
-        @Override
-        public void onTick(long millisUntilFinished) {
-            updateProgress(millisUntilFinished);
-        }
-
-        @Override
-        public void onFinish() {
-            recordEnd();
-        }
-    }
-
-    private class LongPressRunnable implements Runnable {
-        @Override
-        public void run() {
-            state = STATE_LONG_PRESS;
-            if (PermissionChecker.checkSelfPermission(getContext(), new String[]{Manifest.permission.RECORD_AUDIO})) {
-                startRecordAnimation(button_outside_radius, button_outside_radius + outside_add_size,
-                        button_inside_radius, button_inside_radius - inside_reduce_size);
+            //设置为录制状态
+            if (state == Status.STATE_LONG_PRESS) {
+                captureListener?.recordStart()
+                state = Status.STATE_RECORDER_ING
+                timer.start()
             } else {
-                onExplainCallback();
-                handlerPressByState();
-                PermissionChecker.getInstance().requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, new PermissionResultCallback() {
-                    @Override
-                    public void onGranted() {
-                        postDelayed(longPressRunnable, 500);
-                        ViewGroup customCameraView = getCustomCameraView();
-                        if (customCameraView != null && CustomCameraConfig.explainListener != null) {
-                            CustomCameraConfig.explainListener.onDismiss(customCameraView);
-                        }
-                    }
-
-                    @Override
-                    public void onDenied() {
-                        if (CustomCameraConfig.deniedListener != null) {
-                            SimpleXSpUtils.putBoolean(getContext(), Manifest.permission.RECORD_AUDIO, true);
-                            CustomCameraConfig.deniedListener.onDenied(getContext(), Manifest.permission.RECORD_AUDIO, PermissionChecker.PERMISSION_RECORD_AUDIO_SETTING_CODE);
-                            ViewGroup customCameraView = getCustomCameraView();
-                            if (customCameraView != null && CustomCameraConfig.explainListener != null) {
-                                CustomCameraConfig.explainListener.onDismiss(customCameraView);
-                            }
-                        } else {
-                            SimpleXPermissionUtil.goIntentSetting(activity, PermissionChecker.PERMISSION_RECORD_AUDIO_SETTING_CODE);
-                        }
-                    }
-                });
+                state = Status.STATE_IDLE
             }
         }
     }
 
-    private void onExplainCallback() {
-        if (CustomCameraConfig.explainListener != null) {
-            if (!SimpleXSpUtils.getBoolean(getContext(), Manifest.permission.RECORD_AUDIO, false)) {
-                ViewGroup customCameraView = getCustomCameraView();
-                if (customCameraView != null) {
-                    CustomCameraConfig.explainListener.onPermissionDescription(getContext(), customCameraView,
-                                    Manifest.permission.RECORD_AUDIO);
-                }
+    private inner class RecordCountDownTimer(millisInFuture: Long, countDownInterval: Long) : CountDownTimer(millisInFuture, countDownInterval) {
+        override fun onTick(millisUntilFinished: Long) = updateProgress(millisUntilFinished)
+
+        override fun onFinish() = recordEnd()
+    }
+
+    private inner class LongPressRunnable : Runnable {
+        override fun run() {
+            state = Status.STATE_LONG_PRESS
+            if (XXPermissions.isGranted(context, Manifest.permission.RECORD_AUDIO)) {
+                startRecordAnimation(
+                    outSideRadius, outSideRadius + outSideAddSize,
+                    inSideRadius, inSideRadius - insideReduceSize
+                )
+            } else {
+                handlerPressByState()
+                XXPermissions.with(context)
+                    .permission(Manifest.permission.RECORD_AUDIO)
+                    .interceptor(interceptor?.onCreateIPermissionInterceptor())
+                    .request { _, _ -> postDelayed(longPressRunnable, 500) }
             }
         }
     }
 
-    public void setMaxDuration(int duration) {
-        this.maxDuration = duration;
-        timer = new RecordCountDownTimer(maxDuration, maxDuration / 360);
-    }
 
-    public void setMinDuration(int duration) {
-        this.minDuration = duration;
-    }
-
-    public void setCaptureListener(CaptureListener captureListener) {
-        this.captureListener = captureListener;
-    }
-
-    public void setProgressColor(int progressColor) {
-        this.progressColor = progressColor;
-    }
-
-    public void setButtonFeatures(int state) {
-        this.buttonState = state;
-    }
-
-    public int getButtonFeatures() {
-        return buttonState;
-    }
-
-    public boolean isIdle() {
-        return state == STATE_IDLE;
-    }
-
-    public void setButtonCaptureEnabled(boolean enabled) {
-        this.isTakeCamera = enabled;
-    }
-
-    public void resetState() {
-        state = STATE_IDLE;
+    enum class Status(val des:String){
+        STATE_IDLE("空闲状态"),
+        STATE_PRESS("按下状态"),
+        STATE_LONG_PRESS("长按状态"),
+        STATE_RECORDER_ING("录制状态"),
+        STATE_BAN("禁止状态"),
     }
 }

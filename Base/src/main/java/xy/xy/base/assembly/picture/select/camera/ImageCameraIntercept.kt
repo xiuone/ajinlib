@@ -24,9 +24,6 @@ class ImageCameraIntercept :
         camera.isManualFocusCameraPreview(true)
         camera.isZoomCameraPreview(true)
         camera.setOutputPathDir(context.getSdImageDir(context.getResString(R.string.app_name)))
-        camera.setImageEngine { context, url, imageView ->
-            Glide.with(context).load(url).into(imageView)
-        }
         camera.start(fragment.requireActivity(), fragment, requestCode)
     }
 }

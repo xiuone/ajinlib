@@ -1,60 +1,36 @@
-package camerax.luck.lib.camerax.widget;
+package camerax.luck.lib.camerax.widget
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.view.View;
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.view.View
 
 /**
  * @author：luck
  * @date：2019-01-04 13:41
  * @describe：ReturnButton
  */
-public class ReturnButton extends View {
+class ReturnButton(context: Context?,private val size: Int) : View(context) {
+    private val centerX by lazy { size / 2 }
+    private val centerY by lazy { size / 2 }
+    private val strokeWidth by lazy { size / 15f }
+    private val paint by lazy { Paint() }
+    private val path by lazy { Path() }
 
-    private int size;
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) =
+        setMeasuredDimension(size, size / 2)
 
-    private int center_X;
-    private int center_Y;
-    private float strokeWidth;
-
-    private Paint paint;
-    Path path;
-
-    public ReturnButton(Context context, int size) {
-        this(context);
-        this.size = size;
-        center_X = size / 2;
-        center_Y = size / 2;
-
-        strokeWidth = size / 15f;
-
-        paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(strokeWidth);
-
-        path = new Path();
-    }
-
-    public ReturnButton(Context context) {
-        super(context);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(size, size / 2);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        path.moveTo(strokeWidth, strokeWidth / 2);
-        path.lineTo(center_X, center_Y - strokeWidth / 2);
-        path.lineTo(size - strokeWidth, strokeWidth / 2);
-        canvas.drawPath(path, paint);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        paint.isAntiAlias = true
+        paint.color = Color.WHITE
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = strokeWidth
+        path.moveTo(strokeWidth, strokeWidth / 2)
+        path.lineTo(centerX.toFloat(), centerY - strokeWidth / 2)
+        path.lineTo(size - strokeWidth, strokeWidth / 2)
+        canvas.drawPath(path, paint)
     }
 }

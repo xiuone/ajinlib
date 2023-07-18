@@ -155,26 +155,10 @@ public final class PictureSelectionModel {
     /**
      * Image Compress the engine
      *
-     * @param engine Image Compress the engine
-     * Please use {@link CompressFileEngine}
      * @return
      */
-    @Deprecated
-    public PictureSelectionModel setCompressEngine(CompressEngine engine) {
-        selectionConfig.compressEngine = engine;
-        selectionConfig.isCompressEngine = true;
-        return this;
-    }
-
-    /**
-     * Image Compress the engine
-     *
-     * @param engine Image Compress the engine
-     * @return
-     */
-    public PictureSelectionModel setCompressEngine(CompressFileEngine engine) {
-        selectionConfig.compressFileEngine = engine;
-        selectionConfig.isCompressEngine = true;
+    public PictureSelectionModel isCompressEngine(Boolean isCompressEngine) {
+        selectionConfig.isCompressEngine = isCompressEngine;
         return this;
     }
 
