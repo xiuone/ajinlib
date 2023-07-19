@@ -1,5 +1,12 @@
 package camerax.luck.lib.camerax
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
+import camerax.luck.lib.camerax.type.CustomCameraType
+import camerax.luck.lib.camerax.utils.FileUtils
+import xy.xy.base.permission.IPermissionInterceptorCreateListener
+
 /**
  * @author：luck
  * @date：2021/11/29 7:14 下午
@@ -7,28 +14,69 @@ package camerax.luck.lib.camerax
  */
 object CustomCameraConfig {
     /**
-     * 两者都可以
+     * 按钮可执行的功能状态（拍照,录制,两者）
      */
-    const val BUTTON_STATE_BOTH = 0
+    var buttonFeatures = CustomCameraType.BUTTON_STATE_BOTH
 
     /**
-     * 只能拍照
+     * 权限拦截器
      */
-    const val BUTTON_STATE_ONLY_CAPTURE = 1
-
-    /**
-     * 只能录像
-     */
-    const val BUTTON_STATE_ONLY_RECORDER = 2
-
+    var interceptor: IPermissionInterceptorCreateListener? = null
     /**
      * 默认最大录制时间
      */
-    const val DEFAULT_MAX_RECORD_VIDEO = 60 * 1000 + 500
-
+    var maxDuration = 60 * 1000 + 500L
     /**
      * 默认最小录制时间
      */
-    const val DEFAULT_MIN_RECORD_VIDEO = 1500
-    const val SP_NAME = "PictureSpUtils"
+    var minDuration = 1500L
+    /**
+     * 相机是否准备好
+     */
+    var isTakeCamera = true
+
+    /**
+     * 是否只拍照
+     */
+    fun isOnlyCapture() :Boolean{
+        return buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE
+    }
+
+    /**
+     * 是否可以拍照
+     */
+    fun haveCapture():Boolean {
+        var status = buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE
+        return status || buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH
+    }
+
+    /**
+     * 是否可以拍照
+     */
+    fun haveRecord():Boolean {
+        var status = buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_RECORDER
+        return status || buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH
+    }
+
+
+    /**
+     * 保存相机输出的路径
+     *
+     * @param intent
+     * @param uri
+     */
+    fun putOutputUri(intent: Intent, uri: Uri?) {
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+    }
+
+    /**
+     * 获取保存相机输出的路径
+     *
+     * @param intent
+     * @return
+     */
+    fun getOutputPath(intent: Intent?): String? {
+        val uri = intent?.getParcelableExtra<Uri>(MediaStore.EXTRA_OUTPUT) ?: return ""
+        return if (FileUtils.isContent(uri.toString())) uri.toString() else uri.path
+    }
 }

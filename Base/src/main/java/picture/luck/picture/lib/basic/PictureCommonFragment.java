@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 
 import com.hjq.permissions.XXPermissions;
 
+import camerax.luck.lib.camerax.type.CustomCameraType;
 import compress.zibin.luban.image.ImageFileCompressEngine;
 import picture.luck.picture.lib.app.PictureAppMaster;
 import picture.luck.picture.lib.config.Crop;
@@ -844,14 +845,14 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
                 switch (position) {
                     case PhotoItemSelectedDialog.IMAGE_CAMERA:
                         if (selectorConfig.onCameraInterceptListener != null) {
-                            onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE);
+                            onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_CAPTURE);
                         } else {
                             openImageCamera();
                         }
                         break;
                     case PhotoItemSelectedDialog.VIDEO_CAMERA:
                         if (selectorConfig.onCameraInterceptListener != null) {
-                            onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO);
+                            onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_RECORDER);
                         } else {
                             openVideoCamera();
                         }
@@ -900,7 +901,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
         if (!ActivityCompatHelper.isDestroy(getActivity())) {
             onPermissionExplainEvent(false, null);
             if (selectorConfig.onCameraInterceptListener != null) {
-                onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE);
+                onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_CAPTURE);
             } else {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -947,7 +948,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
         if (!ActivityCompatHelper.isDestroy(getActivity())) {
             onPermissionExplainEvent(false, null);
             if (selectorConfig.onCameraInterceptListener != null) {
-                onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO);
+                onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_RECORDER);
             } else {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -984,7 +985,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      * 拦截相机事件并处理返回结果
      */
     @Override
-    public void onInterceptCameraEvent(int cameraMode) {
+    public void onInterceptCameraEvent(CustomCameraType cameraMode) {
         ForegroundService.startForegroundService(getAppContext(), selectorConfig.isCameraForegroundService);
         selectorConfig.onCameraInterceptListener.openCamera(this, cameraMode, PictureConfig.REQUEST_CAMERA);
     }

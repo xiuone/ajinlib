@@ -1,4 +1,4 @@
-package camerax.luck.lib.camerax.widget
+package camerax.luck.lib.camerax.widget.type
 
 import android.content.Context
 import android.graphics.Canvas

@@ -1,4 +1,4 @@
-package camerax.luck.lib.camerax.widget
+package camerax.luck.lib.camerax.widget.flash
 
 enum class FlashType(val status:Int) {
     TYPE_FLASH_AUTO(0x021),

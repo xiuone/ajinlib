@@ -1,4 +1,4 @@
-package camerax.luck.lib.camerax
+package camerax.luck.lib.camerax.type
 
 /**
  * @author：luck

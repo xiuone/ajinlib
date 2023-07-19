@@ -1,4 +1,4 @@
-package camerax.luck.lib.camerax.widget
+package camerax.luck.lib.camerax.widget.flash
 
 import android.content.Context
 import android.util.AttributeSet
@@ -14,9 +14,9 @@ class FlashImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     init {
         setOnClickListener{
             typeFlash = when(typeFlash){
-                FlashType.TYPE_FLASH_AUTO-> FlashType.TYPE_FLASH_ON
-                FlashType.TYPE_FLASH_ON-> FlashType.TYPE_FLASH_OFF
-                FlashType.TYPE_FLASH_OFF-> FlashType.TYPE_FLASH_AUTO
+                FlashType.TYPE_FLASH_AUTO -> FlashType.TYPE_FLASH_ON
+                FlashType.TYPE_FLASH_ON -> FlashType.TYPE_FLASH_OFF
+                FlashType.TYPE_FLASH_OFF -> FlashType.TYPE_FLASH_AUTO
             }
             setFlashMode()
         }

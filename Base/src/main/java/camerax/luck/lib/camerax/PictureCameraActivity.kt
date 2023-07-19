@@ -24,11 +24,7 @@ import xy.xy.base.utils.exp.showToast
  * @describe：PictureCameraActivity
  */
 class PictureCameraActivity : ActivityBaseSwipeBack() {
-    private val mCameraView by lazy {
-        CustomCameraView(
-            this
-        )
-    }
+    private val mCameraView by lazy { CustomCameraView(this) }
     private val matchParent by lazy { RelativeLayout.LayoutParams.MATCH_PARENT }
 
     override fun startInitView(savedInstanceState: Bundle?) {
@@ -108,11 +104,4 @@ class PictureCameraActivity : ActivityBaseSwipeBack() {
             super.onBackPressed()
         }
     }
-
-    override fun onDestroy() {
-        mCameraView.onDestroy()
-        super.onDestroy()
-    }
-
-
 }

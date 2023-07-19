@@ -43,6 +43,7 @@ import androidx.camera.view.video.OnVideoSavedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import camerax.luck.lib.camerax.CustomCameraConfig
+import camerax.luck.lib.camerax.type.CustomCameraType
 import camerax.luck.lib.camerax.SimpleCameraX
 import camerax.luck.lib.camerax.listener.CameraListener
 import camerax.luck.lib.camerax.listener.CaptureListener
@@ -54,11 +55,13 @@ import camerax.luck.lib.camerax.listener.PreviewViewTouchListener
 import camerax.luck.lib.camerax.listener.PreviewViewTouchListener.CustomTouchListener
 import camerax.luck.lib.camerax.listener.TypeListener
 import camerax.luck.lib.camerax.utils.CameraUtils
-import camerax.luck.lib.camerax.utils.DensityUtil
 import camerax.luck.lib.camerax.utils.FileUtils
+import camerax.luck.lib.camerax.widget.capture.CaptureLayout
+import camerax.luck.lib.camerax.widget.flash.FlashImageView
+import camerax.luck.lib.camerax.widget.focus.FocusImageView
 import com.hjq.permissions.XXPermissions
 import xy.xy.base.R
-import xy.xy.base.permission.IPermissionInterceptorCreateListener
+import xy.xy.base.utils.exp.getResColor
 import xy.xy.base.utils.exp.getScreenHeight
 import xy.xy.base.utils.exp.getScreenWidth
 import xy.xy.base.utils.exp.isContent
@@ -80,7 +83,6 @@ import kotlin.math.min
 @SuppressLint("RestrictedApi", "UnsafeOptInUsageError", "MissingPermission")
 class CustomCameraView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0):
     RelativeLayout(context, attrs, defStyleAttr), OnOrientationChangedListener {
-    private var interceptor: IPermissionInterceptorCreateListener? = null
     private val mCameraPreviewView by lazy { findViewById<PreviewView>(R.id.cameraPreviewView) }
     private var mCameraProvider: ProcessCameraProvider? = null
     private var mImageCapture: ImageCapture? = null
@@ -88,8 +90,6 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
     private var mVideoCapture: VideoCapture? = null
     private var displayId = -1
 
-    //相机模式
-    private var buttonFeatures = 0
     //自定义拍照输出路径
     private var outPutCameraDir: String? = null
     //自定义拍照文件名
@@ -99,7 +99,7 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
     //设置编码比特率。
     private var videoBitRate = 0
     //视频录制最小时长
-    private var recordVideoMinSecond = 0
+    private var recordVideoMinSecond = 0L
     //是否显示录制时间
     private var isDisplayRecordTime = false
     //图片文件类型
@@ -147,15 +147,10 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     init {
         inflate(context, R.layout.picture_camera_view, this)
-        setBackgroundColor(ContextCompat.getColor(context, R.color.picture_color_black))
+        setBackgroundColor(ContextCompat.getColor(context, R.color.camerax_color_black))
         mSwitchCamera.setImageResource(R.drawable.picture_ic_camera)
         displayManager.registerDisplayListener(displayListener, null)
         initView()
-    }
-
-    fun setInterceptorCreateListener(listener: IPermissionInterceptorCreateListener?) {
-        interceptor = listener
-
     }
 
     private fun initView() {
@@ -216,21 +211,20 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
                 mVideoCapture?.startRecording(fileOptions, mainExecutor!!,
                     object : VideoCapture.OnVideoSavedCallback {
                         override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
-                            val minSecond =
-                                (if (recordVideoMinSecond <= 0) CustomCameraConfig.DEFAULT_MIN_RECORD_VIDEO else recordVideoMinSecond).toLong()
+                            val minSecond = (if (recordVideoMinSecond <= 0) CustomCameraConfig.minDuration else recordVideoMinSecond).toLong()
                             if (recordTime < minSecond || outputFileResults.savedUri == null) {
                                 return
                             }
                             val savedUri = outputFileResults.savedUri
-                            SimpleCameraX.putOutputUri(activity!!.intent, savedUri)
+                            CustomCameraConfig.putOutputUri(activity!!.intent, savedUri)
                             val outPutPath =
                                 if (FileUtils.isContent(savedUri.toString())) savedUri.toString() else savedUri!!.path!!
                             mTextureView.visibility = VISIBLE
                             tvCurrentTime.visibility = GONE
-                            if (mTextureView.isAvailable()) {
+                            if (mTextureView.isAvailable) {
                                 startVideoPlay(outPutPath)
                             } else {
-                                mTextureView.setSurfaceTextureListener(surfaceTextureListener)
+                                mTextureView.surfaceTextureListener = surfaceTextureListener
                             }
                         }
 
@@ -293,8 +287,6 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
                     e.printStackTrace()
                 }
             }
-
-            override fun recordZoom(zoom: Float) {}
             override fun recordError() {
                 if (mCameraListener != null) {
                     mCameraListener!!.onError(0, "An unknown error", null)
@@ -357,21 +349,12 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
                 }
             }
             // 当用户未设置存储路径时，相片默认是存在外部公共目录下
-            val externalSavedUri: Uri?
-            externalSavedUri = if (isImageCaptureEnabled) {
-                val contentValues =
-                    CameraUtils.buildImageContentValues(outPutCameraFileName, imageFormatForQ)
-                context.contentResolver.insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    contentValues
-                )
+            val externalSavedUri: Uri? = if (isImageCaptureEnabled) {
+                val contentValues = CameraUtils.buildImageContentValues(outPutCameraFileName, imageFormatForQ)
+                context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             } else {
-                val contentValues =
-                    CameraUtils.buildVideoContentValues(outPutCameraFileName, videoFormatForQ)
-                context.contentResolver.insert(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                    contentValues
-                )
+                val contentValues = CameraUtils.buildVideoContentValues(outPutCameraFileName, videoFormatForQ)
+                context.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
             }
             if (externalSavedUri == null) {
                 return outputPath
@@ -405,8 +388,6 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
     fun setCameraConfig(intent: Intent) {
         val extras = intent.extras ?: return
         val isCameraAroundState = extras.getBoolean(SimpleCameraX.EXTRA_CAMERA_AROUND_STATE, false)
-        buttonFeatures =
-            extras.getInt(SimpleCameraX.EXTRA_CAMERA_MODE, CustomCameraConfig.BUTTON_STATE_BOTH)
         lensFacing =
             if (isCameraAroundState) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
         outPutCameraDir = extras.getString(SimpleCameraX.EXTRA_OUTPUT_PATH_DIR)
@@ -414,14 +395,6 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
         videoFrameRate = extras.getInt(SimpleCameraX.EXTRA_VIDEO_FRAME_RATE)
         videoBitRate = extras.getInt(SimpleCameraX.EXTRA_VIDEO_BIT_RATE)
         isAutoRotation = extras.getBoolean(SimpleCameraX.EXTRA_AUTO_ROTATION)
-        val recordVideoMaxSecond = extras.getInt(
-            SimpleCameraX.EXTRA_RECORD_VIDEO_MAX_SECOND,
-            CustomCameraConfig.DEFAULT_MAX_RECORD_VIDEO
-        )
-        recordVideoMinSecond = extras.getInt(
-            SimpleCameraX.EXTRA_RECORD_VIDEO_MIN_SECOND,
-            CustomCameraConfig.DEFAULT_MIN_RECORD_VIDEO
-        )
         imageFormat = extras.getString(SimpleCameraX.EXTRA_CAMERA_IMAGE_FORMAT, CameraUtils.JPEG)
         imageFormatForQ = extras.getString(
             SimpleCameraX.EXTRA_CAMERA_IMAGE_FORMAT_FOR_Q,
@@ -432,45 +405,33 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
             SimpleCameraX.EXTRA_CAMERA_VIDEO_FORMAT_FOR_Q,
             CameraUtils.MIME_TYPE_VIDEO
         )
-        val captureLoadingColor =
-            extras.getInt(SimpleCameraX.EXTRA_CAPTURE_LOADING_COLOR, -0x828201)
+        val captureLoadingColor = context.getResColor(R.color.camerax_capture_loading_color)
         isDisplayRecordTime =
             extras.getBoolean(SimpleCameraX.EXTRA_DISPLAY_RECORD_CHANGE_TIME, false)
-        mCaptureLayout!!.setButtonFeatures(buttonFeatures)
-        if (recordVideoMaxSecond > 0) {
-            setRecordVideoMaxTime(recordVideoMaxSecond)
-        }
-        if (recordVideoMinSecond > 0) {
-            setRecordVideoMinTime(recordVideoMinSecond)
-        }
         val format = String.format(
             Locale.getDefault(),
             "%02d:%02d",
-            TimeUnit.MILLISECONDS.toMinutes(recordVideoMaxSecond.toLong()),
-            TimeUnit.MILLISECONDS.toSeconds(recordVideoMaxSecond.toLong())
-                    - TimeUnit.MINUTES.toSeconds(
-                TimeUnit.MILLISECONDS.toMinutes(
-                    recordVideoMaxSecond.toLong()
-                )
+            TimeUnit.MILLISECONDS.toMinutes(CustomCameraConfig.maxDuration),
+            TimeUnit.MILLISECONDS.toSeconds(CustomCameraConfig.minDuration)
+                    - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(CustomCameraConfig.maxDuration)
             )
         )
-        tvCurrentTime!!.text = format
-        if (isAutoRotation && buttonFeatures != CustomCameraConfig.BUTTON_STATE_ONLY_RECORDER) {
+        tvCurrentTime.text = format
+        if (isAutoRotation && !CustomCameraConfig.isOnlyCapture()) {
             orientationEventListener = OrientationEventListener(
                 context, this
             )
             startCheckOrientation()
         }
         setCaptureLoadingColor(captureLoadingColor)
-        setProgressColor(captureLoadingColor)
         val isCheckSelfPermission = XXPermissions.isGranted(context, Manifest.permission.CAMERA)
         if (isCheckSelfPermission) {
             buildUseCameraCases()
         } else {
             XXPermissions.with(context)
                 .permission(Manifest.permission.CAMERA)
-                .interceptor(interceptor!!.onCreateIPermissionInterceptor())
-                .request { permissions: List<String?>?, allGranted: Boolean -> buildUseCameraCases() }
+                .interceptor(CustomCameraConfig.interceptor?.onCreateIPermissionInterceptor())
+                .request { _: List<String?>?, _: Boolean -> buildUseCameraCases() }
         }
     }
 
@@ -521,15 +482,15 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
      */
     private fun bindCameraUseCases() {
         if (null != mCameraProvider && isBackCameraLevel3Device(mCameraProvider!!)) {
-            if (CustomCameraConfig.BUTTON_STATE_ONLY_RECORDER == buttonFeatures) {
+            if (CustomCameraConfig.haveRecord()) {
                 bindCameraVideoUseCases()
             } else {
                 bindCameraImageUseCases()
             }
         } else {
-            when (buttonFeatures) {
-                CustomCameraConfig.BUTTON_STATE_ONLY_CAPTURE -> bindCameraImageUseCases()
-                CustomCameraConfig.BUTTON_STATE_ONLY_RECORDER -> bindCameraVideoUseCases()
+            when (CustomCameraConfig.buttonFeatures) {
+                CustomCameraType.BUTTON_STATE_ONLY_CAPTURE -> bindCameraImageUseCases()
+                CustomCameraType.BUTTON_STATE_ONLY_RECORDER -> bindCameraVideoUseCases()
                 else -> bindCameraWithUserCases()
             }
         }
@@ -540,7 +501,7 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val cameraInfos = CameraSelector.DEFAULT_BACK_CAMERA
                 .filter(cameraProvider.availableCameraInfos)
-            if (!cameraInfos.isEmpty()) {
+            if (cameraInfos.isNotEmpty()) {
                 return Camera2CameraInfo.from(cameraInfos[0]).getCameraCharacteristic(
                     CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL
                 ) == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY
@@ -594,11 +555,7 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
      */
     private fun bindCameraImageUseCases() {
         try {
-            val screenAspectRatio = aspectRatio(
-                DensityUtil.getScreenWidth(
-                    context
-                ), DensityUtil.getScreenHeight(context)
-            )
+            val screenAspectRatio = aspectRatio(context.getScreenWidth(),context.getScreenHeight())
             val rotation = mCameraPreviewView!!.display.rotation
             val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
             // Preview
@@ -743,19 +700,6 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
         mCameraListener = cameraListener
     }
 
-    /**
-     * 设置录制视频最大时长 秒
-     */
-    fun setRecordVideoMaxTime(maxDurationTime: Int) {
-        mCaptureLayout!!.setDuration(maxDurationTime)
-    }
-
-    /**
-     * 设置录制视频最小时长 秒
-     */
-    fun setRecordVideoMinTime(minDurationTime: Int) {
-        mCaptureLayout!!.setMinDuration(minDurationTime)
-    }
 
     /**
      * 设置拍照时loading色值
@@ -763,18 +707,8 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
      * @param color
      */
     fun setCaptureLoadingColor(color: Int) {
-        mCaptureLayout!!.setCaptureLoadingColor(color)
+        mCaptureLayout?.setCaptureLoadingColor(color)
     }
-
-    /**
-     * 设置录像时loading色值
-     *
-     * @param color
-     */
-    fun setProgressColor(color: Int) {
-        mCaptureLayout!!.setProgressColor(color)
-    }
-
     /**
      * 切换前后摄像头
      */
@@ -893,14 +827,10 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
     public override fun onConfigurationChanged(newConfig: Configuration) {
         buildUseCameraCases()
     }
-
-    /**
-     * onDestroy
-     */
-    fun onDestroy() {
-        displayManager?.unregisterDisplayListener(displayListener)
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        displayManager.unregisterDisplayListener(displayListener)
         stopCheckOrientation()
-        focusImageView?.destroy()
     }
 
 
@@ -914,8 +844,8 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
         override fun onDisplayRemoved(displayId: Int) {}
         override fun onDisplayChanged(displayId: Int) {
             if (displayId == this@CustomCameraView.displayId) {
-                mImageCapture?.targetRotation = mCameraPreviewView!!.display.rotation
-                mImageAnalyzer?.targetRotation = mCameraPreviewView!!.display.rotation
+                mImageCapture?.targetRotation = mCameraPreviewView.display.rotation
+                mImageAnalyzer?.targetRotation = mCameraPreviewView.display.rotation
             }
         }
     }
@@ -941,13 +871,13 @@ class CustomCameraView @JvmOverloads constructor(context: Context, attrs: Attrib
                 .build()
             if (mCameraInfo?.isFocusMeteringSupported(action) == true) {
                 mCameraControl?.cancelFocusAndMetering()
-                focusImageView?.setDisappear(false)
+                focusImageView?.isDisappear = false
                 focusImageView?.startFocus(Point(x.toInt(), y.toInt()))
                 val future = mCameraControl?.startFocusAndMetering(action)
                 future?.addListener({
                     try {
                         val result = future.get()
-                        focusImageView?.setDisappear(true)
+                        focusImageView?.isDisappear = true
                         if (result.isFocusSuccessful) {
                             focusImageView?.onFocusSuccess()
                         } else {

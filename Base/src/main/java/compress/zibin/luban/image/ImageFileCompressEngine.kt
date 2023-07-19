@@ -1,32 +1,26 @@
-package compress.zibin.luban.image;
+package compress.zibin.luban.image
 
-import android.content.Context;
-import android.net.Uri;
+import android.content.Context
+import android.net.Uri
+import compress.zibin.luban.Luban
+import compress.zibin.luban.OnCompressListener
+import picture.luck.picture.lib.engine.CompressFileEngine
+import picture.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
+import java.io.File
 
-import java.io.File;
-import java.util.ArrayList;
-
-import compress.zibin.luban.Luban;
-import compress.zibin.luban.OnCompressListener;
-import picture.luck.picture.lib.engine.CompressFileEngine;
-import picture.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener;
-
-public class ImageFileCompressEngine implements CompressFileEngine {
-    @Override
-    public void onStartCompress(Context context, ArrayList<Uri> source, OnKeyValueResultCallbackListener call) {
+class ImageFileCompressEngine : CompressFileEngine {
+    override fun onStartCompress(context: Context, source: ArrayList<Uri>, call: OnKeyValueResultCallbackListener) {
         Luban.with(context)
-                .load(source)
-                .ignoreBy(100)
-                .setCompressListener( new OnCompressListener() {
-                    @Override
-                    public void onSuccess(String source, File compressFile) {
-                        call.onCallback(source, compressFile.getAbsolutePath());
-                    }
+            .load(source)
+            .ignoreBy(100)
+            .setCompressListener(object : OnCompressListener {
+                override fun onSuccess(source: String?, compressFile: File?) {
+                    call.onCallback(source, compressFile!!.absolutePath)
+                }
 
-                    @Override
-                    public void onError(String source, Throwable e) {
-                        call.onCallback(source, null);
-                    }
-        }).launch();
+                override fun onError(source: String?, e: Throwable?) {
+                    call.onCallback(source, null)
+                }
+            }).launch()
     }
 }

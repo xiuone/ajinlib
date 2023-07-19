@@ -11,6 +11,5 @@ interface CaptureListener {
     fun recordStart()
     fun recordEnd(time: Long)
     fun changeTime(duration: Long)
-    fun recordZoom(zoom: Float)
     fun recordError()
 }

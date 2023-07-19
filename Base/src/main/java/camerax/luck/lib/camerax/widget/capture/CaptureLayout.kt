@@ -1,4 +1,4 @@
-package camerax.luck.lib.camerax.widget
+package camerax.luck.lib.camerax.widget.capture
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -15,10 +15,13 @@ import android.widget.TextView
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import camerax.luck.lib.camerax.CustomCameraConfig
-import camerax.luck.lib.camerax.CustomCameraType
+import camerax.luck.lib.camerax.type.CustomCameraType
 import camerax.luck.lib.camerax.listener.CaptureListener
 import camerax.luck.lib.camerax.listener.ClickListener
 import camerax.luck.lib.camerax.listener.TypeListener
+import camerax.luck.lib.camerax.widget.type.ReturnButton
+import camerax.luck.lib.camerax.widget.type.TypeCancelButton
+import camerax.luck.lib.camerax.widget.type.TypeConfirmButton
 import xy.xy.base.R
 import xy.xy.base.utils.exp.getScreenWidth
 
@@ -36,8 +39,8 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
 
     private val progressBar by lazy { ProgressBar(context) }// 拍照等待loading
     private val captureButton by lazy { CaptureButton(context, buttonSize) }//拍照按钮
-    private val confirmButton by lazy { TypeButton(context, TypeButton.TYPE.TYPE_CONFIRM, buttonSize) }//确认按钮
-    private val cancelButton by lazy {  TypeButton(context, TypeButton.TYPE.TYPE_CANCEL, buttonSize) }//取消按钮
+    private val confirmButton by lazy { TypeConfirmButton(context, buttonSize) }//确认按钮
+    private val cancelButton by lazy {  TypeCancelButton(context, buttonSize) }//取消按钮
     private val returnButton by lazy { ReturnButton(context, (buttonSize / 2.5f).toInt()) }//返回按钮
     private val customLeftIv by lazy { ImageView(context) }//左边自定义按钮
     private val customRightIv by lazy { ImageView(context) }//右边自定义按钮
@@ -109,10 +112,6 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
                 captureListener?.changeTime(time)
             }
 
-            override fun recordZoom(zoom: Float) {
-                captureListener?.recordZoom(zoom)
-            }
-
             override fun recordError() {
                 captureListener?.recordError()
             }
@@ -179,7 +178,7 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         val txtParam = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         txtParam.gravity = Gravity.CENTER_HORIZONTAL
         txtParam.setMargins(0, 0, 0, 0)
-        tipTv.text = captureTip()
+        setTip()
         tipTv.setTextColor(-0x1)
         tipTv.gravity = Gravity.CENTER
         tipTv.layoutParams = txtParam
@@ -221,17 +220,11 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         set.start()
     }
 
-    private fun captureTip(): String{
-        return when (captureButton.buttonFeatures) {
-            CustomCameraType.BUTTON_STATE_ONLY_CAPTURE -> context.getString(R.string.picture_photo_pictures)
-            CustomCameraType.BUTTON_STATE_ONLY_RECORDER -> context.getString(R.string.picture_photo_recording)
-            else -> context.getString(R.string.picture_photo_camera)
-        }
-    }
+
 
     fun setButtonCaptureEnabled(enabled: Boolean) {
         progressBar.visibility = if (enabled) GONE else VISIBLE
-        captureButton.isTakeCamera = enabled
+        CustomCameraConfig.isTakeCamera = enabled
     }
 
     fun setCaptureLoadingColor(color: Int) {
@@ -244,7 +237,7 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         cancelButton.visibility = GONE
         confirmButton.visibility = GONE
         captureButton.visibility = VISIBLE
-        tipTv.text = captureTip()
+        setTip()
         tipTv.visibility = VISIBLE
         if (iconLeft != 0) customLeftIv.visibility = VISIBLE else returnButton.visibility = VISIBLE
         if (iconRight != 0) customRightIv.visibility = VISIBLE
@@ -260,7 +253,7 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         tipAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                tipTv.setText(captureTip())
+                setTip()
                 tipTv.alpha = 1f
             }
         })
@@ -268,24 +261,12 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         tipAnimator.start()
     }
 
-    fun setDuration(duration: Int) {
-        captureButton.maxDuration = duration
-    }
-
-    fun setMinDuration(duration: Int) {
-        captureButton.minDuration = duration
-    }
-    fun setProgressColor(color: Int) {
-        this.captureButton.progressColor = color
-    }
-
-    fun setButtonFeatures(state: CustomCameraType) {
-        captureButton.buttonFeatures = state
-        tipTv.text = captureTip()
-    }
-
-    fun setTip(tip: String?) {
-        tipTv.text = tip
+    fun setTip() {
+        tipTv.text = when (CustomCameraConfig.buttonFeatures) {
+            CustomCameraType.BUTTON_STATE_ONLY_CAPTURE -> context.getString(R.string.picture_photo_pictures)
+            CustomCameraType.BUTTON_STATE_ONLY_RECORDER -> context.getString(R.string.picture_photo_recording)
+            else -> context.getString(R.string.picture_photo_camera)
+        }
     }
 
     fun showTip() {

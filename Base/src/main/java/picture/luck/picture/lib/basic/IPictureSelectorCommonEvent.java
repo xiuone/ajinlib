@@ -3,6 +3,7 @@ package picture.luck.picture.lib.basic;
 import android.content.Intent;
 import android.os.Bundle;
 
+import camerax.luck.lib.camerax.type.CustomCameraType;
 import picture.luck.picture.lib.config.SelectorConfig;
 import picture.luck.picture.lib.config.SelectMimeType;
 import picture.luck.picture.lib.entity.LocalMedia;
@@ -293,7 +294,7 @@ public interface IPictureSelectorCommonEvent {
      *
      * @param cameraMode {@link SelectMimeType}
      */
-    void onInterceptCameraEvent(int cameraMode);
+    void onInterceptCameraEvent(CustomCameraType cameraMode);
 
     /**
      * 进入Fragment
