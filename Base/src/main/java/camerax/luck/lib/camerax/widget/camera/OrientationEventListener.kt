@@ -1,4 +1,4 @@
-package camerax.luck.lib.camerax.listener
+package camerax.luck.lib.camerax.widget.camera
 
 import android.content.Context
 import android.view.OrientationEventListener

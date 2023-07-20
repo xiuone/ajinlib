@@ -23,6 +23,7 @@ import camerax.luck.lib.camerax.widget.type.ReturnButton
 import camerax.luck.lib.camerax.widget.type.TypeCancelButton
 import camerax.luck.lib.camerax.widget.type.TypeConfirmButton
 import xy.xy.base.R
+import xy.xy.base.utils.exp.getResColor
 import xy.xy.base.utils.exp.getScreenWidth
 
 /**
@@ -81,6 +82,9 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         progressBarParam.gravity = Gravity.CENTER
         progressBar.layoutParams = progressBarParam
         progressBar.visibility = GONE
+        val color = context.getResColor(R.color.camerax_capture_loading_color)
+        val colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
+        progressBar.indeterminateDrawable.colorFilter = colorFilter
     }
 
     //拍照按钮
@@ -225,11 +229,6 @@ class CaptureLayout @JvmOverloads constructor(context: Context, attrs: Attribute
     fun setButtonCaptureEnabled(enabled: Boolean) {
         progressBar.visibility = if (enabled) GONE else VISIBLE
         CustomCameraConfig.isTakeCamera = enabled
-    }
-
-    fun setCaptureLoadingColor(color: Int) {
-        val colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
-        progressBar.indeterminateDrawable.colorFilter = colorFilter
     }
 
     fun resetCaptureLayout() {

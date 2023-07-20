@@ -22,24 +22,24 @@ import xy.xy.base.BuildConfig
  */
 class SimpleCameraX {
     //视频帧率，越高视频体积越大
-    private var videoFrameRate = 0
+    var videoFrameRate = 0
     //相机模式
-    private var buttonFeatures = CustomCameraType.BUTTON_STATE_BOTH
+    var buttonFeatures = CustomCameraType.BUTTON_STATE_BOTH
     //bit率， 越大视频体积越大
-    private var videoBitRate = 0
+    var videoBitRate = 0
     //相机前置或后置
-    private var isCameraAroundState :Boolean = false
+    var isCameraAroundState :Boolean = false
     //默认最大录制时间
-    private var maxDuration = 60 * 1000 + 500L
+    var maxDuration = 60 * 1000 + 500L
     //默认最小录制时间
-    private var minDuration = 1500L
+    var minDuration = 1500L
     //是否显示录制时间
-    private var isDisplayRecordTime = false
+    var isDisplayRecordTime = false
     //是否显示录制时间
-    private var imageFormat = CameraImageFormat.PNG
-    private var imageFormatQ = CameraImageFormatQ.JPEG
-    private var videoFormat = CameraVideoFormat.VIDEO
-    private var videoFormatQ = CameraVideoFormatQ.VIDEO
+    var imageFormat = CameraImageFormat.PNG
+    var imageFormatQ = CameraImageFormatQ.JPEG
+    var videoFormat = CameraVideoFormat.VIDEO
+    var videoFormatQ = CameraVideoFormatQ.VIDEO
 
     /**
      * 视频帧率，越高视频体积越大
@@ -155,6 +155,7 @@ class SimpleCameraX {
      * @param requestCode requestCode for result
      */
     fun start(activity: Activity, requestCode: Int) {
+        CustomCameraConfig.setConfig(this)
         activity.startActivityForResult(getIntent(activity), requestCode)
     }
 
@@ -165,6 +166,7 @@ class SimpleCameraX {
      * @param requestCode requestCode for result
      */
     fun start(context: Context, fragment: Fragment, requestCode: Int) {
+        CustomCameraConfig.setConfig(this)
         fragment.startActivityForResult(getIntent(context), requestCode)
     }
 

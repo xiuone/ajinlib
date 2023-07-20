@@ -13,6 +13,18 @@ import xy.xy.base.permission.IPermissionInterceptorCreateListener
  * @describe：CustomCameraConfig
  */
 object CustomCameraConfig {
+    private var simpleCameraX:SimpleCameraX? =null
+
+    fun setConfig(simpleCameraX: SimpleCameraX?){
+        this.simpleCameraX = simpleCameraX
+    }
+
+    fun getConfig() :SimpleCameraX{
+        val simpleCameraX = simpleCameraX?:SimpleCameraX()
+        this.simpleCameraX = simpleCameraX
+        return simpleCameraX
+    }
+
     /**
      * 按钮可执行的功能状态（拍照,录制,两者）
      */
@@ -39,23 +51,25 @@ object CustomCameraConfig {
      * 是否只拍照
      */
     fun isOnlyCapture() :Boolean{
-        return buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE
+        return getConfig().buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE
     }
 
     /**
      * 是否可以拍照
      */
     fun haveCapture():Boolean {
-        var status = buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE
-        return status || buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH
+        val config = getConfig()
+        var status = config.buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_CAPTURE
+        return status || config.buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH
     }
 
     /**
      * 是否可以拍照
      */
     fun haveRecord():Boolean {
-        var status = buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_RECORDER
-        return status || buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH
+        val config = getConfig()
+        var status = config.buttonFeatures == CustomCameraType.BUTTON_STATE_ONLY_RECORDER
+        return status || config.buttonFeatures == CustomCameraType.BUTTON_STATE_BOTH
     }
 
 
@@ -65,8 +79,8 @@ object CustomCameraConfig {
      * @param intent
      * @param uri
      */
-    fun putOutputUri(intent: Intent, uri: Uri?) {
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+    fun putOutputUri(intent: Intent?, uri: Uri?) {
+        intent?.putExtra(MediaStore.EXTRA_OUTPUT, uri)
     }
 
     /**

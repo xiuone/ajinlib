@@ -15,14 +15,10 @@ class ImageCameraIntercept : OnCameraInterceptListener {
         val fragment = fragment?:return
         val context = fragment.context?:return
         val camera = SimpleCameraX.of()
-        camera.isAutoRotation(true)
         camera.setCameraMode(cameraMode)
         camera.setVideoFrameRate(25)
         camera.setVideoBitRate(3 * 1024 * 1024)
         camera.isDisplayRecordChangeTime(true)
-        camera.isManualFocusCameraPreview(true)
-        camera.isZoomCameraPreview(true)
-        camera.setOutputPathDir(context.getSdImageDir(context.getResString(R.string.app_name)))
         camera.start(fragment.requireActivity(), fragment, requestCode)
     }
 }

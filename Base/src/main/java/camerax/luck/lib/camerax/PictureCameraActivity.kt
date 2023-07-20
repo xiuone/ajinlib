@@ -1,5 +1,6 @@
 package camerax.luck.lib.camerax
 
+import android.Manifest
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -13,8 +14,9 @@ import android.widget.RelativeLayout
 import camerax.luck.lib.camerax.listener.CameraListener
 import camerax.luck.lib.camerax.listener.ClickListener
 import camerax.luck.lib.camerax.listener.ImageCallbackListener
-import camerax.luck.lib.camerax.widget.CustomCameraView
+import camerax.luck.lib.camerax.widget.camera.CustomCameraView
 import com.bumptech.glide.Glide
+import com.hjq.permissions.XXPermissions
 import xy.xy.base.act.ActivityBaseSwipeBack
 import xy.xy.base.utils.exp.showToast
 
@@ -44,7 +46,15 @@ class PictureCameraActivity : ActivityBaseSwipeBack() {
         super.initView(savedInstanceState)
         mCameraView.layoutParams = RelativeLayout.LayoutParams(matchParent,matchParent)
         setContentView(mCameraView)
-        mCameraView.post { mCameraView.setCameraConfig(intent) }
+        val isCheckSelfPermission = XXPermissions.isGranted(this, Manifest.permission.CAMERA)
+        if (isCheckSelfPermission) {
+            mCameraView.buildUseCameraCases()
+        } else {
+            XXPermissions.with(this)
+                .permission(Manifest.permission.CAMERA)
+                .interceptor(CustomCameraConfig.interceptor?.onCreateIPermissionInterceptor())
+                .request { _: List<String?>?, _: Boolean -> mCameraView.buildUseCameraCases() }
+        }
     }
 
     override fun setListener() {
@@ -67,7 +77,6 @@ class PictureCameraActivity : ActivityBaseSwipeBack() {
             override fun onClick() {
                 handleCameraCancel()
             }
-
         })
     }
 
