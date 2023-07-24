@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="picture_color_black">#000000</color>
+    <color name="camerax_color_black">#000000</color>
+    <color name="camerax_outside_color">#EEDCDCDC</color>
+    <color name="camerax_inside_color">#FFFFFFFF</color>
+    <color name="camerax_progress_color">#EE16AE16</color>
+    <color name="camerax_capture_loading_color">#FF7D7DFF</color>
 </resources>

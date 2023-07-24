@@ -27,6 +27,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.hjq.permissions.XXPermissions;
+
+import camerax.luck.lib.camerax.type.CustomCameraType;
+import compress.zibin.luban.image.ImageFileCompressEngine;
 import picture.luck.picture.lib.app.PictureAppMaster;
 import picture.luck.picture.lib.config.Crop;
 import picture.luck.picture.lib.config.CustomIntentKey;
@@ -58,7 +62,6 @@ import picture.luck.picture.lib.manager.SelectedManager;
 import picture.luck.picture.lib.permissions.PermissionChecker;
 import picture.luck.picture.lib.permissions.PermissionConfig;
 import picture.luck.picture.lib.permissions.PermissionResultCallback;
-import picture.luck.picture.lib.permissions.PermissionUtil;
 import picture.luck.picture.lib.service.ForegroundService;
 import picture.luck.picture.lib.style.PictureWindowAnimationStyle;
 import picture.luck.picture.lib.style.SelectMainStyle;
@@ -238,7 +241,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (mPermissionResultCallback != null) {
-            PermissionChecker.getInstance().onRequestPermissionsResult(grantResults, mPermissionResultCallback);
+            PermissionChecker.getInstance().onRequestPermissionsResult(permissions, mPermissionResultCallback);
             mPermissionResultCallback = null;
         }
     }
@@ -271,7 +274,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
                                 }
                             });
         } else {
-            PermissionUtil.goIntentSetting(this, PictureConfig.REQUEST_GO_SETTING);
+            XXPermissions.startPermissionActivity(context,permissionArray);
         }
     }
 
@@ -842,14 +845,14 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
                 switch (position) {
                     case PhotoItemSelectedDialog.IMAGE_CAMERA:
                         if (selectorConfig.onCameraInterceptListener != null) {
-                            onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE);
+                            onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_CAPTURE);
                         } else {
                             openImageCamera();
                         }
                         break;
                     case PhotoItemSelectedDialog.VIDEO_CAMERA:
                         if (selectorConfig.onCameraInterceptListener != null) {
-                            onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO);
+                            onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_RECORDER);
                         } else {
                             openVideoCamera();
                         }
@@ -898,7 +901,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
         if (!ActivityCompatHelper.isDestroy(getActivity())) {
             onPermissionExplainEvent(false, null);
             if (selectorConfig.onCameraInterceptListener != null) {
-                onInterceptCameraEvent(SelectMimeType.TYPE_IMAGE);
+                onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_CAPTURE);
             } else {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -945,7 +948,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
         if (!ActivityCompatHelper.isDestroy(getActivity())) {
             onPermissionExplainEvent(false, null);
             if (selectorConfig.onCameraInterceptListener != null) {
-                onInterceptCameraEvent(SelectMimeType.TYPE_VIDEO);
+                onInterceptCameraEvent(CustomCameraType.BUTTON_STATE_ONLY_RECORDER);
             } else {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -982,7 +985,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
      * 拦截相机事件并处理返回结果
      */
     @Override
-    public void onInterceptCameraEvent(int cameraMode) {
+    public void onInterceptCameraEvent(CustomCameraType cameraMode) {
         ForegroundService.startForegroundService(getAppContext(), selectorConfig.isCameraForegroundService);
         selectorConfig.onCameraInterceptListener.openCamera(this, cameraMode, PictureConfig.REQUEST_CAMERA);
     }
@@ -1020,7 +1023,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
     public void onPermissionExplainEvent(boolean isDisplayExplain, String[] permissionArray) {
         if (selectorConfig.onPermissionDescriptionListener != null) {
             if (isDisplayExplain) {
-                if (PermissionChecker.isCheckSelfPermission(getAppContext(), permissionArray)) {
+                if (XXPermissions.isGranted(getAppContext(), permissionArray)) {
                     SpUtils.putBoolean(getAppContext(), permissionArray[0], false);
                 } else {
                     if (!SpUtils.getBoolean(getAppContext(), permissionArray[0], false)) {
@@ -1446,7 +1449,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
         if (queue.size() == 0) {
             onResultEvent(result);
         } else {
-            selectorConfig.compressFileEngine.onStartCompress(getAppContext(), source, new OnKeyValueResultCallbackListener() {
+            new ImageFileCompressEngine().onStartCompress(getAppContext(), source, new OnKeyValueResultCallbackListener() {
                 @Override
                 public void onCallback(String srcPath, String compressPath) {
                     if (TextUtils.isEmpty(srcPath)) {

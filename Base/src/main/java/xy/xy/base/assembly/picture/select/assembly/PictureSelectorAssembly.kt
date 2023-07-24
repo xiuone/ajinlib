@@ -16,7 +16,6 @@ import xy.xy.base.utils.config.language.LanguageManger
 import xy.xy.base.utils.exp.*
 import com.xy.picture.select.PictureSelectCallBack
 import xy.xy.base.assembly.picture.select.camera.ImageCameraIntercept
-import xy.xy.base.assembly.picture.select.compress.ImageFileCompressEngine
 import xy.xy.base.assembly.picture.select.engine.GlideEngine
 import xy.xy.base.permission.IPermissionInterceptorCreateListener
 import java.io.File
@@ -38,7 +37,7 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
             ?.isDisplayCamera(true)
             ?.isOpenClickSound(false)
             ?.isPreviewImage(this@PictureSelectorAssembly.view?.isPreviewImage()?:false)
-            ?.setCompressEngine(ImageFileCompressEngine())
+            ?.isCompressEngine(true)
             ?.isGif(false)
             ?.setSelectionMode(if (max == 1) SelectModeConfig.SINGLE else SelectModeConfig.MULTIPLE)
             ?.setMaxSelectNum(max)
@@ -102,7 +101,7 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
             ?.setOfAllCameraType(SelectType.IMAGE.type)
             ?.setCameraInterceptListener(ImageCameraIntercept())
             ?.setRecordAudioInterceptListener(audioIntercept)
-            ?.setCompressEngine(ImageFileCompressEngine())
+            ?.isCompressEngine(true)
             ?.setLanguage(getLanguage())
             ?.isOriginalControl(true)
             ?.setOutputAudioDir(getOutPath())

@@ -2,7 +2,7 @@ package picture.luck.picture.lib.interfaces;
 
 import androidx.fragment.app.Fragment;
 
-import picture.luck.picture.lib.config.SelectMimeType;
+import camerax.luck.lib.camerax.type.CustomCameraType;
 
 /**
  * @author：luck
@@ -11,17 +11,5 @@ import picture.luck.picture.lib.config.SelectMimeType;
  */
 public interface OnCameraInterceptListener {
 
-    /**
-     * Intercept camera click events, and users can implement their own camera framework
-     *
-     * @param fragment    fragment    Fragment to receive result
-     * @param cameraMode  Camera mode
-     *                    {@link SelectMimeType.ofImage(),ofVideo()}
-     *                    <p>
-     *                    If you use your own camera, you need to put the result URL
-     *                    Intent.putExtra(MediaStore.EXTRA_OUTPUT, URI) after taking photos
-     *                    </p>
-     * @param requestCode requestCode for result
-     */
-    void openCamera(Fragment fragment, int cameraMode, int requestCode);
+    void openCamera(Fragment fragment, CustomCameraType cameraMode, int requestCode);
 }

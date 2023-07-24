@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.hjq.permissions.XXPermissions;
+
 import picture.luck.picture.lib.adapter.PictureImageGridAdapter;
 import picture.luck.picture.lib.animators.AlphaInAnimationAdapter;
 import picture.luck.picture.lib.animators.AnimationType;
@@ -481,12 +483,7 @@ public class PictureSelectorFragment extends PictureCommonFragment
         }
         onPermissionExplainEvent(false, null);
         boolean isHasCamera = permissions.length > 0 && TextUtils.equals(permissions[0], PermissionConfig.CAMERA[0]);
-        boolean isHasPermissions;
-        if (selectorConfig.onPermissionsEventListener != null) {
-            isHasPermissions = selectorConfig.onPermissionsEventListener.hasPermissions(this, permissions);
-        } else {
-            isHasPermissions = PermissionChecker.isCheckSelfPermission(getContext(), permissions);
-        }
+        boolean isHasPermissions = XXPermissions.isGranted(getContext(),permissions);
         if (isHasPermissions) {
             if (isHasCamera) {
                 openSelectedCamera();

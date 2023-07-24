@@ -20,19 +20,6 @@ import java.util.Locale;
  */
 public class LubanUtils {
     private static final String TAG = "Luban";
-
-    /**
-     * Get a file path from a Uri. This will get the the path for Storage Access
-     * Framework Documents, as well as the _data field for the MediaStore and
-     * other file-based ContentProviders.<br>
-     * <br>
-     * Callers should check whether the path is local before assuming it
-     * represents a local file.
-     *
-     * @param context The context.
-     * @param uri     The Uri to query.
-     * @author paulburke
-     */
     @SuppressLint("NewApi")
     public static String getPath(final Context ctx, final Uri uri) {
         Context context = ctx.getApplicationContext();

@@ -11,10 +11,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.hjq.permissions.XXPermissions;
+
 import picture.luck.picture.lib.basic.PictureCommonFragment;
 import picture.luck.picture.lib.config.SelectMimeType;
 import picture.luck.picture.lib.utils.ActivityCompatHelper;
 import picture.luck.picture.lib.utils.SdkVersionUtils;
+import xy.xy.base.utils.ContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,8 +93,8 @@ public class PermissionChecker {
         }
     }
 
-    public void onRequestPermissionsResult(int[] grantResults, PermissionResultCallback action) {
-        if (PermissionUtil.isAllGranted(grantResults)) {
+    public void onRequestPermissionsResult(String[] permissions, PermissionResultCallback action) {
+        if (XXPermissions.isGranted(ContextHolder.INSTANCE.getContext(),permissions)) {
             action.onGranted();
         } else {
             action.onDenied();
@@ -99,41 +102,17 @@ public class PermissionChecker {
     }
 
     /**
-     * 检查是否有某个权限
-     *
-     * @param ctx
-     * @param permissions
-     */
-    public static boolean checkSelfPermission(Context ctx, String[] permissions) {
-        boolean isAllGranted = true;
-        if (permissions != null) {
-            for (String permission : permissions) {
-                if (ContextCompat.checkSelfPermission(ctx.getApplicationContext(), permission)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    isAllGranted = false;
-                    break;
-                }
-            }
-        }
-        return isAllGranted;
-    }
-
-    /**
      * 检查读写权限是否存在
      */
     public static boolean isCheckReadStorage(int chooseMode, Context context) {
-        if (SdkVersionUtils.isTIRAMISU()) {
-            if (chooseMode == SelectMimeType.ofImage()) {
-                return PermissionChecker.isCheckReadImages(context);
-            } else if (chooseMode == SelectMimeType.ofVideo()) {
-                return PermissionChecker.isCheckReadVideo(context);
-            } else if (chooseMode == SelectMimeType.ofAudio()) {
-                return PermissionChecker.isCheckReadAudio(context);
-            } else {
-                return PermissionChecker.isCheckReadImages(context) && PermissionChecker.isCheckReadVideo(context);
-            }
+        if (chooseMode == SelectMimeType.ofImage()) {
+            return PermissionChecker.isCheckReadImages(context);
+        } else if (chooseMode == SelectMimeType.ofVideo()) {
+            return PermissionChecker.isCheckReadVideo(context);
+        } else if (chooseMode == SelectMimeType.ofAudio()) {
+            return PermissionChecker.isCheckReadAudio(context);
         } else {
-            return PermissionChecker.isCheckReadExternalStorage(context);
+            return PermissionChecker.isCheckReadImages(context) && PermissionChecker.isCheckReadVideo(context);
         }
     }
 
@@ -141,58 +120,25 @@ public class PermissionChecker {
     /**
      * 检查读取图片权限是否存在
      */
-    @RequiresApi(api = 33)
     public static boolean isCheckReadImages(Context context) {
-        return PermissionChecker.checkSelfPermission(context,
-                new String[]{PermissionConfig.READ_MEDIA_IMAGES});
+        return XXPermissions.isGranted(context, PermissionConfig.READ_MEDIA_IMAGES);
     }
 
     /**
      * 检查读取视频权限是否存在
      */
-    @RequiresApi(api = 33)
     public static boolean isCheckReadVideo(Context context) {
-        return PermissionChecker.checkSelfPermission(context,
-                new String[]{PermissionConfig.READ_MEDIA_VIDEO});
+        return XXPermissions.isGranted(context, PermissionConfig.READ_MEDIA_VIDEO);
     }
 
     /**
      * 检查读取音频权限是否存在
      */
-    @RequiresApi(api = 33)
     public static boolean isCheckReadAudio(Context context) {
-        return PermissionChecker.checkSelfPermission(context,
-                new String[]{PermissionConfig.READ_MEDIA_AUDIO});
+        return XXPermissions.isGranted(context, PermissionConfig.READ_MEDIA_AUDIO);
     }
 
-    /**
-     * 检查写入权限是否存在
-     */
-    public static boolean isCheckWriteExternalStorage(Context context) {
-        return PermissionChecker.checkSelfPermission(context,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
-    }
-
-    /**
-     * 检查读取权限是否存在
-     */
-    public static boolean isCheckReadExternalStorage(Context context) {
-        return PermissionChecker.checkSelfPermission(context,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
-    }
-
-
-    /**
-     * 检查相机权限是否存在
-     */
     public static boolean isCheckCamera(Context context) {
-        return PermissionChecker.checkSelfPermission(context, new String[]{Manifest.permission.CAMERA});
-    }
-
-    /**
-     * 权限是否已申请
-     */
-    public static boolean isCheckSelfPermission(Context context, String[] permissions) {
-        return PermissionChecker.checkSelfPermission(context, permissions);
+        return XXPermissions.isGranted(context, PermissionConfig.CAMERA);
     }
 }
