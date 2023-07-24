@@ -7,14 +7,13 @@ import xy.xy.base.utils.ContextHolder
 
 object LocationConfig {
 
-    val mLocationClient by lazy { getLocation() }
 
     var lastLocation: AMapLocation?=null
 
     /**
      * 定位初始化
      * */
-    private fun getLocation(): AMapLocationClient?{
+    fun getLocation(): AMapLocationClient?{
 
         val mLocationClient = AMapLocationClient(ContextHolder.getContext())
         val mLocationOption = AMapLocationClientOption()

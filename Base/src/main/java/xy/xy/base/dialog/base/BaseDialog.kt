@@ -16,11 +16,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import xy.xy.base.utils.exp.getScreenWidth
 import xy.xy.base.dialog.listener.DialogActionListener
+import xy.xy.base.utils.TagNumber
 import xy.xy.base.utils.softkey.MoveKeyBoardController
 
 abstract class BaseDialog(context: Context) : Dialog(context) ,
     DialogInterface.OnDismissListener, DialogActionListener,LifecycleObserver {
-    protected val TAG = this::class.java.toString()
+    protected val TAG by lazy { TagNumber.getTag(this::class.java.name) }
     protected var any:Any? = null
     protected var rootView:View?=null
     private val disListenerList by lazy { ArrayList<DialogInterface.OnDismissListener>() }

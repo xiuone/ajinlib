@@ -49,7 +49,7 @@ class NineView<T: NineListener> @JvmOverloads  constructor(context: Context, pro
         val imageView = RoundImageView(context,attrs)
         imageView.builder.setAllRadius(builder.radius)
         imageView.layoutParams = layoutParams
-        imageView.loadImageWithCenter(item.onThumb())
+        imageView.loadImageWithCenter(item.onThumb(),builder.place)
         frameLayout.addView(imageView)
         if (listener != null){
             frameLayout.setOnClick{

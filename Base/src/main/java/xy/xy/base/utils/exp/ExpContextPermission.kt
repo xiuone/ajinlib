@@ -19,10 +19,12 @@ fun Context?.addPermissionUseDescription(permissionArray: MutableList<String>,co
     val permissionCameraTitle = getResString(R.string.permission_camera)
     val permissionMic = getResString(R.string.permission_microphone)
     val permissionWrite = getResString(R.string.permission_write)
+    val permissionLocation = getResString(R.string.permission_location)
 
     val permissionCameraDes =getResString(R.string.permission_camera_use_des)
     val permissionMicDes = getResString(R.string.permission_microphone_use_des)
     val permissionWriteDes = getResString(R.string.permission_write_use_des)
+    val permissionLocationDes = getResString(R.string.permission_location_use_des)
 
     val stringBuffer = StringBuffer()
     val usePermissionList = ArrayList<String>()
@@ -39,16 +41,28 @@ fun Context?.addPermissionUseDescription(permissionArray: MutableList<String>,co
                 stringBuffer.append("\n")
             }
             stringBuffer.append(String.format(useTips,permissionMic,permissionMicDes))
-            usePermissionList.add(permissionCameraTitle)
+            usePermissionList.add(permissionMic)
         }
-        if (item == Manifest.permission.WRITE_EXTERNAL_STORAGE || item == Manifest.permission.READ_EXTERNAL_STORAGE){
+        if (item == Manifest.permission.READ_MEDIA_IMAGES ||
+            item == Manifest.permission.READ_MEDIA_VIDEO ||
+            item == Manifest.permission.READ_MEDIA_AUDIO){
             val permissionDes = String.format(useTips,permissionWrite,permissionWriteDes)
             if (!stringBuffer.contains(permissionDes)) {
                 if (!stringBuffer.isNullOrEmpty()){
                     stringBuffer.append("\n")
                 }
                 stringBuffer.append(permissionDes)
-                usePermissionList.add(permissionCameraTitle)
+                usePermissionList.add(permissionWrite)
+            }
+        }
+        if (item == Manifest.permission.ACCESS_FINE_LOCATION  || item == Manifest.permission.ACCESS_COARSE_LOCATION){
+            val permissionDes = String.format(useTips,permissionLocation,permissionLocationDes)
+            if (!stringBuffer.contains(permissionDes)) {
+                if (!stringBuffer.isNullOrEmpty()){
+                    stringBuffer.append("\n")
+                }
+                stringBuffer.append(permissionDes)
+                usePermissionList.add(permissionLocation)
             }
         }
     }
@@ -72,11 +86,12 @@ fun Context?.addPermissionDeniedDescription(permissionArray: MutableList<String>
     val permissionCameraTitle = getResString(R.string.permission_camera)
     val permissionMic = getResString(R.string.permission_microphone)
     val permissionWrite = getResString(R.string.permission_write)
+    val permissionLocation = getResString(R.string.permission_location)
 
     val permissionCameraDes = getResString(R.string.permission_camera_denied_des)
     val permissionMicDes = getResString(R.string.permission_microphone_denied_des)
     val permissionWriteDes = getResString(R.string.permission_write_denied_des)
-
+    val permissionLocationDes = getResString(R.string.permission_location_denied_des)
     val stringBuffer = StringBuffer()
     val usePermissionList = ArrayList<String>()
     for (item in permissionArray){
@@ -92,16 +107,28 @@ fun Context?.addPermissionDeniedDescription(permissionArray: MutableList<String>
                 stringBuffer.append("\n")
             }
             stringBuffer.append(String.format(useTips,permissionMic,permissionMicDes))
-            usePermissionList.add(permissionCameraTitle)
+            usePermissionList.add(permissionMic)
         }
-        if (item == Manifest.permission.WRITE_EXTERNAL_STORAGE || item == Manifest.permission.READ_EXTERNAL_STORAGE){
+        if (item == Manifest.permission.READ_MEDIA_IMAGES ||
+            item == Manifest.permission.READ_MEDIA_VIDEO ||
+            item == Manifest.permission.READ_MEDIA_AUDIO){
             val permissionDes = String.format(useTips,permissionWrite,permissionWriteDes)
             if (!stringBuffer.contains(permissionDes)) {
                 if (!stringBuffer.isNullOrEmpty()){
                     stringBuffer.append("\n")
                 }
                 stringBuffer.append(permissionDes)
-                usePermissionList.add(permissionCameraTitle)
+                usePermissionList.add(permissionWrite)
+            }
+        }
+        if (item == Manifest.permission.ACCESS_FINE_LOCATION  || item == Manifest.permission.ACCESS_COARSE_LOCATION){
+            val permissionDes = String.format(useTips,permissionLocation,permissionLocationDes)
+            if (!stringBuffer.contains(permissionDes)) {
+                if (!stringBuffer.isNullOrEmpty()){
+                    stringBuffer.append("\n")
+                }
+                stringBuffer.append(permissionDes)
+                usePermissionList.add(permissionLocation)
             }
         }
     }

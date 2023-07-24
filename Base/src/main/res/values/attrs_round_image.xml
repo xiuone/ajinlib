@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
         <declare-styleable name="RoundBaseImageView">
-                <!--        圆角大小-->
                 <attr name="round_image_radius" format="dimension"/>
                 <!--        左上角圆角-->
                 <attr name="round_image_radius_left_top" format="dimension"/>

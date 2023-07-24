@@ -7,10 +7,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import xy.xy.base.utils.TagNumber
 
 abstract class BaseAssemblyBase<T>(protected var view: T? = null) : LifecycleObserver {
     private val lifecycleObserverList by lazy { ArrayList<LifecycleObserver>() }
-    protected val TAG = this::class.java.toString()
+    protected val TAG by lazy { TagNumber.getTag(this::class.java.name) }
     protected val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     open fun onCreateInit(){

@@ -10,10 +10,11 @@ import com.xy.amap.location.LocationConfig
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 import xy.xy.base.permission.IPermissionInterceptorCreateListener
+import xy.xy.base.utils.Logger
 
 
 class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<LocationAssembly.LocationAssemblyView>(view){
-    private val aMapLocationClient by lazy { LocationConfig.mLocationClient }
+    private val aMapLocationClient by lazy { LocationConfig.getLocation() }
     private val interceptor by lazy { this.view?.onCreateIPermissionInterceptor() }
 
     override fun onResume(owner: LifecycleOwner?) {
@@ -41,7 +42,9 @@ class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<Loca
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: List<String?>, allGranted: Boolean) {
                         val lastLocation = LocationConfig.lastLocation
+                        Logger.d("===========$lastLocation===========$showOld")
                         if (lastLocation != null && showOld){
+                            Logger.d("===========$lastLocation")
                             this@LocationAssembly.view?.onLocationChanged(lastLocation)
                         }
                         aMapLocationClient?.startLocation()

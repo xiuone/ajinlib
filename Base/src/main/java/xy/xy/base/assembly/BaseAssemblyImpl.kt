@@ -17,6 +17,7 @@ import xy.xy.base.dialog.listener.DialogCancelSureView
 import xy.xy.base.assembly.load.LoadDialogView
 import xy.xy.base.dialog.LoadProgressDialog
 import xy.xy.base.listener.LoadViewListener
+import xy.xy.base.utils.TagNumber
 
 abstract class BaseAssemblyImpl(protected val rootView:View,
                                 private val contentView:View?=null,
@@ -26,7 +27,7 @@ abstract class BaseAssemblyImpl(protected val rootView:View,
                                 protected val fragment: Fragment?=null) : BaseAssemblyViewWithContext, DialogCancelSureView,
     LoadViewListener, LoadDialogView,LifecycleObserver {
 
-    protected val TAG by lazy { this::class.java.name }
+    protected val TAG by lazy { TagNumber.getTag(this::class.java.name) }
 
     protected val context: Context by lazy { rootView.context }
 

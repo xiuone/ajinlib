@@ -15,9 +15,10 @@ import xy.xy.base.act.ActivityBaseStatusBar
 import xy.xy.base.act.ActivityBase
 import xy.xy.base.assembly.BaseAssemblyImpl
 import xy.xy.base.listener.OpenPageListener
+import xy.xy.base.utils.TagNumber
 
 abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>,OpenPageListener{
-    protected val TAG by lazy { this::class.java.name }
+    protected val TAG by lazy { TagNumber.getTag(this::class.java.name) }
     private val FRAGMENT_BASE_LAUNCH:String = "FRAGMENT:BASE:LAUNCH:"
     private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     private val configController by lazy { ConfigController(::needReCreate) }

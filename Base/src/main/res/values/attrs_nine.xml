@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="NineBaseView">
+        <attr name="nine_spacing_place" format="reference"/>
         <attr name="nine_spacing_size" format="dimension"/>
         <attr name="nine_max_size" format="dimension"/>
         <attr name="nine_min_size" format="dimension"/>

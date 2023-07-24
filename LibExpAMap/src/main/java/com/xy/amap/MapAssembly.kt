@@ -12,6 +12,7 @@ import com.amap.api.maps.model.MyLocationStyle
 import com.amap.api.maps.model.MyLocationStyle.LOCATION_TYPE_LOCATE
 import com.xy.amap.location.LocationNotify
 import xy.xy.base.permission.IPermissionInterceptorCreateListener
+import xy.xy.base.utils.Logger
 
 
 class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemblyView>(view),
@@ -22,7 +23,6 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
     private var latLng: LatLng?=null
 
     private val zoomNumber by lazy { view.onCreateZoomNumber() }
-    private var mListener: LocationSource.OnLocationChangedListener? = null
 
 
     override fun onCreateInit(savedInstanceState: Bundle?) {
@@ -52,31 +52,24 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
      * 激活定位
      */
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
-        mListener = onLocationChangedListener
         LocationNotify.instance.addNotify(TAG,this)
-        locationAssembly?.startLocation()
+        locationAssembly?.startLocation(true)
     }
 
     /**
      * 停止激活   相当于停止定位
      */
     override fun deactivate() {
-        mListener = null
-        LocationNotify.instance.removeNotify(TAG)
+        LocationNotify.instance.removeNotify(TAG,this)
     }
 
     /**
      * 定位状态变化
      */
     override fun onLocationChanged(aMapLocation: AMapLocation?) {
+        Logger.d("====222222222$aMapLocation")
         if (aMapLocation == null || aMapLocation.errorCode != 0)return
-        val mListener = this.mListener
-        if (mListener != null){
-            mListener.onLocationChanged(aMapLocation)
-        }else{
-            showCurrentLocation(aMapLocation)
-        }
-        this.mListener = null
+        showCurrentLocation(aMapLocation)
     }
 
     /**
@@ -116,7 +109,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
     override fun onDestroyed(owner: LifecycleOwner) {
         super.onDestroyed(owner)
         mapView?.onDestroy()
-        LocationNotify.instance.removeNotify(TAG)
+        LocationNotify.instance.removeNotify(TAG,this)
     }
 
     interface MapAssemblyView : MapBaseAssemblyView, IPermissionInterceptorCreateListener {

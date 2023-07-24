@@ -21,6 +21,7 @@ import xy.xy.base.assembly.BaseAssemblyImpl
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.listener.OpenPageListener
 import xy.xy.base.utils.Logger
+import xy.xy.base.utils.TagNumber
 import xy.xy.base.utils.config.ConfigController
 import xy.xy.base.utils.exp.getViewPosRect
 import xy.xy.base.utils.runMain
@@ -29,7 +30,7 @@ import kotlin.collections.HashMap
 
 abstract class ActivityBase : FragmentActivity(), ActivityResultCallback<ActivityResult> ,OpenPageListener{
     protected val ACTIVITY_BASE_LAUNCH by lazy { "ACTIVITY:BASE:LAUNCH:" }
-    protected val TAG by lazy { this::class.java.name }
+    protected val TAG by lazy { TagNumber.getTag(this::class.java.name) }
     private val activityResultLauncherList: HashMap<String,ActivityResultLauncher<Intent>> by lazy { HashMap() }
     private val configController by lazy { ConfigController(::needReCreate) }
     private val unHindKeyView by lazy { ArrayList<View>() }

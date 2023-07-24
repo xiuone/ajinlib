@@ -54,6 +54,5 @@ abstract class ActivityBaseSwipeBack : ActivityBaseStatusBar(),
             return
         }
         super.onBackPressed()
-
     }
 }

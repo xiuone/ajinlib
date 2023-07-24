@@ -5,22 +5,30 @@ import xy.xy.base.utils.runMain
 
 
 abstract class NotifyBase<T> {
-    private val tagHashMap by lazy { HashMap<Any,T>() }
+    private val tagHashMap by lazy { HashMap<Any,ArrayList<T>>() }
     protected val relation by lazy { "-" }
 
     open fun addNotify(tag:String?,view: T?){
         if (tag == null || view == null)return
         synchronized(this){
-            val value = tagHashMap[tag]
-            if (value != null)return
-            tagHashMap[tag] = view
+            val value = tagHashMap[tag]?:ArrayList()
+            if (!value.contains(view)){
+                value.add(view)
+                tagHashMap[tag] = value
+            }
         }
     }
 
-    open fun removeNotify(life: Any?){
-        if (life == null )return
+    open fun removeNotify(tag: Any?,view: T?){
+        if (tag == null )return
         synchronized(this){
-            tagHashMap.remove(life)
+            val value = tagHashMap[tag]?:ArrayList()
+            value.remove(view)
+            if (value.isEmpty()){
+                tagHashMap.remove(tag)
+            }else{
+                tagHashMap[tag] = value
+            }
         }
     }
 
@@ -28,9 +36,11 @@ abstract class NotifyBase<T> {
         runBackThread({
             synchronized(this){
                 for (entry in tagHashMap.entries){
-                    runMain({
-                        method(entry.value)
-                    })
+                    for (item in entry.value){
+                        runMain({
+                            method(item)
+                        })
+                    }
                 }
             }
         })

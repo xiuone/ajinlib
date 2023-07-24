@@ -105,7 +105,7 @@ class XyWebView(context: Context,attrs: AttributeSet? = null) :FrameLayout(conte
             Logger.d("curUa update")
             settings.userAgentString = userAgent
         }
-        settings.blockNetworkImage = true
+        settings.blockNetworkImage = false
     }
 
     override fun onCreateXyWebView(): XyWebView  = this

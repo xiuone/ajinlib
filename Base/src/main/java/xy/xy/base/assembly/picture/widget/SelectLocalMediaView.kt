@@ -36,7 +36,6 @@ class SelectLocalMediaView @JvmOverloads  constructor(context: Context, attrs: A
 
     private var rowSize = 0
 
-
     init {
         val array = context.obtainStyledAttributes(attrs, R.styleable.SelectLocalMediaView)
         maxNUmber = array.getInteger(R.styleable.SelectLocalMediaView_select_media_max,0)

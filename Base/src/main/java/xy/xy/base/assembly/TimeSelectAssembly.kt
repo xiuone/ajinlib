@@ -14,6 +14,7 @@ import xy.xy.base.dialog.listener.DialogImplListener
 import xy.xy.base.utils.exp.setOnClick
 import xy.xy.base.utils.exp.showToast
 import java.util.*
+import kotlin.math.min
 
 abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc:()->Unit = {}):
     BaseAssemblyWithContext<TimeSelectAssembly.BirthAssemblyView>(view) , DialogImplListener,
@@ -51,7 +52,7 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
     protected fun getCurrentYear() = calendar.get(Calendar.YEAR)
     protected fun getCurrentMonth() = calendar.get(Calendar.MONTH) + 1
     protected fun getCurrentDay() = calendar.get(Calendar.DAY_OF_MONTH)
-    protected fun getCurrentHour() = calendar.get(Calendar.HOUR)
+    protected fun getCurrentHour() = calendar.get(Calendar.HOUR_OF_DAY)
     protected fun getCurrentMin() = calendar.get(Calendar.MINUTE)
 
     protected fun getSelectYear():Int = yearWheelView?.getCurrentItem<Int>()?:-1
@@ -92,7 +93,7 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
     }
 
 
-    override fun dialogLayoutRes(): Int? = this.view?.onCreateBirthDialogLayoutRes()
+    override fun dialogLayoutRes(): Int? = this.view?.onCreateTimeDialogLayoutRes()
 
     override fun dialogProportion(): Double = 1.0
 
@@ -112,6 +113,7 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
             setSelect(selectYear, selectMonth, selectDay,selectHour,selectMin)
         }
         initData()
+        view?.onCreateTimeDialogInit(dialog)
     }
 
     private fun initView(dialog: BaseDialog){
@@ -129,9 +131,8 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
         hourWheelView?.setOnWheelChangedListener(this)
     }
 
+
     open fun initData(){
-        val currentYear = getCurrentYear()
-        yearWheelView?.setRange(currentYear-100,currentYear,1)
         val defaultYear = if (defaultYear != Int.MAX_VALUE) defaultYear else (getCurrentYear() - 18)
         val defaultMonth = if (defaultMonth != Int.MAX_VALUE) defaultMonth else getCurrentMonth()
         val defaultDay = if (defaultDay != Int.MAX_VALUE) defaultDay else getCurrentDay()
@@ -156,11 +157,11 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
             this.selectDay = selectDay
 
 
-            val selectYearStr = if (yearWheelView?.isVisible == true) "" else if (selectYear < 10) "0$selectYear" else "$selectYear"
-            val selectMonthStr = if (monthWheelView?.isVisible == true) "" else if (selectMonth < 10) "0$selectMonth" else "$selectMonth"
-            val selectDayStr = if (dayWheelView?.isVisible == true) "" else if (selectDay < 10) "0$selectDay" else "$selectDay"
-            val selectHourStr = if (hourWheelView?.isVisible == true) "" else if (selectHour < 10) "0$selectHour" else "$selectHour"
-            val selectMinStr = if (minWheelView?.isVisible == true) "" else if (selectMin < 10) "0$selectMin" else "$selectMin"
+            val selectYearStr = if (yearWheelView?.isVisible != true) "" else if (selectYear < 10) "0$selectYear" else "$selectYear"
+            val selectMonthStr = if (monthWheelView?.isVisible != true) "" else if (selectMonth < 10) "0$selectMonth" else "$selectMonth"
+            val selectDayStr = if (dayWheelView?.isVisible != true) "" else if (selectDay < 10) "0$selectDay" else "$selectDay"
+            val selectHourStr = if (hourWheelView?.isVisible != true) "" else if (selectHour < 10) "0$selectHour" else "$selectHour"
+            val selectMinStr = if (minWheelView?.isVisible != true) "" else if (selectMin < 10) "0$selectMin" else "$selectMin"
 
 
             birthTv?.text = String.format(birthRule,selectYearStr,selectMonthStr,selectDayStr,selectHourStr,selectMinStr)
@@ -190,15 +191,29 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
         }
     }
 
-    /**
-     * 充值month的选择项
-     */
-    open fun resetMonth(year:Int){}
+    open fun resetMonth(year: Int) {
+        val maxMonth = if (year >= getCurrentYear()) getCurrentMonth() else 12
+        val selectMonth = min(getSelectMonth(),maxMonth)
+        if (this.maxMonth != maxMonth && monthWheelView != null){
+            monthWheelView?.setRange(1,maxMonth,1)
+            this.maxMonth = maxMonth
+        }
+        monthWheelView?.setDefaultValue(selectMonth)
+        resetDay(year,selectMonth)
+    }
 
-    /**
-     * 充值day的选择项目
-     */
-    open fun resetDay(year: Int,month:Int){}
+    open fun resetDay(year: Int, month: Int) {
+        val currentYear = getCurrentYear()
+        val currentMonth = getCurrentMonth()
+        val currentDay = getCurrentDay()
+        val maxDay = if (year == currentYear && currentMonth == month) currentDay else getTotalDaysInMonth(year, month)
+        val selectDay = min(currentDay,maxDay)
+        if (this.maxDay != maxDay && dayWheelView != null){
+            dayWheelView?.setRange(1,maxDay,1)
+            this.maxDay = maxDay
+        }
+        dayWheelView?.setDefaultValue(selectDay)
+    }
     open fun resetHour(year: Int,month:Int,day:Int){}
     open fun resetMin(year: Int,month:Int,day: Int,hour:Int){}
 
@@ -297,8 +312,9 @@ abstract class TimeSelectAssembly(view: BirthAssemblyView, private val selectSuc
         fun onCreateDayWheelView(dialog: BaseDialog):NumberWheelView?
         fun onCreateHourWheelView(dialog: BaseDialog):NumberWheelView?
         fun onCreateMinWheelView(dialog: BaseDialog):NumberWheelView?
-
-        fun onCreateBirthDialogLayoutRes():Int
+        fun onCreateTimeDialogLayoutRes():Int
+        fun onCreateTimeDialogInit(dialog: BaseDialog){}
+        
         fun onCreateBirthRule():String?
         fun unSelectBirthHint():String?
         fun checkSelectMethod(assembly: TimeSelectAssembly, year:Int, month:Int, day:Int, hour:Int, min:Int):Boolean
