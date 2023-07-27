@@ -3,6 +3,7 @@ package xy.xy.base.widget.shadow
 import android.graphics.Path
 import android.graphics.RectF
 import android.view.View
+import xy.xy.base.utils.Logger
 import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 import kotlin.math.max
 import kotlin.math.min
@@ -43,8 +44,11 @@ class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: V
         startRight =  view.width - max(builderImpl.arrowRight(),builderImpl.shadowRight())-off
         startBottom =  view.height - max(builderImpl.arrowBottom(),builderImpl.shadowBottom())-off
 
-
-        moveTo(startLeft, startBottom-leftBottomRadius)
+        Logger.d("moveTo===view.height${view.height}  " +
+                "startBottom$startBottom   "+
+                "y${startBottom-leftBottomRadius/2}"
+        )
+        moveTo(startLeft, startBottom-leftBottomRadius/2)
         addLeft()
         addTop()
         addRight()
@@ -73,8 +77,11 @@ class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: V
             lineTo(startLeft - arrowHeight, arrowStart - arrowWidth / 2)
             lineTo(startLeft, arrowStart - arrowWidth)
         }
-
-        lineTo(startLeft, startTop+leftTopRadius)
+        Logger.d("lineTo===view.height${view.height}  " +
+                "startBottom$startBottom   "+
+                "y${startTop+leftTopRadius}"
+        )
+        lineTo(startLeft, startTop+leftTopRadius/2)
         val connerRect = RectF()
         connerRect.set(startLeft, startTop, startLeft + leftTopRadius, startTop+leftTopRadius)
         arcTo(connerRect, 180F, 90F)
@@ -129,7 +136,7 @@ class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: V
             lineTo(startRight, arrowStart + arrowWidth)
         }
 
-        lineTo(startRight, startBottom - rightBottomRadius)
+        lineTo(startRight, startBottom - rightBottomRadius/2)
         val connerRect = RectF()
         connerRect.set(startRight - rightBottomRadius, startBottom - rightBottomRadius, startRight, startBottom)
         arcTo(connerRect, 0f, 90F)
