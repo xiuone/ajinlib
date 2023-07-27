@@ -2,6 +2,7 @@ package xy.xy.base.widget.recycler.adapter
 
 import android.annotation.SuppressLint
 import android.view.View
+import xy.xy.base.utils.exp.setOnClick
 import xy.xy.base.widget.recycler.holder.BaseViewHolder
 import xy.xy.base.widget.recycler.listener.*
 import kotlin.math.max

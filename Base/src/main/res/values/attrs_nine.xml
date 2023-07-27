@@ -5,6 +5,7 @@
         <attr name="nine_spacing_size" format="dimension"/>
         <attr name="nine_max_size" format="dimension"/>
         <attr name="nine_min_size" format="dimension"/>
+        <attr name="nine_please" format="reference"/>
         <attr name="nine_media_video_play_res" format="reference"/>
         <attr name="nine_media_video_play_size" format="dimension"/>
     </declare-styleable>

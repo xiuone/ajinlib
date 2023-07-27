@@ -13,6 +13,7 @@ import xy.xy.base.utils.exp.loadImageWithCenter
 import xy.xy.base.utils.exp.setOnClick
 import xy.xy.base.R
 import xy.xy.base.widget.image.circle.RoundImageView
+import kotlin.math.min
 
 class NineView<T: NineListener> @JvmOverloads  constructor(context: Context, protected val attrs: AttributeSet? = null, defStyleAttr: Int = 0, )
     :FrameLayout(context, attrs, defStyleAttr){
@@ -44,6 +45,7 @@ class NineView<T: NineListener> @JvmOverloads  constructor(context: Context, pro
 
     open fun addView(data:MutableList<T>,item :T,position:Int){
         val frameLayout = FrameLayout(context)
+
         this.addView(frameLayout)
         val layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)
         val imageView = RoundImageView(context,attrs)
@@ -58,6 +60,7 @@ class NineView<T: NineListener> @JvmOverloads  constructor(context: Context, pro
         }
         addVideoPlayView(frameLayout,item)
         frameLayout.tag = item
+        frameLayout.setBackgroundResource(builder.pleaseRes)
         frameLayout.layoutParams = LayoutParams(context.getResDimension(R.dimen.dp_100),context.getResDimension(R.dimen.dp_100))
     }
 
@@ -145,8 +148,10 @@ class NineView<T: NineListener> @JvmOverloads  constructor(context: Context, pro
                 return picHeight
             }else if (picHeight > maxSize){
                 var viewWidth = picWidth*maxSize/picHeight
-                if (viewWidth < builder.minSize)
+                if (viewWidth < builder.minSize) {
                     viewWidth = builder.minSize
+                }
+                viewWidth = min(viewWidth,width-paddingLeft-paddingRight)
                 val params = LayoutParams(viewWidth,maxSize)
                 setChildLayoutParams(childView, params)
                 return maxSize

@@ -42,6 +42,13 @@ fun View.setOnClick(listener:View.OnClickListener) {
     }
 }
 
+fun View.checkDoubleDown(method:()->Unit) {
+    if (System.currentTimeMillis() > (clickedTime +500)){
+        clickedTime = System.currentTimeMillis()
+        method()
+    }
+}
+
 
 
 fun View.shakeAnimation(){

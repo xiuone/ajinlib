@@ -13,18 +13,19 @@ class NineBuild(private val view:View, private val attrs: AttributeSet? = null) 
     var minSize  = 0
 
     var mediaPlayRes = 0
+    var pleaseRes = 0
     var mediaPlaySize = 0
     var radius = 0
     var place = R.drawable.bg_transparent
 
     fun init(){
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.NineBaseView)
-        space = typedArray.getResourceId(R.styleable.NineBaseView_nine_spacing_place, R.drawable.bg_transparent)
         space = typedArray.getDimensionPixelSize(R.styleable.NineBaseView_nine_spacing_size, context.getResDimension(R.dimen.dp_2))
         maxSize = typedArray.getDimensionPixelSize(R.styleable.NineBaseView_nine_max_size, context.getResDimension(R.dimen.dp_100))
         minSize = typedArray.getDimensionPixelSize(R.styleable.NineBaseView_nine_min_size, context.getResDimension(R.dimen.dp_100))
         mediaPlaySize = typedArray.getDimensionPixelSize(R.styleable.NineBaseView_nine_media_video_play_size, context.getResDimension(R.dimen.dp_0))
         mediaPlayRes = typedArray.getResourceId(R.styleable.NineBaseView_nine_media_video_play_res, R.drawable.bg_transparent)
+        pleaseRes = typedArray.getResourceId(R.styleable.NineBaseView_nine_please, R.drawable.bg_transparent)
 
         typedArray.recycle()
 
