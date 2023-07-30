@@ -10,8 +10,8 @@ abstract class BaseAssemblyLoadDialog<T : BaseAssemblyViewLoadDialog>(view: T?) 
      * 提示框
      */
     private val loadDialog by lazy { onCreateLoadDialog() }
-    private val progressTv = view?.loadProgressTvIdRes()
-    private val progressString = view?.loadProgressString()
+    private val progressTv by lazy { view?.loadProgressTvIdRes() }
+    private val progressString by lazy { view?.loadProgressString()}
 
     fun showLoad(){
         loadDialog?.showDialog(progressTv,progressString?:"")

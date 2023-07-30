@@ -13,7 +13,7 @@
     <string name="year" tools:ignore="ExtraTranslation">年</string>
     <string name="month" tools:ignore="ExtraTranslation">月</string>
     <string name="day" tools:ignore="ExtraTranslation">日</string>
-    <string name="processing" tools:ignore="ExtraTranslation">处理中</string>
+    <string name="process_ing" tools:ignore="ExtraTranslation">处理中</string>
 
     <string name="permission_un_all" tools:ignore="ExtraTranslation">获取部分权限成功，但部分权限未正常授予</string>
     <string name="permission_refuse" tools:ignore="ExtraTranslation">被永久拒绝授权，请手动授予权限</string>
