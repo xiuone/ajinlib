@@ -1,7 +1,8 @@
-package xy.xy.baselib
+package com.xy.baselib
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import xy.xy.baselib.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -23,7 +23,6 @@ class MinSelectDialog(context: Context,private val listener:DialogSelectListener
             override fun onItemClick(view: View, data: DialogSelectMode, holder: BaseViewHolder?) {
                 adapter.updateType(data.type)
                 listener.onDataCallBack(data)
-                dismiss()
             }
         }
         adapter.setNewData(data)

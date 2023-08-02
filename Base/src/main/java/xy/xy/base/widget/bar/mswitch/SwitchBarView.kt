@@ -49,6 +49,7 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
     var isSwitchSelect = false
         set(value) {
             field = value
+            resetCenter()
             invalidate()
         }
     var switchBarListener: SwitchBarListener?=null
@@ -134,9 +135,7 @@ class SwitchBarView @JvmOverloads constructor(context: Context, attrs: Attribute
     private fun startAnim(event: MotionEvent){
         val switchBarListener = this.switchBarListener
         val changeSelected = !isSelected
-        if ((event.action == MotionEvent.ACTION_CANCEL ||
-            event.action == MotionEvent.ACTION_UP) &&
-            (switchBarListener != null)){
+        if (event.action == MotionEvent.ACTION_UP && switchBarListener != null){
                 if (!switchBarListener.onSwitchIntercept(changeSelected)) {
                     isSelected = changeSelected
                     switchBarListener.onSwitchCallBack(changeSelected)

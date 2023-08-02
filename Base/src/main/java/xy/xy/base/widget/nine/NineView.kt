@@ -117,7 +117,7 @@ class NineView<T: NineListener> @JvmOverloads  constructor(context: Context, pro
      */
     private fun resetMoreSize(width: Int,cowSize:Int):Int{
         val newWidth = width - paddingLeft - paddingRight
-        val itemSize = (newWidth - builder.space)/cowSize
+        val itemSize = (newWidth - builder.space*(cowSize - 1))/cowSize
         val totalSize = childCount
         for (index in 0 until totalSize){
             val childView  = getChildAt(index)
