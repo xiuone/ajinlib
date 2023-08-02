@@ -23,7 +23,7 @@ public class RemindDialog extends Dialog implements View.OnClickListener {
         super(context, R.style.Picture_Theme_Dialog);
         setContentView(R.layout.ps_remind_dialog);
         btnOk = findViewById(R.id.btnOk);
-        tvContent = findViewById(R.id.tv_content);
+        tvContent = findViewById(R.id.content_tv);
         tvContent.setText(tips);
         btnOk.setOnClickListener(this);
         setDialogSize();

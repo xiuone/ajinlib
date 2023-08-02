@@ -30,7 +30,7 @@ public class PictureCommonDialog extends Dialog implements View.OnClickListener 
         Button btnCancel = findViewById(R.id.btn_cancel);
         Button btnCommit = findViewById(R.id.btn_commit);
         TextView tvTitle = findViewById(R.id.tvTitle);
-        TextView tv_content = findViewById(R.id.tv_content);
+        TextView tv_content = findViewById(R.id.content_tv);
         tvTitle.setText(title);
         tv_content.setText(content);
         btnCancel.setOnClickListener(this);

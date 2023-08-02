@@ -16,7 +16,7 @@
 
 
     <TextView
-        android:id="@+id/tv_content"
+        android:id="@+id/content_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvTitle"
@@ -33,7 +33,7 @@
         android:id="@+id/bottom_line"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_below="@id/tv_content"
+        android:layout_below="@id/content_tv"
         android:background="@color/ps_color_e" />
 
     <LinearLayout

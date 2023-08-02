@@ -1,12 +1,13 @@
 package xy.xy.base.assembly.common.lauch
 
+import android.content.Context
 import android.view.View
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.utils.exp.*
 import xy.xy.base.utils.lift.ActivityController
 
 class CommonLaunchAssembly(view: CommonLaunchAssemblyView) : BaseAssemblyWithContext<CommonLaunchAssemblyView>(view) {
-    private val launchPrivacyKey = "LaunchPrivacyKey"
+
 
     private val agreeButtonView by lazy { this.view?.agreeButtonView() }
     private val refuseButtonView by lazy { this.view?.refuseButtonView() }
@@ -29,9 +30,8 @@ class CommonLaunchAssembly(view: CommonLaunchAssemblyView) : BaseAssemblyWithCon
             this.view?.agreeLaunchPrivacy()
             return
         }
-        val oldVersion = context.getSpLong(launchPrivacyKey,0)
         val currentVersion = context.getVersionCode()
-        if (currentVersion <= oldVersion){
+        if (isPrivacyReady(context)){
             privacyContentView?.visibility = View.GONE
             this.view?.agreeLaunchPrivacy()
             return
@@ -46,6 +46,16 @@ class CommonLaunchAssembly(view: CommonLaunchAssemblyView) : BaseAssemblyWithCon
         refuseButtonView?.setOnClick{
             privacyContentView?.visibility = View.GONE
             ActivityController.instance.closeAllAct()
+        }
+    }
+
+    companion object{
+        const val launchPrivacyKey = "LaunchPrivacyKey"
+
+        fun isPrivacyReady(context:Context):Boolean{
+            val oldVersion = context.getSpLong(launchPrivacyKey,0)
+            val currentVersion = context.getVersionCode()
+            return currentVersion > oldVersion
         }
     }
 }
