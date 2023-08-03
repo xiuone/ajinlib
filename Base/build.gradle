@@ -80,6 +80,15 @@ dependencies {
     api 'com.github.jenly1314:zxing-lite:2.4.0'
 
     api "androidx.exifinterface:exifinterface:1.3.2"
+
+    // PictureSelector basic (Necessary)
+    api 'io.github.lucksiege:pictureselector:v3.11.1'
+    // image compress library (Not necessary)
+    api 'io.github.lucksiege:compress:v3.11.1'
+    // uCrop library (Not necessary)
+    api 'io.github.lucksiege:ucrop:v3.11.1'
+    // simple camerax library (Not necessary)
+    api 'io.github.lucksiege:camerax:v3.11.1'
 }
 
 

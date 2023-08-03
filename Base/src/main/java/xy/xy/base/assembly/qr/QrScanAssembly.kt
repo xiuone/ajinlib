@@ -1,14 +1,13 @@
 package xy.xy.base.assembly.qr
 
-import picture.luck.picture.lib.entity.LocalMedia
-import picture.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
 import xy.xy.base.utils.exp.isFileExist
 import java.util.ArrayList
 
-class QrScanAssembly(view: QrScanAssemblyView) :
-    BaseAssemblyWithContext<QrScanAssembly.QrScanAssemblyView>(view),
+class QrScanAssembly(view: QrScanAssemblyView) : BaseAssemblyWithContext<QrScanAssembly.QrScanAssemblyView>(view),
     OnResultCallbackListener<LocalMedia> {
 
 

@@ -6,11 +6,10 @@ import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import com.hjq.permissions.IPermissionInterceptor
 import com.hjq.permissions.XXPermissions
-import picture.luck.picture.lib.interfaces.OnRecordAudioInterceptListener
+import com.luck.picture.lib.interfaces.OnRecordAudioInterceptListener
 import xy.xy.base.utils.exp.showToast
 
-open class RecordAudioIntercept(private val permissionInterceptor: IPermissionInterceptor?) :
-    OnRecordAudioInterceptListener {
+open class RecordAudioIntercept(private val permissionInterceptor: IPermissionInterceptor?) : OnRecordAudioInterceptListener {
 
     override fun onRecordAudio(fragment: Fragment?, requestCode: Int) {
         val fragment = fragment?:return

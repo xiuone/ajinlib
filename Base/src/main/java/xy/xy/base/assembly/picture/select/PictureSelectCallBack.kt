@@ -1,6 +1,7 @@
-package com.xy.picture.select
+package xy.xy.base.assembly.picture.select
 
-import picture.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.entity.LocalMedia
+
 
 interface PictureSelectCallBack {
     fun onResult(result: ArrayList<LocalMedia>)

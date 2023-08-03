@@ -64,7 +64,7 @@
             android:value="640"/>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.jianbian.key.fileProvider"
+            android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -72,47 +72,6 @@
                 android:resource="@xml/provider_paths"
                 tools:replace="android:resource" />
         </provider>
-
-        <provider
-            android:name="picture.luck.picture.lib.basic.PictureFileProvider"
-            android:authorities="${applicationId}.luckProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/ps_file_paths" />
-        </provider>
-
-        <service
-            android:name="picture.luck.picture.lib.service.ForegroundService"
-            android:enabled="true"
-            android:foregroundServiceType="location" />
-
-        <activity
-            android:name="picture.luck.picture.lib.basic.PictureSelectorSupporterActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/Base.Theme.NoActionBar"/>
-
-        <activity
-            android:name="picture.luck.picture.lib.basic.PictureSelectorTransparentActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/Picture.Theme.Translucent"/>
-        <activity
-            android:name="camerax.luck.lib.camerax.PictureCameraActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/Base.Theme.NoActionBar" />
-
-
-        <activity
-            android:name="ucrop.yalantis.ucrop.UCropActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name="ucrop.yalantis.ucrop.UCropMultipleActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
     </application>
 </manifest>

@@ -10,19 +10,18 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.luck.picture.lib.engine.CropFileEngine
+import com.luck.picture.lib.style.PictureSelectorStyle
+import com.luck.picture.lib.utils.StyleUtils
+import com.yalantis.ucrop.UCrop
+import com.yalantis.ucrop.UCropImageEngine
 import xy.xy.base.R
-import picture.luck.picture.lib.engine.CropFileEngine
-import picture.luck.picture.lib.style.PictureSelectorStyle
-import picture.luck.picture.lib.utils.StyleUtils
 import xy.xy.base.utils.ContextHolder
 import xy.xy.base.assembly.picture.select.ImageLoaderUtils
-import ucrop.yalantis.ucrop.UCrop
-import ucrop.yalantis.ucrop.UCropImageEngine
 import java.io.File
 
 
-abstract class ImageCropEngineBase :
-    CropFileEngine {
+abstract class ImageCropEngineBase : CropFileEngine {
     private val context by lazy { ContextHolder.getContext() }
     private val selectorStyle by lazy { onCreateSelectStyle() }
 

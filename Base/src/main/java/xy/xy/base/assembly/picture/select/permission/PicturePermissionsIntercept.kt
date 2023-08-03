@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment
 import com.hjq.permissions.IPermissionInterceptor
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
-import picture.luck.picture.lib.interfaces.OnPermissionsInterceptListener
-import picture.luck.picture.lib.interfaces.OnRequestPermissionListener
+import com.luck.picture.lib.interfaces.OnPermissionsInterceptListener
+import com.luck.picture.lib.interfaces.OnRequestPermissionListener
 
 class PicturePermissionsIntercept(private val interceptor: IPermissionInterceptor):
     OnPermissionsInterceptListener {

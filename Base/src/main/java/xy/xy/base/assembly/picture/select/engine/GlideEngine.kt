@@ -7,8 +7,8 @@ import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import picture.luck.picture.lib.engine.ImageEngine
-import picture.luck.picture.lib.utils.ActivityCompatHelper
+import com.luck.picture.lib.engine.ImageEngine
+import com.luck.picture.lib.utils.ActivityCompatHelper
 import xy.xy.base.utils.exp.getResColor
 
 

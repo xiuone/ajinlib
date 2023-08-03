@@ -8,16 +8,15 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
+import com.luck.picture.lib.entity.LocalMedia
 import xy.xy.base.R
-import picture.luck.picture.lib.entity.LocalMedia
 import xy.xy.base.utils.anim.AppAnimatorListener
 import xy.xy.base.utils.anim.ViewAnimHelper
 import xy.xy.base.utils.exp.loadImageWithCenter
 import xy.xy.base.utils.exp.setOnClick
-import com.xy.picture.select.PictureSelectCallBack
+import xy.xy.base.assembly.picture.select.PictureSelectCallBack
 import com.xy.picture.widget.ResetPositionController
 import com.xy.picture.widget.ResetPositionListener
-import com.xy.picture.widget.SelectLocalMediaListener
 
 
 class SelectLocalMediaView @JvmOverloads  constructor(context: Context, attrs: AttributeSet? = null) : FrameLayout(context,attrs),

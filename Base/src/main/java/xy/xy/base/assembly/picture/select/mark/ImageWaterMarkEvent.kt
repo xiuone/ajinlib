@@ -6,11 +6,11 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import picture.luck.picture.lib.config.PictureMimeType
-import picture.luck.picture.lib.interfaces.OnBitmapWatermarkEventListener
-import picture.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
-import picture.luck.picture.lib.utils.DateUtils
-import picture.luck.picture.lib.utils.PictureFileUtils
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.interfaces.OnBitmapWatermarkEventListener
+import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
+import com.luck.picture.lib.utils.DateUtils
+import com.luck.picture.lib.utils.PictureFileUtils
 import xy.xy.base.R
 
 import xy.xy.base.utils.exp.*
