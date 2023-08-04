@@ -1,6 +1,7 @@
-package xy.xy.base.assembly.picture.select.assembly
+package xy.xy.base.assembly.picture
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.luck.picture.lib.basic.PictureSelectionModel
 import com.luck.picture.lib.basic.PictureSelector
@@ -9,34 +10,30 @@ import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.luck.picture.lib.language.LanguageConfig
 import xy.xy.base.R
-import xy.xy.base.assembly.base.BaseAssemblyWithContext
-import xy.xy.base.assembly.picture.select.permission.PicturePermissionsIntercept
 import xy.xy.base.utils.config.language.AppLanguageConfig
 import xy.xy.base.utils.config.language.LanguageManger
 import xy.xy.base.utils.exp.*
 import xy.xy.base.assembly.picture.select.PictureSelectCallBack
 import xy.xy.base.assembly.picture.select.camera.ImageCameraIntercept
 import xy.xy.base.assembly.picture.select.compress.ImageFileCompressEngine
+import xy.xy.base.assembly.picture.select.crop.ImageCropEngineCommon
+import xy.xy.base.assembly.picture.select.crop.ImageCropEngineHead
 import xy.xy.base.assembly.picture.select.engine.GlideEngine
-import xy.xy.base.permission.IPermissionInterceptorCreateListener
+import xy.xy.base.utils.ContextHolder
 import java.io.File
 
 
-open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: IPermissionInterceptorCreateListener) : BaseAssemblyWithContext<PictureSelectorAssemblyView>(view){
-    private val cropEngine by lazy { this.view?.onCreateImageCropEngine() }
-    private val audioIntercept by lazy { this.view?.onCreateRecordAudioIntercept() }
+object PictureSelectorUtils{
     private val glideEngine by lazy { GlideEngine() }
-    private val intercept by lazy { PicturePermissionsIntercept(listener.onCreateIPermissionInterceptor()) }
 
-    private fun PictureSelectionModel?.requestBase(type: SelectType,max:Int = 1 ,list:ArrayList<LocalMedia>?= null): PictureSelectionModel?{
+    private fun PictureSelectionModel?.requestBase(type: SelectType, max:Int = 1, list:ArrayList<LocalMedia>?= null): PictureSelectionModel?{
         return this?.setLanguage(getLanguage())
-            ?.setSelectorUIStyle(this@PictureSelectorAssembly.view?.onGetPictureSelectorStyle())
             ?.isOriginalControl(true)
             ?.setImageEngine(glideEngine)
             ?.isDisplayCamera(true)
             ?.setCompressEngine(ImageFileCompressEngine())
             ?.isOpenClickSound(false)
-            ?.isPreviewImage(this@PictureSelectorAssembly.view?.isPreviewImage()?:false)
+            ?.isPreviewImage(true)
             ?.isGif(false)
             ?.setSelectionMode(if (max == 1) SelectModeConfig.SINGLE else SelectModeConfig.MULTIPLE)
             ?.setMaxSelectNum(max)
@@ -44,12 +41,8 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
             ?.setOutputCameraDir(getOutPath(type))
             ?.setOutputAudioDir(getOutPath(type))
             ?.setQuerySandboxDir(getOutPath(type))
-            ?.setPermissionsInterceptListener(intercept)
-
-            ?.setCropEngine(cropEngine)
 
             ?.setCameraInterceptListener(ImageCameraIntercept())
-            ?.setRecordAudioInterceptListener(audioIntercept)
     }
 
     private fun PictureSelectionModel?.request(callBack: PictureSelectCallBack){
@@ -67,17 +60,17 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
     /**
      * 选择头像
      */
-    fun openSelectHeadIcon(callBack: PictureSelectCallBack){
-        getPictureSelector()
+    fun openSelectHeadIcon(any: Any?,callBack: PictureSelectCallBack){
+        getPictureSelector(any)
             ?.openGallery(SelectType.IMAGE.type)
             ?.requestBase(SelectType.IMAGE)
             ?.setOfAllCameraType(SelectType.IMAGE.type)
             ?.setSelectionMode(SelectModeConfig.SINGLE)
             ?.setMaxSelectNum(1)
+            ?.setCropEngine(ImageCropEngineHead())
             ?.setOutputCameraDir(getOutPath(SelectType.IMAGE))
             ?.setOutputAudioDir(getOutPath(SelectType.IMAGE))
             ?.setQuerySandboxDir(getOutPath(SelectType.IMAGE))
-            ?.setPermissionsInterceptListener(intercept)
             ?.request(callBack)
 
     }
@@ -85,21 +78,22 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
     /**
      * 选择普通图片
      */
-    fun openCommonIcon(type: SelectType,callBack: PictureSelectCallBack,max:Int = 1 ,list:ArrayList<LocalMedia>?=null){
-        getPictureSelector()
+    fun openCommonIcon(any: Any?, type: SelectType, callBack: PictureSelectCallBack,
+                       max:Int = 1, list:ArrayList<LocalMedia>?=null){
+        getPictureSelector(any)
             ?.openGallery(type.type)
             ?.requestBase(type,max,list)
+            ?.setCropEngine(ImageCropEngineCommon())
             ?.setOfAllCameraType(SelectType.IMAGE.type)
             ?.request(callBack)
     }
 
 
-    fun openCamera(type: SelectType,callBack: PictureSelectCallBack){
-        getPictureSelector()
+    fun openCamera(any: Any?, type: SelectType, callBack: PictureSelectCallBack){
+        getPictureSelector(any)
             ?.openCamera(type.type)
             ?.setOfAllCameraType(SelectType.IMAGE.type)
             ?.setCameraInterceptListener(ImageCameraIntercept())
-            ?.setRecordAudioInterceptListener(audioIntercept)
             ?.setLanguage(getLanguage())
             ?.isOriginalControl(true)
             ?.setOutputAudioDir(getOutPath(type))
@@ -114,8 +108,9 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
     }
 
     private fun getOutPath(type: SelectType?):String?{
-        val dirName = getContext()?.getResString(R.string.app_name)
-        val path = if (type == SelectType.AUDIO) getContext()?.getAudioDir(dirName) else getContext()?.getSdImageDir(dirName)
+        val context = ContextHolder.getContext()
+        val dirName = context?.getResString(R.string.app_name)
+        val path = if (type == SelectType.AUDIO) context?.getAudioDir(dirName) else context?.getSdImageDir(dirName)
         if (!path.isNullOrEmpty()){
             val file = File(path)
             if (!file.exists()){
@@ -126,7 +121,7 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
     }
 
     private fun getLanguage():Int{
-        val context = getContext() ?: return LanguageConfig.SYSTEM_LANGUAGE
+        val context = ContextHolder.getContext() ?: return LanguageConfig.SYSTEM_LANGUAGE
         val language = LanguageManger.instant.getCurrentLanguage(context)
         var picLanguage = LanguageConfig.UNKNOWN_LANGUAGE
         when(language.name){
@@ -170,18 +165,12 @@ open class PictureSelectorAssembly(view: PictureSelectorAssemblyView,listener: I
         return picLanguage
     }
 
-
-    private fun getPictureSelector(): PictureSelector?{
-        val fragment = getCurrentFragment()
-        val activity = getCurrentAct()
-        if (fragment != null)return PictureSelector.create(fragment)
-        if (activity is FragmentActivity) return PictureSelector.create(activity)
-        if (activity is AppCompatActivity) return PictureSelector.create(activity)
+    private fun getPictureSelector(any: Any?): PictureSelector?{
+        if (any is Fragment)return PictureSelector.create(any)
+        if (any is FragmentActivity) return PictureSelector.create(any)
+        if (any is AppCompatActivity) return PictureSelector.create(any)
         return null
     }
-
-
-
 
     enum class SelectType(val type:Int){
         ALL(0),

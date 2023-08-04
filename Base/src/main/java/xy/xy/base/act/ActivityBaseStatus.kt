@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import xy.xy.base.R
 import xy.xy.base.listener.ContextListener
 import xy.xy.base.utils.exp.setOnClick
@@ -80,7 +81,7 @@ abstract class ActivityBaseStatus : ActivityBase(), ContextListener {
     protected open fun onCreateRootRes():Int = R.layout.layout_xiu_layer_view
 
     override fun getPageContext(): Context = this
-    override fun getCurrentAct(): Activity?  = this
+    override fun getCurrentAct(): FragmentActivity?  = this
     override fun getCurrentFragment(): Fragment? = null
     open fun setListener() {}
     @LayoutRes

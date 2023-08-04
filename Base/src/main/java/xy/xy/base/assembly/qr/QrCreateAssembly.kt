@@ -6,13 +6,11 @@ import com.hjq.permissions.XXPermissions
 import com.king.zxing.util.CodeUtils
 import xy.xy.base.R
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
-import xy.xy.base.permission.IPermissionInterceptorCreateListener
 import xy.xy.base.utils.exp.*
 import xy.xy.base.utils.runBackThread
 import xy.xy.base.utils.runMain
 
-class QrCreateAssembly(view: QrCreateAssemblyView,listener:IPermissionInterceptorCreateListener) : BaseAssemblyWithContext<QrCreateAssemblyView>(view),
-    OnPermissionCallback {
+class QrCreateAssembly(view: QrCreateAssemblyView) : BaseAssemblyWithContext<QrCreateAssemblyView>(view),OnPermissionCallback{
 
     private val historyKey by lazy { this.view?.createSaveHistoryKey() }
 
@@ -22,16 +20,14 @@ class QrCreateAssembly(view: QrCreateAssemblyView,listener:IPermissionIntercepto
     private val changeButton by lazy { this.view?.createChangeQrButton() }
     private val logoBitmap by lazy { this.view?.createLogoBitmap() }
     private val bitmapSize by lazy { this.view?.createBitmapSize()?:600 }
-    private val interceptor by lazy { listener.onCreateIPermissionInterceptor() }
 
     override fun onCreateInit() {
         super.onCreateInit()
 
         saveButton?.setOnClick{
             val act = getCurrentAct()
-            val interceptor = interceptor
-            if (act != null && interceptor != null){
-                XXPermissions.with(act).permission(Permission.WRITE_EXTERNAL_STORAGE).interceptor(interceptor).request(this)
+            if (act != null){
+                XXPermissions.with(act).permission(Permission.WRITE_EXTERNAL_STORAGE).request(this)
             }
         }
         changeButton?.setOnClick{

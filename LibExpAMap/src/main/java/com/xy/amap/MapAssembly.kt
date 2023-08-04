@@ -11,7 +11,6 @@ import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.MyLocationStyle
 import com.amap.api.maps.model.MyLocationStyle.LOCATION_TYPE_LOCATE
 import com.xy.amap.location.LocationNotify
-import xy.xy.base.permission.IPermissionInterceptorCreateListener
 import xy.xy.base.utils.Logger
 
 
@@ -112,7 +111,7 @@ class MapAssembly(view: MapAssemblyView) : MapBaseAssembly<MapAssembly.MapAssemb
         LocationNotify.instance.removeNotify(TAG,this)
     }
 
-    interface MapAssemblyView : MapBaseAssemblyView, IPermissionInterceptorCreateListener {
+    interface MapAssemblyView : MapBaseAssemblyView{
         fun onCreateLocationAssembly(): LocationAssembly?
         fun onCreateZoomNumber(): Float = 18F
     }

@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
-import xy.xy.base.permission.IPermissionInterceptorCreateListener
 
 interface QrCreateAssemblyView :BaseAssemblyViewWithContext {
     fun createSaveView():View?

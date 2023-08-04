@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import xy.xy.base.R
 import xy.xy.base.listener.ContextListener
 import xy.xy.base.utils.exp.setBar
@@ -113,7 +114,7 @@ abstract class FragmentBaseStatus : FragmentBase() , ContextListener {
 
 
     override fun getPageContext(): Context? = context
-    override fun getCurrentAct(): Activity? = activity
+    override fun getCurrentAct(): FragmentActivity? = activity
     override fun getCurrentFragment(): Fragment? = this
 
     open fun startInitView(savedInstanceState: Bundle?, rootView: View?){}

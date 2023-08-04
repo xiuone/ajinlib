@@ -9,13 +9,11 @@ import com.hjq.permissions.XXPermissions
 import com.xy.amap.location.LocationConfig
 import xy.xy.base.assembly.base.BaseAssemblyWithContext
 import xy.xy.base.assembly.base.BaseAssemblyViewWithContext
-import xy.xy.base.permission.IPermissionInterceptorCreateListener
 import xy.xy.base.utils.Logger
 
 
 class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<LocationAssembly.LocationAssemblyView>(view){
     private val aMapLocationClient by lazy { LocationConfig.getLocation() }
-    private val interceptor by lazy { this.view?.onCreateIPermissionInterceptor() }
 
     override fun onResume(owner: LifecycleOwner?) {
         super.onResume(owner)
@@ -34,11 +32,9 @@ class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<Loca
 
     fun startLocation(showOld:Boolean = false){
         val act = getCurrentAct()
-        val interceptor = interceptor
-        if (act != null && interceptor != null){
+        if (act != null){
             XXPermissions.with(act)
                 .permission(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                .interceptor(interceptor)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: List<String?>, allGranted: Boolean) {
                         val lastLocation = LocationConfig.lastLocation
@@ -59,7 +55,7 @@ class LocationAssembly(view: LocationAssemblyView) :BaseAssemblyWithContext<Loca
     }
 
 
-    interface LocationAssemblyView :BaseAssemblyViewWithContext,AMapLocationListener,IPermissionInterceptorCreateListener{
+    interface LocationAssemblyView :BaseAssemblyViewWithContext,AMapLocationListener{
         fun onCanLocation() = true
         fun onLocationPermissionError(){}
     }

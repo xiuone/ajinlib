@@ -15,8 +15,6 @@ import xy.xy.base.utils.anim.ViewAnimHelper
 import xy.xy.base.utils.exp.loadImageWithCenter
 import xy.xy.base.utils.exp.setOnClick
 import xy.xy.base.assembly.picture.select.PictureSelectCallBack
-import com.xy.picture.widget.ResetPositionController
-import com.xy.picture.widget.ResetPositionListener
 
 
 class SelectLocalMediaView @JvmOverloads  constructor(context: Context, attrs: AttributeSet? = null) : FrameLayout(context,attrs),

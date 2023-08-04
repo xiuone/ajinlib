@@ -1,4 +1,4 @@
-package com.xy.picture.widget
+package xy.xy.base.assembly.picture.widget
 
 import android.animation.Animator
 import android.animation.AnimatorSet
