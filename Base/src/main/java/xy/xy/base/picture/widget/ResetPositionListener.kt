@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.widget
+package xy.xy.base.picture.widget
 
 import android.graphics.RectF
 

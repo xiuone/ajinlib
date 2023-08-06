@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.widget
+package xy.xy.base.picture.widget
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -14,7 +14,7 @@ import xy.xy.base.utils.anim.AppAnimatorListener
 import xy.xy.base.utils.anim.ViewAnimHelper
 import xy.xy.base.utils.exp.loadImageWithCenter
 import xy.xy.base.utils.exp.setOnClick
-import xy.xy.base.assembly.picture.select.PictureSelectCallBack
+import xy.xy.base.picture.select.PictureSelectCallBack
 
 
 class SelectLocalMediaView @JvmOverloads  constructor(context: Context, attrs: AttributeSet? = null) : FrameLayout(context,attrs),

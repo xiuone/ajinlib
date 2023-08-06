@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.select.crop
+package xy.xy.base.picture.select.crop
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -17,7 +17,7 @@ import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropImageEngine
 import xy.xy.base.R
 import xy.xy.base.utils.ContextHolder
-import xy.xy.base.assembly.picture.select.ImageLoaderUtils
+import xy.xy.base.picture.select.ImageLoaderUtils
 import java.io.File
 
 

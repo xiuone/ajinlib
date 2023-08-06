@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.select.mark
+package xy.xy.base.picture.select.mark
 
 import android.content.Context
 import android.graphics.Bitmap

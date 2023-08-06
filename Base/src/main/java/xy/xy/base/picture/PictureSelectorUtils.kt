@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture
+package xy.xy.base.picture
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -13,12 +13,12 @@ import xy.xy.base.R
 import xy.xy.base.utils.config.language.AppLanguageConfig
 import xy.xy.base.utils.config.language.LanguageManger
 import xy.xy.base.utils.exp.*
-import xy.xy.base.assembly.picture.select.PictureSelectCallBack
-import xy.xy.base.assembly.picture.select.camera.ImageCameraIntercept
-import xy.xy.base.assembly.picture.select.compress.ImageFileCompressEngine
-import xy.xy.base.assembly.picture.select.crop.ImageCropEngineCommon
-import xy.xy.base.assembly.picture.select.crop.ImageCropEngineHead
-import xy.xy.base.assembly.picture.select.engine.GlideEngine
+import xy.xy.base.picture.select.PictureSelectCallBack
+import xy.xy.base.picture.select.camera.ImageCameraIntercept
+import xy.xy.base.picture.select.compress.ImageFileCompressEngine
+import xy.xy.base.picture.select.crop.ImageCropEngineCommon
+import xy.xy.base.picture.select.crop.ImageCropEngineHead
+import xy.xy.base.picture.select.engine.GlideEngine
 import xy.xy.base.utils.ContextHolder
 import java.io.File
 
@@ -107,7 +107,7 @@ object PictureSelectorUtils{
             })
     }
 
-    private fun getOutPath(type: SelectType?):String?{
+    fun getOutPath(type: SelectType?):String?{
         val context = ContextHolder.getContext()
         val dirName = context?.getResString(R.string.app_name)
         val path = if (type == SelectType.AUDIO) context?.getAudioDir(dirName) else context?.getSdImageDir(dirName)

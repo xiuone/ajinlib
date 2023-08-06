@@ -7,7 +7,6 @@ import xy.xy.base.utils.Logger
 import xy.xy.base.utils.lift.ActivityController
 import xy.xy.base.utils.config.font.ConfigChangeListener
 import xy.xy.base.utils.config.ConfigController
-import xy.xy.base.web.down.DownloadManager
 import me.jessyan.autosize.AutoSize
 
 
@@ -20,7 +19,6 @@ abstract class BaseApp : MultiDexApplication() , ConfigChangeListener {
         registerActivityLifecycleCallbacks(ActivityController.instance)
         ContextHolder.setContext(this)
         Logger.debug = BuildConfig.DEBUG
-        DownloadManager.instance.init()
     }
 
     override fun attachBaseContext(newBase: Context) {

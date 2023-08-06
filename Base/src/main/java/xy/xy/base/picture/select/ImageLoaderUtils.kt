@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.select
+package xy.xy.base.picture.select
 
 import android.app.Activity
 import android.content.Context

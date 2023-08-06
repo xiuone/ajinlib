@@ -1,11 +1,11 @@
 package xy.xy.base.web.down
 
-import com.arialyy.aria.core.task.DownloadTask
+import java.io.File
 
 interface DownLoadListener {
-    fun running(task: DownloadTask)
-    fun taskComplete(task: DownloadTask)
-    fun taskFail(task: DownloadTask)
-    fun taskStop(task: DownloadTask){}
-    fun taskCancel(task: DownloadTask){}
+    fun start(url:String){}
+    fun running(url:String,progress:Int,totalSize:Long){}
+    fun taskComplete(url:String,path:File?){}
+    fun taskFail(url:String?){}
+    fun taskCancel(url:String){}
 }

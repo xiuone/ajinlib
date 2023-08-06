@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.select.compress
+package xy.xy.base.picture.select.compress
 
 import android.content.Context
 import android.net.Uri

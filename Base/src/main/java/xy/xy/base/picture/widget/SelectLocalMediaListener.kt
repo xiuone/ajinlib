@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.widget
+package xy.xy.base.picture.widget
 
 import android.widget.ImageView
 import com.luck.picture.lib.entity.LocalMedia

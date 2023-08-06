@@ -1,4 +1,4 @@
-package xy.xy.base.assembly.picture.select
+package xy.xy.base.picture.select
 
 import com.luck.picture.lib.entity.LocalMedia
 
