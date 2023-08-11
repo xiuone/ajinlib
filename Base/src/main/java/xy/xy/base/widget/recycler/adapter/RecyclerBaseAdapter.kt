@@ -77,8 +77,7 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
             data?.run {
                 this@RecyclerBaseAdapter.data.addAll(this)
             }
-
-            notifyItemRangeChanged(getHeadSize(), max(oldAll,this.data.size))
+            notifyDataSetChanged()
         }
     }
 
