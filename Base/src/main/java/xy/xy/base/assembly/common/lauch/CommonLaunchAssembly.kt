@@ -55,7 +55,7 @@ class CommonLaunchAssembly(view: CommonLaunchAssemblyView) : BaseAssemblyWithCon
         fun isPrivacyReady(context:Context):Boolean{
             val oldVersion = context.getSpLong(launchPrivacyKey,0)
             val currentVersion = context.getVersionCode()
-            return currentVersion > oldVersion
+            return currentVersion <= oldVersion
         }
     }
 }
