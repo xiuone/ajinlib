@@ -7,30 +7,26 @@ import android.view.View
 import xy.xy.base.widget.shadow.ShadowPaint
 import xy.xy.base.widget.shadow.ShadowPath
 
-class OnDrawImpl(view: View, builderImpl: ShadowBuilderImpl,private val expDrawListener:OnDrawExpListener) : OnSizeChangeImpl(view, builderImpl),
+open class OnDrawImpl(view: View, builderImpl: ShadowBuilderImpl) : OnSizeChangeImpl(view, builderImpl),
     OnDrawListener {
     private val shadowPaint: Paint by lazy { ShadowPaint(builderImpl) }
     private val stokePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
 
     override fun onDraw(canvas: Canvas?) {
-        if (!expDrawListener.onExpDraw(canvas)) {
-            shadowPaint.reset()
-            val path = ShadowPath(builderImpl, view)
-            path.reset()
-            canvas?.drawPath(path, shadowPaint)
-        }
+        shadowPaint.reset()
+        val path = ShadowPath(builderImpl, view)
+        path.reset()
+        canvas?.drawPath(path, shadowPaint)
     }
 
     override fun onDrawStoke(canvas: Canvas?) {
-        if (!expDrawListener.onExpDrawStoke(canvas)) {
-            stokePaint.isAntiAlias = true
-            stokePaint.style = Paint.Style.STROKE
-            stokePaint.strokeWidth = builder.stokeSize
-            stokePaint.color = builder.stokeColor
-            val path = ShadowPath(builderImpl, view, (builder.stokeSize / 2).toInt())
-            path.reset()
-            canvas?.drawPath(path, stokePaint)
-        }
+        stokePaint.isAntiAlias = true
+        stokePaint.style = Paint.Style.STROKE
+        stokePaint.strokeWidth = builder.stokeSize
+        stokePaint.color = builder.stokeColor
+        val path = ShadowPath(builderImpl, view, (builder.stokeSize / 2).toInt())
+        path.reset()
+        canvas?.drawPath(path, stokePaint)
     }
 
 

@@ -10,14 +10,13 @@ import xy.xy.base.utils.glide.GlideProgressListener
 import xy.xy.base.widget.bar.progress.ProgressBuild
 import xy.xy.base.widget.image.RoundBuild
 import xy.xy.base.widget.shadow.ShadowBuilder
-import xy.xy.base.widget.shadow.impl.OnDrawExpListener
 import xy.xy.base.widget.shadow.impl.OnDrawImpl
 import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 import kotlin.math.max
 import kotlin.math.min
 
 abstract class RoundBaseImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : AppCompatImageView(context, attrs, defStyleAttr),GlideProgressListener, OnDrawExpListener {
+    : AppCompatImageView(context, attrs, defStyleAttr),GlideProgressListener {
     val builder by lazy { RoundBuild(this,attrs) }
     private val mPaintBitmap by lazy { Paint(Paint.ANTI_ALIAS_FLAG)  }
     private val mPaintFrame by lazy { Paint(Paint.ANTI_ALIAS_FLAG)  }
@@ -26,7 +25,7 @@ abstract class RoundBaseImageView @JvmOverloads constructor(context: Context, at
     protected val mMatrix by lazy { Matrix() }
 
     val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
-    private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl,this) }
+    protected val onDrawImpl by lazy { onCreateDrawImpl() }
 
     private val progressBuild = ProgressBuild(this, attrs)
 
@@ -37,6 +36,8 @@ abstract class RoundBaseImageView @JvmOverloads constructor(context: Context, at
         onDrawImpl.initView()
         setBackgroundColor(Color.TRANSPARENT)
     }
+
+    open fun onCreateDrawImpl() :OnDrawImpl = OnDrawImpl(this, shadowBuilderImpl)
 
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
         if (builder.showShaow) {

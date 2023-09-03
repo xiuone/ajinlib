@@ -6,17 +6,18 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 import xy.xy.base.widget.shadow.ShadowBuilder
-import xy.xy.base.widget.shadow.impl.OnDrawExpListener
 import xy.xy.base.widget.shadow.impl.OnDrawImpl
 
 open class ShadowLinearLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0 ) :
-    LinearLayout(context, attrs, defStyleAttr) ,OnDrawExpListener{
+    LinearLayout(context, attrs, defStyleAttr) {
     val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
-    private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl,this) }
+    protected val onDrawImpl by lazy { onCreateDrawImpl() }
 
     init {
         onDrawImpl.initView()
     }
+
+    open fun onCreateDrawImpl() :OnDrawImpl = OnDrawImpl(this, shadowBuilderImpl)
 
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
         val newLeft = onDrawImpl.getPaddingLeft()+left
