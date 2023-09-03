@@ -8,7 +8,7 @@ import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 import kotlin.math.max
 import kotlin.math.min
 
-class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: View, private val off:Int = 0 ) : Path() {
+open class ShadowPath(private val builderImpl: ShadowBuilderImpl, private val view: View, private val off:Int = 0 ) : Path() {
     var leftTopRadius = 0F
     var rightTopRadius = 0F
     var leftBottomRadius = 0F

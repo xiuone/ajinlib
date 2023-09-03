@@ -4,7 +4,7 @@ import android.graphics.*
 import android.graphics.Color.parseColor
 import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 
-class ShadowPaint(private val builderImpl: ShadowBuilderImpl) : Paint(ANTI_ALIAS_FLAG) {
+open class ShadowPaint(private val builderImpl: ShadowBuilderImpl) : Paint(ANTI_ALIAS_FLAG) {
     private val builder: ShadowBuilder by lazy {  builderImpl.builder }
     override fun reset() {
         isAddAlpha()
