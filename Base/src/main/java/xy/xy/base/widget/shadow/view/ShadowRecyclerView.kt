@@ -6,12 +6,13 @@ import android.util.AttributeSet
 import androidx.recyclerview.widget.RecyclerView
 import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 import xy.xy.base.widget.shadow.ShadowBuilder
+import xy.xy.base.widget.shadow.impl.OnDrawExpListener
 import xy.xy.base.widget.shadow.impl.OnDrawImpl
 
 open class ShadowRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, ) :
-    RecyclerView(context, attrs, defStyleAttr) {
+    RecyclerView(context, attrs, defStyleAttr),OnDrawExpListener {
     val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
-    private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
+    private val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl,this) }
 
     init {
         onDrawImpl.initView()

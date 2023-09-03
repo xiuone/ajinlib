@@ -7,13 +7,14 @@ import android.util.AttributeSet
 import android.webkit.WebSettings
 import android.webkit.WebView
 import xy.xy.base.widget.shadow.ShadowBuilder
+import xy.xy.base.widget.shadow.impl.OnDrawExpListener
 import xy.xy.base.widget.shadow.impl.OnDrawImpl
 import xy.xy.base.widget.shadow.impl.ShadowBuilderImpl
 
 open class ShadowWebView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
-    WebView(context, attrs) {
+    WebView(context, attrs) , OnDrawExpListener {
     val shadowBuilderImpl: ShadowBuilderImpl by lazy { ShadowBuilderImpl(ShadowBuilder(this, attrs)) }
-    protected val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl) }
+    protected val onDrawImpl: OnDrawImpl by lazy { OnDrawImpl(this, shadowBuilderImpl,this) }
 
     init {
         onDrawImpl.initView()
