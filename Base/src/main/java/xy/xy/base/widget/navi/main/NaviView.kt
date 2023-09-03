@@ -27,7 +27,12 @@ open class NaviView<T: NaviListener> @JvmOverloads constructor(context: Context,
         val textView = newViewListener.createItemTextView(index,view,item)
 
         imageView?.setImageResource(item.drawRes())
-        textView?.setTextColor(item.textColorRes())
+        val colorStateList = item.textColorStateList()
+        if (colorStateList != null){
+            textView?.setTextColor(colorStateList)
+        }else {
+            textView?.setTextColor(item.textColorRes())
+        }
         textView?.text = item.titleStr()
         this.addView(view)
         view.setOnClick{
