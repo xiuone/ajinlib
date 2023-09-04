@@ -75,7 +75,7 @@ fun Context.installAPK(path:String?){
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         if (Build.VERSION.SDK_INT >= 24) {
             val packageName: String = packageName
-            val apkUri = FileProvider.getUriForFile(this@installAPK, "$packageName.fileprovider", File(this))
+            val apkUri = FileProvider.getUriForFile(this@installAPK, "$packageName.fileProvider", File(this))
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
         } else {
