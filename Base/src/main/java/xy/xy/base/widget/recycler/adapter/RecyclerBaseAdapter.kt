@@ -216,10 +216,12 @@ abstract class RecyclerBaseAdapter<T> : RecyclerAdapterWrapper<BaseViewHolder>()
 
 
 
-    fun bindHeadFootImpl(listener:ItemHeadFootListener){
-        synchronized(this){
-            implList.add(listener)
-            listener.addHeadOrFoot(this)
+    fun bindHeadFootImpl(listener:ItemHeadFootListener?){
+        if (listener != null) {
+            synchronized(this) {
+                implList.add(listener)
+                listener.addHeadOrFoot(this)
+            }
         }
     }
 

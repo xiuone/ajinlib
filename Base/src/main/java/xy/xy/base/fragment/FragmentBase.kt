@@ -68,10 +68,12 @@ abstract class FragmentBase : Fragment(), ActivityResultCallback<ActivityResult>
     }
 
 
-    protected fun addLifecycleObserver(vararg lifeList: BaseAssemblyImpl){
+    protected fun addLifecycleObserver(vararg lifeList: BaseAssemblyImpl?){
         for (lift in lifeList){
-            lifecycle.addObserver(lift)
-            lift.onCreate()
+            if (lift != null) {
+                lifecycle.addObserver(lift)
+                lift.onCreate()
+            }
         }
     }
 
